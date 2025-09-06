@@ -1,0 +1,6 @@
+pre-commit:
+  parallel: true
+  jobs:
+    - run: "./vendor/bin/pint"
+      glob: "*.php"
+      stage_fixed: true
