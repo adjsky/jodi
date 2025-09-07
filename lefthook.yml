@@ -1,6 +1,9 @@
 pre-commit:
-  parallel: true
   jobs:
-    - run: "./vendor/bin/pint"
+    - run: "composer run format"
       glob: "*.php"
       stage_fixed: true
+pre-push:
+  jobs:
+    - run: "composer run analyse"
+      glob: "*.php"
