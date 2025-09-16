@@ -1,0 +1,36 @@
+{
+    "compilerOptions": {
+        "lib": ["ESNext", "DOM", "DOM.Iterable"],
+        "module": "nodenext",
+        "target": "ESNext",
+
+        "moduleResolution": "nodenext",
+        "verbatimModuleSyntax": true,
+        "allowImportingTsExtensions": true,
+        "noEmit": true,
+        "resolveJsonModule": true,
+
+        "baseUrl": ".",
+        "paths": {
+            "@/*": ["./resources/js/*"]
+        },
+
+        "strict": true,
+        "libReplacement": true,
+        "skipLibCheck": true,
+        "esModuleInterop": true,
+        "allowJs": false,
+        "forceConsistentCasingInFileNames": true,
+        "isolatedModules": true,
+
+        "types": ["vite/client"]
+    },
+    "include": [
+        "resources/js/**/*.svelte",
+        "resources/js/**/*.svelte.js",
+        "resources/js/**/*.svelte.ts",
+        "resources/js/**/*.ts",
+        "resources/js/**/*.d.ts",
+        "resources/js/**/*.js"
+    ]
+}
