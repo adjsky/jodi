@@ -1,0 +1,10 @@
+{
+    "typescript.tsdk": "root/node_modules/typescript/lib",
+    "eslint.validate": ["javascript", "javascriptreact", "svelte"],
+    "editor.quickSuggestions": {
+        "strings": true
+    },
+    "files.associations": {
+        "*.css": "tailwindcss"
+    }
+}
