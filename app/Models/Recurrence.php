@@ -19,8 +19,8 @@ class Recurrence extends Model
     protected function casts(): array
     {
         return [
-            'recurring_since' => 'date',
-            'generated_until' => 'date',
+            'recurring_since' => 'date:Y-m-d',
+            'generated_until' => 'date:Y-m-d',
         ];
     }
 }

@@ -12,8 +12,6 @@ class Todo extends Model
     /** @use HasFactory<\Database\Factories\TodoFactory> */
     use HasFactory;
 
-    protected $fillable = [];
-
     protected $hidden = [];
 
     protected function casts(): array
@@ -21,7 +19,7 @@ class Todo extends Model
         return [
             'notify_at' => 'datetime',
             'completed_at' => 'datetime',
-            'todo_date' => 'date',
+            'todo_date' => 'date:Y-m-d',
         ];
     }
 }

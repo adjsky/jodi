@@ -19,7 +19,7 @@ class MoodTrackerEntry extends Model
     protected function casts(): array
     {
         return [
-            'entry_date' => 'date',
+            'entry_date' => 'date:Y-m-d',
         ];
     }
 }
