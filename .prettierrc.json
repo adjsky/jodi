@@ -1,0 +1,28 @@
+{
+    "singleQuote": false,
+    "trailingComma": "none",
+
+    "plugins": [
+        "@ianvs/prettier-plugin-sort-imports",
+        "prettier-plugin-svelte",
+        "prettier-plugin-tailwindcss"
+    ],
+
+    "importOrder": [
+        "<BUILTIN_MODULES>",
+        "<THIRD_PARTY_MODULES>",
+        "^@/(.*)$",
+        "^[./]",
+        "<TYPES>"
+    ],
+    "importOrderCaseInsensitive": true,
+    "importOrderSeparation": true,
+    "importOrderSortSpecifiers": true,
+
+    "tailwindFunctions": ["tw"],
+    "tailwindStylesheet": "resources/css/app.css",
+
+    "htmlWhitespaceSensitivity": "ignore",
+
+    "overrides": [{ "files": "*.svelte", "options": { "parser": "svelte" } }]
+}
