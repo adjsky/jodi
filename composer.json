@@ -1,11 +1,11 @@
 {
     "$schema": "https://getcomposer.org/schema.json",
-    "name": "laravel/laravel",
+    "name": "adjsky/jodi",
     "type": "project",
-    "description": "The skeleton application for the Laravel framework.",
+    "description": "Journal & Diary",
     "keywords": [
-        "laravel",
-        "framework"
+        "journal",
+        "diary"
     ],
     "license": "MIT",
     "require": {
