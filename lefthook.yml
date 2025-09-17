@@ -8,5 +8,7 @@ pre-commit:
       stage_fixed: true
 pre-push:
   jobs:
-    - run: "composer run analyse"
+    - run: "composer run check"
       glob: "*.php"
+    - run: "npm run check -- --fail-on-warnings"
+      glob: "*.{js,ts,svelte}"

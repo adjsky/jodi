@@ -5,7 +5,8 @@
     "scripts": {
         "build": "vite build",
         "dev": "vite",
-        "lint": "eslint"
+        "lint": "eslint",
+        "check": "svelte-check"
     },
     "devDependencies": {
         "@eslint/compat": "^1.2.5",

@@ -38,7 +38,7 @@
         }
     },
     "scripts": {
-        "analyse": [
+        "check": [
             "./vendor/bin/phpstan analyse"
         ],
         "format": [
