@@ -1,5 +1,44 @@
 @import "tailwindcss";
+@import "tw-animate-css";
 
 @source '../../vendor/laravel/framework/src/Illuminate/Pagination/resources/views/*.blade.php';
 @source '../../storage/framework/views/*.php';
 @source '../**/*.blade.php';
+
+@plugin '@tailwindcss/forms' {
+    strategy: "base";
+}
+
+@custom-variant dark (&:where([data-mode='dark'], [data-mode='dark'] *));
+
+@layer base {
+    :root {
+        color-scheme: light;
+        @variant dark {
+            color-scheme: dark;
+        }
+
+        scroll-behavior: smooth;
+    }
+
+    /** Remove yellow/blue autofill indicator */
+    input:-webkit-autofill {
+        background-clip: text !important;
+    }
+
+    button,
+    [role="button"] {
+        cursor: pointer;
+    }
+
+    :is(button, [role="button"]):disabled {
+        cursor: default;
+    }
+
+    /** https://github.com/tailwindlabs/tailwindcss-forms/issues/74 */
+    :is([type="checkbox"], [type="radio"]):checked {
+        @variant dark {
+            background-color: currentColor;
+        }
+    }
+}
