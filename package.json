@@ -4,7 +4,8 @@
     "type": "module",
     "scripts": {
         "build": "vite build",
-        "dev": "vite"
+        "dev": "vite",
+        "lint": "eslint"
     },
     "devDependencies": {
         "@eslint/compat": "^1.2.5",
