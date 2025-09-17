@@ -1,6 +1,6 @@
 pre-commit:
   jobs:
-    - run: "composer run format"
+    - run: "composer run format {staged_files}"
       glob: "*.php"
       stage_fixed: true
     - run: "npm run lint {staged_files} -- --fix"
