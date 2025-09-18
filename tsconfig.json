@@ -9,6 +9,9 @@
         "allowImportingTsExtensions": true,
         "noEmit": true,
         "resolveJsonModule": true,
+        "paths": {
+            "$/*": ["./resources/js/*"]
+        },
 
         "strict": true,
         "libReplacement": true,
