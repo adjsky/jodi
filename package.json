@@ -9,6 +9,7 @@
         "check": "svelte-check"
     },
     "devDependencies": {
+        "@ark-ui/svelte": "^5.10.0",
         "@eslint/compat": "^1.2.5",
         "@eslint/js": "^9.22.0",
         "@ianvs/prettier-plugin-sort-imports": "^4.7.0",
@@ -31,6 +32,7 @@
         "prettier-plugin-tailwindcss": "^0.6.14",
         "runed": "^0.31.1",
         "svelte": "^5.38.10",
+        "svelte-bottom-sheet": "^2.2.2",
         "svelte-check": "^4.3.1",
         "tailwind-merge": "^3.3.1",
         "tailwindcss": "^4.1.13",
