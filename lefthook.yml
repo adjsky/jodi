@@ -1,4 +1,5 @@
 pre-commit:
+  parallel: true
   jobs:
     - run: "composer run format {staged_files}"
       glob: "*.php"
@@ -7,6 +8,7 @@ pre-commit:
       glob: "*.{js,ts,svelte}"
       stage_fixed: true
 pre-push:
+  parallel: true
   jobs:
     - run: "composer run check"
       glob: "*.php"
