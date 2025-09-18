@@ -22,6 +22,7 @@ class DatabaseSeeder extends Seeder
             RecurrenceSeeder::class,
             RegistrationInvitationSeeder::class,
             TodoSeeder::class,
+            UserLoginRequestsSeeder::class,
             UserSeeder::class,
         ]);
     }
