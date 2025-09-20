@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers;
 
-class VerifyLoginOTPController extends Controller
+class LoginTwoFactorController extends Controller
 {
     public function index()
     {
-        return inertia('VerifyLoginOTP');
+        return inertia('LoginTwoFactor');
     }
 }

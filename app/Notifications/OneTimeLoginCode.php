@@ -7,7 +7,7 @@ namespace App\Notifications;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
 
-class LoginOTP extends Notification
+class OneTimeLoginCode extends Notification
 {
     public function __construct(public string $otp) {}
 
@@ -21,7 +21,7 @@ class LoginOTP extends Notification
         return (new MailMessage)
             ->subject("{$this->otp} is your one-time login code")
             ->markdown(
-                'mail.login-otp',
+                'mail.one-time-login-code',
                 ['otp' => $this->otp]
             );
     }

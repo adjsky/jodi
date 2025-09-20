@@ -6,7 +6,7 @@ namespace App\Http\Controllers;
 
 use App\Models\User;
 use App\Models\UserOneTimePasswords;
-use App\Notifications\LoginOTP;
+use App\Notifications;
 use Illuminate\Http\Request;
 use Nette\Utils\Random;
 
@@ -26,24 +26,24 @@ class LoginController extends Controller
         $user = User::where('email', $email)->first();
 
         if ($user) {
-            $otp = Random::generate(
+            $password = Random::generate(
                 UserOneTimePasswords::$SIZE,
                 UserOneTimePasswords::$CHARSET
             );
 
             $user->oneTimePasswords()->create([
                 'purpose' => 'login',
-                'password' => $otp,
+                'password' => $password,
                 'expires_at' => now()->addMinutes(
                     UserOneTimePasswords::$EXPIRES_IN_X_MINUTES
                 ),
             ]);
 
-            $user->notify(new LoginOtp($otp));
+            $user->notify(new Notifications\OneTimeLoginCode($password));
         }
 
-        $request->session()->put('email', $email);
+        $request->session()->put('2fa-email', $email);
 
-        return to_route('verify-login-otp');
+        return to_route('login.two-factor');
     }
 }
