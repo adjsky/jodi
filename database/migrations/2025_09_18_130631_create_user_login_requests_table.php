@@ -13,12 +13,15 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('user_login_requests', function (Blueprint $table) {
+        Schema::create('user_one_time_passwords', function (Blueprint $table) {
             $table->id();
             $table->foreignId('user_id')->index()->constrained();
-            $table->string('code')->unique();
+            $table->string('purpose')->index();
+            $table->string('password');
             $table->datetime('expires_at');
             $table->timestamps();
+
+            $table->unique(['user_id', 'purpose', 'password']);
         });
     }
 
@@ -27,6 +30,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('user_login_requests');
+        Schema::dropIfExists('user_one_time_passwords');
     }
 };

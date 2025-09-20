@@ -19,6 +19,7 @@ class User extends Authenticatable
     protected $fillable = [
         'name',
         'email',
+        'preferences',
     ];
 
     protected $hidden = [
@@ -35,6 +36,11 @@ class User extends Authenticatable
     public function friends(): BelongsToMany
     {
         return $this->belongsToMany(User::class, 'user_friends', 'user_id', 'friend_id');
+    }
+
+    public function oneTimePasswords(): HasMany
+    {
+        return $this->hasMany(UserOneTimePasswords::class);
     }
 
     public function todos(): HasMany
