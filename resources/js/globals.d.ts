@@ -6,5 +6,5 @@ declare module "@inertiajs/core" {
 }
 
 export interface AppPageProps {
-    flash: { message: string };
+    flash: { message: string | null };
 }

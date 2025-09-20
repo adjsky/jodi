@@ -6,7 +6,7 @@ import { hydrate, mount } from "svelte";
 import type { ResolvedComponent } from "@inertiajs/svelte";
 
 void createInertiaApp({
-    resolve: (name) => {
+    resolve(name) {
         const pages = import.meta.glob<ResolvedComponent>(
             "./pages/**/*.svelte",
             { eager: true }

@@ -1,7 +1,9 @@
 <script>
-    import { Form } from "@inertiajs/svelte";
+    import { Form, page } from "@inertiajs/svelte";
     import { store } from "$/actions/App/Http/Controllers/LoginController";
 </script>
+
+{$page.props.flash.message}
 
 <Form action={store()}>
     <input type="email" name="email" />

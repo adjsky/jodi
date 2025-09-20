@@ -4,6 +4,9 @@
         "declare_strict_types": true,
         "concat_space": {
             "spacing": "one"
+        },
+        "function_declaration": {
+            "closure_fn_spacing": "none"
         }
     }
 }
