@@ -42,8 +42,8 @@ class LoginController extends Controller
             $user->notify(new Notifications\OneTimeLoginCode($password));
         }
 
-        $request->session()->put('2fa-email', $email);
+        $request->session()->put('2fa.email', $email);
 
-        return to_route('login.two-factor');
+        return to_route('two-factor-challenge');
     }
 }

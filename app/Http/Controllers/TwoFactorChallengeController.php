@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers;
 
-class LoginTwoFactorController extends Controller
+class TwoFactorChallengeController extends Controller
 {
     public function index()
     {
-        return inertia('LoginTwoFactor');
+        return inertia('TwoFactorChallenge');
     }
 }

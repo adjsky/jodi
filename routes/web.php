@@ -3,8 +3,8 @@
 declare(strict_types=1);
 
 use App\Http\Controllers\LoginController;
-use App\Http\Controllers\LoginTwoFactorController;
 use App\Http\Controllers\LogoutController;
+use App\Http\Controllers\TwoFactorChallengeController;
 use Illuminate\Support\Facades\Route;
 
 Route::middleware('guest')->group(function () {
@@ -13,8 +13,8 @@ Route::middleware('guest')->group(function () {
     Route::post('/login', [LoginController::class, 'store'])
         ->name('login.store');
 
-    Route::get('/login/2fa', [LoginTwoFactorController::class, 'index'])
-        ->name('login.two-factor');
+    Route::get('/two-factor-challenge', [TwoFactorChallengeController::class, 'index'])
+        ->name('two-factor-challenge');
 });
 
 Route::middleware('auth')->group(function () {
