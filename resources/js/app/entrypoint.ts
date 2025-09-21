@@ -1,4 +1,4 @@
-import "../css/app.css";
+import "../../css/app.css";
 
 import { createInertiaApp } from "@inertiajs/svelte";
 import { hydrate, mount } from "svelte";
@@ -8,10 +8,10 @@ import type { ResolvedComponent } from "@inertiajs/svelte";
 void createInertiaApp({
     resolve(name) {
         const pages = import.meta.glob<ResolvedComponent>(
-            "./pages/**/*.svelte",
+            "../pages/**/*.svelte",
             { eager: true }
         );
-        return pages[`./pages/${name}.svelte`];
+        return pages[`../pages/${name}.svelte`];
     },
     setup({ el, App, props }) {
         if (el && el.dataset.serverRendered === "true") {
