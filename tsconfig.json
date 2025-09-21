@@ -10,14 +10,18 @@
         "noEmit": true,
         "resolveJsonModule": true,
         "paths": {
-            "$/*": ["./resources/js/*"]
+            "$/*": ["./resources/js/*"],
+            "$actions/*": [
+                "./resources/js/generated/actions/App/Http/Controllers/*"
+            ],
+            "$routes/*": ["./resources/js/generated/routes/*"]
         },
 
         "strict": true,
         "libReplacement": true,
         "skipLibCheck": true,
         "esModuleInterop": true,
-        "allowJs": false,
+        "allowJs": true,
         "forceConsistentCasingInFileNames": true,
         "isolatedModules": true
     },

@@ -1,6 +1,6 @@
 <script>
     import { Form, page } from "@inertiajs/svelte";
-    import { store } from "$/actions/App/Http/Controllers/LoginController";
+    import { store } from "$actions/LoginController";
 </script>
 
 {$page.props.flash.message}
