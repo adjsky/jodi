@@ -7,6 +7,8 @@ use App\Http\Middleware\RequestId;
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
+use Illuminate\Http\Request;
+use Illuminate\Http\Response;
 
 return Application::configure(basePath: dirname(__DIR__))
     ->withRouting(
@@ -21,5 +23,41 @@ return Application::configure(basePath: dirname(__DIR__))
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {
-        //
+        $exceptions->respond(
+            function (
+                Response $response,
+                Throwable $exception,
+                Request $request
+            ) {
+                $status = $response->status();
+                $isInertia = $request->header('X-Inertia') == 'true';
+
+                if (! $isInertia) {
+                    if (in_array($status, [500, 503, 404])) {
+                        return inertia('Error', ['status' => $status])
+                            ->toResponse($request)
+                            ->setStatusCode($status);
+                    }
+
+                    return $response;
+                }
+
+                if ($status == 419) {
+                    return back()->with([
+                        'message' => __('error.expired'),
+                    ]);
+                }
+
+                return response()->json(
+                    [
+                        'exception' => get_class($exception),
+                        'message' => $exception->getMessage(),
+                    ],
+                    $status,
+                    [
+                        'x-ratelimit-reset' => $response->headers->get('x-ratelimit-reset'),
+                    ]
+                );
+            }
+        );
     })->create();
