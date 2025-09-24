@@ -8,7 +8,7 @@ use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
 use Illuminate\Http\Request;
-use Illuminate\Http\Response;
+use Symfony\Component\HttpFoundation\Response as SymfonyResponse;
 
 return Application::configure(basePath: dirname(__DIR__))
     ->withRouting(
@@ -25,11 +25,22 @@ return Application::configure(basePath: dirname(__DIR__))
     ->withExceptions(function (Exceptions $exceptions): void {
         $exceptions->respond(
             function (
-                Response $response,
+                SymfonyResponse $response,
                 Throwable $exception,
                 Request $request
             ) {
-                $status = $response->status();
+                if ($response->isRedirect()) {
+                    return $response;
+                }
+
+                $status = $response->getStatusCode();
+
+                if ($status == 419) {
+                    return back()->with([
+                        'message' => __('error.expired'),
+                    ]);
+                }
+
                 $isInertia = $request->header('X-Inertia') == 'true';
 
                 if (! $isInertia) {
@@ -40,12 +51,6 @@ return Application::configure(basePath: dirname(__DIR__))
                     }
 
                     return $response;
-                }
-
-                if ($status == 419) {
-                    return back()->with([
-                        'message' => __('error.expired'),
-                    ]);
                 }
 
                 return response()->json(

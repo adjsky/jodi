@@ -20,6 +20,11 @@ Route::middleware('guest')->group(function () {
         [TwoFactorChallengeController::class, 'index']
     )
         ->name('two-factor-challenge');
+    Route::post(
+        '/two-factor-challenge',
+        [TwoFactorChallengeController::class, 'store']
+    )
+        ->name('two-factor-challenge.store');
 });
 
 Route::middleware('auth')->group(function () {
