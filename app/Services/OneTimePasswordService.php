@@ -24,7 +24,6 @@ class OneTimePasswordService
             return ConsumeResult::NoUser;
         }
 
-        /** @var ?UserOneTimePasswords */
         $otp = $user
             ->oneTimePasswords()
             ->where([

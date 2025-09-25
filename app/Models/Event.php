@@ -26,6 +26,7 @@ class Event extends Model
         ];
     }
 
+    /** @return HasMany<EventAttendee, $this> */
     public function attendees(): HasMany
     {
         return $this->hasMany(EventAttendee::class);
