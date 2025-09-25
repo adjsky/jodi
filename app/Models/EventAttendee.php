@@ -22,7 +22,7 @@ class EventAttendee extends Model
         return [];
     }
 
-    /** @return HasOne<User, $this> */
+    /** @return HasOne<User,$this> */
     public function user(): HasOne
     {
         return $this->hasOne(User::class);

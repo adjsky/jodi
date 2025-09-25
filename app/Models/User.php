@@ -33,37 +33,37 @@ class User extends Authenticatable
         ];
     }
 
-    /** @return BelongsToMany<User, $this> */
+    /** @return BelongsToMany<User,$this> */
     public function friends(): BelongsToMany
     {
         return $this->belongsToMany(User::class, 'user_friends', 'user_id', 'friend_id');
     }
 
-    /** @return HasMany<UserOneTimePasswords, $this> */
+    /** @return HasMany<UserOneTimePasswords,$this> */
     public function oneTimePasswords(): HasMany
     {
         return $this->hasMany(UserOneTimePasswords::class);
     }
 
-    /** @return HasMany<Todo, $this> */
+    /** @return HasMany<Todo,$this> */
     public function todos(): HasMany
     {
         return $this->hasMany(Todo::class);
     }
 
-    /** @return HasMany<Event, $this> */
+    /** @return HasMany<Event,$this> */
     public function events(): HasMany
     {
         return $this->hasMany(Event::class);
     }
 
-    /** @return HasMany<JournalEntry, $this> */
+    /** @return HasMany<JournalEntry,$this> */
     public function journalEntries(): HasMany
     {
         return $this->hasMany(JournalEntry::class);
     }
 
-    /** @return HasMany<MoodTrackerEntry, $this> */
+    /** @return HasMany<MoodTrackerEntry,$this> */
     public function moodTrackerEntries(): HasMany
     {
         return $this->hasMany(MoodTrackerEntry::class);

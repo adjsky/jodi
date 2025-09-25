@@ -19,7 +19,7 @@ class UserOneTimePasswords extends Model
     protected $hidden = [];
 
     /**
-     * @return array{expires_at: "datetime"}
+     * @return array{expires_at:"datetime"}
      */
     protected function casts(): array
     {

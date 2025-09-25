@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Services;
 
-use App\Enums\OneTimePassword\ConsumeResult;
+use App\Enums\OneTimePassword\ConsumeError;
 use App\Enums\OneTimePassword\Purpose;
 use App\Models\User;
 use App\Models\UserOneTimePasswords;
@@ -13,15 +13,16 @@ use Nette\Utils\Random;
 class OneTimePasswordService
 {
     // TODO: timebox
+    /** @return array{User,?ConsumeError} */
     public function consume(
         Purpose $purpose,
         string $email,
         string $password
-    ): ConsumeResult {
+    ): array {
         $user = User::where('email', $email)->first();
 
         if (! $user) {
-            return ConsumeResult::NoUser;
+            return [new User, ConsumeError::NoUser];
         }
 
         $otp = $user
@@ -33,16 +34,16 @@ class OneTimePasswordService
             ->first();
 
         if (! $otp) {
-            return ConsumeResult::InvalidPassword;
+            return [new User, ConsumeError::InvalidPassword];
         }
 
         if ($otp->expires_at->isPast()) {
-            return ConsumeResult::PasswordExpired;
+            return [new User, ConsumeError::PasswordExpired];
         }
 
         $otp->delete();
 
-        return ConsumeResult::OK($user);
+        return [$user, null];
     }
 
     public function generate(Purpose $purpose, User $user): string
