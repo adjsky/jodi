@@ -8,42 +8,48 @@ use App\Enums\OneTimePassword\ConsumeError;
 use App\Enums\OneTimePassword\Purpose;
 use App\Models\User;
 use App\Models\UserOneTimePasswords;
+use Carbon\CarbonInterval;
+use Illuminate\Support\Timebox;
 use Nette\Utils\Random;
 
 class OneTimePasswordService
 {
-    // TODO: timebox
     /** @return array{User,?ConsumeError} */
     public function consume(
         Purpose $purpose,
         string $email,
         string $password
     ): array {
-        $user = User::where('email', $email)->first();
+        return (new Timebox)->call(
+            function () use ($purpose, $email, $password) {
+                $user = User::where('email', $email)->first();
 
-        if (! $user) {
-            return [new User, ConsumeError::NoUser];
-        }
+                if (! $user) {
+                    return [new User, ConsumeError::NoUser];
+                }
 
-        $otp = $user
-            ->oneTimePasswords()
-            ->where([
-                'purpose' => $purpose->value,
-                'password' => $password,
-            ])
-            ->first();
+                $otp = $user
+                    ->oneTimePasswords()
+                    ->where([
+                        'purpose' => $purpose->value,
+                        'password' => $password,
+                    ])
+                    ->first();
 
-        if (! $otp) {
-            return [new User, ConsumeError::InvalidPassword];
-        }
+                if (! $otp) {
+                    return [new User, ConsumeError::InvalidPassword];
+                }
 
-        if ($otp->expires_at->isPast()) {
-            return [new User, ConsumeError::PasswordExpired];
-        }
+                if ($otp->expires_at->isPast()) {
+                    return [new User, ConsumeError::PasswordExpired];
+                }
 
-        $otp->delete();
+                $otp->delete();
 
-        return [$user, null];
+                return [$user, null];
+            },
+            microseconds: CarbonInterval::milliseconds(100)->microseconds
+        );
     }
 
     public function generate(Purpose $purpose, User $user): string
