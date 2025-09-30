@@ -6,6 +6,7 @@ namespace App\Http\Controllers;
 
 use App\Enums\OneTimePassword\ConsumeError;
 use App\Enums\OneTimePassword\Purpose;
+use App\Http\Requests\TwoFactorChallengeRequest;
 use App\Services\OneTimePasswordService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -21,16 +22,15 @@ class TwoFactorChallengeController extends Controller
         return inertia('TwoFactorChallenge');
     }
 
-    // TODO: throttling
-    public function store(Request $request)
+    public function store(TwoFactorChallengeRequest $request)
     {
-        $request->validate(['password' => 'required|string']);
-
-        $email = $request->session()->get('2fa.email');
+        $email = $request->session()->get(config('auth.2fa.session_key') . 'email');
 
         if (! $email) {
             return to_route('login')->with(['message' => 'log in first']);
         }
+
+        $request->throttle($email);
 
         [$user, $error] = $this->otpService->consume(
             Purpose::Login,

@@ -59,9 +59,10 @@ return Application::configure(basePath: dirname(__DIR__))
                         'message' => $exception->getMessage(),
                     ],
                     $status,
-                    [
-                        'x-ratelimit-reset' => $response->headers->get('x-ratelimit-reset'),
-                    ]
+                    collect(['retry-after', 'x-ratelimit-reset'])
+                        ->mapWithKeys(
+                            fn($h) => [$h => $response->headers->get($h)]
+                        )->all()
                 );
             }
         );
