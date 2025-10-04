@@ -23,7 +23,7 @@ class TwoFactorChallengeRequest extends FormRequest
 
     public function throttle(string $email): void
     {
-        $key = '2fa' . '|' . str($email)->lower()->transliterate();
+        $key = '2fa'.'|'.str($email)->lower()->transliterate();
 
         $hits = RateLimiter::hit($key, config('auth.2fa.throttle.decay_seconds'));
 

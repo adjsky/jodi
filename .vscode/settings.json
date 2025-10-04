@@ -6,5 +6,8 @@
     },
     "files.associations": {
         "*.css": "tailwindcss"
+    },
+    "[php]": {
+        "editor.defaultFormatter": "laravel.vscode-laravel"
     }
 }

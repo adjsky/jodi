@@ -24,7 +24,7 @@ class TwoFactorChallengeController extends Controller
 
     public function store(TwoFactorChallengeRequest $request)
     {
-        $email = $request->session()->get(config('auth.2fa.session_key') . 'email');
+        $email = $request->session()->get(config('auth.2fa.session_key').'email');
 
         if (! $email) {
             return to_route('login')->with(['message' => 'log in first']);

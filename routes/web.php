@@ -28,7 +28,7 @@ Route::middleware('guest')->group(function () {
 });
 
 Route::middleware('auth')->group(function () {
-    Route::get('/', fn() => inertia('Home'))
+    Route::get('/', fn () => inertia('Home'))
         ->name('home');
 
     Route::post('/logout', LogoutController::class);
@@ -37,6 +37,6 @@ Route::middleware('auth')->group(function () {
 if (app()->isLocal()) {
     Route::get(
         '/mail/otp',
-        fn() => new Notifications\OneTimeLoginCode('042712')->toMail()
+        fn () => new Notifications\OneTimeLoginCode('042712')->toMail()
     );
 }

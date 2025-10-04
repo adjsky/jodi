@@ -12,8 +12,8 @@ use Symfony\Component\HttpFoundation\Response as SymfonyResponse;
 
 return Application::configure(basePath: dirname(__DIR__))
     ->withRouting(
-        web: __DIR__ . '/../routes/web.php',
-        commands: __DIR__ . '/../routes/console.php',
+        web: __DIR__.'/../routes/web.php',
+        commands: __DIR__.'/../routes/console.php',
         health: '/up',
     )
     ->withMiddleware(function (Middleware $middleware): void {
@@ -61,7 +61,7 @@ return Application::configure(basePath: dirname(__DIR__))
                     $status,
                     collect(['retry-after', 'x-ratelimit-reset'])
                         ->mapWithKeys(
-                            fn($h) => [$h => $response->headers->get($h)]
+                            fn ($h) => [$h => $response->headers->get($h)]
                         )->all()
                 );
             }
