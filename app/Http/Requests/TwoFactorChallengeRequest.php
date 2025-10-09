@@ -16,6 +16,7 @@ class TwoFactorChallengeRequest extends FormRequest
         return true;
     }
 
+    /** @return string[] */
     public function rules(): array
     {
         return ['password' => 'required|string'];
