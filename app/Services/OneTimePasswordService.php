@@ -20,34 +20,33 @@ class OneTimePasswordService
         string $email,
         string $password
     ): array {
+        $callback = function () use ($purpose, $email, $password) {
+            $user = User::where('email', $email)->first();
+
+            if (! $user) {
+                return [new User, ConsumeError::NoUser];
+            }
+
+            $otp = $user->oneTimePasswords()->where([
+                'purpose' => $purpose->value,
+                'password' => $password,
+            ])->first();
+
+            if (! $otp) {
+                return [new User, ConsumeError::InvalidPassword];
+            }
+
+            if ($otp->expires_at->isPast()) {
+                return [new User, ConsumeError::PasswordExpired];
+            }
+
+            $otp->delete();
+
+            return [$user, null];
+        };
+
         return (new Timebox)->call(
-            function () use ($purpose, $email, $password) {
-                $user = User::where('email', $email)->first();
-
-                if (! $user) {
-                    return [new User, ConsumeError::NoUser];
-                }
-
-                $otp = $user
-                    ->oneTimePasswords()
-                    ->where([
-                        'purpose' => $purpose->value,
-                        'password' => $password,
-                    ])
-                    ->first();
-
-                if (! $otp) {
-                    return [new User, ConsumeError::InvalidPassword];
-                }
-
-                if ($otp->expires_at->isPast()) {
-                    return [new User, ConsumeError::PasswordExpired];
-                }
-
-                $otp->delete();
-
-                return [$user, null];
-            },
+            $callback,
             microseconds: CarbonInterval::milliseconds(100)->microseconds
         );
     }
