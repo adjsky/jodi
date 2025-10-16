@@ -4,8 +4,10 @@ declare(strict_types=1);
 
 namespace App\Services;
 
-use App\Enums\OneTimePassword\ConsumeError;
 use App\Enums\OneTimePassword\Purpose;
+use App\Exceptions\Service\OneTimePassword\InvalidPasswordException;
+use App\Exceptions\Service\OneTimePassword\NoUserException;
+use App\Exceptions\Service\OneTimePassword\PasswordExpiredException;
 use App\Models\User;
 use App\Models\UserOneTimePasswords;
 use Carbon\CarbonInterval;
@@ -14,17 +16,13 @@ use Nette\Utils\Random;
 
 class OneTimePasswordService
 {
-    /** @return array{User,?ConsumeError} */
-    public function consume(
-        Purpose $purpose,
-        string $email,
-        string $password
-    ): array {
+    public function consume(Purpose $purpose, string $email, string $password): User
+    {
         $callback = function () use ($purpose, $email, $password) {
             $user = User::where('email', $email)->first();
 
             if (! $user) {
-                return [new User, ConsumeError::NoUser];
+                throw new NoUserException;
             }
 
             $otp = $user->oneTimePasswords()->where([
@@ -33,16 +31,16 @@ class OneTimePasswordService
             ])->first();
 
             if (! $otp) {
-                return [new User, ConsumeError::InvalidPassword];
+                throw new InvalidPasswordException;
             }
 
             if ($otp->expires_at->isPast()) {
-                return [new User, ConsumeError::PasswordExpired];
+                throw new PasswordExpiredException;
             }
 
             $otp->delete();
 
-            return [$user, null];
+            return $user;
         };
 
         return (new Timebox)->call(

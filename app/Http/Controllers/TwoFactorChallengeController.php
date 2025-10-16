@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers;
 
-use App\Enums\OneTimePassword\ConsumeError;
 use App\Enums\OneTimePassword\Purpose;
 use App\Http\Requests\TwoFactorChallengeRequest;
 use App\Services\OneTimePasswordService;
@@ -32,20 +31,11 @@ class TwoFactorChallengeController extends Controller
 
         $request->throttle($email);
 
-        [$user, $error] = $this->otpService->consume(
+        $user = $this->otpService->consume(
             Purpose::Login,
             $email,
             $request->input('password')
         );
-
-        if ($error) {
-            return back()->with(['message' => match ($error) {
-                ConsumeError::NoUser,
-                ConsumeError::InvalidPassword => 'invalid code',
-
-                ConsumeError::PasswordExpired => 'code expired'
-            }]);
-        }
 
         Auth::login($user, remember: true);
         $request->session()->regenerate();
