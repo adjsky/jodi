@@ -33,7 +33,7 @@ class LoginController extends Controller
         }
 
         $request->session()->put(
-            config('auth.2fa.session_key').'email',
+            sprintf('%s.email', config('auth.2fa.session_key')),
             $request->input('email')
         );
 
