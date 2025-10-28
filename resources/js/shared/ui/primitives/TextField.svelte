@@ -4,23 +4,30 @@
 
     import type { WithClassName } from "$/shared/utils/tw.ts";
     import type { Snippet } from "svelte";
-    import type { SvelteHTMLElements } from "svelte/elements";
+    import type { HTMLInputAttributes } from "svelte/elements";
     import type { Except } from "type-fest";
 
     type Props = WithClassName<
-        Except<SvelteHTMLElements["input"], "children">,
+        Except<HTMLInputAttributes, "children">,
         {
             error?: string;
             indicator?: Snippet;
+            required?: boolean;
+            disabled?: boolean;
+            readonly?: boolean;
         }
     >;
 
-    const { error, indicator, ...props }: Props = $props();
+    const { error, indicator, required, disabled, readonly, ...props }: Props =
+        $props();
 </script>
 
-<Field.Root>
+<Field.Root invalid={Boolean(error)} {required} {disabled} readOnly={readonly}>
     <div
-        class="relative flex h-15 items-center gap-2 rounded-xl border-1 border-cream-950 bg-white"
+        class={tw(
+            "relative flex h-15 items-center gap-2 rounded-xl border-1 border-cream-950 bg-white",
+            error && "border-red"
+        )}
     >
         {#if indicator}
             <div
@@ -30,7 +37,6 @@
             </div>
         {/if}
         <Field.Input
-            aria-invalid={error ? "true" : undefined}
             {...props}
             class={tw(
                 "form-input size-full border-none bg-transparent px-4 font-medium text-cream-950 placeholder:text-cream-600 focus:ring-0",
@@ -40,6 +46,8 @@
         />
     </div>
     {#if error}
-        <Field.ErrorText>{error}</Field.ErrorText>
+        <Field.ErrorText class="text-sm font-medium text-red">
+            {error}
+        </Field.ErrorText>
     {/if}
 </Field.Root>
