@@ -1,24 +1,87 @@
+@import "@fontsource/kodchasan/400.css";
+@import "@fontsource/kodchasan/500.css";
+@import "@fontsource/kodchasan/600.css";
+@import "@fontsource/kodchasan/700.css";
+
 @import "tailwindcss";
 @import "tw-animate-css";
 
-@source '../../vendor/laravel/framework/src/Illuminate/Pagination/resources/views/*.blade.php';
-@source '../../storage/framework/views/*.php';
-@source '../**/*.blade.php';
-
 @plugin '@tailwindcss/forms' {
-    strategy: "base";
+    strategy: "class";
 }
 
-@custom-variant dark (&:where([data-mode='dark'], [data-mode='dark'] *));
+@theme {
+    /* ------------------------------- FONTS -------------------------------- */
+
+    --font-*: initial;
+
+    --font-sans:
+        "Kodchasan", ui-sans-serif, system-ui, sans-serif, "Apple Color Emoji",
+        "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+    --font-mono:
+        ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas,
+        "Liberation Mono", "Courier New", monospace;
+
+    /* ---------------------------- FONT WEIGHTS ---------------------------- */
+
+    --font-weight-*: initial;
+
+    --font-weight-normal: 400;
+    --font-weight-medium: 500;
+    --font-weight-semibold: 600;
+    --font-weight-bold: 700;
+
+    /* ------------------------------- COLORS ------------------------------- */
+
+    --color-*: initial;
+
+    --color-white: hsl(38, 85%, 97%);
+    --color-yellow: hsl(42, 96%, 67%);
+    --color-brand: hsl(20, 91%, 60%);
+    --color-red: hsl(10, 77%, 54%);
+
+    --color-cream-50: hsl(37, 88%, 94%);
+    --color-cream-100: hsl(38, 47%, 89%);
+    --color-cream-200: hsl(37, 32%, 84%);
+    --color-cream-300: hsl(35, 22%, 78%);
+    --color-cream-400: hsl(38, 10%, 61%);
+    --color-cream-500: hsl(39, 6%, 49%);
+    --color-cream-600: hsl(38, 6%, 37%);
+    --color-cream-700: hsl(38, 6%, 27%);
+    --color-cream-800: hsl(45, 5%, 15%);
+    --color-cream-900: hsl(40, 6%, 10%);
+    --color-cream-950: hsl(30, 7%, 6%);
+
+    /* --------------------------- BORDER RADIUS ---------------------------- */
+
+    --radius-*: initial;
+
+    --radius-xs: 0.125rem;
+    --radius-sm: 0.25rem;
+    --radius-md: 0.375rem;
+    --radius-lg: 0.5rem;
+    --radius-lt: 0.625rem;
+    --radius-xl: 0.75rem;
+    --radius-2xl: 1rem;
+    --radius-3xl: 1.25rem;
+    --radius-4xl: 1.5rem;
+    --radius-5xl: 1.875rem;
+
+    /* ---------------------------- TRANSITIONS ----------------------------- */
+
+    --default-transition-duration: 150ms;
+    --default-transition-timing-function: var(--ease-in-out);
+}
 
 @layer base {
     :root {
         color-scheme: light;
-        @variant dark {
-            color-scheme: dark;
-        }
-
         scroll-behavior: smooth;
+    }
+
+    body {
+        background-color: theme("colors.cream.50");
+        color: theme("colors.cream.950");
     }
 
     /** Remove yellow/blue autofill indicator */
@@ -35,10 +98,8 @@
         cursor: default;
     }
 
-    /** https://github.com/tailwindlabs/tailwindcss-forms/issues/74 */
-    :is([type="checkbox"], [type="radio"]):checked {
-        @variant dark {
-            background-color: currentColor;
-        }
+    .lucide {
+        width: 1em;
+        height: 1em;
     }
 }
