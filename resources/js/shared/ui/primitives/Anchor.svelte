@@ -1,7 +1,7 @@
 <script lang="ts">
-    import { tw } from "$/shared/utils/tw.ts";
+    import { tw } from "$/shared/utils/tw";
 
-    import type { WithClassName } from "$/shared/utils/tw.ts";
+    import type { WithClassName } from "$/shared/utils/tw";
     import type { HTMLAnchorAttributes } from "svelte/elements";
 
     type Props = WithClassName<

@@ -1,8 +1,8 @@
 <script lang="ts">
     import { Field } from "@ark-ui/svelte/field";
-    import { tw } from "$/shared/utils/tw.ts";
+    import { tw } from "$/shared/utils/tw";
 
-    import type { WithClassName } from "$/shared/utils/tw.ts";
+    import type { WithClassName } from "$/shared/utils/tw";
     import type { Snippet } from "svelte";
     import type { HTMLInputAttributes } from "svelte/elements";
     import type { Except } from "type-fest";
