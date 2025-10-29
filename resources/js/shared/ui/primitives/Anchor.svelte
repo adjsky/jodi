@@ -17,11 +17,9 @@
 <a
     {...rest}
     class={tw(
-        "flex h-15 w-full items-center justify-center rounded-xl font-semibold motion-safe:transition-colors",
-        variant == "main" &&
-            "border border-cream-950 bg-brand text-white hover:bg-white hover:text-brand",
-        variant == "secondary" &&
-            "hover:bg-gray-200 border border-cream-950 text-cream-700 hover:bg-white hover:text-brand",
+        "flex h-15 w-full items-center justify-center rounded-xl font-semibold",
+        variant == "main" && "border border-cream-950 bg-brand text-white",
+        variant == "secondary" && "border border-cream-950 text-cream-700",
         rest.class
     )}
 >
