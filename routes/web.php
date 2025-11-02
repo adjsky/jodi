@@ -9,7 +9,7 @@ use App\Notifications;
 use Illuminate\Support\Facades\Route;
 
 Route::middleware('guest')->group(function () {
-    Route::get('/login', [LoginController::class, 'index'])
+    Route::get('/login', [LoginController::class, 'show'])
         ->name('login');
     Route::post('/login', [LoginController::class, 'store'])
         ->middleware('throttle:5,1')
@@ -17,7 +17,7 @@ Route::middleware('guest')->group(function () {
 
     Route::get(
         '/two-factor-challenge',
-        [TwoFactorChallengeController::class, 'index']
+        [TwoFactorChallengeController::class, 'show']
     )
         ->name('two-factor-challenge');
     Route::post(

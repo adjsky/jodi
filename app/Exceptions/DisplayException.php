@@ -32,6 +32,6 @@ class DisplayException extends JodiException
             );
         }
 
-        return redirect()->back()->with('message', $this->getMessage());
+        return redirect()->back()->with('error', $this->getMessage());
     }
 }

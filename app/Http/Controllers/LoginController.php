@@ -16,7 +16,7 @@ class LoginController extends Controller
         private OneTimePasswordService $otpService
     ) {}
 
-    public function index()
+    public function show()
     {
         return inertia('Auth/Login');
     }

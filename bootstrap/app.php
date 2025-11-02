@@ -37,7 +37,7 @@ return Application::configure(basePath: dirname(__DIR__))
 
                 if ($status == 419) {
                     return back()->with([
-                        'message' => __('error.expired'),
+                        'error' => __('error.expired'),
                     ]);
                 }
 

@@ -5,10 +5,14 @@ declare(strict_types=1);
 namespace App\Http\Controllers;
 
 use App\Enums\OneTimePassword\Purpose;
+use App\Exceptions\Service\OneTimePassword\InvalidPasswordException;
+use App\Exceptions\Service\OneTimePassword\NoUserException;
+use App\Exceptions\Service\OneTimePassword\PasswordExpiredException;
 use App\Http\Requests\TwoFactorChallengeRequest;
 use App\Services\OneTimePasswordService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Validation\ValidationException;
 
 class TwoFactorChallengeController extends Controller
 {
@@ -16,7 +20,7 @@ class TwoFactorChallengeController extends Controller
         private OneTimePasswordService $otpService
     ) {}
 
-    public function index(Request $request)
+    public function show(Request $request)
     {
         return inertia('Auth/TwoFactorChallenge');
     }
@@ -28,20 +32,28 @@ class TwoFactorChallengeController extends Controller
         );
 
         if (! $email) {
-            return to_route('login')->with(['message' => 'log in first']);
+            return to_route('login')->with(['error' => 'log in first']);
         }
 
         $request->throttle($email);
 
-        $user = $this->otpService->consume(
-            Purpose::Login,
-            $email,
-            $request->input('password')
-        );
+        try {
+            $user = $this->otpService->consume(
+                Purpose::Login,
+                $email,
+                $request->input('password')
+            );
 
-        Auth::login($user, remember: true);
-        $request->session()->regenerate();
+            Auth::login($user, remember: true);
+            $request->session()->regenerate();
 
-        return redirect()->intended();
+            return redirect()->intended();
+        } catch (NoUserException|InvalidPasswordException) {
+            throw ValidationException::withMessages([
+                'password' => 'wrong code',
+            ]);
+        } catch (PasswordExpiredException) {
+            return redirect()->back()->with('error', 'code expired, log in again');
+        }
     }
 }
