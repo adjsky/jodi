@@ -9,6 +9,8 @@ export function useFlashToast() {
                 toaster.error({ title: flash.error });
             } else if (flash.message) {
                 toaster.info({ title: flash.message });
+            } else if (flash.success) {
+                toaster.success({ title: flash.success });
             }
         })
     );

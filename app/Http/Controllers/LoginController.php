@@ -9,6 +9,7 @@ use App\Models\User;
 use App\Notifications;
 use App\Services\OneTimePasswordService;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class LoginController extends Controller
 {
@@ -21,7 +22,7 @@ class LoginController extends Controller
         return inertia('Auth/Login');
     }
 
-    public function store(Request $request)
+    public function login(Request $request)
     {
         $user = User::where(
             $request->validate(['email' => 'required|email'])
@@ -38,5 +39,15 @@ class LoginController extends Controller
         );
 
         return to_route('two-factor-challenge');
+    }
+
+    public function logout(Request $request)
+    {
+        Auth::logout();
+
+        $request->session()->invalidate();
+        $request->session()->regenerateToken();
+
+        return to_route('login');
     }
 }

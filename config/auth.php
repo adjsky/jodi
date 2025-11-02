@@ -77,7 +77,6 @@ return [
     |--------------------------------------------------------------------------
     | Two Factor Challenge
     |--------------------------------------------------------------------------
-    |
     */
 
     '2fa' => [
@@ -86,5 +85,6 @@ return [
             'attempts' => (int) env('2FA_THROTTLE_ATTEMPTS', 3),
             'decay_seconds' => (int) env('2FA_THROTTLE_DECAY_SECONDS', 300),
         ],
+        'resend_otp_throttle' => (int) env('2FA_RESEND_OTP_THROTTLE', 60),
     ],
 ];

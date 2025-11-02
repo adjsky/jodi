@@ -6,7 +6,7 @@
     import Cat from "$/shared/ui/assets/cat.svg";
     import Button from "$/shared/ui/primitives/Button.svelte";
     import TextField from "$/shared/ui/primitives/TextField.svelte";
-    import { store } from "$actions/LoginController";
+    import { login } from "$actions/LoginController";
 </script>
 
 <AuthLayout>
@@ -16,7 +16,7 @@
         {/snippet}
     </Intro>
 
-    <Form action={store()} class="mt-24 space-y-4" let:processing let:errors>
+    <Form action={login()} class="mt-24 space-y-4" let:processing let:errors>
         <TextField
             type="email"
             name="email"

@@ -8,7 +8,9 @@ use App\Enums\OneTimePassword\Purpose;
 use App\Exceptions\Service\OneTimePassword\InvalidPasswordException;
 use App\Exceptions\Service\OneTimePassword\NoUserException;
 use App\Exceptions\Service\OneTimePassword\PasswordExpiredException;
-use App\Http\Requests\TwoFactorChallengeRequest;
+use App\Helpers;
+use App\Models\User;
+use App\Notifications;
 use App\Services\OneTimePasswordService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -25,8 +27,10 @@ class TwoFactorChallengeController extends Controller
         return inertia('Auth/TwoFactorChallenge');
     }
 
-    public function store(TwoFactorChallengeRequest $request)
+    public function consume(Request $request)
     {
+        ['password' => $password] = $request->validate(['password' => 'required|string']);
+
         $email = $request->session()->get(
             sprintf('%s.email', config('auth.2fa.session_key'))
         );
@@ -35,13 +39,18 @@ class TwoFactorChallengeController extends Controller
             return to_route('login')->with(['error' => 'log in first']);
         }
 
-        $request->throttle($email);
+        Helpers\Auth::throttle(
+            'consume-otp',
+            config('auth.2fa.throttle.attempts'),
+            config('auth.2fa.throttle.decay_seconds'),
+            $email
+        );
 
         try {
             $user = $this->otpService->consume(
                 Purpose::Login,
                 $email,
-                $request->input('password')
+                $password
             );
 
             Auth::login($user, remember: true);
@@ -55,5 +64,27 @@ class TwoFactorChallengeController extends Controller
         } catch (PasswordExpiredException) {
             return redirect()->back()->with('error', 'code expired, log in again');
         }
+    }
+
+    public function resend(Request $request)
+    {
+        $email = $request->session()->get(
+            sprintf('%s.email', config('auth.2fa.session_key'))
+        );
+
+        if (! $email) {
+            return to_route('login')->with(['error' => 'log in first']);
+        }
+
+        Helpers\Auth::throttle('resend-otp', 1, config('auth.2fa.resend_otp_throttle'), $email);
+
+        $user = User::where(['email' => $email])->first();
+
+        if ($user) {
+            $password = $this->otpService->generate(Purpose::Login, $user);
+            $user->notify(new Notifications\OneTimeLoginCode($password));
+        }
+
+        return redirect()->back()->with('success', 'code resend');
     }
 }

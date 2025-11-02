@@ -1,6 +1,6 @@
 <script lang="ts">
     import { Toast, Toaster } from "@ark-ui/svelte/toast";
-    import { CircleAlert, Info } from "@lucide/svelte";
+    import { CircleAlert, CircleCheck, Info } from "@lucide/svelte";
 
     import type { CreateToasterReturn } from "@ark-ui/svelte/toast";
 
@@ -18,9 +18,11 @@
         >
             <div class="shrink-0 text-3xl">
                 {#if toast().type == "info"}
-                    <Info />
+                    <Info class="text-yellow" />
                 {:else if toast().type == "error"}
                     <CircleAlert class="text-red" />
+                {:else if toast().type == "success"}
+                    <CircleCheck class="text-green" />
                 {/if}
             </div>
             <Toast.Title class="text-sm font-semibold text-white">
