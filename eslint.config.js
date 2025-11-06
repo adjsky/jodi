@@ -69,7 +69,8 @@ export default defineConfig(
         },
 
         rules: {
-            "svelte/no-target-blank": "error"
+            "svelte/no-target-blank": "error",
+            "svelte/prefer-svelte-reactivity": "off"
         }
     },
     {

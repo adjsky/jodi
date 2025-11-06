@@ -24,7 +24,7 @@ class TwoFactorChallengeController extends Controller
 
     public function show(Request $request)
     {
-        return inertia('Auth/TwoFactorChallenge');
+        return inertia('TwoFactorChallenge');
     }
 
     public function consume(Request $request)

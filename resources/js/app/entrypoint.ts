@@ -19,5 +19,6 @@ void createInertiaApp({
         } else if (el) {
             mount(App, { target: el, props });
         }
-    }
+    },
+    progress: false
 });

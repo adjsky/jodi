@@ -19,7 +19,7 @@ class LoginController extends Controller
 
     public function show()
     {
-        return inertia('Auth/Login');
+        return inertia('Login');
     }
 
     public function login(Request $request)

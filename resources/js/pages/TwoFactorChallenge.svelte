@@ -1,4 +1,4 @@
-<script>
+<script lang="ts">
     import { Form } from "@inertiajs/svelte";
     import Intro from "$/app/components/auth/Intro.svelte";
     import AuthLayout from "$/app/layouts/AuthLayout.svelte";
@@ -6,9 +6,13 @@
     import Button from "$/shared/ui/primitives/Button.svelte";
     import OneTimePasswordInput from "$/shared/ui/primitives/OneTimePasswordInput.svelte";
     import { toaster } from "$/shared/utils/toaster";
+    import { useActionRateLimit } from "$/shared/utils/use-action-rate-limit.svelte";
     import { consume, resend } from "$actions/TwoFactorChallengeController";
 
     const id = $props.id();
+
+    const resendTimer = useActionRateLimit(resend.definition);
+    const consumeTimer = useActionRateLimit(consume.definition);
 </script>
 
 <AuthLayout>
@@ -31,15 +35,32 @@
         let:processing
         let:errors
     >
-        <OneTimePasswordInput name="password" error={errors.password} />
+        <OneTimePasswordInput
+            name="password"
+            error={Boolean(errors.password)}
+        />
 
         <p class="text-center text-sm">
             You didn't receive any code?
-            <button class="font-medium text-brand" form="{id}-resend-form">
-                Resend code
+            <button
+                class="font-medium text-brand"
+                form="{id}-resend-form"
+                disabled={resendTimer.running}
+            >
+                {#if resendTimer.running}
+                    Resend in {resendTimer.secondsLeft}s
+                {:else}
+                    Resend code
+                {/if}
             </button>
         </p>
 
-        <Button loading={processing}>Continue</Button>
+        <Button loading={processing} disabled={consumeTimer.running}>
+            {#if consumeTimer.running}
+                Continue in {consumeTimer.secondsLeft}s
+            {:else}
+                Continue
+            {/if}
+        </Button>
     </Form>
 </AuthLayout>

@@ -32,7 +32,7 @@
             <PinInput.Input
                 {index}
                 class={tw(
-                    "h-15 rounded-xl border border-cream-950 bg-white text-center text-xl placeholder:text-cream-600",
+                    "form-input h-15 rounded-xl border border-cream-950 bg-white text-center text-xl placeholder:text-cream-600 focus:border-brand focus:ring-brand",
                     error && "border-red"
                 )}
             />
