@@ -20,7 +20,7 @@ class OneTimeLoginCode extends Notification
     public function toMail(): MailMessage
     {
         return (new MailMessage)
-            ->subject("{$this->otp} is your one-time login code")
+            ->subject(__(':code is your one-time login code', ['code' => $this->otp]))
             ->markdown(
                 'mail.one-time-login-code',
                 ['otp' => $this->otp]

@@ -10,6 +10,6 @@ class PasswordExpiredException extends DisplayException
 {
     public function __construct()
     {
-        parent::__construct('code expired');
+        parent::__construct(__('The code is expired.'));
     }
 }

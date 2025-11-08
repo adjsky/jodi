@@ -1,0 +1,19 @@
+{
+    "$schema": "https://inlang.com/schema/inlang-message-format",
+    "or": "Или",
+    "too-many-requests": "Слишком много запросов. Попробуйте позже.",
+    "login": {
+        "title": "Авторизуйтесь",
+        "email-placeholder": "Введите ваш email",
+        "submit": "Продолжить",
+        "with-passkey": "Войти с ключом доступа"
+    },
+    "2fa": {
+        "title": "Введите 6-значный код",
+        "no-code": "Вы не получили код?",
+        "resend": "Отправить снова",
+        "resend-in": "Отправить через {seconds}s",
+        "continue": "Продолжить",
+        "continue-in": "Продолжить через {seconds}s"
+    }
+}

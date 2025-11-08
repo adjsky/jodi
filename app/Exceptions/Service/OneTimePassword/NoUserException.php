@@ -10,6 +10,6 @@ class NoUserException extends DisplayException
 {
     public function __construct()
     {
-        parent::__construct('user doesn\'t exist');
+        parent::__construct(__('User does not exist.'));
     }
 }

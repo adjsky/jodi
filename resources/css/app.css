@@ -1,7 +1,4 @@
-@import "@fontsource/kodchasan/400.css";
-@import "@fontsource/kodchasan/500.css";
-@import "@fontsource/kodchasan/600.css";
-@import "@fontsource/kodchasan/700.css";
+@import "@fontsource-variable/nunito";
 
 @import "tailwindcss";
 @import "tw-animate-css";
@@ -16,8 +13,9 @@
     --font-*: initial;
 
     --font-sans:
-        "Kodchasan", ui-sans-serif, system-ui, sans-serif, "Apple Color Emoji",
-        "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+        "Nunito Variable", ui-sans-serif, system-ui, sans-serif,
+        "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol",
+        "Noto Color Emoji";
     --font-mono:
         ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas,
         "Liberation Mono", "Courier New", monospace;

@@ -6,11 +6,10 @@ namespace App\Http\Middleware;
 
 use Closure;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Log;
-use Illuminate\Support\Str;
+use Illuminate\Support\Facades\App;
 use Symfony\Component\HttpFoundation\Response;
 
-class RequestId
+class LocaleMiddleware
 {
     /**
      * Handle an incoming request.
@@ -19,14 +18,12 @@ class RequestId
      */
     public function handle(Request $request, Closure $next): Response
     {
-        $requestId = strtolower((string) Str::ulid());
+        $locale = $request->cookies->get('jodi-locale');
 
-        Log::withContext(['request-id' => $requestId]);
+        if (gettype($locale) == 'string') {
+            App::setLocale($locale);
+        }
 
-        $response = $next($request);
-
-        $response->headers->set('Request-Id', $requestId);
-
-        return $response;
+        return $next($request);
     }
 }

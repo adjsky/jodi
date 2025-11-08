@@ -1,4 +1,5 @@
 import { router } from "@inertiajs/svelte";
+import { m } from "$/paraglide/messages";
 
 import { toaster } from "./toaster";
 
@@ -24,7 +25,7 @@ export function useActionRateLimit(action: RouteDefinition<["post"]>) {
             secondsLeft = Number(response.headers["retry-after"]);
             running = true;
 
-            toaster.error({ title: "too many requests" });
+            toaster.error({ title: m["too-many-requests"]() });
         })
     );
 

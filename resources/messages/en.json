@@ -1,0 +1,19 @@
+{
+    "$schema": "https://inlang.com/schema/inlang-message-format",
+    "or": "Or",
+    "too-many-requests": "Too many requests. Try again later.",
+    "login": {
+        "title": "Log In",
+        "email-placeholder": "Enter your email",
+        "submit": "Continue",
+        "with-passkey": "Log in with a passkey"
+    },
+    "2fa": {
+        "title": "Enter 6-digit code",
+        "no-code": "You didn't receive any code?",
+        "resend": "Resend code",
+        "resend-in": "Resend in {seconds}s",
+        "continue": "Continue",
+        "continue-in": "Continue in {seconds}s"
+    }
+}

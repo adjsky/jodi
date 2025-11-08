@@ -2,8 +2,9 @@
 
 declare(strict_types=1);
 
-use App\Http\Middleware\HandleInertiaRequests;
-use App\Http\Middleware\RequestId;
+use App\Http\Middleware\InertiaMiddleware;
+use App\Http\Middleware\LocaleMiddleware;
+use App\Http\Middleware\RequestIdMiddleware;
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
@@ -18,8 +19,9 @@ return Application::configure(basePath: dirname(__DIR__))
     )
     ->withMiddleware(function (Middleware $middleware): void {
         $middleware->web(append: [
-            RequestId::class,
-            HandleInertiaRequests::class,
+            LocaleMiddleware::class,
+            RequestIdMiddleware::class,
+            InertiaMiddleware::class,
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {
@@ -37,7 +39,7 @@ return Application::configure(basePath: dirname(__DIR__))
 
                 if ($status == 419) {
                     return back()->with([
-                        'error' => __('error.expired'),
+                        'error' => __('The page expired. Please, try again.'),
                     ]);
                 }
 

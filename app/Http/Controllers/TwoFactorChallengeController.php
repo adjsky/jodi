@@ -36,7 +36,7 @@ class TwoFactorChallengeController extends Controller
         );
 
         if (! $email) {
-            return to_route('login')->with(['error' => 'log in first']);
+            return to_route('login')->with(['error' => __('Log in first.')]);
         }
 
         Helpers\Auth::throttle(
@@ -59,10 +59,10 @@ class TwoFactorChallengeController extends Controller
             return redirect()->intended();
         } catch (NoUserException|InvalidPasswordException) {
             throw ValidationException::withMessages([
-                'password' => 'wrong code',
+                'password' => __('The code is wrong.'),
             ]);
         } catch (PasswordExpiredException) {
-            return redirect()->back()->with('error', 'code expired, log in again');
+            return redirect()->back()->with('error', __('The code is expired.'));
         }
     }
 
@@ -73,7 +73,7 @@ class TwoFactorChallengeController extends Controller
         );
 
         if (! $email) {
-            return to_route('login')->with(['error' => 'log in first']);
+            return to_route('login')->with(['error' => __('Log in first.')]);
         }
 
         Helpers\Auth::throttle('resend-otp', 1, config('auth.2fa.resend_otp_throttle'), $email);
@@ -85,6 +85,6 @@ class TwoFactorChallengeController extends Controller
             $user->notify(new Notifications\OneTimeLoginCode($password));
         }
 
-        return redirect()->back()->with('success', 'code resend');
+        return redirect()->back()->with('success', 'The code has been sent.');
     }
 }
