@@ -41,7 +41,7 @@
             error={Boolean(errors.password)}
         />
 
-        <p class="text-center text-sm">
+        <p class="text-center text-ms">
             {m["2fa.no-code"]()}
             <button
                 class="font-semibold text-brand"
