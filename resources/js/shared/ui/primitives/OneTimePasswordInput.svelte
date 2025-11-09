@@ -23,7 +23,6 @@
     invalid={error}
     type="numeric"
     placeholder="*"
-    blurOnComplete
     required
     otp
 >

@@ -1,5 +1,6 @@
 import "../../css/app.css";
 import "./paraglide";
+import "./dayjs";
 
 import { createInertiaApp } from "@inertiajs/svelte";
 import { hydrate, mount } from "svelte";
