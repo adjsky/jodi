@@ -4,14 +4,14 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers;
 
-use App\Enums\OneTimePassword\Purpose;
-use App\Exceptions\Service\OneTimePassword\InvalidPasswordException;
-use App\Exceptions\Service\OneTimePassword\NoUserException;
-use App\Exceptions\Service\OneTimePassword\PasswordExpiredException;
-use App\Helpers;
+use App\Domain\Auth\Enums\OtpPurpose;
+use App\Domain\Auth\Exceptions\InvalidOtpException;
+use App\Domain\Auth\Exceptions\NoUserException;
+use App\Domain\Auth\Exceptions\OtpExpiredException;
+use App\Domain\Auth\Notifications;
+use App\Domain\Auth\Services\OtpService;
+use App\Domain\Auth\Services\ThrottleService;
 use App\Models\User;
-use App\Notifications;
-use App\Services\OneTimePasswordService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Validation\ValidationException;
@@ -19,7 +19,8 @@ use Illuminate\Validation\ValidationException;
 class TwoFactorChallengeController extends Controller
 {
     public function __construct(
-        private OneTimePasswordService $otpService
+        private OtpService $otpService,
+        private ThrottleService $throttleService
     ) {}
 
     public function show(Request $request)
@@ -39,7 +40,7 @@ class TwoFactorChallengeController extends Controller
             return to_route('login')->with(['error' => __('Log in first.')]);
         }
 
-        Helpers\Auth::throttle(
+        $this->throttleService->throttle(
             'consume-otp',
             config('auth.2fa.throttle.attempts'),
             config('auth.2fa.throttle.decay_seconds'),
@@ -48,7 +49,7 @@ class TwoFactorChallengeController extends Controller
 
         try {
             $user = $this->otpService->consume(
-                Purpose::Login,
+                OtpPurpose::Login,
                 $email,
                 $password
             );
@@ -57,11 +58,11 @@ class TwoFactorChallengeController extends Controller
             $request->session()->regenerate();
 
             return redirect()->intended();
-        } catch (NoUserException|InvalidPasswordException) {
+        } catch (NoUserException|InvalidOtpException) {
             throw ValidationException::withMessages([
                 'password' => __('The code is wrong.'),
             ]);
-        } catch (PasswordExpiredException) {
+        } catch (OtpExpiredException) {
             return redirect()->back()->with('error', __('The code is expired.'));
         }
     }
@@ -76,12 +77,17 @@ class TwoFactorChallengeController extends Controller
             return to_route('login')->with(['error' => __('Log in first.')]);
         }
 
-        Helpers\Auth::throttle('resend-otp', 1, config('auth.2fa.resend_otp_throttle'), $email);
+        $this->throttleService->throttle(
+            'resend-otp',
+            1,
+            config('auth.2fa.resend_otp_throttle'),
+            $email
+        );
 
         $user = User::where(['email' => $email])->first();
 
         if ($user) {
-            $password = $this->otpService->generate(Purpose::Login, $user);
+            $password = $this->otpService->generate(OtpPurpose::Login, $user);
             $user->notify(new Notifications\OneTimeLoginCode($password));
         }
 

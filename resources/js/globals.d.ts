@@ -6,6 +6,14 @@ declare module "@inertiajs/core" {
 }
 
 export interface AppPageProps {
+    auth: {
+        user: {
+            id: number;
+            name: string;
+            email: string;
+            preferences: Record<string, unknown>;
+        };
+    };
     flash: {
         message: string | null;
         error: string | null;

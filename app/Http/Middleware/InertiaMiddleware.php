@@ -39,6 +39,9 @@ class InertiaMiddleware extends Middleware
     {
         return [
             ...parent::share($request),
+            'auth.user' => fn () => $request->user()?->only(
+                ['id', 'name', 'email', 'preferences']
+            ),
             'flash' => [
                 'message' => fn () => $request->session()->get('message'),
                 'error' => fn () => $request->session()->get('error'),

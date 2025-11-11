@@ -12,8 +12,6 @@ class UserOneTimePasswords extends Model
 
     const SIZE = 6;
 
-    const CHARSET = '0-9';
-
     protected $fillable = ['purpose', 'password', 'expires_at'];
 
     protected $hidden = [];

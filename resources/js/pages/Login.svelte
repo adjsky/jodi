@@ -1,12 +1,12 @@
 <script lang="ts">
     import { Form } from "@inertiajs/svelte";
     import { Mail } from "@lucide/svelte";
-    import Intro from "$/app/components/auth/Intro.svelte";
-    import AuthLayout from "$/app/layouts/AuthLayout.svelte";
+    import Intro from "$/app/ui/auth/Intro.svelte";
+    import AuthLayout from "$/app/ui/layouts/AuthLayout.svelte";
     import { m } from "$/paraglide/messages";
-    import Cat from "$/shared/ui/assets/cat.svg";
-    import Button from "$/shared/ui/primitives/Button.svelte";
-    import TextField from "$/shared/ui/primitives/TextField.svelte";
+    import Cat from "$/shared/assets/cat.svg";
+    import Button from "$/shared/ui/Button.svelte";
+    import TextField from "$/shared/ui/TextField.svelte";
     import { login } from "$actions/LoginController";
 </script>
 

@@ -4,17 +4,17 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers;
 
-use App\Enums\OneTimePassword\Purpose;
+use App\Domain\Auth\Enums\OtpPurpose;
+use App\Domain\Auth\Notifications;
+use App\Domain\Auth\Services\OtpService;
 use App\Models\User;
-use App\Notifications;
-use App\Services\OneTimePasswordService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
 class LoginController extends Controller
 {
     public function __construct(
-        private OneTimePasswordService $otpService
+        private OtpService $otpService
     ) {}
 
     public function show()
@@ -29,7 +29,7 @@ class LoginController extends Controller
         )->first();
 
         if ($user) {
-            $password = $this->otpService->generate(Purpose::Login, $user);
+            $password = $this->otpService->generate(OtpPurpose::Login, $user);
             $user->notify(new Notifications\OneTimeLoginCode($password));
         }
 

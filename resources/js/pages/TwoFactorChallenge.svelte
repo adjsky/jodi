@@ -1,13 +1,13 @@
 <script lang="ts">
     import { Form } from "@inertiajs/svelte";
-    import Intro from "$/app/components/auth/Intro.svelte";
-    import AuthLayout from "$/app/layouts/AuthLayout.svelte";
+    import Intro from "$/app/ui/auth/Intro.svelte";
+    import AuthLayout from "$/app/ui/layouts/AuthLayout.svelte";
     import { m } from "$/paraglide/messages";
-    import Froggy from "$/shared/ui/assets/froggy.svg";
-    import Button from "$/shared/ui/primitives/Button.svelte";
-    import OneTimePasswordInput from "$/shared/ui/primitives/OneTimePasswordInput.svelte";
-    import { toaster } from "$/shared/utils/toaster";
-    import { useActionRateLimit } from "$/shared/utils/use-action-rate-limit.svelte";
+    import Froggy from "$/shared/assets/froggy.svg";
+    import { useActionRateLimit } from "$/shared/inertia/use-action-rate-limit.svelte";
+    import { toaster } from "$/shared/lib/toast";
+    import Button from "$/shared/ui/Button.svelte";
+    import OneTimePasswordInput from "$/shared/ui/OneTimePasswordInput.svelte";
     import { consume, resend } from "$actions/TwoFactorChallengeController";
 
     const id = $props.id();
