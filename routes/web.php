@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
+use App\Domain\Auth\Notifications;
 use App\Http\Controllers\LoginController;
 use App\Http\Controllers\TwoFactorChallengeController;
-use App\Notifications;
 use Illuminate\Support\Facades\Route;
 
 Route::middleware('guest')->group(function () {

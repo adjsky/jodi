@@ -4,25 +4,12 @@
     import { User } from "$/entities/user";
     import { WeekCarousel } from "$/features/filter-by-date";
     import { getLocale } from "$/paraglide/runtime";
+    import { useSearchParams } from "$/shared/inertia/use-search-params.svelte";
     import dayjs from "dayjs";
     import { capitalize } from "remeda";
 
-    // const calendar = new Calendar();
-
-    // watch(
-    //     () => calendar.pointer,
-    //     () => {
-    //         router.reload({
-    //             data: {
-    //                 d: calendar.pointer.format("YYYY-MM-DD")
-    //             },
-    //             replace: true
-    //         });
-    //     },
-    //     { lazy: true }
-    // );
-
-    let day = $state(dayjs().locale(getLocale()));
+    const searchParams = useSearchParams();
+    const day = $derived(dayjs(searchParams["d"]).locale(getLocale()));
 </script>
 
 <header class="flex h-12.5 items-center justify-between px-5">
@@ -41,4 +28,6 @@
     <User.Avatar name={$page.props.auth.user.name} />
 </header>
 
-<WeekCarousel bind:day />
+<WeekCarousel
+    bind:day={() => day, (v) => (searchParams.d = v.format("YYYY-MM-DD"))}
+/>

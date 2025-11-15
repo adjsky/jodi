@@ -6,6 +6,7 @@ declare module "@inertiajs/core" {
 }
 
 export interface AppPageProps {
+    search: Record<string, string>;
     auth: {
         user: {
             id: number;

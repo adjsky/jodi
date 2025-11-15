@@ -39,6 +39,7 @@ class InertiaMiddleware extends Middleware
     {
         return [
             ...parent::share($request),
+            'search' => $request->query(),
             'auth.user' => fn () => $request->user()?->only(
                 ['id', 'name', 'email', 'preferences']
             ),
