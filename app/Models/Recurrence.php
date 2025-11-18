@@ -17,7 +17,7 @@ class Recurrence extends Model
     protected $hidden = [];
 
     /**
-     * @return array{recurring_since:"date:Y-m-d",generated_until:"date:Y-m-d"}
+     * @return array{ recurring_since: "date:Y-m-d", generated_until: "date:Y-m-d" }
      */
     protected function casts(): array
     {

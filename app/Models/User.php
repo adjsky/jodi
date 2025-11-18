@@ -27,7 +27,7 @@ class User extends Authenticatable
     ];
 
     /**
-     * @return array{preferences:class-string<AsArrayObject>}
+     * @return array{ preferences: "Illuminate\\Database\\Eloquent\\Casts\\AsArrayObject" }
      */
     protected function casts(): array
     {
