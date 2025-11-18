@@ -3,31 +3,41 @@
 declare(strict_types=1);
 
 use App\Domain\Auth\Notifications;
+use App\Http\Controllers\HomeController;
 use App\Http\Controllers\LoginController;
+use App\Http\Controllers\TodoController;
 use App\Http\Controllers\TwoFactorChallengeController;
 use Illuminate\Support\Facades\Route;
 
 Route::middleware('guest')->group(function () {
-    Route::get('/login', [LoginController::class, 'show'])->name('login');
-    Route::post('/login', [LoginController::class, 'login']);
+    Route::prefix('/login')
+        ->controller(LoginController::class)
+        ->group(function () {
+            Route::get('/', 'show')->name('login');
+            Route::post('/', 'login');
+        });
 
-    Route::get(
-        '/two-factor-challenge',
-        [TwoFactorChallengeController::class, 'show']
-    )->name('two-factor-challenge');
-    Route::post(
-        '/two-factor-challenge/consume',
-        [TwoFactorChallengeController::class, 'consume']
-    );
-    Route::post(
-        '/two-factor-challenge/resend',
-        [TwoFactorChallengeController::class, 'resend']
-    );
+    Route::prefix('/two-factor-challenge')
+        ->controller(TwoFactorChallengeController::class)
+        ->group(function () {
+            Route::get('/', 'show')->name('two-factor-challenge');
+            Route::post('/consume', 'consume');
+            Route::post('/resend', 'resend');
+        });
 });
 
 Route::middleware('auth')->group(function () {
-    Route::get('/', fn () => inertia('Home'))->name('home');
+    Route::get('/', [HomeController::class, 'show'])->name('home');
     Route::post('/logout', [LoginController::class, 'logout'])->name('logout');
+
+    Route::prefix('/todo')
+        ->controller(TodoController::class)
+        ->group(function () {
+            Route::post('/', 'store');
+            Route::patch('/{id}', 'update');
+            Route::delete('/{id}', 'destroy');
+            Route::post('/{id}/complete', 'complete');
+        });
 });
 
 if (app()->isLocal()) {

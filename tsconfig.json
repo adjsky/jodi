@@ -26,11 +26,11 @@
         "isolatedModules": true
     },
     "include": [
-        "resources/js/**/*.svelte",
-        "resources/js/**/*.svelte.js",
-        "resources/js/**/*.svelte.ts",
-        "resources/js/**/*.ts",
-        "resources/js/**/*.d.ts",
-        "resources/js/**/*.js"
+        "resources/**/*.svelte",
+        "resources/**/*.svelte.js",
+        "resources/**/*.svelte.ts",
+        "resources/**/*.ts",
+        "resources/**/*.d.ts",
+        "resources/**/*.js"
     ]
 }

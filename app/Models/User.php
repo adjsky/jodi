@@ -26,6 +26,9 @@ class User extends Authenticatable
         'remember_token',
     ];
 
+    /**
+     * @return array{preferences:class-string<AsArrayObject>}
+     */
     protected function casts(): array
     {
         return [

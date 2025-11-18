@@ -15,5 +15,9 @@
         "resend-in": "Resend in {seconds}s",
         "continue": "Continue",
         "continue-in": "Continue in {seconds}s"
+    },
+    "todos": {
+        "title": "Todos",
+        "ungrouped": "No group"
     }
 }

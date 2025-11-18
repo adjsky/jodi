@@ -17,6 +17,9 @@ class Event extends Model
 
     protected $hidden = [];
 
+    /**
+     * @return array{notify_at:"datetime",starts_at:"datetime",ends_at:"datetime"}
+     */
     protected function casts(): array
     {
         return [

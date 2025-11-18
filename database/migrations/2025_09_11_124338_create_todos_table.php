@@ -22,7 +22,6 @@ return new class extends Migration
             $table->integer('position')->nullable();
             $table->date('todo_date');
             $table->foreignId('recurrence_id')->nullable()->constrained();
-            $table->boolean('is_completed');
             $table->datetime('completed_at')->nullable();
             $table->datetime('notify_at')->nullable();
             $table->timestamps();

@@ -18,8 +18,13 @@ class TodoFactory extends Factory
      */
     public function definition(): array
     {
+        $categories = ['Work', 'Personal', 'Shopping', 'Health', 'Errands', 'Home'];
+
         return [
-            //
+            'title' => fake()->sentence(rand(3, 8)),
+            'description' => fake()->optional(0.7)->paragraph(rand(1, 3)),
+            'category' => fake()->randomElement($categories),
+            'todo_date' => now()->format('Y-m-d'),
         ];
     }
 }

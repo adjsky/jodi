@@ -54,7 +54,8 @@ export default defineConfig(
 
             "prettier/prettier": "warn",
             "no-console": "error",
-            "no-constant-condition": ["error", { checkLoops: false }]
+            "no-constant-condition": ["error", { checkLoops: false }],
+            "no-undef": "off"
         }
     },
     {

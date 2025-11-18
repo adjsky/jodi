@@ -16,6 +16,9 @@ class MoodTrackerEntry extends Model
 
     protected $hidden = [];
 
+    /**
+     * @return array{entry_date:"date:Y-m-d"}
+     */
     protected function casts(): array
     {
         return [
