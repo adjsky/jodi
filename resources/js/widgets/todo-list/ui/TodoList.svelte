@@ -1,9 +1,11 @@
 <script lang="ts">
-    import { Check, ChevronDown, GripVertical, Plus } from "@lucide/svelte";
+    import { Check, ChevronDown, GripVertical } from "@lucide/svelte";
     import { Todo } from "$/entities/todo";
     import { m } from "$/paraglide/messages";
     import { tw } from "$/shared/lib/styles";
     import { groupBy } from "remeda";
+
+    import AddTodo from "./AddTodo.svelte";
 
     import type { WithClassName } from "$/shared/lib/styles";
     import type { SvelteHTMLElements } from "svelte/elements";
@@ -36,11 +38,7 @@
             <Check class="text-2xl" />
             <h3 class="font-semibold">{m["todos.title"]()}</h3>
         </div>
-        <button
-            class="flex size-8 items-center justify-center rounded-lg border border-cream-950 bg-white"
-        >
-            <Plus class="text-xl" />
-        </button>
+        <AddTodo />
     </div>
     <div class="mt-3 space-y-3">
         {#each Object.entries(groups) as [group, todos], idx (idx)}
