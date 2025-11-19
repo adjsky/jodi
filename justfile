@@ -14,3 +14,6 @@ dev-logs:
 
 dev-vite:
     npm run dev
+
+preview:
+    npm run build && frankenphp php-server -r public/ --listen=localhost:8000
