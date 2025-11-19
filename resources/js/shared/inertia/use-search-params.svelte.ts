@@ -14,7 +14,7 @@ export function useSearchParams() {
         });
     }
 
-    const proxy = new Proxy(props.search, {
+    const proxy = new Proxy({} as Record<string, string>, {
         get(_, prop: string) {
             return props.search[prop];
         },
