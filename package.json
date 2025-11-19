@@ -9,7 +9,7 @@
         "check": "svelte-check"
     },
     "devDependencies": {
-        "@ark-ui/svelte": "^5.10.0",
+        "@ark-ui/svelte": "^5.13.0",
         "@eslint/compat": "^1.2.5",
         "@eslint/js": "^9.22.0",
         "@fontsource-variable/nunito": "^5.2.7",

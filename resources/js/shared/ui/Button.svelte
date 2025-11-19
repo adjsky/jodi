@@ -40,7 +40,7 @@
     class={tw(
         "flex h-15 w-full items-center justify-center rounded-xl font-bold disabled:cursor-not-allowed disabled:opacity-50",
         variant == "main" && "border border-cream-950 bg-brand text-white",
-        variant == "secondary" && "border border-cream-950 text-cream-600",
+        variant == "secondary" && "border border-cream-950 text-cream-700",
         rest.class
     )}
     disabled={delayedLoading.current || disabled}

@@ -16,6 +16,7 @@
     const { error, disabled, name, ...props }: Props = $props();
 </script>
 
+<!-- TODO: why it doesn't focus??????? -->
 <PinInput.Root
     {disabled}
     {count}
@@ -23,6 +24,7 @@
     invalid={error}
     type="numeric"
     placeholder="*"
+    autoFocus
     required
     otp
 >

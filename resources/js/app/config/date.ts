@@ -11,4 +11,5 @@ const locales: Record<Locale, () => Promise<unknown>> = {
     ru: () => import("dayjs/locale/ru")
 };
 
+// TODO: find out how to lazily load dayjs locales
 // await locales[getLocale()]();
