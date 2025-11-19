@@ -5,8 +5,6 @@
     import type { HTMLInputAttributes } from "svelte/elements";
     import type { Except } from "type-fest";
 
-    const count = 6;
-
     type Props = Except<HTMLInputAttributes, "children"> & {
         error?: boolean;
         disabled?: boolean;
@@ -16,10 +14,8 @@
     const { error, disabled, name, ...props }: Props = $props();
 </script>
 
-<!-- TODO: why it doesn't focus??????? -->
 <PinInput.Root
     {disabled}
-    {count}
     {name}
     invalid={error}
     type="numeric"
@@ -29,7 +25,7 @@
     otp
 >
     <PinInput.Control class="grid grid-cols-6 gap-2">
-        {#each Array.from({ length: count }) as _, index (index)}
+        {#each Array.from({ length: 6 }) as _, index (index)}
             <PinInput.Input
                 {index}
                 class={tw(
