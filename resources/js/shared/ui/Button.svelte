@@ -2,6 +2,8 @@
     import { tw } from "$/shared/lib/styles";
     import { useLoadingDebounce } from "$/shared/lib/use-loading-debounce.svelte";
 
+    import Loader from "./Loader.svelte";
+
     import type { WithClassName } from "$/shared/lib/styles";
     import type { HTMLButtonAttributes } from "svelte/elements";
 
@@ -46,7 +48,7 @@
     disabled={delayedLoading.current || disabled}
 >
     {#if loading && delayedLoading.current}
-        Loading...
+        <Loader />
     {:else}
         {@render children?.()}
     {/if}
