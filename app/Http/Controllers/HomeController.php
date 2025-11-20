@@ -17,7 +17,13 @@ class HomeController extends Controller
         $date = $search['d'] ?? now()->toDateString();
 
         return inertia('Home', [
-            'todos' => TodoDto::collect($user->todos()->where('todo_date', '=', $date)->get()),
+            'todos' => TodoDto::collect(
+                $user->todos()
+                    ->where('todo_date', '=', $date)
+                    ->orderBy('created_at', 'asc')
+                    ->orderBy('category', 'asc')
+                    ->get()
+            ),
         ]);
     }
 }

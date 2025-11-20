@@ -1,0 +1,47 @@
+diff --git a/node_modules/@inertiajs/core/dist/index.esm.js b/node_modules/@inertiajs/core/dist/index.esm.js
+index 3fa968f..e64fa4a 100644
+--- a/node_modules/@inertiajs/core/dist/index.esm.js
++++ b/node_modules/@inertiajs/core/dist/index.esm.js
+@@ -512,7 +512,6 @@ var CurrentPage = class {
+       const isServer2 = typeof window === "undefined";
+       const location = !isServer2 ? window.location : new URL(page2.url);
+       const scrollRegions = !isServer2 && preserveScroll ? history.getScrollRegions() : [];
+-      replace = replace || isSameUrlWithoutHash(hrefToUrl(page2.url), location);
+       return new Promise((resolve) => {
+         replace ? history.replaceState(page2, () => resolve(null)) : history.pushState(page2, () => resolve(null));
+       }).then(() => {
+@@ -881,6 +880,14 @@ var EventHandler = class {
+     return () => document.removeEventListener(type, listener);
+   }
+   handlePopstateEvent(event) {
++    if (page.__jodi_isHistoryModal) {
++        delete page.__jodi_isHistoryModal;
++        const url = hrefToUrl(page.get().url)
++        url.hash = ""
++        const page2 = { ...page.get(), url: url.pathname + url.search }
++        page.setQuietly(page2, { preserveState: true });
++        return
++    }
+     const state = event.state || null;
+     if (state === null) {
+       const url = hrefToUrl(page.get().url);
+@@ -2253,6 +2260,7 @@ var Router = class {
+     };
+     const preserveScroll = RequestParams.resolvePreserveOption(params.preserveScroll ?? false, page2);
+     const preserveState = RequestParams.resolvePreserveOption(params.preserveState ?? false, page2);
++    page.__jodi_isHistoryModal = pageParams.__jodi_isHistoryModal;
+     page.set(page2, {
+       replace,
+       preserveScroll,
+diff --git a/node_modules/@inertiajs/core/types/types.d.ts b/node_modules/@inertiajs/core/types/types.d.ts
+index 3fb2f61..f41bb8d 100644
+--- a/node_modules/@inertiajs/core/types/types.d.ts
++++ b/node_modules/@inertiajs/core/types/types.d.ts
+@@ -110,6 +110,7 @@ export interface ClientSideVisitOptions<TProps = Page['props']> {
+     preserveState?: VisitOptions['preserveState'];
+     errorBag?: string | null;
+     viewTransition?: VisitOptions['viewTransition'];
++    __jodi_isHistoryModal?: boolean;
+     onError?: (errors: Errors) => void;
+     onFinish?: (visit: ClientSideVisitOptions<TProps>) => void;
+     onSuccess?: (page: Page) => void;

@@ -18,6 +18,7 @@ class TodoDto extends Data
         public ?string $description,
         public ?string $category,
         public ?Carbon $completedAt,
+        public ?Carbon $createdAt,
     ) {}
 
     public static function fromModel(Todo $todo): self
@@ -27,7 +28,8 @@ class TodoDto extends Data
             $todo->title,
             $todo->description,
             $todo->category,
-            $todo->completed_at
+            $todo->completed_at,
+            $todo->created_at
         );
     }
 }

@@ -63,7 +63,7 @@ class TwoFactorChallengeController extends Controller
                 'password' => __('The code is wrong.'),
             ]);
         } catch (OtpExpiredException) {
-            return redirect()->back()->with('error', __('The code is expired.'));
+            return back()->with('error', __('The code is expired.'));
         }
     }
 
@@ -91,6 +91,6 @@ class TwoFactorChallengeController extends Controller
             $user->notify(new Notifications\OneTimeLoginCode($password));
         }
 
-        return redirect()->back()->with('success', 'The code has been sent.');
+        return back()->with('success', 'The code has been sent.');
     }
 }

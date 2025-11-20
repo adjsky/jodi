@@ -19,16 +19,7 @@
 
     const { todos, ...rest }: Props = $props();
     const groups = $derived(
-        groupBy(
-            todos.sort((a, b) =>
-                a.category
-                    ? b.category
-                        ? a.category.localeCompare(b.category)
-                        : -1
-                    : 1
-            ),
-            ({ category }) => category ?? m["todos.ungrouped"]()
-        )
+        groupBy(todos, ({ category }) => category ?? m["todos.ungrouped"]())
     );
 </script>
 
@@ -40,7 +31,7 @@
         </div>
         <AddTodo />
     </div>
-    <div class="mt-3 space-y-3">
+    <div class="mt-3 space-y-4">
         {#each Object.entries(groups) as [group, todos], idx (idx)}
             {@const completed = todos.filter(
                 (todo) => todo.completedAt != null
@@ -60,21 +51,19 @@
                     {#snippet checkbox()}
                         <button
                             aria-label="lorem"
-                            class="size-4.5 shrink-0 rounded-sm border border-cream-950"
+                            class="size-4.5 shrink-0 rounded-full border border-cream-950"
                         ></button>
                     {/snippet}
                     {#snippet edit()}
                         <button
-                            class="flex w-full flex-col items-start justify-start gap-1"
+                            class="relative table w-full table-fixed text-ms font-medium"
+                            data-part="edit"
                         >
-                            <span class="table w-full table-fixed">
-                                <span
-                                    class="table-cell overflow-hidden text-start text-ms font-medium text-ellipsis whitespace-nowrap"
-                                >
-                                    {todo.title}
-                                </span>
+                            <span
+                                class="table-cell overflow-hidden text-start text-ellipsis whitespace-nowrap"
+                            >
+                                {todo.title}
                             </span>
-                            <span class="h-px w-full bg-cream-200"></span>
                         </button>
                     {/snippet}
                     {#snippet grip()}
@@ -87,3 +76,19 @@
         {/each}
     </div>
 </section>
+
+<style>
+    [data-part="edit"]::after {
+        content: "";
+
+        position: absolute;
+        left: 0;
+        bottom: -4px;
+
+        width: 100%;
+        height: 1px;
+        border-radius: 1px;
+
+        background: var(--color-cream-200);
+    }
+</style>

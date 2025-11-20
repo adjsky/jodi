@@ -14,8 +14,12 @@ export function useSearchParams() {
         });
     }
 
-    const proxy = new Proxy({} as Record<string, string>, {
+    return new Proxy({} as Record<string, string> & { update: typeof update }, {
         get(_, prop: string) {
+            if (prop === "update") {
+                return update;
+            }
+
             return props.search[prop];
         },
         set(_, prop, v: string) {
@@ -23,6 +27,4 @@ export function useSearchParams() {
             return true;
         }
     });
-
-    return Object.assign(proxy, { update });
 }

@@ -33,9 +33,9 @@ Route::middleware('auth')->group(function () {
     Route::prefix('/todo')
         ->controller(TodoController::class)
         ->group(function () {
-            Route::post('/', 'store');
+            Route::post('/', 'add');
             Route::patch('/{id}', 'update');
-            Route::delete('/{id}', 'destroy');
+            Route::delete('/{id}', 'delete');
             Route::post('/{id}/complete', 'complete');
         });
 });
