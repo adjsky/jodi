@@ -12,5 +12,5 @@
 
 <AppLayout>
     <ProfileCalendar />
-    <TodoList {todos} class="mt-3" />
+    <TodoList {todos} loading={todos == undefined} class="mt-3" />
 </AppLayout>

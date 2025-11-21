@@ -5,6 +5,7 @@
     import AuthLayout from "$/app/ui/layouts/AuthLayout.svelte";
     import { m } from "$/paraglide/messages";
     import Cat from "$/shared/assets/cat.svg";
+    import { toastify } from "$/shared/inertia/toastify";
     import Button from "$/shared/ui/Button.svelte";
     import TextField from "$/shared/ui/TextField.svelte";
     import { login } from "$actions/LoginController";
@@ -17,7 +18,13 @@
         {/snippet}
     </Intro>
 
-    <Form action={login()} class="mt-23 space-y-4" let:processing let:errors>
+    <Form
+        {...toastify()}
+        action={login()}
+        class="mt-23 space-y-4"
+        let:processing
+        let:errors
+    >
         <TextField
             type="email"
             name="email"

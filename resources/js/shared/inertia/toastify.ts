@@ -1,13 +1,10 @@
-import { page, router } from "@inertiajs/svelte";
-import { fromStore } from "svelte/store";
-
 import { toaster } from "../lib/toast";
 
-export function useFlashToast() {
-    const flash = $derived(fromStore(page).current.props.flash);
+import type { Page } from "@inertiajs/core";
 
-    $effect(() =>
-        router.on("success", () => {
+export function toastify() {
+    return {
+        onSuccess({ props: { flash } }: Page) {
             if (flash.error) {
                 toaster.error({ title: flash.error });
             } else if (flash.message) {
@@ -15,6 +12,6 @@ export function useFlashToast() {
             } else if (flash.success) {
                 toaster.success({ title: flash.success });
             }
-        })
-    );
+        }
+    };
 }

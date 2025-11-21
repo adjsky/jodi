@@ -17,6 +17,7 @@ class TodoDto extends Data
         public string $title,
         public ?string $description,
         public ?string $category,
+        public Carbon $date,
         public ?Carbon $completedAt,
         public ?Carbon $createdAt,
     ) {}
@@ -28,6 +29,7 @@ class TodoDto extends Data
             $todo->title,
             $todo->description,
             $todo->category,
+            $todo->todo_date,
             $todo->completed_at,
             $todo->created_at
         );

@@ -10,7 +10,7 @@ use Illuminate\Support\Facades\Gate;
 
 class TodoController extends Controller
 {
-    public function add(Request $request)
+    public function create(Request $request)
     {
         $this->user()->todos()->create($request->validate([
             'title' => 'required|string',
@@ -22,7 +22,17 @@ class TodoController extends Controller
         return back()->with('success', __('Todo successfully created.'));
     }
 
-    public function update(Request $request, Todo $todo) {}
+    public function update(Request $request, Todo $todo)
+    {
+        Gate::authorize('update', $todo);
+
+        $todo->update($request->validate([
+            'title' => 'sometimes|string',
+            'description' => 'sometimes|nullable|string',
+        ]));
+
+        return back()->with('success', __('Todo successfully updated.'));
+    }
 
     public function delete(Request $request, Todo $todo)
     {

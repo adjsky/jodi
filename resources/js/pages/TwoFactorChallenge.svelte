@@ -4,6 +4,7 @@
     import AuthLayout from "$/app/ui/layouts/AuthLayout.svelte";
     import { m } from "$/paraglide/messages";
     import Froggy from "$/shared/assets/froggy.svg";
+    import { toastify } from "$/shared/inertia/toastify";
     import { useActionRateLimit } from "$/shared/inertia/use-action-rate-limit.svelte";
     import { toaster } from "$/shared/lib/toast";
     import Button from "$/shared/ui/Button.svelte";
@@ -23,9 +24,10 @@
         {/snippet}
     </Intro>
 
-    <Form action={resend()} id="{id}-resend-form" hidden></Form>
+    <Form {...toastify()} action={resend()} id="{id}-resend-form" hidden></Form>
 
     <Form
+        {...toastify()}
         action={consume()}
         class="mt-23 space-y-3.5"
         onError={(error) => {

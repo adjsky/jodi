@@ -1,5 +1,4 @@
 <script lang="ts">
-    import { useFlashToast } from "$/shared/inertia/use-flash-toast.svelte";
     import { toaster } from "$/shared/lib/toast";
     import Toaster from "$/shared/ui/Toaster.svelte";
 
@@ -10,8 +9,6 @@
     };
 
     const { children }: Props = $props();
-
-    useFlashToast();
 </script>
 
 <Toaster {toaster} />

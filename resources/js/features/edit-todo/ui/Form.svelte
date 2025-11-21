@@ -2,39 +2,48 @@
     import { Form } from "@inertiajs/svelte";
     import { CalendarFold } from "@lucide/svelte";
     import { Todo } from "$/entities/todo";
-    import { create } from "$/generated/actions/App/Http/Controllers/TodoController";
+    import { update } from "$/generated/actions/App/Http/Controllers/TodoController";
     import { getLocale } from "$/paraglide/runtime";
     import { toastify } from "$/shared/inertia/toastify";
-    import { useSearchParams } from "$/shared/inertia/use-search-params.svelte";
     import SaveOrClose from "$/shared/ui/SaveOrClose.svelte";
-    import dayjs from "dayjs";
 
-    const searchParams = useSearchParams();
-    const day = $state(dayjs(searchParams["d"]).locale(getLocale()));
+    type Props = {
+        todo: App.Data.TodoDto;
+        onClose?: VoidFunction;
+    };
+
+    const { todo, onClose }: Props = $props();
 </script>
 
 <Form
     {...toastify()}
-    action={create()}
+    action={update(todo.id)}
     options={{
         only: ["todos"],
         preserveState: true,
         preserveScroll: true
     }}
+    let:isDirty
 >
-    <input name="todo_date" value={day.format("YYYY-MM-DD")} hidden />
     <div class="flex items-center justify-between text-ms">
         <h4 class="flex items-center gap-1.5 font-bold text-cream-800">
             <CalendarFold />
-            {new Intl.DateTimeFormat(day.locale(), {
+            {new Intl.DateTimeFormat(getLocale(), {
                 day: "2-digit",
                 year: "numeric",
                 month: "short",
                 weekday: "short"
-            }).format(day.toDate())}
+            }).format(new Date(todo.date))}
         </h4>
-        <SaveOrClose variant="save" />
+        <SaveOrClose
+            variant={isDirty ? "save" : "close"}
+            onclick={() => {
+                if (!isDirty) {
+                    onClose?.();
+                }
+            }}
+        />
     </div>
-    <Todo.Title name="title" required />
-    <Todo.Description name="description" />
+    <Todo.Title name="title" value={todo.title} required />
+    <Todo.Description name="description" value={todo.description} />
 </Form>

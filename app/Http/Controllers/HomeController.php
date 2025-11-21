@@ -6,6 +6,7 @@ namespace App\Http\Controllers;
 
 use App\Data\TodoDto;
 use Illuminate\Http\Request;
+use Inertia\Inertia;
 
 class HomeController extends Controller
 {
@@ -17,12 +18,14 @@ class HomeController extends Controller
         $date = $search['d'] ?? now()->toDateString();
 
         return inertia('Home', [
-            'todos' => TodoDto::collect(
-                $user->todos()
-                    ->where('todo_date', '=', $date)
-                    ->orderBy('created_at', 'asc')
-                    ->orderBy('category', 'asc')
-                    ->get()
+            'todos' => Inertia::defer(
+                fn () => TodoDto::collect(
+                    $user->todos()
+                        ->where('todo_date', '=', $date)
+                        ->orderBy('created_at', 'asc')
+                        ->orderBy('category', 'asc')
+                        ->get()
+                )
             ),
         ]);
     }

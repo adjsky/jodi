@@ -34,10 +34,18 @@ index 3fa968f..e64fa4a 100644
        replace,
        preserveScroll,
 diff --git a/node_modules/@inertiajs/core/types/types.d.ts b/node_modules/@inertiajs/core/types/types.d.ts
-index 3fb2f61..f41bb8d 100644
+index 3fb2f61..51d0034 100644
 --- a/node_modules/@inertiajs/core/types/types.d.ts
 +++ b/node_modules/@inertiajs/core/types/types.d.ts
-@@ -110,6 +110,7 @@ export interface ClientSideVisitOptions<TProps = Page['props']> {
+@@ -93,6 +93,7 @@ export interface Page<SharedProps extends PageProps = PageProps> {
+     deepMergeProps?: string[];
+     matchPropsOn?: string[];
+     scrollProps?: Record<keyof PageProps, ScrollProp>;
++    __jodi_isHistoryModal?: boolean;
+     /** @internal */
+     rememberedState: Record<string, unknown>;
+ }
+@@ -110,6 +111,7 @@ export interface ClientSideVisitOptions<TProps = Page['props']> {
      preserveState?: VisitOptions['preserveState'];
      errorBag?: string | null;
      viewTransition?: VisitOptions['viewTransition'];

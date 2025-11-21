@@ -10,7 +10,7 @@
     const { checkbox, edit, grip }: Props = $props();
 </script>
 
-<div class="flex items-center gap-2">
+<div class="grid grid-cols-[auto_1fr_auto] items-center gap-2">
     {@render checkbox()}
     {@render edit()}
     {@render grip()}
