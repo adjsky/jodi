@@ -8,7 +8,7 @@
     import dayjs from "dayjs";
     import { capitalize } from "remeda";
 
-    const searchParams = useSearchParams();
+    const searchParams = useSearchParams({ showProgress: true });
     const day = $derived(dayjs(searchParams["d"]).locale(getLocale()));
 </script>
 

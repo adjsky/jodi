@@ -17,9 +17,10 @@
     {...toastify()}
     action={create()}
     options={{
-        only: ["todos"],
+        only: ["todos", "flash"],
         preserveState: true,
-        preserveScroll: true
+        preserveScroll: true,
+        replace: true
     }}
 >
     <input name="todo_date" value={day.format("YYYY-MM-DD")} hidden />
@@ -35,6 +36,6 @@
         </h4>
         <SaveOrClose variant="save" />
     </div>
-    <Todo.Title name="title" required />
+    <Todo.Title class="mt-5" name="title" required autofocus />
     <Todo.Description name="description" />
 </Form>

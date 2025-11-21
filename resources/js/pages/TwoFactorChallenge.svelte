@@ -58,7 +58,7 @@
             </button>
         </p>
 
-        <Button loading={processing} disabled={consumeTimer.running}>
+        <Button disabled={consumeTimer.running || processing}>
             {#if consumeTimer.running}
                 {m["2fa.continue-in"]({ seconds: consumeTimer.secondsLeft })}
             {:else}

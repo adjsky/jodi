@@ -36,7 +36,7 @@
         </TextField>
 
         <div class="space-y-1.25">
-            <Button type="submit" loading={processing}>
+            <Button type="submit" disabled={processing}>
                 {m["login.submit"]()}
             </Button>
             <div

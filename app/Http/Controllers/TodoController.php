@@ -34,9 +34,9 @@ class TodoController extends Controller
         return back()->with('success', __('Todo successfully updated.'));
     }
 
-    public function delete(Request $request, Todo $todo)
+    public function destroy(Request $request, Todo $todo)
     {
-        Gate::authorize('delete', $todo);
+        Gate::authorize('destroy', $todo);
 
         $todo->delete();
 

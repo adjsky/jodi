@@ -1,5 +1,5 @@
 <script lang="ts">
-    import { CircleX } from "@lucide/svelte";
+    import { X } from "@lucide/svelte";
 
     import { tw } from "../lib/styles";
 
@@ -17,11 +17,21 @@
 </script>
 
 {#if variant == "close"}
-    <button {...rest} type="button" class={tw("", rest.class)}>
-        <CircleX class="text-xl" />
+    <button
+        {...rest}
+        type="button"
+        class={tw(
+            "flex size-6 items-center justify-center rounded-full bg-cream-100",
+            rest.class
+        )}
+    >
+        <X class="text-lg text-cream-700" />
     </button>
 {:else}
-    <button {...rest} class={tw("font-bold text-brand", rest.class)}>
+    <button
+        {...rest}
+        class={tw("leading-[1.5rem] font-bold text-brand", rest.class)}
+    >
         Сохранить
     </button>
 {/if}

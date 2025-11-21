@@ -1,7 +1,13 @@
 import { page, router } from "@inertiajs/svelte";
 import { fromStore } from "svelte/store";
 
-export function useSearchParams() {
+type Options = {
+    showProgress?: boolean;
+};
+
+export function useSearchParams(options?: Options) {
+    const { showProgress } = options ?? {};
+
     const props = $derived(fromStore(page).current.props);
 
     function update(values: Record<string, string>) {
@@ -10,7 +16,8 @@ export function useSearchParams() {
                 ...props.search,
                 ...values
             },
-            replace: true
+            replace: true,
+            showProgress
         });
     }
 

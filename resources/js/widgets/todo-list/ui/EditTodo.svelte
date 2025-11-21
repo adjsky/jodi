@@ -20,7 +20,7 @@
             class="relative table w-full table-fixed text-start text-ms font-medium"
         >
             {#if loading}
-                <Skeleton inline style="width: {Math.random() * 100 + 60}px" />
+                <Skeleton inline style="width: {Math.random() * 100 + 100}px" />
             {:else}
                 <span
                     class="table-cell overflow-hidden text-ellipsis whitespace-nowrap"

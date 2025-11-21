@@ -1,8 +1,5 @@
 <script lang="ts">
     import { tw } from "$/shared/lib/styles";
-    import { useLoadingDebounce } from "$/shared/lib/use-loading-debounce.svelte";
-
-    import Loader from "./Loader.svelte";
 
     import type { WithClassName } from "$/shared/lib/styles";
     import type { HTMLButtonAttributes } from "svelte/elements";
@@ -10,31 +7,11 @@
     type Props = WithClassName<
         HTMLButtonAttributes,
         {
-            loading?: boolean;
             variant?: "main" | "secondary";
-            /**
-             * Delay applying loading state. Use it if you are making a fast backend
-             * request, this option will prevent jagging glitches, improving the
-             * overall UX.
-             *
-             * If set to `0`, the loader will show up immediately.
-             *
-             * @default 200ms
-             */
-            delay?: number;
         }
     >;
 
-    const {
-        children,
-        variant = "main",
-        disabled,
-        loading = false,
-        delay = 200,
-        ...rest
-    }: Props = $props();
-
-    const delayedLoading = useLoadingDebounce(() => loading, delay);
+    const { children, variant = "main", ...rest }: Props = $props();
 </script>
 
 <button
@@ -45,11 +22,6 @@
         variant == "secondary" && "border border-cream-950 text-cream-700",
         rest.class
     )}
-    disabled={delayedLoading.current || disabled}
 >
-    {#if loading && delayedLoading.current}
-        <Loader />
-    {:else}
-        {@render children?.()}
-    {/if}
+    {@render children?.()}
 </button>

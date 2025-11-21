@@ -1,0 +1,18 @@
+diff --git a/node_modules/svelte-bottom-sheet/dist/BottomSheet/Sheet/Sheet.svelte b/node_modules/svelte-bottom-sheet/dist/BottomSheet/Sheet/Sheet.svelte
+index b45474e..901fe18 100644
+--- a/node_modules/svelte-bottom-sheet/dist/BottomSheet/Sheet/Sheet.svelte
++++ b/node_modules/svelte-bottom-sheet/dist/BottomSheet/Sheet/Sheet.svelte
+@@ -132,7 +132,12 @@
+ 			previousActiveElement = document.activeElement as HTMLElement;
+ 			setTimeout(() => {
+ 				const focusableElements = getFocusableElements();
+-				if (focusableElements.length) {
++				const autofocusedElement = focusableElements.find((element) =>
++					element.matches('[autofocus], [data-autofocus]')
++				);
++				if (autofocusedElement) {
++					autofocusedElement.focus();
++				} else if (focusableElements.length) {
+ 					focusableElements[0].focus();
+ 				} else {
+ 					sheetContext.sheetElement?.focus();

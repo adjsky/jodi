@@ -22,5 +22,8 @@ void createInertiaApp({
             mount(App, { target: el, props });
         }
     },
-    progress: false
+    progress: {
+        color: "var(--color-brand)",
+        delay: 200
+    }
 });

@@ -24,9 +24,11 @@
         {@render trigger()}
     </BottomSheet.Trigger>
     <BottomSheet.Overlay>
-        <BottomSheet.Sheet class="!bg-white">
-            <BottomSheet.Handle class="!bg-white" />
-            <BottomSheet.Content class="w-full !px-4 !pt-2 !pb-5">
+        <BottomSheet.Sheet class="flex flex-col !bg-white">
+            <BottomSheet.Handle class="!bg-white">
+                <BottomSheet.Grip class="!bg-cream-200" />
+            </BottomSheet.Handle>
+            <BottomSheet.Content class="h-full w-full !px-4 !pt-2 !pb-6">
                 {@render content()}
             </BottomSheet.Content>
         </BottomSheet.Sheet>
