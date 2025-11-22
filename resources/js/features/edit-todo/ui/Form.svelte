@@ -20,10 +20,10 @@
 
     type Props = {
         todo: App.Data.TodoDto;
-        close?: VoidFunction;
+        onClose?: VoidFunction;
     };
 
-    const { todo, close }: Props = $props();
+    const { todo, onClose }: Props = $props();
 
     const baseVisitOptions: VisitOptions = {
         only: ["todos"],
@@ -34,12 +34,7 @@
 </script>
 
 <div class="flex h-full flex-col">
-    <Form
-        action={update(todo.id)}
-        options={baseVisitOptions}
-        onFinish={close}
-        let:isDirty
-    >
+    <Form action={update(todo.id)} options={baseVisitOptions} let:isDirty>
         <div class="flex items-center justify-between text-ms">
             <h4 class="flex items-center gap-1.5 font-bold text-cream-800">
                 <CalendarFold />
@@ -54,7 +49,7 @@
                 variant={isDirty ? "save" : "close"}
                 onclick={() => {
                     if (!isDirty) {
-                        close?.();
+                        onClose?.();
                     }
                 }}
             />
@@ -78,7 +73,6 @@
                 href: destroy(todo.id),
                 disableWhileProcessing: true
             }}
-            onfinish={close}
         >
             <Trash />
         </button>
