@@ -14,20 +14,19 @@
         update
     } from "$/generated/actions/App/Http/Controllers/TodoController";
     import { getLocale } from "$/paraglide/runtime";
-    import { toastify } from "$/shared/inertia/toastify";
     import SaveOrClose from "$/shared/ui/SaveOrClose.svelte";
 
     import type { VisitOptions } from "@inertiajs/core";
 
     type Props = {
         todo: App.Data.TodoDto;
-        onClose?: VoidFunction;
+        close?: VoidFunction;
     };
 
-    const { todo, onClose }: Props = $props();
+    const { todo, close }: Props = $props();
 
     const baseVisitOptions: VisitOptions = {
-        only: ["todos", "flash"],
+        only: ["todos"],
         preserveState: true,
         preserveScroll: true,
         replace: true
@@ -36,9 +35,9 @@
 
 <div class="flex h-full flex-col">
     <Form
-        {...toastify()}
         action={update(todo.id)}
         options={baseVisitOptions}
+        onFinish={close}
         let:isDirty
     >
         <div class="flex items-center justify-between text-ms">
@@ -55,7 +54,7 @@
                 variant={isDirty ? "save" : "close"}
                 onclick={() => {
                     if (!isDirty) {
-                        onClose?.();
+                        close?.();
                     }
                 }}
             />
@@ -71,14 +70,15 @@
     </Form>
 
     <div
-        class="flex flex-grow items-end justify-between *:p-3 *:text-lg *:disabled:text-cream-400"
+        class="flex flex-grow items-end justify-between *:p-3 *:text-lg *:disabled:not-data-loading:text-cream-400"
     >
         <button
             use:inertia={{
                 ...baseVisitOptions,
-                ...toastify(),
-                href: destroy(todo.id)
+                href: destroy(todo.id),
+                disableWhileProcessing: true
             }}
+            onfinish={close}
         >
             <Trash />
         </button>

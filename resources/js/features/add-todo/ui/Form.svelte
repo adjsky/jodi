@@ -4,7 +4,6 @@
     import { Todo } from "$/entities/todo";
     import { create } from "$/generated/actions/App/Http/Controllers/TodoController";
     import { getLocale } from "$/paraglide/runtime";
-    import { toastify } from "$/shared/inertia/toastify";
     import { useSearchParams } from "$/shared/inertia/use-search-params.svelte";
     import SaveOrClose from "$/shared/ui/SaveOrClose.svelte";
     import dayjs from "dayjs";
@@ -14,14 +13,14 @@
 </script>
 
 <Form
-    {...toastify()}
     action={create()}
     options={{
-        only: ["todos", "flash"],
+        only: ["todos"],
         preserveState: true,
         preserveScroll: true,
         replace: true
     }}
+    let:processing
 >
     <input name="todo_date" value={day.format("YYYY-MM-DD")} hidden />
     <div class="flex items-center justify-between text-ms">
@@ -34,7 +33,7 @@
                 weekday: "short"
             }).format(day.toDate())}
         </h4>
-        <SaveOrClose variant="save" />
+        <SaveOrClose variant="save" disabled={processing} />
     </div>
     <Todo.Title class="mt-5" name="title" required autofocus />
     <Todo.Description name="description" />

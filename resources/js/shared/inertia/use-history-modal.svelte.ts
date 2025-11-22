@@ -2,11 +2,14 @@ import { page, router } from "@inertiajs/svelte";
 import { extract } from "runed";
 import { fromStore } from "svelte/store";
 
-import type { Getter } from "runed";
+import type { MaybeGetter } from "runed";
 
-export function useHistoryModal(name: string, ready?: Getter<boolean>) {
+export function useHistoryModal(
+    name: MaybeGetter<string>,
+    ready?: MaybeGetter<boolean>
+) {
     const url = $derived(new URL(fromStore(page).current.url, location.origin));
-    const hash = `#${name}`;
+    const hash = $derived(`#${extract(name)}`);
 
     return {
         get open() {

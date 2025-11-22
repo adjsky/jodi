@@ -19,7 +19,7 @@ class TodoController extends Controller
             'todo_date' => 'date_format:Y-m-d',
         ]));
 
-        return back()->with('success', __('Todo successfully created.'));
+        return back();
     }
 
     public function update(Request $request, Todo $todo)
@@ -31,7 +31,7 @@ class TodoController extends Controller
             'description' => 'sometimes|nullable|string',
         ]));
 
-        return back()->with('success', __('Todo successfully updated.'));
+        return back();
     }
 
     public function destroy(Request $request, Todo $todo)
@@ -40,7 +40,7 @@ class TodoController extends Controller
 
         $todo->delete();
 
-        return back()->with('success', __('Todo successfully deleted.'));
+        return back();
     }
 
     public function complete(Request $request, string $id)

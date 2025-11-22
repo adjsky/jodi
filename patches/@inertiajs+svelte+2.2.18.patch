@@ -1,0 +1,28 @@
+diff --git a/node_modules/@inertiajs/svelte/dist/link.js b/node_modules/@inertiajs/svelte/dist/link.js
+index 228d424..10dcc08 100644
+--- a/node_modules/@inertiajs/svelte/dist/link.js
++++ b/node_modules/@inertiajs/svelte/dist/link.js
+@@ -91,6 +91,7 @@ function link(node, initialParams = {}) {
+             except: params.except || [],
+             headers: params.headers || {},
+             async: params.async || false,
++            showProgress: params.showProgress ?? true,
+         };
+         visitParams = {
+             ...baseParams,
+@@ -131,9 +132,15 @@ function link(node, initialParams = {}) {
+     }
+     function updateNodeAttributes() {
+         if (inFlightCount > 0) {
++            if (initialParams.disableWhileProcessing) {
++                node.setAttribute('disabled', '');
++            }
+             node.setAttribute('data-loading', '');
+             return;
+         }
++        if (initialParams.disableWhileProcessing) {
++            node.removeAttribute('disabled');
++        }
+         node.removeAttribute('data-loading');
+     }
+     function updateEventListeners() {

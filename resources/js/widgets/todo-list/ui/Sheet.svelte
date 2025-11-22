@@ -6,7 +6,7 @@
     type Props = {
         open: boolean;
         content: Snippet;
-        trigger: Snippet;
+        trigger?: Snippet;
     };
 
     let { open = $bindable(), content, trigger }: Props = $props();
@@ -20,9 +20,10 @@
         startingSnapPoint: 0.6
     }}
 >
-    <BottomSheet.Trigger>
-        {@render trigger()}
-    </BottomSheet.Trigger>
+    {#if trigger}
+        <BottomSheet.Trigger>
+            {@render trigger()}
+        </BottomSheet.Trigger>{/if}
     <BottomSheet.Overlay>
         <BottomSheet.Sheet class="flex flex-col !bg-white">
             <BottomSheet.Handle class="!bg-white">
