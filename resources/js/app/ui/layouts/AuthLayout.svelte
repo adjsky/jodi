@@ -1,4 +1,5 @@
 <script lang="ts">
+    import { useHandleRouterException } from "$/shared/inertia/use-handle-router-exception.svelte";
     import { toaster } from "$/shared/lib/toast";
     import Toaster from "$/shared/ui/Toaster.svelte";
 
@@ -9,6 +10,8 @@
     };
 
     const { children }: Props = $props();
+
+    useHandleRouterException();
 </script>
 
 <Toaster {toaster} />

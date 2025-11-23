@@ -2,6 +2,7 @@
     "$schema": "https://inlang.com/schema/inlang-message-format",
     "or": "Or",
     "too-many-requests": "Too many requests. Try again later.",
+    "router-exception": "Unexpected error happened. Try again later.",
     "login": {
         "title": "Log In",
         "email-placeholder": "Enter your email",
