@@ -1,6 +1,7 @@
 <script lang="ts">
     import { Check, ChevronDown, GripVertical } from "@lucide/svelte";
     import { Todo } from "$/entities/todo";
+    import Checkbox from "$/features/complete-todo/ui/Checkbox.svelte";
     import { m } from "$/paraglide/messages";
     import { tw } from "$/shared/lib/styles";
     import Skeleton from "$/shared/ui/Skeleton.svelte";
@@ -40,7 +41,8 @@
         );
     });
 
-    let editingTodo = $state<App.Data.TodoDto | null>(null);
+    let editingTodoId = $state<number | null>(null);
+    let editModalOpen = $state(false);
 </script>
 
 <section {...rest} class={tw("px-4", rest.class)}>
@@ -74,18 +76,18 @@
         {/each}
     </div>
 
-    <EditTodo {loading} bind:todo={editingTodo} />
+    <EditTodo
+        {loading}
+        bind:open={editModalOpen}
+        todo={todos?.find(({ id }) => editingTodoId == id) ?? null}
+    />
 </section>
 
 {#snippet list(todos: App.Data.TodoDto[])}
     {#each todos as todo (todo.id)}
-        <Todo.Row>
+        <Todo.Row class={todo.completedAt && "opacity-40"}>
             {#snippet checkbox()}
-                <button
-                    disabled={loading}
-                    aria-label="lorem"
-                    class="size-4.5 shrink-0 rounded-full border border-cream-950"
-                ></button>
+                <Checkbox {loading} {todo} />
             {/snippet}
             {#snippet edit()}
                 <button
@@ -93,7 +95,8 @@
                     class="relative table w-full table-fixed text-start text-ms font-medium"
                     data-part="edit"
                     onclick={() => {
-                        editingTodo = todo;
+                        editingTodoId = todo.id;
+                        editModalOpen = true;
                     }}
                 >
                     {#if loading}
@@ -103,7 +106,10 @@
                         />
                     {:else}
                         <span
-                            class="table-cell overflow-hidden text-ellipsis whitespace-nowrap"
+                            class={[
+                                "table-cell overflow-hidden text-ellipsis whitespace-nowrap",
+                                todo.completedAt && "line-through"
+                            ]}
                         >
                             {todo.title}
                         </span>

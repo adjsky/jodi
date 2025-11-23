@@ -18,4 +18,9 @@ class TodoPolicy
     {
         return $user->id == $todo->user_id;
     }
+
+    public function complete(User $user, Todo $todo): bool
+    {
+        return $user->id == $todo->user_id;
+    }
 }

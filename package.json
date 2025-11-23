@@ -4,7 +4,7 @@
     "type": "module",
     "scripts": {
         "build": "vite build",
-        "dev": "vite",
+        "dev": "vite --force",
         "lint": "eslint",
         "check": "svelte-check",
         "postinstall": "patch-package"
@@ -40,7 +40,7 @@
         "remeda": "^2.32.0",
         "runed": "^0.36.0",
         "svelte": "^5.43.12",
-        "svelte-bottom-sheet": "^2.2.3",
+        "svelte-bottom-sheet": "^2.2.4",
         "svelte-check": "^4.3.1",
         "tailwind-merge": "^3.3.1",
         "tailwindcss": "^4.1.13",

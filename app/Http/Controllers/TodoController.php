@@ -43,8 +43,13 @@ class TodoController extends Controller
         return back();
     }
 
-    public function complete(Request $request, string $id)
+    public function complete(Request $request, Todo $todo)
     {
-        //
+        Gate::authorize('complete', $todo);
+
+        $todo->completed_at = is_null($todo->completed_at) ? now() : null;
+        $todo->save();
+
+        return back();
     }
 }

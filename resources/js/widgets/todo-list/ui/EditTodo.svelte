@@ -6,9 +6,13 @@
 
     import Sheet from "./Sheet.svelte";
 
-    type Props = { todo: App.Data.TodoDto | null; loading: boolean };
+    type Props = {
+        todo: App.Data.TodoDto | null;
+        open: boolean;
+        loading: boolean;
+    };
 
-    let { todo = $bindable(), loading }: Props = $props();
+    let { todo, open = $bindable(), loading }: Props = $props();
 
     const modal = useHistoryModal(
         () => `edit-todo:${todo?.id}`,
@@ -16,10 +20,23 @@
     );
 
     watch(
-        () => [todo],
+        () => [open],
         () => {
-            modal.open = todo != null;
-        }
+            if (open) {
+                modal.open = true;
+            }
+        },
+        { lazy: true }
+    );
+
+    watch(
+        () => [modal.open],
+        () => {
+            if (!modal.open) {
+                open = false;
+            }
+        },
+        { lazy: true }
     );
 </script>
 

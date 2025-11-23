@@ -9,6 +9,7 @@
         Trash
     } from "@lucide/svelte";
     import { Todo } from "$/entities/todo";
+    import { Checkbox } from "$/features/complete-todo";
     import {
         destroy,
         update
@@ -54,11 +55,13 @@
                 }}
             />
         </div>
-        <div class="mt-5 flex items-center gap-2">
-            <button
-                aria-label="lorem"
-                class="size-5 shrink-0 rounded-full border border-cream-950"
-            ></button>
+        <div
+            class={[
+                "mt-5 flex items-center gap-2",
+                todo.completedAt && "opacity-40"
+            ]}
+        >
+            <Checkbox {todo} class="size-5" />
             <Todo.Title name="title" value={todo.title} required />
         </div>
         <Todo.Description name="description" value={todo.description} />

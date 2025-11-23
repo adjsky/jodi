@@ -1,16 +1,26 @@
 <script lang="ts">
+    import { tw } from "$/shared/lib/styles";
+
+    import type { WithClassName } from "$/shared/lib/styles";
     import type { Snippet } from "svelte";
+    import type { SvelteHTMLElements } from "svelte/elements";
 
-    type Props = {
-        checkbox: Snippet;
-        edit: Snippet;
-        grip: Snippet;
-    };
+    type Props = WithClassName<
+        SvelteHTMLElements["div"],
+        {
+            checkbox: Snippet;
+            edit: Snippet;
+            grip: Snippet;
+        }
+    >;
 
-    const { checkbox, edit, grip }: Props = $props();
+    const { checkbox, edit, grip, ...props }: Props = $props();
 </script>
 
-<div class="grid grid-cols-[auto_1fr_auto] items-center gap-2">
+<div
+    {...props}
+    class={tw("grid grid-cols-[auto_1fr_auto] items-center gap-2", props.class)}
+>
     {@render checkbox()}
     {@render edit()}
     {@render grip()}

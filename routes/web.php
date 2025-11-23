@@ -36,7 +36,7 @@ Route::middleware('auth')->group(function () {
             Route::post('/', 'create');
             Route::patch('/{todo}', 'update');
             Route::delete('/{todo}', 'destroy');
-            Route::post('/{id}/complete', 'complete');
+            Route::post('/{todo}/complete', 'complete');
         });
 });
 
