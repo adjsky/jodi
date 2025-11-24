@@ -4,8 +4,8 @@
     import AuthLayout from "$/app/ui/layouts/AuthLayout.svelte";
     import { m } from "$/paraglide/messages";
     import Froggy from "$/shared/assets/froggy.svg";
-    import { toastify } from "$/shared/inertia/toastify";
     import { useActionRateLimit } from "$/shared/inertia/use-action-rate-limit.svelte";
+    import { toastify } from "$/shared/inertia/visit/toastify";
     import { toaster } from "$/shared/lib/toast";
     import Button from "$/shared/ui/Button.svelte";
     import OneTimePasswordInput from "$/shared/ui/OneTimePasswordInput.svelte";

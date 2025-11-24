@@ -1,17 +1,117 @@
+diff --git a/node_modules/@inertiajs/svelte/dist/components/Form.svelte b/node_modules/@inertiajs/svelte/dist/components/Form.svelte
+index fc6965a..85fc004 100644
+--- a/node_modules/@inertiajs/svelte/dist/components/Form.svelte
++++ b/node_modules/@inertiajs/svelte/dist/components/Form.svelte
+@@ -24,6 +24,7 @@ export let onFinish = noop;
+ export let onCancel = noop;
+ export let onSuccess = noop;
+ export let onError = noop;
++export let onInvalid = noop;
+ export let onSubmitComplete = noop;
+ export let disableWhileProcessing = false;
+ export let invalidateCacheTags = [];
+@@ -68,6 +69,7 @@ export function submit() {
+     onStart,
+     onProgress,
+     onFinish,
++    onInvalid,
+     onCancel,
+     onSuccess: (...args) => {
+       if (onSuccess) {
+diff --git a/node_modules/@inertiajs/svelte/dist/components/Form.svelte.d.ts b/node_modules/@inertiajs/svelte/dist/components/Form.svelte.d.ts
+index dcaf4ad..6fa18fd 100644
+--- a/node_modules/@inertiajs/svelte/dist/components/Form.svelte.d.ts
++++ b/node_modules/@inertiajs/svelte/dist/components/Form.svelte.d.ts
+@@ -19,6 +19,7 @@ declare const __propDef: {
+         onCancel?: import("@inertiajs/core").GlobalEventCallback<"cancel", import("@inertiajs/core").RequestPayload> | undefined;
+         onSuccess?: import("@inertiajs/core").GlobalEventCallback<"success", import("@inertiajs/core").RequestPayload> | undefined;
+         onError?: import("@inertiajs/core").GlobalEventCallback<"error", import("@inertiajs/core").RequestPayload> | undefined;
++        onInvalid?: import("@inertiajs/core").GlobalEventCallback<"invalid", import("@inertiajs/core").RequestPayload> | undefined;
+         onSubmitComplete?: ((props: import("@inertiajs/core").FormComponentonSubmitCompleteArguments) => void) | undefined;
+         disableWhileProcessing?: boolean | undefined;
+         invalidateCacheTags?: string | string[] | undefined;
+diff --git a/node_modules/@inertiajs/svelte/dist/link.d.ts b/node_modules/@inertiajs/svelte/dist/link.d.ts
+index f6075bb..185838b 100644
+--- a/node_modules/@inertiajs/svelte/dist/link.d.ts
++++ b/node_modules/@inertiajs/svelte/dist/link.d.ts
+@@ -1,16 +1,8 @@
+-import { type CancelToken, type GlobalEventsMap, type LinkComponentBaseProps, type VisitOptions } from '@inertiajs/core';
++import { type LinkComponentBaseProps, type VisitOptions } from '@inertiajs/core';
+ import type { ActionReturn } from 'svelte/action';
+ interface ActionElement extends HTMLElement {
+     href?: string;
+ }
+ type ActionParameters = Omit<LinkComponentBaseProps, 'onCancelToken'> & Omit<VisitOptions, keyof LinkComponentBaseProps>;
+-type SelectedEventKeys = 'start' | 'progress' | 'finish' | 'before' | 'cancel' | 'success' | 'error' | 'prefetching' | 'prefetched';
+-type SelectedGlobalEventsMap = Pick<GlobalEventsMap, SelectedEventKeys>;
+-type ActionAttributes = {
+-    [K in keyof SelectedGlobalEventsMap as `on:${K}` | `on${K}`]?: (event: CustomEvent<SelectedGlobalEventsMap[K]['details']>) => void;
+-} & {
+-    'on:cancel-token'?: (event: CustomEvent<CancelToken>) => void;
+-    oncanceltoken?: (event: CustomEvent<CancelToken>) => void;
+-};
+-declare function link(node: ActionElement, initialParams?: ActionParameters): ActionReturn<ActionParameters, ActionAttributes>;
++declare function link(node: ActionElement, initialParams?: ActionParameters): ActionReturn<ActionParameters>;
+ export default link;
 diff --git a/node_modules/@inertiajs/svelte/dist/link.js b/node_modules/@inertiajs/svelte/dist/link.js
-index 228d424..1661395 100644
+index 228d424..1804f9e 100644
 --- a/node_modules/@inertiajs/svelte/dist/link.js
 +++ b/node_modules/@inertiajs/svelte/dist/link.js
-@@ -91,6 +91,8 @@ function link(node, initialParams = {}) {
+@@ -91,6 +91,7 @@ function link(node, initialParams = {}) {
              except: params.except || [],
              headers: params.headers || {},
              async: params.async || false,
 +            showProgress: params.showProgress ?? true,
-+            __jodi_keepHash: params.__jodi_keepHash || false
          };
          visitParams = {
              ...baseParams,
-@@ -131,9 +133,15 @@ function link(node, initialParams = {}) {
+@@ -98,42 +99,46 @@ function link(node, initialParams = {}) {
+             onStart: (visit) => {
+                 inFlightCount++;
+                 updateNodeAttributes();
+-                return dispatchEvent('start', { detail: { visit } });
++                return params.onStart?.(visit);
+             },
+-            onProgress: (progress) => dispatchEvent('progress', { detail: { progress } }),
++            onProgress: (progress) => params.onProgress?.(progress),
+             onFinish: (visit) => {
+                 inFlightCount--;
+                 updateNodeAttributes();
+-                return dispatchEvent('finish', { detail: { visit } });
++                return params.onFinish?.(visit);
+             },
+-            onBefore: (visit) => dispatchEvent('before', { cancelable: true, detail: { visit } }),
+-            onCancel: () => dispatchEvent('cancel'),
+-            onSuccess: (page) => dispatchEvent('success', { detail: { page } }),
+-            onError: (errors) => dispatchEvent('error', { detail: { errors } }),
+-            onCancelToken: (token) => dispatchEvent('cancel-token', { detail: { token } }),
+-            onPrefetching: (visit) => dispatchEvent('prefetching', { detail: { visit } }),
+-            onPrefetched: (response, visit) => dispatchEvent('prefetched', { detail: { response, visit } }),
++            onInvalid: (response) => params.onInvalid?.(response),
++            onBefore: (visit) => params.onBefore?.(visit),
++            onCancel: () => params.onCancel?.(),
++            onSuccess: (page) => params.onSuccess?.(page),
++            onError: (errors) => params.onError?.(errors),
++            onCancelToken: (token) => params.onCancelToken?.(token),
++            onPrefetching: (visit) => params.onPrefetching?.(visit),
++            onPrefetched: (response, visit) => params.onPrefetched?.(response, visit),
+         };
+         updateEventListeners();
+     }
+-    function dispatchEvent(type, detail = {}) {
+-        return node.dispatchEvent(new CustomEvent(type, detail));
+-    }
+     function hrefAndData(method, params) {
+         return mergeDataIntoQueryString(method, isUrlMethodPair(params.href) ? params.href.url : node.href || params.href || '', params.data || {}, params.queryStringArrayFormat || 'brackets');
+     }
+     function prefetch() {
+         router.prefetch(href, {
+             ...baseParams,
+-            onPrefetching: (visit) => dispatchEvent('prefetching', { detail: { visit } }),
+-            onPrefetched: (response, visit) => dispatchEvent('prefetched', { detail: { response, visit } }),
++            onPrefetching: visitParams.onPrefetching,
++            onPrefetched: visitParams.onPrefetched,
+         }, { cacheFor: cacheForValue, cacheTags });
      }
      function updateNodeAttributes() {
          if (inFlightCount > 0) {
@@ -27,3 +127,21 @@ index 228d424..1661395 100644
          node.removeAttribute('data-loading');
      }
      function updateEventListeners() {
+diff --git a/node_modules/@inertiajs/svelte/dist/useForm.js b/node_modules/@inertiajs/svelte/dist/useForm.js
+index 8dc260c..d5a1d9f 100644
+--- a/node_modules/@inertiajs/svelte/dist/useForm.js
++++ b/node_modules/@inertiajs/svelte/dist/useForm.js
+@@ -154,6 +154,13 @@ export default function useForm(rememberKeyOrData, maybeData) {
+                         return options.onCancel();
+                     }
+                 },
++                onInvalid: (response) => {
++                    setFormState('processing', false);
++                    setFormState('progress', null);
++                    if (options.onInvalid) {
++                        return options.onInvalid(response);
++                    }
++                },
+                 onFinish: (visit) => {
+                     setFormState('processing', false);
+                     setFormState('progress', null);

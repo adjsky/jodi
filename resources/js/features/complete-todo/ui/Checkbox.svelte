@@ -2,6 +2,7 @@
     import { inertia } from "@inertiajs/svelte";
     import { Check } from "@lucide/svelte";
     import { complete } from "$/generated/actions/App/Http/Controllers/TodoController";
+    import { optimistic } from "$/shared/inertia/visit/optimistic";
     import { tw } from "$/shared/lib/styles";
     import { boolAttr } from "runed";
 
@@ -18,12 +19,28 @@
 
 <button
     use:inertia={{
+        ...optimistic(
+            (prev) => ({
+                todos: prev.todos.map((t: App.Data.TodoDto) =>
+                    t.id == todo.id
+                        ? {
+                              ...t,
+                              completedAt: t.completedAt
+                                  ? null
+                                  : new Date().toISOString()
+                          }
+                        : t
+                )
+            }),
+            { error: "Failed to complete todo. Try again later." }
+        ),
         only: ["todos"],
         preserveState: true,
         preserveScroll: true,
         replace: true,
         href: complete(todo.id),
-        __jodi_keepHash: true
+        preserveUrl: true,
+        showProgress: false
     }}
     type="button"
     disabled={loading}

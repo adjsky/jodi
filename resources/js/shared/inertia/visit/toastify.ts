@@ -1,8 +1,12 @@
-import { toaster } from "../lib/toast";
+import { toaster } from "../../lib/toast";
 
 import type { Page } from "@inertiajs/core";
 
-export function toastify() {
+type Options = {
+    invalid?: string;
+};
+
+export function toastify(_options?: Options) {
     return {
         onSuccess({ props: { flash } }: Page) {
             if (flash.error) {

@@ -5,7 +5,7 @@
     import AuthLayout from "$/app/ui/layouts/AuthLayout.svelte";
     import { m } from "$/paraglide/messages";
     import Cat from "$/shared/assets/cat.svg";
-    import { toastify } from "$/shared/inertia/toastify";
+    import { toastify } from "$/shared/inertia/visit/toastify";
     import Button from "$/shared/ui/Button.svelte";
     import TextField from "$/shared/ui/TextField.svelte";
     import { login } from "$actions/LoginController";
