@@ -92,7 +92,7 @@
             {#snippet edit()}
                 <button
                     disabled={loading}
-                    class="relative table w-full table-fixed text-start text-ms font-medium"
+                    class="relative table w-full table-fixed text-start text-ms font-medium outline-none"
                     data-part="edit"
                     onclick={() => {
                         editingTodoId = todo.id;

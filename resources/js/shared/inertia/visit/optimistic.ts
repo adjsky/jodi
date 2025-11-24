@@ -8,6 +8,8 @@ import type { PageProps, VisitCallbacks } from "@inertiajs/core";
 type CommitFn = (prev: any, data: any) => any;
 type Options = {
     error?: string;
+    onBefore?: VoidFunction;
+    preserveUrl?: "without-hash";
 };
 
 export function optimistic(
@@ -29,7 +31,10 @@ export function optimistic(
                         ...prev,
                         ...commit(prev, e.data)
                     };
-                }
+                },
+                ...(options?.preserveUrl == "without-hash" && {
+                    url: location.pathname + location.search
+                })
             });
         },
         onInvalid(response) {

@@ -1,14 +1,14 @@
 import { toaster } from "../../lib/toast";
 
-import type { Page } from "@inertiajs/core";
+import type { VisitCallbacks } from "@inertiajs/core";
 
 type Options = {
     invalid?: string;
 };
 
-export function toastify(_options?: Options) {
+export function toastify(options?: Options): Partial<VisitCallbacks> {
     return {
-        onSuccess({ props: { flash } }: Page) {
+        onSuccess({ props: { flash } }) {
             if (flash.error) {
                 toaster.error({ title: flash.error });
             } else if (flash.message) {
@@ -16,6 +16,10 @@ export function toastify(_options?: Options) {
             } else if (flash.success) {
                 toaster.success({ title: flash.success });
             }
+        },
+        onInvalid(response) {
+            toaster.error({ title: options?.invalid ?? response.data.message });
+            return false;
         }
     };
 }

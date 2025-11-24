@@ -15,6 +15,7 @@
         update
     } from "$/generated/actions/App/Http/Controllers/TodoController";
     import { getLocale } from "$/paraglide/runtime";
+    import { optimistic } from "$/shared/inertia/visit/optimistic";
     import SaveOrClose from "$/shared/ui/SaveOrClose.svelte";
 
     import type { VisitOptions } from "@inertiajs/core";
@@ -35,7 +36,28 @@
 </script>
 
 <div class="flex h-full flex-col">
-    <Form action={update(todo.id)} options={baseVisitOptions} let:isDirty>
+    <Form
+        {...optimistic(
+            (prev, data) => ({
+                todos: prev.todos.map((t: App.Data.TodoDto) =>
+                    t.id == todo.id
+                        ? {
+                              ...t,
+                              ...data
+                          }
+                        : t
+                )
+            }),
+            {
+                error: "Failed to update todo. Try again later.",
+                preserveUrl: "without-hash"
+            }
+        )}
+        action={update(todo.id)}
+        options={baseVisitOptions}
+        showProgress={false}
+        let:isDirty
+    >
         <div class="flex items-center justify-between text-ms">
             <h4 class="flex items-center gap-1.5 font-bold text-cream-800">
                 <CalendarFold />
@@ -73,8 +95,16 @@
         <button
             use:inertia={{
                 ...baseVisitOptions,
+                ...optimistic(
+                    (prev) => ({
+                        todos: prev.todos.filter(
+                            (t: App.Data.TodoDto) => t.id == todo.id
+                        )
+                    }),
+                    { error: "Failed to delete todo. Try again later." }
+                ),
                 href: destroy(todo.id),
-                disableWhileProcessing: true
+                showProgress: false
             }}
         >
             <Trash />

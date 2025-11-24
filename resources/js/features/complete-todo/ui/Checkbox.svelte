@@ -34,12 +34,12 @@
             }),
             { error: "Failed to complete todo. Try again later." }
         ),
+        href: complete(todo.id),
         only: ["todos"],
+        preserveUrl: true,
         preserveState: true,
         preserveScroll: true,
         replace: true,
-        href: complete(todo.id),
-        preserveUrl: true,
         showProgress: false
     }}
     type="button"
