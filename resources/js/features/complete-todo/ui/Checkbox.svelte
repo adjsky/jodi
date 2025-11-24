@@ -45,12 +45,10 @@
     type="button"
     disabled={loading}
     class={tw(
-        "flex size-4.5 shrink-0 items-center justify-center rounded-full border border-cream-950 data-completed:bg-cream-950 data-completed:text-cream-50",
+        "group flex size-4.5 shrink-0 items-center justify-center rounded-full border border-cream-950 data-completed:bg-cream-950 data-completed:text-cream-50",
         props.class
     )}
     data-completed={boolAttr(todo.completedAt)}
 >
-    {#if todo.completedAt}
-        <Check class="text-sm" />
-    {/if}
+    <Check class="text-sm group-not-data-completed:hidden" />
 </button>
