@@ -23,6 +23,13 @@
     "todos": {
         "title": "Todos",
         "ungrouped": "No group",
+        "tooltips": {
+            "delete": "Delete",
+            "repeat": "Repeat",
+            "color": "Color",
+            "notification": "Notification",
+            "more": "More"
+        },
         "errors": {
             "complete": "Failed to complete todo. Try again later.",
             "edit": "Failed to update todo. Try again later.",

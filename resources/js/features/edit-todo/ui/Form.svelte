@@ -18,6 +18,9 @@
     import { getLocale } from "$/paraglide/runtime";
     import { optimistic } from "$/shared/inertia/visit/optimistic";
     import SaveOrClose from "$/shared/ui/SaveOrClose.svelte";
+    import { fromAction } from "svelte/attachments";
+
+    import Action from "./Action.svelte";
 
     import type { VisitOptions } from "@inertiajs/core";
 
@@ -90,11 +93,9 @@
         <Todo.Description name="description" value={todo.description} />
     </Form>
 
-    <div
-        class="flex flex-grow items-end justify-between *:p-3 *:text-lg *:disabled:not-data-loading:text-cream-400"
-    >
-        <button
-            use:inertia={{
+    <div class="flex flex-grow items-end justify-between">
+        <Action
+            {@attach fromAction(inertia, () => ({
                 ...baseVisitOptions,
                 ...optimistic(
                     (prev) => ({
@@ -106,13 +107,18 @@
                 ),
                 href: destroy(todo.id),
                 showProgress: false
-            }}
+            }))}
+            tooltip={m["todos.tooltips.delete"]()}
         >
             <Trash />
-        </button>
-        <button disabled><RotateCw /></button>
-        <button><Circle /></button>
-        <button disabled><Bell /></button>
-        <button><Ellipsis /></button>
+        </Action>
+        <Action disabled tooltip={m["todos.tooltips.repeat"]()}>
+            <RotateCw />
+        </Action>
+        <Action tooltip={m["todos.tooltips.color"]()}><Circle /></Action>
+        <Action disabled tooltip={m["todos.tooltips.notification"]()}>
+            <Bell />
+        </Action>
+        <Action tooltip={m["todos.tooltips.more"]()}><Ellipsis /></Action>
     </div>
 </div>
