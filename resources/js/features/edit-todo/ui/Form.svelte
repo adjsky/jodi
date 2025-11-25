@@ -14,6 +14,7 @@
         destroy,
         update
     } from "$/generated/actions/App/Http/Controllers/TodoController";
+    import { m } from "$/paraglide/messages";
     import { getLocale } from "$/paraglide/runtime";
     import { optimistic } from "$/shared/inertia/visit/optimistic";
     import SaveOrClose from "$/shared/ui/SaveOrClose.svelte";
@@ -49,7 +50,7 @@
                 )
             }),
             {
-                error: "Failed to update todo. Try again later.",
+                error: m["todos.errors.edit"](),
                 preserveUrl: "without-hash"
             }
         )}
@@ -101,7 +102,7 @@
                             (t: App.Data.TodoDto) => t.id == todo.id
                         )
                     }),
-                    { error: "Failed to delete todo. Try again later." }
+                    { error: m["todos.errors.delete"]() }
                 ),
                 href: destroy(todo.id),
                 showProgress: false

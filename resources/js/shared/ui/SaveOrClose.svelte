@@ -1,5 +1,6 @@
 <script lang="ts">
     import { X } from "@lucide/svelte";
+    import { m } from "$/paraglide/messages";
 
     import { tw } from "../lib/styles";
 
@@ -32,6 +33,6 @@
         {...rest}
         class={tw("leading-[1.5rem] font-bold text-brand", rest.class)}
     >
-        Сохранить
+        {m["common.save"]()}
     </button>
 {/if}

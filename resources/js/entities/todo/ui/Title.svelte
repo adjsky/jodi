@@ -1,4 +1,5 @@
 <script lang="ts">
+    import { m } from "$/paraglide/messages";
     import { tw } from "$/shared/lib/styles";
 
     import type { WithClassName } from "$/shared/lib/styles";
@@ -13,5 +14,5 @@
         "form-input w-full border-none bg-transparent p-0 text-xl font-bold text-cream-950 placeholder:text-cream-600 focus:ring-0",
         props.class
     )}
-    placeholder="Задача"
+    placeholder={m["todos.placeholders.title"]()}
 />

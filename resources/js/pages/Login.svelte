@@ -43,7 +43,7 @@
                 class="flex items-center gap-3 text-sm font-semibold text-cream-400"
             >
                 <div class="h-px w-full rounded-[1px] bg-current"></div>
-                {m["or"]()}
+                {m["common.or"]()}
                 <div class="h-px w-full rounded-[1px] bg-current"></div>
             </div>
             <Button variant="secondary" type="button">

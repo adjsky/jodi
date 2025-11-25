@@ -7,7 +7,7 @@ export function useHandleRouterException() {
     $effect(() =>
         router.on("exception", (e) => {
             e.preventDefault();
-            toaster.error({ title: m["router-exception"]() });
+            toaster.error({ title: m["common.router-exception"]() });
         })
     );
 }

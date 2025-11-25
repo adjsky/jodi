@@ -1,8 +1,11 @@
 {
     "$schema": "https://inlang.com/schema/inlang-message-format",
-    "or": "Or",
-    "too-many-requests": "Too many requests. Try again later.",
-    "router-exception": "Unexpected error happened. Try again later.",
+    "common": {
+        "or": "Or",
+        "too-many-requests": "Too many requests. Try again later.",
+        "router-exception": "Unexpected error happened. Try again later.",
+        "save": "Save"
+    },
     "login": {
         "title": "Log In",
         "email-placeholder": "Enter your email",
@@ -19,6 +22,15 @@
     },
     "todos": {
         "title": "Todos",
-        "ungrouped": "No group"
+        "ungrouped": "No group",
+        "errors": {
+            "complete": "Failed to complete todo. Try again later.",
+            "edit": "Failed to update todo. Try again later.",
+            "delete": "Failed to delete todo. Try again later."
+        },
+        "placeholders": {
+            "title": "Task",
+            "description": "Add a few extra notes here..."
+        }
     }
 }

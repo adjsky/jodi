@@ -2,6 +2,7 @@
     import { inertia } from "@inertiajs/svelte";
     import { Check } from "@lucide/svelte";
     import { complete } from "$/generated/actions/App/Http/Controllers/TodoController";
+    import { m } from "$/paraglide/messages";
     import { optimistic } from "$/shared/inertia/visit/optimistic";
     import { tw } from "$/shared/lib/styles";
     import { boolAttr } from "runed";
@@ -32,7 +33,7 @@
                         : t
                 )
             }),
-            { error: "Failed to complete todo. Try again later." }
+            { error: m["todos.errors.complete"]() }
         ),
         href: complete(todo.id),
         only: ["todos"],

@@ -25,7 +25,7 @@ export function useActionRateLimit(action: RouteDefinition<["post"]>) {
             secondsLeft = Number(response.headers["retry-after"]);
             running = true;
 
-            toaster.error({ title: m["too-many-requests"]() });
+            toaster.error({ title: m["common.too-many-requests"]() });
         })
     );
 
