@@ -1,7 +1,11 @@
 {
+    "$schema": "https://www.schemastore.org/prettierrc.json",
+
     "singleQuote": false,
     "trailingComma": "none",
     "htmlWhitespaceSensitivity": "ignore",
+    "printWidth": 80,
+    "tabWidth": 4,
 
     "plugins": [
         "@ianvs/prettier-plugin-sort-imports",
@@ -24,5 +28,13 @@
     "tailwindFunctions": ["tw"],
     "tailwindStylesheet": "resources/css/app.css",
 
-    "overrides": [{ "files": "*.svelte", "options": { "parser": "svelte" } }]
+    "overrides": [
+        { "files": "*.svelte", "options": { "parser": "svelte" } },
+        {
+            "files": "**/*.{yml,yaml}",
+            "options": {
+                "tabWidth": 2
+            }
+        }
+    ]
 }
