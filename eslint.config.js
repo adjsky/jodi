@@ -2,7 +2,6 @@ import { fileURLToPath } from "node:url";
 
 import { includeIgnoreFile } from "@eslint/compat";
 import js from "@eslint/js";
-import prettier from "eslint-config-prettier/flat";
 import svelte from "eslint-plugin-svelte";
 import { defineConfig } from "eslint/config";
 import globals from "globals";
@@ -74,8 +73,5 @@ export default defineConfig(
     {
         files: ["**/*.js"],
         extends: [ts.configs.disableTypeChecked]
-    },
-    // Turn off all rules that might conflict with Prettier
-    ...svelte.configs.prettier,
-    prettier
+    }
 );

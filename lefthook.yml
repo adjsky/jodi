@@ -7,6 +7,9 @@ pre-commit:
     - run: "npm run lint {staged_files} -- --fix"
       glob: "*.{js,ts,svelte}"
       stage_fixed: true
+    - run: "npm run format {staged_files} -- --write"
+      glob: "*.{js,ts,svelte}"
+      stage_fixed: true
 pre-push:
   parallel: true
   jobs:

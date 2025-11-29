@@ -6,6 +6,7 @@
         "build": "vite build",
         "dev": "vite",
         "lint": "eslint",
+        "format": "prettier",
         "check": "svelte-check",
         "postinstall": "patch-package"
     },
@@ -27,7 +28,6 @@
         "concurrently": "^9.0.1",
         "dayjs": "^1.11.19",
         "eslint": "^9.22.0",
-        "eslint-config-prettier": "^10.0.1",
         "eslint-plugin-svelte": "^3.0.0",
         "globals": "^16.0.0",
         "laravel-vite-plugin": "^2.0.1",
