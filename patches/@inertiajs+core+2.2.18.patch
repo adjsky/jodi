@@ -1,5 +1,5 @@
 diff --git a/node_modules/@inertiajs/core/dist/index.esm.js b/node_modules/@inertiajs/core/dist/index.esm.js
-index 3fa968f..a995eb7 100644
+index 3fa968f..f29398c 100644
 --- a/node_modules/@inertiajs/core/dist/index.esm.js
 +++ b/node_modules/@inertiajs/core/dist/index.esm.js
 @@ -512,7 +512,6 @@ var CurrentPage = class {
@@ -62,6 +62,15 @@ index 3fa968f..a995eb7 100644
        onError: options.onError || (() => {
        }),
        onPrefetched: options.onPrefetched || (() => {
+@@ -2360,7 +2371,7 @@ var Router = class {
+   loadDeferredProps(deferred) {
+     if (deferred) {
+       Object.entries(deferred).forEach(([_, group]) => {
+-        this.reload({ only: group });
++        this.reload({ only: group, replace: true });
+       });
+     }
+   }
 diff --git a/node_modules/@inertiajs/core/types/types.d.ts b/node_modules/@inertiajs/core/types/types.d.ts
 index 3fb2f61..4761be2 100644
 --- a/node_modules/@inertiajs/core/types/types.d.ts

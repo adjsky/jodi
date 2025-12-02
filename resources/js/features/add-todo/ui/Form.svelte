@@ -24,7 +24,7 @@
 >
     <input name="todo_date" value={day.format("YYYY-MM-DD")} hidden />
     <div class="flex items-center justify-between text-ms">
-        <h4 class="flex items-center gap-1.5 font-bold text-cream-800">
+        <h4 class="flex items-center gap-1.5 text-lg font-bold text-cream-800">
             <CalendarFold />
             {new Intl.DateTimeFormat(day.locale(), {
                 day: "2-digit",

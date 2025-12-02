@@ -22,16 +22,16 @@
         {...rest}
         type="button"
         class={tw(
-            "flex size-6 items-center justify-center rounded-full bg-cream-100",
+            "flex size-7 items-center justify-center rounded-full bg-cream-100",
             rest.class
         )}
     >
-        <X class="text-lg text-cream-700" />
+        <X class="text-xl text-cream-700" />
     </button>
 {:else}
     <button
         {...rest}
-        class={tw("leading-[1.5rem] font-bold text-brand", rest.class)}
+        class={tw("text-lg leading-[1.5rem] font-bold text-brand", rest.class)}
     >
         {m["common.save"]()}
     </button>

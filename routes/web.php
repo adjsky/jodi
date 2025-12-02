@@ -3,6 +3,7 @@
 declare(strict_types=1);
 
 use App\Domain\Auth\Notifications;
+use App\Http\Controllers\CurrentUserController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\LoginController;
 use App\Http\Controllers\TodoController;
@@ -37,6 +38,12 @@ Route::middleware('auth')->group(function () {
             Route::patch('/{todo}', 'update');
             Route::delete('/{todo}', 'destroy');
             Route::post('/{todo}/complete', 'complete');
+        });
+
+    Route::prefix('/me')
+        ->controller(CurrentUserController::class)
+        ->group(function () {
+            Route::get('/', 'show');
         });
 });
 

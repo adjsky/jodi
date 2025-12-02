@@ -16,10 +16,10 @@
 </script>
 
 <div class="border-b border-cream-300 p-3 pb-5">
-    <div class="flex h-10 items-stretch">
+    <div class="flex h-12 items-stretch">
         <button
             onclick={() => (day = week.previous())}
-            class="flex w-7 shrink-0 items-center justify-center text-xl text-cream-700"
+            class="flex w-7 shrink-0 items-center justify-center text-2xl text-cream-700"
         >
             <ChevronLeft />
         </button>
@@ -30,11 +30,14 @@
                     class="group flex flex-col items-center justify-between"
                     data-selected={boolAttr(day.isSame(d, "date"))}
                 >
-                    <span class="text-2xs text-cream-500" data-part="day-name">
-                        {d.format("dd").charAt(0).toLocaleUpperCase(d.locale())}
+                    <span
+                        class="text-xs font-semibold text-cream-500"
+                        data-part="day-name"
+                    >
+                        {d.format("dd")}
                     </span>
                     <span
-                        class="relative text-sm text-cream-800 group-data-selected:text-cream-950"
+                        class="relative font-semibold text-cream-800 group-data-selected:text-lg group-data-selected:text-white"
                         data-part="day-number"
                     >
                         {d.date()}
@@ -44,7 +47,7 @@
         </div>
         <button
             onclick={() => (day = week.next())}
-            class="flex w-7 shrink-0 items-center justify-center text-xl text-cream-700"
+            class="flex w-7 shrink-0 items-center justify-center text-2xl text-cream-700"
         >
             <ChevronRight />
         </button>
@@ -60,8 +63,8 @@
         left: 50%;
         transform: translate(-50%, -50%);
 
-        width: 2rem;
-        height: 2rem;
+        width: 2.25rem;
+        height: 2.25rem;
 
         background: var(--color-brand);
         border-radius: 50%;

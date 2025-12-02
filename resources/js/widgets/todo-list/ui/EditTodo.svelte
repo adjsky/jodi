@@ -4,7 +4,7 @@
     import { raise } from "$/shared/lib/raise";
     import { watch } from "runed";
 
-    import Sheet from "./Sheet.svelte";
+    import TodoSheet from "./TodoSheet.svelte";
 
     type Props = {
         todo: App.Data.TodoDto | null;
@@ -40,11 +40,11 @@
     );
 </script>
 
-<Sheet bind:open={modal.open}>
+<TodoSheet bind:open={modal.open}>
     {#snippet content()}
         <Form
             onClose={() => (modal.open = false)}
             todo={todo ?? raise("todo must be present")}
         />
     {/snippet}
-</Sheet>
+</TodoSheet>

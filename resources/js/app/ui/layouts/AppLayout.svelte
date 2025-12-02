@@ -3,19 +3,15 @@
     import { toaster } from "$/shared/lib/toast";
     import Toaster from "$/shared/ui/Toaster.svelte";
 
-    import type { Snippet } from "svelte";
+    import type { SvelteHTMLElements } from "svelte/elements";
 
-    type Props = {
-        children: Snippet;
-    };
-
-    const { children }: Props = $props();
+    const { children, ...props }: SvelteHTMLElements["main"] = $props();
 
     useHandleRouterException();
 </script>
 
 <Toaster {toaster} />
 
-<main>
-    {@render children()}
+<main {...props}>
+    {@render children?.()}
 </main>

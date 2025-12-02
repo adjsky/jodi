@@ -1,11 +1,20 @@
 <script lang="ts">
-    type Props = {
-        name: string;
-    };
+    import { tw } from "$/shared/lib/styles";
 
-    const { name }: Props = $props();
+    import type { WithClassName } from "$/shared/lib/styles";
+    import type { SvelteHTMLElements } from "svelte/elements";
+
+    type Props = WithClassName<SvelteHTMLElements["div"], { name: string }>;
+
+    const { name, ...props }: Props = $props();
 </script>
 
-<button class="size-8 rounded-full bg-[#C2F4E9] outline outline-cream-950">
+<div
+    {...props}
+    class={tw(
+        "flex size-9 items-center justify-center rounded-full bg-brand text-lg font-semibold text-white outline outline-cream-950",
+        props.class
+    )}
+>
     {name[0].toLocaleUpperCase()}
-</button>
+</div>

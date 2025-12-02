@@ -1,5 +1,5 @@
 <script lang="ts">
-    import { page } from "@inertiajs/svelte";
+    import { Link, page } from "@inertiajs/svelte";
     import { Calendar } from "@lucide/svelte";
     import { User } from "$/entities/user";
     import { WeekCarousel } from "$/features/filter-by-date";
@@ -12,20 +12,20 @@
     const day = $derived(dayjs(searchParams["d"]).locale(getLocale()));
 </script>
 
-<header class="flex h-12.5 items-center justify-between px-5">
-    <button><Calendar class="text-2xl" /></button>
+<header class="flex items-center justify-between pr-6 pl-3">
+    <button class="p-2.5"><Calendar class="text-3xl" /></button>
     <div class="absolute left-1/2 -translate-x-1/2">
-        <h1 class="text-center text-lg font-bold">
+        <h1 class="text-center text-xl font-bold">
             {capitalize(day.format("dddd"))}
         </h1>
-        <h2 class="text-center text-xs text-cream-600">
+        <h2 class="text-center text-sm text-cream-600">
             {new Intl.DateTimeFormat(day.locale(), {
                 year: "numeric",
                 month: "long"
             }).format(day.toDate())}
         </h2>
     </div>
-    <User.Avatar name={$page.props.auth.user.name} />
+    <Link href="/me"><User.Avatar name={$page.props.auth.user.name} /></Link>
 </header>
 
 <WeekCarousel

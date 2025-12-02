@@ -47,13 +47,13 @@
 
 <section {...rest} class={tw("px-4", rest.class)}>
     <div class="flex items-center justify-between">
-        <div class="flex items-center gap-1">
-            <Check class="text-2xl" />
-            <h3 class="font-semibold">{m["todos.title"]()}</h3>
+        <div class="flex items-center gap-1.5">
+            <Check class="text-3xl" />
+            <h3 class="text-lg font-bold">{m["todos.title"]()}</h3>
         </div>
         <AddTodo {loading} />
     </div>
-    <div class="mt-3 space-y-4">
+    <div class="mt-3 space-y-4.5">
         {#each Object.entries(groups) as [group, todos], idx (idx)}
             {#if Object.keys(groups).length == 1 && group == m["todos.ungrouped"]()}
                 {@render list(todos)}
@@ -62,14 +62,14 @@
                     (todo) => todo.completedAt != null
                 ).length}
                 <div class="flex items-center justify-between not-first:mt-5">
-                    <div class="text-sm font-medium">
+                    <div class="font-medium">
                         <span class="text-cream-500">
                             {completed}/{todos.length}
                         </span>
                         <span class="text-cream-500">•</span>
                         <span>{group}</span>
                     </div>
-                    <button><ChevronDown class="text-xl" /></button>
+                    <button><ChevronDown class="text-2xl" /></button>
                 </div>
                 {@render list(todos)}
             {/if}
@@ -92,7 +92,7 @@
             {#snippet edit()}
                 <button
                     disabled={loading}
-                    class="relative table w-full table-fixed text-start text-ms font-medium outline-none"
+                    class="relative table w-full table-fixed text-start text-lg font-medium outline-none"
                     data-part="edit"
                     onclick={() => {
                         editingTodoId = todo.id;
@@ -118,7 +118,7 @@
             {/snippet}
             {#snippet grip()}
                 <button disabled={loading} aria-label="lorem" class="shrink-0">
-                    <GripVertical class="text-xl text-cream-400" />
+                    <GripVertical class="text-2xl text-cream-400" />
                 </button>
             {/snippet}
         </Todo.Row>

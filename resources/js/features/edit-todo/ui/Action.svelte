@@ -20,7 +20,7 @@
     <Tooltip.Trigger
         {...props}
         class={tw(
-            "p-3 text-lg disabled:not-data-loading:text-cream-400",
+            "p-3.5 text-xl disabled:not-data-loading:text-cream-400",
             props.class
         )}
     >
@@ -29,7 +29,7 @@
     <Tooltip.Positioner>
         <Tooltip.Content
             class={[
-                "rounded-sm bg-cream-950 px-1.5 text-sm leading-normal font-medium text-cream-50",
+                "rounded-sm bg-cream-950 px-1.5 leading-normal font-medium text-cream-50",
                 "data-[state=closed]:animate-out data-[state=closed]:fade-out",
                 "data-[state=open]:animate-in data-[state=open]:fade-in"
             ]}

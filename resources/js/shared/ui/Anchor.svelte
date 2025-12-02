@@ -1,4 +1,5 @@
 <script lang="ts">
+    import { Link } from "@inertiajs/svelte";
     import { tw } from "$/shared/lib/styles";
 
     import type { WithClassName } from "$/shared/lib/styles";
@@ -8,13 +9,14 @@
         HTMLAnchorAttributes,
         {
             variant?: "main" | "secondary";
+            href: string;
         }
     >;
 
     const { children, variant = "main", ...rest }: Props = $props();
 </script>
 
-<a
+<Link
     {...rest}
     class={tw(
         "flex h-15 w-full items-center justify-center rounded-xl font-semibold",
@@ -24,4 +26,4 @@
     )}
 >
     {@render children?.()}
-</a>
+</Link>

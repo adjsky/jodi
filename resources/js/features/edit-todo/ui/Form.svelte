@@ -63,7 +63,9 @@
         let:isDirty
     >
         <div class="flex items-center justify-between text-ms">
-            <h4 class="flex items-center gap-1.5 font-bold text-cream-800">
+            <h4
+                class="flex items-center gap-1.5 text-lg font-bold text-cream-800"
+            >
                 <CalendarFold />
                 {new Intl.DateTimeFormat(getLocale(), {
                     day: "2-digit",
@@ -87,7 +89,7 @@
                 todo.completedAt && "opacity-40"
             ]}
         >
-            <Checkbox {todo} class="size-5" />
+            <Checkbox {todo} class="size-6 text-lg" />
             <Todo.Title name="title" value={todo.title} required />
         </div>
         <Todo.Description name="description" value={todo.description} />
@@ -100,7 +102,7 @@
                 ...optimistic(
                     (prev) => ({
                         todos: prev.todos.filter(
-                            (t: App.Data.TodoDto) => t.id == todo.id
+                            (t: App.Data.TodoDto) => t.id != todo.id
                         )
                     }),
                     { error: m["todos.errors.delete"]() }
