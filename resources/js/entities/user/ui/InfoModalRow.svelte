@@ -20,7 +20,7 @@
 <button
     {...props}
     class={tw(
-        "flex w-full justify-between border-cream-300 py-3 text-lg font-medium not-last:border-b",
+        "flex w-full justify-between border-cream-300 py-3.5 text-lg font-medium not-last:border-b",
         props.class
     )}
 >

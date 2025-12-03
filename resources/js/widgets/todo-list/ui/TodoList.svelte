@@ -3,6 +3,7 @@
     import { Todo } from "$/entities/todo";
     import Checkbox from "$/features/complete-todo/ui/Checkbox.svelte";
     import { m } from "$/paraglide/messages";
+    import PencilNote from "$/shared/assets/pencil-note.svg";
     import { tw } from "$/shared/lib/styles";
     import Skeleton from "$/shared/ui/Skeleton.svelte";
     import { groupBy } from "remeda";
@@ -53,28 +54,46 @@
         </div>
         <AddTodo {loading} />
     </div>
-    <div class="mt-3 space-y-4.5">
-        {#each Object.entries(groups) as [group, todos], idx (idx)}
-            {#if Object.keys(groups).length == 1 && group == m["todos.ungrouped"]()}
-                {@render list(todos)}
-            {:else}
-                {@const completed = todos.filter(
-                    (todo) => todo.completedAt != null
-                ).length}
-                <div class="flex items-center justify-between not-first:mt-5">
-                    <div class="font-medium">
-                        <span class="text-cream-500">
-                            {completed}/{todos.length}
-                        </span>
-                        <span class="text-cream-500">•</span>
-                        <span>{group}</span>
+
+    {#if todos?.length == 0}
+        <img
+            src={PencilNote}
+            width={217}
+            height={256}
+            alt=""
+            loading="lazy"
+            decoding="async"
+            class="mx-auto mt-24 max-w-30"
+        />
+        <p class="mx-auto mt-8 max-w-3/4 text-center text-lg font-medium">
+            {m["todos.no-todos"]()}
+        </p>
+    {:else}
+        <div class="mt-3 space-y-4.5">
+            {#each Object.entries(groups) as [group, todos], idx (idx)}
+                {#if Object.keys(groups).length == 1 && group == m["todos.ungrouped"]()}
+                    {@render list(todos)}
+                {:else}
+                    {@const completed = todos.filter(
+                        (todo) => todo.completedAt != null
+                    ).length}
+                    <div
+                        class="flex items-center justify-between not-first:mt-5"
+                    >
+                        <div class="font-medium">
+                            <span class="text-cream-500">
+                                {completed}/{todos.length}
+                            </span>
+                            <span class="text-cream-500">•</span>
+                            <span>{group}</span>
+                        </div>
+                        <button><ChevronDown class="text-2xl" /></button>
                     </div>
-                    <button><ChevronDown class="text-2xl" /></button>
-                </div>
-                {@render list(todos)}
-            {/if}
-        {/each}
-    </div>
+                    {@render list(todos)}
+                {/if}
+            {/each}
+        </div>
+    {/if}
 
     <EditTodo
         {loading}

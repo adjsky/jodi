@@ -14,7 +14,7 @@
 <Toaster {toaster}>
     {#snippet children(toast)}
         <Toast.Root
-            class="flex w-full max-w-89 items-center gap-2 rounded-lt bg-cream-800 px-2.5 py-2"
+            class="flex w-full items-center gap-2 rounded-lt bg-cream-800 px-2.5 py-2"
         >
             <div class="shrink-0 text-3xl">
                 {#if toast().type == "info"}
@@ -25,7 +25,7 @@
                     <CircleCheck class="text-green" />
                 {/if}
             </div>
-            <Toast.Title class="text-sm font-semibold text-white">
+            <Toast.Title class="font-semibold text-white">
                 {toast().title}
             </Toast.Title>
         </Toast.Root>

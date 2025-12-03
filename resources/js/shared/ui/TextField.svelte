@@ -25,7 +25,7 @@
 <Field.Root invalid={Boolean(error)} {required} {disabled} readOnly={readonly}>
     <div
         class={tw(
-            "relative flex h-15 items-center gap-2 rounded-xl border-1 border-cream-950 bg-white",
+            "relative flex h-15.5 items-center gap-2 rounded-xl border-1 border-cream-950 bg-white",
             error && "border-red"
         )}
     >
@@ -39,7 +39,7 @@
         <Field.Input
             {...props}
             class={tw(
-                "form-input size-full border-none bg-transparent px-4 font-medium text-cream-950 placeholder:text-cream-600 focus:ring-0",
+                "form-input size-full border-none bg-transparent px-4 text-md font-semibold text-cream-950 placeholder:text-cream-600 focus:ring-0",
                 indicator && "ps-12",
                 props.class
             )}

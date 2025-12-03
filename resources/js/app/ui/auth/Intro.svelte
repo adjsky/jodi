@@ -19,7 +19,7 @@
         <img src={Logo} width={120} height={55} alt="" />
         {@render icon()}
     </div>
-    <h1 class="text-center text-2xl font-bold">{title}</h1>
+    <h1 class="text-center text-3xl font-bold">{title}</h1>
     {#if description}
         <p>{description}</p>
     {/if}

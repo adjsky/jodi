@@ -1,5 +1,5 @@
 <script lang="ts">
-    import { Link, page } from "@inertiajs/svelte";
+    import { Link } from "@inertiajs/svelte";
     import { Calendar } from "@lucide/svelte";
     import { User } from "$/entities/user";
     import { WeekCarousel } from "$/features/filter-by-date";
@@ -7,6 +7,12 @@
     import { useSearchParams } from "$/shared/inertia/use-search-params.svelte";
     import dayjs from "dayjs";
     import { capitalize } from "remeda";
+
+    import type { AppPageProps } from "$/globals";
+
+    type Props = { user: AppPageProps["auth"]["user"] };
+
+    const { user }: Props = $props();
 
     const searchParams = useSearchParams({ showProgress: true });
     const day = $derived(dayjs(searchParams["d"]).locale(getLocale()));
@@ -25,7 +31,7 @@
             }).format(day.toDate())}
         </h2>
     </div>
-    <Link href="/me"><User.Avatar name={$page.props.auth.user.name} /></Link>
+    <Link href="/me"><User.Avatar name={user.name} /></Link>
 </header>
 
 <WeekCarousel

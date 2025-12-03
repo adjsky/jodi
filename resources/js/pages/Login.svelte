@@ -21,7 +21,7 @@
     <Form
         {...toastify()}
         action={login()}
-        class="mt-23 space-y-4"
+        class="mt-13 space-y-4"
         let:processing
         let:errors
     >
@@ -40,7 +40,7 @@
                 {m["login.submit"]()}
             </Button>
             <div
-                class="flex items-center gap-3 text-sm font-medium text-cream-400"
+                class="flex items-center gap-3 text-sm font-semibold text-cream-400"
             >
                 <div class="h-px w-full rounded-[1px] bg-current"></div>
                 {m["common.or"]()}

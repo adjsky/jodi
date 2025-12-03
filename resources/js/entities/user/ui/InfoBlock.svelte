@@ -12,7 +12,7 @@
     {#if title}
         <h2 class="text-lg font-bold">{title}</h2>
     {/if}
-    <div class="mt-3 rounded-xl border border-cream-950 bg-white px-3">
+    <div class="mt-3 rounded-xl border border-cream-950 bg-white px-4">
         {@render children?.()}
     </div>
 </section>

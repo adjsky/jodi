@@ -29,7 +29,7 @@
     <Form
         {...toastify()}
         action={consume()}
-        class="mt-23 space-y-3.5"
+        class="mt-13 space-y-3.5"
         onError={(error) => {
             if (error.password) {
                 toaster.error({ title: error.password });

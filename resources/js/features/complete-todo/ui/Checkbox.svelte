@@ -1,8 +1,8 @@
 <script lang="ts">
-    import { inertia } from "@inertiajs/svelte";
     import { Check } from "@lucide/svelte";
     import { complete } from "$/generated/actions/App/Http/Controllers/TodoController";
     import { m } from "$/paraglide/messages";
+    import { link } from "$/shared/inertia/link";
     import { optimistic } from "$/shared/inertia/visit/optimistic";
     import { tw } from "$/shared/lib/styles";
     import { boolAttr } from "runed";
@@ -19,7 +19,7 @@
 </script>
 
 <button
-    use:inertia={{
+    {@attach link(() => ({
         ...optimistic(
             (prev) => ({
                 todos: prev.todos.map((t: App.Data.TodoDto) =>
@@ -42,7 +42,7 @@
         preserveScroll: true,
         replace: true,
         showProgress: false
-    }}
+    }))}
     type="button"
     disabled={loading}
     class={tw(

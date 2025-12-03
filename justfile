@@ -16,4 +16,4 @@ dev-vite:
     npm run dev
 
 preview:
-    npm run build && frankenphp php-server -r public/ --listen=localhost:8000
+    npm run build && APP_URL=https://localhost:8000 frankenphp run

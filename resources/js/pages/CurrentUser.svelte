@@ -1,21 +1,19 @@
 <script lang="ts">
-    import { inertia, page } from "@inertiajs/svelte";
+    import { page } from "@inertiajs/svelte";
     import { Bell, ChevronLeft } from "@lucide/svelte";
     import AppLayout from "$/app/ui/layouts/AppLayout.svelte";
     import { User } from "$/entities/user";
+    import { logout } from "$/generated/actions/App/Http/Controllers/LoginController";
     import { m } from "$/paraglide/messages";
+    import { link } from "$/shared/inertia/link";
+    import { UserConfiguration } from "$/widgets/current-user";
 
     const user = $derived($page.props.auth.user);
 </script>
 
 <AppLayout class="min-h-svh px-4 pt-3 pb-8">
-    <header class="flex items-center justify-between">
-        <button
-            use:inertia={{
-                href: "/"
-            }}
-            class="p-2"
-        >
+    <header class="mb-13 flex items-center justify-between">
+        <button {@attach link(() => ({ href: "/" }))} class="p-2">
             <ChevronLeft class="text-4xl" />
         </button>
         <div
@@ -26,45 +24,15 @@
                 {user.name}
             </h1>
         </div>
-        <button class="p-2.5"><Bell class="text-3xl" /></button>
+        <button class="p-2.5 disabled:text-cream-400" disabled>
+            <Bell class="text-3xl " />
+        </button>
     </header>
 
-    <User.Info.Block title={m["current-user.account.title"]()} class="mt-13">
-        <User.Info.ModalRow title={m["current-user.account.name"]()}>
-            {user.name}
-        </User.Info.ModalRow>
-        <User.Info.ModalRow title={m["current-user.account.email"]()}>
-            {user.email}
-        </User.Info.ModalRow>
-        <User.Info.ModalRow title={m["current-user.account.friends"]()}>
-            0
-        </User.Info.ModalRow>
-        <User.Info.ModalRow title={m["current-user.account.invitations"]()}>
-            0
-        </User.Info.ModalRow>
-    </User.Info.Block>
-
-    <User.Info.Block
-        title={m["current-user.app-settings.title"]()}
-        class="mt-10"
-    >
-        <User.Info.ModalRow title={m["current-user.app-settings.language"]()}>
-            English
-        </User.Info.ModalRow>
-        <User.Info.ModalRow
-            title={m["current-user.app-settings.week-start-on"]()}
-        >
-            Monday
-        </User.Info.ModalRow>
-        <User.Info.ModalRow
-            title={m["current-user.app-settings.notifications"]()}
-        >
-            All
-        </User.Info.ModalRow>
-    </User.Info.Block>
+    <UserConfiguration {user} />
 
     <User.Info.Block class="mt-10">
-        <User.Info.ActionRow>
+        <User.Info.ActionRow {@attach link(() => ({ href: logout() }))}>
             {m["current-user.actions.log-out"]()}
         </User.Info.ActionRow>
         <User.Info.ActionRow class="text-red">
