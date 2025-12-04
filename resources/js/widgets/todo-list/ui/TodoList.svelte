@@ -4,6 +4,7 @@
     import Checkbox from "$/features/complete-todo/ui/Checkbox.svelte";
     import { m } from "$/paraglide/messages";
     import PencilNote from "$/shared/assets/pencil-note.svg";
+    import { HistoryView } from "$/shared/inertia/history-view.svelte";
     import { tw } from "$/shared/lib/styles";
     import Skeleton from "$/shared/ui/Skeleton.svelte";
     import { groupBy } from "remeda";
@@ -42,8 +43,7 @@
         );
     });
 
-    let editingTodoId = $state<number | null>(null);
-    let editModalOpen = $state(false);
+    const editView = new HistoryView<App.Data.TodoDto>("edit-todo");
 </script>
 
 <section {...rest} class={tw("px-4", rest.class)}>
@@ -95,11 +95,7 @@
         </div>
     {/if}
 
-    <EditTodo
-        {loading}
-        bind:open={editModalOpen}
-        todo={todos?.find(({ id }) => editingTodoId == id) ?? null}
-    />
+    <EditTodo todo={editView.meta} onclose={() => editView.close()} />
 </section>
 
 {#snippet list(todos: App.Data.TodoDto[])}
@@ -114,8 +110,7 @@
                     class="relative table w-full table-fixed text-start text-lg font-medium outline-none"
                     data-part="edit"
                     onclick={() => {
-                        editingTodoId = todo.id;
-                        editModalOpen = true;
+                        editView.open(todo);
                     }}
                 >
                     {#if loading}

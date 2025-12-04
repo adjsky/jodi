@@ -1,7 +1,7 @@
 <script lang="ts">
     import { Plus } from "@lucide/svelte";
     import { Form } from "$/features/add-todo";
-    import { useHistoryModal } from "$/shared/inertia/use-history-modal.svelte";
+    import { HistoryView } from "$/shared/inertia/history-view.svelte";
 
     import TodoSheet from "./TodoSheet.svelte";
 
@@ -11,10 +11,21 @@
 
     const { loading }: Props = $props();
 
-    const modal = useHistoryModal("add-todo");
+    const view = new HistoryView("add-todo");
 </script>
 
-<TodoSheet bind:open={modal.open}>
+<TodoSheet
+    bind:open={
+        () => view.isOpen(),
+        (v) => {
+            if (v) {
+                view.open();
+            } else {
+                view.close();
+            }
+        }
+    }
+>
     {#snippet trigger()}
         <button
             disabled={loading}
