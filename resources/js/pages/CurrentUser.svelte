@@ -1,11 +1,12 @@
 <script lang="ts">
     import { page } from "@inertiajs/svelte";
-    import { Bell, ChevronLeft } from "@lucide/svelte";
+    import { Bell } from "@lucide/svelte";
     import AppLayout from "$/app/ui/layouts/AppLayout.svelte";
     import { User } from "$/entities/user";
     import { logout } from "$/generated/actions/App/Http/Controllers/LoginController";
     import { m } from "$/paraglide/messages";
     import { link } from "$/shared/inertia/link";
+    import BackButton from "$/shared/ui/BackButton.svelte";
     import { UserConfiguration } from "$/widgets/current-user";
 
     const user = $derived($page.props.auth.user);
@@ -13,9 +14,7 @@
 
 <AppLayout class="min-h-svh px-4 pt-3 pb-8">
     <header class="mb-13 flex items-center justify-between">
-        <button {@attach link(() => ({ href: "/" }))} class="p-2">
-            <ChevronLeft class="text-4xl" />
-        </button>
+        <BackButton {@attach link(() => ({ href: "/" }))} />
         <div
             class="absolute top-4 left-1/2 flex -translate-x-1/2 flex-col items-center gap-1.5"
         >

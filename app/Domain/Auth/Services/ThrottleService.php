@@ -28,7 +28,7 @@ class ThrottleService
         $resetAt = Carbon::now()->addSeconds($retryAfter)->getTimestamp();
 
         throw new ThrottleRequestsException(
-            'Too many attempts',
+            __('Too many attempts.'),
             headers: ['retry-after' => $retryAfter, 'x-ratelimit-reset' => $resetAt]
         );
     }

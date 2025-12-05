@@ -29,8 +29,8 @@
             <PinInput.Input
                 {index}
                 class={tw(
-                    "form-input h-15 rounded-xl border border-cream-950 bg-white text-center text-xl placeholder:text-cream-600 focus:border-brand focus:ring-brand",
-                    error && "border-red"
+                    "form-input h-15 rounded-xl border-none bg-white text-center text-xl outline outline-cream-950 placeholder:text-cream-600 focus:ring-0 focus:outline-2 focus:outline-brand",
+                    error && "outline-red"
                 )}
             />
         {/each}

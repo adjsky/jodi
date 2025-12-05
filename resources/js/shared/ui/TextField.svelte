@@ -25,8 +25,8 @@
 <Field.Root invalid={Boolean(error)} {required} {disabled} readOnly={readonly}>
     <div
         class={tw(
-            "relative flex h-15.5 items-center gap-2 rounded-xl border-1 border-cream-950 bg-white",
-            error && "border-red"
+            "relative flex h-15 items-center gap-2 rounded-xl bg-white outline outline-cream-950",
+            error && "outline-red"
         )}
     >
         {#if indicator}

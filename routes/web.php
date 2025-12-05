@@ -44,6 +44,7 @@ Route::middleware('auth')->group(function () {
         ->controller(CurrentUserController::class)
         ->group(function () {
             Route::get('/', 'show');
+            Route::patch('/', 'update');
         });
 });
 

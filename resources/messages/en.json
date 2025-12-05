@@ -43,6 +43,7 @@
         }
     },
     "current-user": {
+        "save": "Save",
         "account": {
             "title": "Account",
             "name": "Name",
