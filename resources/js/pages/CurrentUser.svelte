@@ -34,7 +34,7 @@
         <User.Info.ActionRow {@attach link(() => ({ href: logout() }))}>
             {m["current-user.actions.log-out"]()}
         </User.Info.ActionRow>
-        <User.Info.ActionRow class="text-red">
+        <User.Info.ActionRow class="text-red disabled:opacity-50" disabled>
             {m["current-user.actions.delete-account"]()}
         </User.Info.ActionRow>
     </User.Info.Block>

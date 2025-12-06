@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Casts\AsArrayObject;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -27,12 +26,12 @@ class User extends Authenticatable
     ];
 
     /**
-     * @return array{ preferences: "Illuminate\\Database\\Eloquent\\Casts\\AsArrayObject" }
+     * @return array{preferences: "array"}
      */
     protected function casts(): array
     {
         return [
-            'preferences' => AsArrayObject::class,
+            'preferences' => 'array',
         ];
     }
 

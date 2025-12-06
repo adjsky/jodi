@@ -8,20 +8,24 @@
     type Props = WithClassName<
         HTMLButtonAttributes,
         {
-            icon?: Snippet;
+            startIcon?: Snippet;
+            endIcon?: Snippet;
         }
     >;
 
-    const { icon, children, ...props }: Props = $props();
+    const { startIcon, endIcon, children, ...props }: Props = $props();
 </script>
 
 <button
     {...props}
     class={tw(
-        "flex w-full border-cream-300 py-3.5 text-lg font-medium not-last:border-b",
+        "flex w-full items-center justify-between border-cream-300 py-3.5 text-lg font-medium not-last:border-b",
         props.class
     )}
 >
-    {@render icon?.()}
-    {@render children?.()}
+    <span class="flex items-center gap-2">
+        {@render startIcon?.()}
+        {@render children?.()}
+    </span>
+    {@render endIcon?.()}
 </button>

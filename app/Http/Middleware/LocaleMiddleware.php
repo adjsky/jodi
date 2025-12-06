@@ -18,7 +18,7 @@ class LocaleMiddleware
      */
     public function handle(Request $request, Closure $next): Response
     {
-        $locale = $request->cookies->get('jodi-locale');
+        $locale = $request->user()->preferences['locale'] ?? $request->cookies->get('jodi-locale');
 
         if (gettype($locale) == 'string') {
             App::setLocale($locale);

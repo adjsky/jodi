@@ -22,7 +22,7 @@ class Todo extends Model
     protected $hidden = [];
 
     /**
-     * @return array{ notify_at: "datetime", completed_at: "datetime", todo_date: "date:Y-m-d" }
+     * @return array{notify_at: "datetime", completed_at: "datetime", todo_date: "date:Y-m-d"}
      */
     protected function casts(): array
     {

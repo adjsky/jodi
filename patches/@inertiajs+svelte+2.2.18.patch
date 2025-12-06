@@ -30,6 +30,112 @@ index dcaf4ad..6fa18fd 100644
          onSubmitComplete?: ((props: import("@inertiajs/core").FormComponentonSubmitCompleteArguments) => void) | undefined;
          disableWhileProcessing?: boolean | undefined;
          invalidateCacheTags?: string | string[] | undefined;
+diff --git a/node_modules/@inertiajs/svelte/dist/components/Link.svelte b/node_modules/@inertiajs/svelte/dist/components/Link.svelte
+index 7b7ed7b..679e04c 100644
+--- a/node_modules/@inertiajs/svelte/dist/components/Link.svelte
++++ b/node_modules/@inertiajs/svelte/dist/components/Link.svelte
+@@ -17,6 +17,18 @@ export let prefetch = false;
+ export let cacheFor = 0;
+ export let cacheTags = [];
+ export let viewTransition = false;
++export let onCancelToken = undefined
++export let onBefore = undefined
++export let onBeforeUpdate = undefined
++export let onStart = undefined
++export let onProgress = undefined
++export let onFinish = undefined
++export let onCancel = undefined
++export let onSuccess = undefined
++export let onError = undefined
++export let onInvalid = undefined
++export let onPrefetched = undefined
++export let onPrefetching = undefined
+ $: _method = isUrlMethodPair(href) ? href.method : method;
+ $: _href = isUrlMethodPair(href) ? href.url : href;
+ $: asProp = _method !== "get" ? "button" : as.toLowerCase();
+@@ -46,28 +58,21 @@ $: elProps = {
+     cacheFor,
+     cacheTags,
+     viewTransition,
++    onCancelToken,
++    onBefore,
++    onBeforeUpdate,
++    onStart,
++    onProgress,
++    onFinish,
++    onCancel,
++    onSuccess,
++    onError,
++    onInvalid,
++    onPrefetched,
++    onPrefetching
+   }}
+   {...$$restProps}
+   {...elProps}
+-  on:focus
+-  on:blur
+-  on:click
+-  on:dblclick
+-  on:mousedown
+-  on:mousemove
+-  on:mouseout
+-  on:mouseover
+-  on:mouseup
+-  on:cancel-token
+-  on:before
+-  on:start
+-  on:progress
+-  on:finish
+-  on:cancel
+-  on:success
+-  on:error
+-  on:prefetching
+-  on:prefetched
+ >
+   <slot />
+ </svelte:element>
+diff --git a/node_modules/@inertiajs/svelte/dist/components/Link.svelte.d.ts b/node_modules/@inertiajs/svelte/dist/components/Link.svelte.d.ts
+index add7fca..5170435 100644
+--- a/node_modules/@inertiajs/svelte/dist/components/Link.svelte.d.ts
++++ b/node_modules/@inertiajs/svelte/dist/components/Link.svelte.d.ts
+@@ -1,3 +1,4 @@
++import { VisitCallbacks } from "@inertiajs/core";
+ import { SvelteComponent } from "svelte";
+ declare const __propDef: {
+     props: {
+@@ -19,30 +20,8 @@ declare const __propDef: {
+         cacheFor?: import("@inertiajs/core").CacheForOption | import("@inertiajs/core").CacheForOption[] | undefined;
+         cacheTags?: string | string[] | undefined;
+         viewTransition?: boolean | ((viewTransition: ViewTransition) => void) | undefined;
+-    };
+-    events: {
+-        focus: FocusEvent;
+-        blur: FocusEvent;
+-        click: PointerEvent;
+-        dblclick: MouseEvent;
+-        mousedown: MouseEvent;
+-        mousemove: MouseEvent;
+-        mouseout: MouseEvent;
+-        mouseover: MouseEvent;
+-        mouseup: MouseEvent;
+-        'cancel-token': Event | ProgressEvent<EventTarget> | SubmitEvent | ErrorEvent | UIEvent | AnimationEvent | PointerEvent | MouseEvent | InputEvent | ToggleEvent | FocusEvent | CompositionEvent | ClipboardEvent | DragEvent | FormDataEvent | KeyboardEvent | SecurityPolicyViolationEvent | TouchEvent | TransitionEvent | WheelEvent;
+-        before: Event | ProgressEvent<EventTarget> | SubmitEvent | ErrorEvent | UIEvent | AnimationEvent | PointerEvent | MouseEvent | InputEvent | ToggleEvent | FocusEvent | CompositionEvent | ClipboardEvent | DragEvent | FormDataEvent | KeyboardEvent | SecurityPolicyViolationEvent | TouchEvent | TransitionEvent | WheelEvent;
+-        start: Event | ProgressEvent<EventTarget> | SubmitEvent | ErrorEvent | UIEvent | AnimationEvent | PointerEvent | MouseEvent | InputEvent | ToggleEvent | FocusEvent | CompositionEvent | ClipboardEvent | DragEvent | FormDataEvent | KeyboardEvent | SecurityPolicyViolationEvent | TouchEvent | TransitionEvent | WheelEvent;
+-        progress: ProgressEvent<EventTarget>;
+-        finish: Event | ProgressEvent<EventTarget> | SubmitEvent | ErrorEvent | UIEvent | AnimationEvent | PointerEvent | MouseEvent | InputEvent | ToggleEvent | FocusEvent | CompositionEvent | ClipboardEvent | DragEvent | FormDataEvent | KeyboardEvent | SecurityPolicyViolationEvent | TouchEvent | TransitionEvent | WheelEvent;
+-        cancel: Event;
+-        success: Event | ProgressEvent<EventTarget> | SubmitEvent | ErrorEvent | UIEvent | AnimationEvent | PointerEvent | MouseEvent | InputEvent | ToggleEvent | FocusEvent | CompositionEvent | ClipboardEvent | DragEvent | FormDataEvent | KeyboardEvent | SecurityPolicyViolationEvent | TouchEvent | TransitionEvent | WheelEvent;
+-        error: ErrorEvent;
+-        prefetching: Event | ProgressEvent<EventTarget> | SubmitEvent | ErrorEvent | UIEvent | AnimationEvent | PointerEvent | MouseEvent | InputEvent | ToggleEvent | FocusEvent | CompositionEvent | ClipboardEvent | DragEvent | FormDataEvent | KeyboardEvent | SecurityPolicyViolationEvent | TouchEvent | TransitionEvent | WheelEvent;
+-        prefetched: Event | ProgressEvent<EventTarget> | SubmitEvent | ErrorEvent | UIEvent | AnimationEvent | PointerEvent | MouseEvent | InputEvent | ToggleEvent | FocusEvent | CompositionEvent | ClipboardEvent | DragEvent | FormDataEvent | KeyboardEvent | SecurityPolicyViolationEvent | TouchEvent | TransitionEvent | WheelEvent;
+-    } & {
+-        [evt: string]: CustomEvent<any>;
+-    };
++    } & Partial<VisitCallbacks>;
++    events: {};
+     slots: {
+         default: {};
+     };
 diff --git a/node_modules/@inertiajs/svelte/dist/link.d.ts b/node_modules/@inertiajs/svelte/dist/link.d.ts
 index f6075bb..185838b 100644
 --- a/node_modules/@inertiajs/svelte/dist/link.d.ts

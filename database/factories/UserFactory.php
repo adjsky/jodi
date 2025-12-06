@@ -22,7 +22,10 @@ class UserFactory extends Factory
         return [
             'name' => fake()->name(),
             'email' => fake()->unique()->safeEmail(),
-            'preferences' => [],
+            'preferences' => [
+                'locale' => 'en',
+                'weekStartOn' => 'monday',
+            ],
             'remember_token' => Str::random(10),
         ];
     }

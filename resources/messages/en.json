@@ -54,12 +54,15 @@
         "app-settings": {
             "title": "App settings",
             "language": "Language",
-            "week-start-on": "Week start on",
-            "notifications": "Notifications"
+            "week-start-on": "Week start on"
         },
         "actions": {
             "log-out": "Log out",
             "delete-account": "Delete account"
+        },
+        "days": {
+            "monday": "Monday",
+            "sunday": "Sunday"
         }
     }
 }

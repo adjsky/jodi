@@ -20,11 +20,11 @@
 <button
     {...props}
     class={tw(
-        "flex w-full justify-between border-cream-300 py-3.5 text-lg font-medium not-last:border-b",
+        "flex w-full items-center justify-between border-cream-300 py-3.5 text-lg font-medium not-last:border-b",
         props.class
     )}
 >
-    <span>{@render icon?.()} {title}</span>
+    <span class="flex items-center gap-2">{@render icon?.()} {title}</span>
     <span class="flex items-center gap-2 text-cream-500">
         {@render children?.()}
         <ChevronRight class="text-xl" />

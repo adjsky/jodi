@@ -47,7 +47,7 @@ class TodoController extends Controller
     {
         Gate::authorize('complete', $todo);
 
-        $todo->completed_at = is_null($todo->completed_at) ? now() : null;
+        $todo->completed_at = $todo->completed_at ? null : now();
         $todo->save();
 
         return back();

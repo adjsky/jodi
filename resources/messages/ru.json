@@ -4,7 +4,8 @@
         "or": "Или",
         "too-many-requests": "Слишком много запросов. Попробуйте позже.",
         "router-exception": "Произошла непредвиденная ошибка. Попробуйте позже.",
-        "save": "Сохранить"
+        "save": "Сохранить",
+        "settings": "Настройки"
     },
     "login": {
         "title": "Авторизуйтесь",
@@ -23,6 +24,14 @@
     "todos": {
         "title": "Задачи",
         "ungrouped": "Без группы",
+        "no-todos": "Looks like you have nothing to do. Click + to add a todo.",
+        "tooltips": {
+            "delete": "Delete",
+            "repeat": "Repeat",
+            "color": "Color",
+            "notification": "Notification",
+            "more": "More"
+        },
         "errors": {
             "complete": "Не удалось завершить задачу. Попробуйте позже.",
             "edit": "Не удалось изменить задачу. Попробуйте позже.",
@@ -31,6 +40,29 @@
         "placeholders": {
             "title": "Задача",
             "description": "Добавьте несколько дополнительных заметок здесь..."
+        }
+    },
+    "current-user": {
+        "save": "Сохранить",
+        "account": {
+            "title": "Аккаунт",
+            "name": "Имя",
+            "email": "Почта",
+            "friends": "Друзья",
+            "invitations": "Ваши приглашения"
+        },
+        "app-settings": {
+            "title": "Настройки приложения",
+            "language": "Язык",
+            "week-start-on": "Начало недели"
+        },
+        "actions": {
+            "log-out": "Выйти",
+            "delete-account": "Удалить аккаунт"
+        },
+        "days": {
+            "monday": "Понедельник",
+            "sunday": "Воскресенье"
         }
     }
 }

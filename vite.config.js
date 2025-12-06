@@ -17,7 +17,7 @@ export default defineConfig({
         paraglideVitePlugin({
             project: "./project.inlang",
             outdir: "./resources/js/paraglide",
-            strategy: ["custom-cookie"]
+            strategy: ["custom-preference", "custom-cookie"]
         }),
         tsconfigPaths(),
         laravel({

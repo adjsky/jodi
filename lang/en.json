@@ -12,6 +12,7 @@
     "Add :name": "Add :name",
     "Admin": "Admin",
     "Agree": "Agree",
+    "All good.": "All good.",
     "All rights reserved.": "All rights reserved.",
     "Already Reported": "Already Reported",
     "Archive": "Archive",
@@ -207,6 +208,7 @@
     "to": "to",
     "Toggle navigation": "Toggle navigation",
     "Too Early": "Too Early",
+    "Too many attempts.": "Too many attempts.",
     "Too Many Requests": "Too Many Requests",
     "Translate": "Translate",
     "Translate It": "Translate It",
@@ -232,7 +234,5 @@
     "Web Server is Down": "Web Server is Down",
     "Whoops!": "Whoops!",
     "Yes": "Yes",
-    "You are receiving this email because we received a password reset request for your account.": "You are receiving this email because we received a password reset request for your account.",
-    "All good.": "All good.",
-    "Too many attempts.": "Too many attempts."
+    "You are receiving this email because we received a password reset request for your account.": "You are receiving this email because we received a password reset request for your account."
 }

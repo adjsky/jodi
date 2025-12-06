@@ -12,7 +12,10 @@ export interface AppPageProps {
             id: number;
             name: string;
             email: string;
-            preferences: Record<string, unknown>;
+            preferences: {
+                locale: string;
+                weekStartOn: "monday" | "sunday";
+            };
         };
     };
     flash: {

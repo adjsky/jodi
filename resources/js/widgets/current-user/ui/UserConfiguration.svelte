@@ -9,6 +9,7 @@
     import EmailScreen from "../screens/EmailScreen.svelte";
     import LanguageScreen from "../screens/LanguageScreen.svelte";
     import NameScreen from "../screens/NameScreen.svelte";
+    import WeekStartScreen from "../screens/WeekStartScreen.svelte";
 
     import type { AppPageProps } from "$/globals";
 
@@ -53,14 +54,10 @@
             {
                 id: "week-start",
                 title: m["current-user.app-settings.week-start-on"](),
-                value: "Monday",
-                screen: makeScreenSnippet(EmailScreen, { email: user.email })
-            },
-            {
-                id: "notifications",
-                title: m["current-user.app-settings.notifications"](),
-                value: "All",
-                screen: makeScreenSnippet(EmailScreen, { email: user.email })
+                value: m[`current-user.days.${user.preferences.weekStartOn}`](),
+                screen: makeScreenSnippet(WeekStartScreen, {
+                    weekStart: user.preferences.weekStartOn
+                })
             }
         ]
     });

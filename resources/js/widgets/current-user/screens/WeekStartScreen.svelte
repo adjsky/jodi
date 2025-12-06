@@ -1,32 +1,35 @@
 <script lang="ts">
-    import { Languages } from "@lucide/svelte";
+    import { Calendar } from "@lucide/svelte";
     import { User } from "$/entities/user";
     import { update } from "$/generated/actions/App/Http/Controllers/CurrentUserController";
-    import { getLocale } from "$/paraglide/runtime";
+    import { m } from "$/paraglide/messages";
     import { link } from "$/shared/inertia/link";
-    import { LANGUAGES } from "$/shared/lib/language";
 
     import Layout from "./Layout.svelte";
 
     import type { LayoutProps } from "../model/types";
 
-    const props: LayoutProps = $props();
+    type Props = LayoutProps & { weekStart: string };
+
+    const { weekStart, ...props }: Props = $props();
+
+    const days = ["monday", "sunday"] as const;
 </script>
 
 <Layout {...props}>
     <User.Info.Block>
-        {#each Object.entries(LANGUAGES) as [locale, language] (locale)}
+        {#each days as day (day)}
             <User.Info.SelectRow
                 {@attach link(() => ({
                     href: update(),
-                    data: { preferences: { locale } }
+                    data: { preferences: { weekStartOn: day } }
                 }))}
-                selected={locale == getLocale()}
+                selected={day == weekStart}
             >
                 {#snippet icon()}
-                    <Languages />
+                    <Calendar />
                 {/snippet}
-                {language}
+                {m[`current-user.days.${day}`]()}
             </User.Info.SelectRow>
         {/each}
     </User.Info.Block>

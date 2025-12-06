@@ -17,7 +17,7 @@ class RegistrationInvitation extends Model
     protected $hidden = [];
 
     /**
-     * @return array{ registered_at: "datetime", expires_at: "datetime" }
+     * @return array{registered_at: "datetime", expires_at: "datetime"}
      */
     protected function casts(): array
     {

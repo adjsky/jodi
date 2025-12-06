@@ -1,5 +1,5 @@
 <script lang="ts">
-    import { Form, inertia } from "@inertiajs/svelte";
+    import { Form } from "@inertiajs/svelte";
     import {
         Bell,
         CalendarFold,
@@ -16,9 +16,9 @@
     } from "$/generated/actions/App/Http/Controllers/TodoController";
     import { m } from "$/paraglide/messages";
     import { getLocale } from "$/paraglide/runtime";
+    import { link } from "$/shared/inertia/link";
     import { optimistic } from "$/shared/inertia/visit/optimistic";
     import SaveOrClose from "$/shared/ui/SaveOrClose.svelte";
-    import { fromAction } from "svelte/attachments";
 
     import Action from "./Action.svelte";
 
@@ -97,7 +97,7 @@
 
     <div class="flex flex-grow items-end justify-between">
         <Action
-            {@attach fromAction(inertia, () => ({
+            {@attach link(() => ({
                 ...baseVisitOptions,
                 ...optimistic(
                     (prev) => ({
