@@ -5,14 +5,12 @@ import {
     extractLocaleFromNavigator,
     isLocale
 } from "$/paraglide/runtime";
+import * as Cookie from "$/shared/lib/cookie";
 import { get } from "svelte/store";
 
 defineCustomClientStrategy("custom-cookie", {
     getLocale() {
-        const locale = document.cookie
-            .split("; ")
-            .find((row) => row.startsWith("jodi-locale="))
-            ?.split("=")[1];
+        const locale = Cookie.get("jodi-locale");
 
         if (!locale) {
             return extractLocaleFromNavigator();
@@ -25,7 +23,10 @@ defineCustomClientStrategy("custom-cookie", {
         return locale;
     },
     setLocale(locale) {
-        document.cookie = `jodi-locale=${locale}`;
+        Cookie.set("jodi-locale", locale, {
+            maxAge: 34560000,
+            sameSite: "lax"
+        });
     }
 });
 

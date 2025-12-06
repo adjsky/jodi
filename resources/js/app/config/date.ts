@@ -1,3 +1,4 @@
+import * as Cookie from "$/shared/lib/cookie";
 import dayjs from "dayjs";
 import isoWeek from "dayjs/plugin/isoWeek";
 
@@ -15,3 +16,12 @@ dayjs.extend(isoWeek);
 // };
 //
 // await locales[getLocale()]();
+
+const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+
+if (Cookie.get("jodi-timezone") != timezone) {
+    Cookie.set("jodi-timezone", timezone, {
+        maxAge: 34560000,
+        sameSite: "lax"
+    });
+}

@@ -12,15 +12,13 @@ class HomeController extends Controller
 {
     public function show(Request $request)
     {
-        $user = $this->user();
-
         $search = $request->validate(['d' => 'nullable|date_format:Y-m-d']);
-        $date = $search['d'] ?? now()->toDateString();
+        $date = $search['d'] ?? now($request->cookies->getString('jodi-timezone'))->toDateString();
 
         return inertia('Home', [
             'todos' => Inertia::defer(
                 fn () => TodoDto::collect(
-                    $user->todos()
+                    $this->user()->todos()
                         ->where('todo_date', '=', $date)
                         ->orderBy('created_at', 'asc')
                         ->orderBy('category', 'asc')
