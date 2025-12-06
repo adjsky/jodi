@@ -1,15 +1,11 @@
 <script lang="ts">
     import { tw } from "$/shared/lib/styles";
 
-    import type { WithClassName } from "$/shared/lib/styles";
     import type { HTMLButtonAttributes } from "svelte/elements";
 
-    type Props = WithClassName<
-        HTMLButtonAttributes,
-        {
-            variant?: "main" | "secondary";
-        }
-    >;
+    type Props = HTMLButtonAttributes & {
+        variant?: "main" | "secondary";
+    };
 
     const { children, variant = "main", ...rest }: Props = $props();
 </script>

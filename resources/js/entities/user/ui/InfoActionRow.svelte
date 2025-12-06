@@ -1,17 +1,13 @@
 <script lang="ts">
     import { tw } from "$/shared/lib/styles";
 
-    import type { WithClassName } from "$/shared/lib/styles";
     import type { Snippet } from "svelte";
     import type { HTMLButtonAttributes } from "svelte/elements";
 
-    type Props = WithClassName<
-        HTMLButtonAttributes,
-        {
-            startIcon?: Snippet;
-            endIcon?: Snippet;
-        }
-    >;
+    type Props = HTMLButtonAttributes & {
+        startIcon?: Snippet;
+        endIcon?: Snippet;
+    };
 
     const { startIcon, endIcon, children, ...props }: Props = $props();
 </script>

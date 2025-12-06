@@ -1,18 +1,14 @@
 <script lang="ts">
     import { tw } from "$/shared/lib/styles";
 
-    import type { WithClassName } from "$/shared/lib/styles";
     import type { Snippet } from "svelte";
     import type { SvelteHTMLElements } from "svelte/elements";
 
-    type Props = WithClassName<
-        SvelteHTMLElements["div"],
-        {
-            checkbox: Snippet;
-            edit: Snippet;
-            grip: Snippet;
-        }
-    >;
+    type Props = SvelteHTMLElements["div"] & {
+        checkbox: Snippet;
+        edit: Snippet;
+        grip: Snippet;
+    };
 
     const { checkbox, edit, grip, ...props }: Props = $props();
 </script>

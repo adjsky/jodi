@@ -1,28 +1,17 @@
 <script lang="ts">
     import { Form } from "@inertiajs/svelte";
-    import {
-        Bell,
-        CalendarFold,
-        Circle,
-        Ellipsis,
-        RotateCw,
-        Trash
-    } from "@lucide/svelte";
+    import { Bell, CalendarFold, Ellipsis, RotateCw } from "@lucide/svelte";
     import { Todo } from "$/entities/todo";
     import { Checkbox } from "$/features/complete-todo";
-    import {
-        destroy,
-        update
-    } from "$/generated/actions/App/Http/Controllers/TodoController";
+    import { update } from "$/generated/actions/App/Http/Controllers/TodoController";
     import { m } from "$/paraglide/messages";
     import { getLocale } from "$/paraglide/runtime";
-    import { link } from "$/shared/inertia/link";
-    import { optimistic } from "$/shared/inertia/visit/optimistic";
     import SaveOrClose from "$/shared/ui/SaveOrClose.svelte";
 
+    import { optimisticEdit, visitOptions } from "../cfg/inertia";
     import Action from "./Action.svelte";
-
-    import type { VisitOptions } from "@inertiajs/core";
+    import Color from "./Color.svelte";
+    import Delete from "./Delete.svelte";
 
     type Props = {
         todo: App.Data.TodoDto;
@@ -30,35 +19,13 @@
     };
 
     const { todo, onClose }: Props = $props();
-
-    const baseVisitOptions: VisitOptions = {
-        only: ["todos"],
-        preserveState: true,
-        preserveScroll: true,
-        replace: true
-    };
 </script>
 
 <div class="flex h-full flex-col">
     <Form
-        {...optimistic(
-            (prev, data) => ({
-                todos: prev.todos.map((t: App.Data.TodoDto) =>
-                    t.id == todo.id
-                        ? {
-                              ...t,
-                              ...data
-                          }
-                        : t
-                )
-            }),
-            {
-                error: m["todos.errors.edit"](),
-                preserveUrl: "without-hash"
-            }
-        )}
+        {...optimisticEdit(todo.id)}
         action={update(todo.id)}
-        options={baseVisitOptions}
+        options={visitOptions}
         showProgress={false}
         let:isDirty
     >
@@ -96,28 +63,11 @@
     </Form>
 
     <div class="flex flex-grow items-end justify-between">
-        <Action
-            {@attach link(() => ({
-                ...baseVisitOptions,
-                ...optimistic(
-                    (prev) => ({
-                        todos: prev.todos.filter(
-                            (t: App.Data.TodoDto) => t.id != todo.id
-                        )
-                    }),
-                    { error: m["todos.errors.delete"]() }
-                ),
-                href: destroy(todo.id),
-                showProgress: false
-            }))}
-            tooltip={m["todos.tooltips.delete"]()}
-        >
-            <Trash />
-        </Action>
+        <Delete {todo} />
         <Action disabled tooltip={m["todos.tooltips.repeat"]()}>
             <RotateCw />
         </Action>
-        <Action tooltip={m["todos.tooltips.color"]()}><Circle /></Action>
+        <Color {todo} />
         <Action disabled tooltip={m["todos.tooltips.notification"]()}>
             <Bell />
         </Action>

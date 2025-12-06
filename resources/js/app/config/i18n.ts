@@ -5,12 +5,13 @@ import {
     extractLocaleFromNavigator,
     isLocale
 } from "$/paraglide/runtime";
+import { LOCALE_COOKIE } from "$/shared/cfg/constants";
 import * as Cookie from "$/shared/lib/cookie";
 import { get } from "svelte/store";
 
 defineCustomClientStrategy("custom-cookie", {
     getLocale() {
-        const locale = Cookie.get("jodi-locale");
+        const locale = Cookie.get(LOCALE_COOKIE);
 
         if (!locale) {
             return extractLocaleFromNavigator();
@@ -23,7 +24,7 @@ defineCustomClientStrategy("custom-cookie", {
         return locale;
     },
     setLocale(locale) {
-        Cookie.set("jodi-locale", locale, {
+        Cookie.set(LOCALE_COOKIE, locale, {
             maxAge: 34560000,
             sameSite: "lax"
         });

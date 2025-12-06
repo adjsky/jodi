@@ -4,15 +4,11 @@
 
     import { tw } from "../lib/styles";
 
-    import type { WithClassName } from "../lib/styles";
     import type { HTMLButtonAttributes } from "svelte/elements";
 
-    type Props = WithClassName<
-        HTMLButtonAttributes,
-        {
-            variant: "save" | "close";
-        }
-    >;
+    type Props = HTMLButtonAttributes & {
+        variant: "save" | "close";
+    };
 
     const { variant, ...rest }: Props = $props();
 </script>

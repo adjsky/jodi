@@ -2,21 +2,17 @@
     import { Field } from "@ark-ui/svelte/field";
     import { tw } from "$/shared/lib/styles";
 
-    import type { WithClassName } from "$/shared/lib/styles";
     import type { Snippet } from "svelte";
     import type { HTMLInputAttributes } from "svelte/elements";
     import type { Except } from "type-fest";
 
-    type Props = WithClassName<
-        Except<HTMLInputAttributes, "children">,
-        {
-            error?: string;
-            indicator?: Snippet;
-            required?: boolean;
-            disabled?: boolean;
-            readonly?: boolean;
-        }
-    >;
+    type Props = Except<HTMLInputAttributes, "children"> & {
+        error?: string;
+        indicator?: Snippet;
+        required?: boolean;
+        disabled?: boolean;
+        readonly?: boolean;
+    };
 
     const { error, indicator, required, disabled, readonly, ...props }: Props =
         $props();

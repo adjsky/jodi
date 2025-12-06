@@ -17,6 +17,7 @@ class Todo extends Model
         'description',
         'category',
         'todo_date',
+        'color',
     ];
 
     protected $hidden = [];

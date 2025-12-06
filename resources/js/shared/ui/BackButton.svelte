@@ -3,10 +3,9 @@
 
     import { tw } from "../lib/styles";
 
-    import type { WithClassName } from "../lib/styles";
     import type { HTMLButtonAttributes } from "svelte/elements";
 
-    const props: WithClassName<HTMLButtonAttributes> = $props();
+    const props: HTMLButtonAttributes = $props();
 </script>
 
 <button {...props} class={tw("p-2", props.class)}>

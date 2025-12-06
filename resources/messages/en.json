@@ -25,6 +25,7 @@
         "title": "Todos",
         "ungrouped": "No group",
         "no-todos": "Looks like you have nothing to do. Click + to add a todo.",
+        "select-color": "Select color",
         "tooltips": {
             "delete": "Delete",
             "repeat": "Repeat",

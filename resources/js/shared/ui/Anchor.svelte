@@ -2,16 +2,12 @@
     import { Link } from "@inertiajs/svelte";
     import { tw } from "$/shared/lib/styles";
 
-    import type { WithClassName } from "$/shared/lib/styles";
     import type { HTMLAnchorAttributes } from "svelte/elements";
 
-    type Props = WithClassName<
-        HTMLAnchorAttributes,
-        {
-            variant?: "main" | "secondary";
-            href: string;
-        }
-    >;
+    type Props = HTMLAnchorAttributes & {
+        variant?: "main" | "secondary";
+        href: string;
+    };
 
     const { children, variant = "main", ...rest }: Props = $props();
 </script>

@@ -5,17 +5,13 @@
 
     import InfoActionRow from "./InfoActionRow.svelte";
 
-    import type { WithClassName } from "$/shared/lib/styles";
     import type { Snippet } from "svelte";
     import type { HTMLButtonAttributes } from "svelte/elements";
 
-    type Props = WithClassName<
-        HTMLButtonAttributes,
-        {
-            icon?: Snippet;
-            selected?: boolean;
-        }
-    >;
+    type Props = HTMLButtonAttributes & {
+        icon?: Snippet;
+        selected?: boolean;
+    };
 
     const { icon, selected, children, ...props }: Props = $props();
 </script>

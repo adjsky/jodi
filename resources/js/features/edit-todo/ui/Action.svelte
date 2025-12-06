@@ -1,22 +1,28 @@
 <script lang="ts">
-    import { Tooltip } from "@ark-ui/svelte/tooltip";
+    // import { Tooltip } from "@ark-ui/svelte/tooltip";
     import { tw } from "$/shared/lib/styles";
 
-    import type { WithClassName } from "$/shared/lib/styles";
     import type { HTMLButtonAttributes } from "svelte/elements";
 
-    type Props = WithClassName<
-        HTMLButtonAttributes,
-        {
-            tooltip: string;
-        }
-    >;
+    type Props = HTMLButtonAttributes & {
+        tooltip: string;
+    };
 
-    const id = $props.id();
-    const { tooltip, children, ...props }: Props = $props();
+    // const id = $props.id();
+    const { tooltip: _tooltip, children, ...props }: Props = $props();
 </script>
 
-<Tooltip.Root {id} openDelay={0} closeDelay={0}>
+<button
+    {...props}
+    class={tw(
+        "p-3.5 text-xl disabled:not-data-loading:text-cream-400",
+        props.class
+    )}
+>
+    {@render children?.()}
+</button>
+
+<!-- <Tooltip.Root {id} openDelay={0} closeDelay={0}>
     <Tooltip.Trigger
         {...props}
         class={tw(
@@ -37,4 +43,4 @@
             {tooltip}
         </Tooltip.Content>
     </Tooltip.Positioner>
-</Tooltip.Root>
+</Tooltip.Root> -->

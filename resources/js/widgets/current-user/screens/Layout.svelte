@@ -12,7 +12,7 @@
     const { title, children, onclose }: Props = $props();
 </script>
 
-<div class="fixed inset-0 flex flex-col bg-cream-50 px-4 py-3">
+<div class="fixed inset-0 z-10 flex flex-col bg-cream-50 px-4 py-3">
     <div class="relative">
         <BackButton onclick={onclose} />
         <span

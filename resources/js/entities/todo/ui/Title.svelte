@@ -2,10 +2,9 @@
     import { m } from "$/paraglide/messages";
     import { tw } from "$/shared/lib/styles";
 
-    import type { WithClassName } from "$/shared/lib/styles";
     import type { SvelteHTMLElements } from "svelte/elements";
 
-    const props: WithClassName<SvelteHTMLElements["input"]> = $props();
+    const props: SvelteHTMLElements["input"] = $props();
 </script>
 
 <input

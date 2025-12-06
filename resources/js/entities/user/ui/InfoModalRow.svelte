@@ -2,17 +2,13 @@
     import { ChevronRight } from "@lucide/svelte";
     import { tw } from "$/shared/lib/styles";
 
-    import type { WithClassName } from "$/shared/lib/styles";
     import type { Snippet } from "svelte";
     import type { HTMLButtonAttributes } from "svelte/elements";
 
-    type Props = WithClassName<
-        HTMLButtonAttributes,
-        {
-            title: string;
-            icon?: Snippet;
-        }
-    >;
+    type Props = HTMLButtonAttributes & {
+        title: string;
+        icon?: Snippet;
+    };
 
     const { title, children, icon, ...props }: Props = $props();
 </script>

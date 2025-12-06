@@ -12,16 +12,12 @@
     import AddTodo from "./AddTodo.svelte";
     import EditTodo from "./EditTodo.svelte";
 
-    import type { WithClassName } from "$/shared/lib/styles";
     import type { SvelteHTMLElements } from "svelte/elements";
 
-    type Props = WithClassName<
-        SvelteHTMLElements["section"],
-        {
-            loading: boolean;
-            todos: App.Data.TodoDto[];
-        }
-    >;
+    type Props = SvelteHTMLElements["section"] & {
+        loading: boolean;
+        todos: App.Data.TodoDto[];
+    };
 
     const { todos, loading, ...rest }: Props = $props();
 
@@ -122,8 +118,12 @@
                         <span
                             class={[
                                 "table-cell overflow-hidden text-ellipsis whitespace-nowrap",
-                                todo.completedAt && "line-through"
+                                todo.completedAt && "line-through",
+                                todo.color && "rounded-xl px-1"
                             ]}
+                            style={todo.color
+                                ? `background: ${todo.color};`
+                                : null}
                         >
                             {todo.title}
                         </span>

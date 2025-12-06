@@ -6,6 +6,8 @@ import isoWeek from "dayjs/plugin/isoWeek";
 import "dayjs/locale/en";
 import "dayjs/locale/ru";
 
+import { TIMEZONE_COOKIE } from "$/shared/cfg/constants";
+
 dayjs.extend(isoWeek);
 
 // TODO: find out how to lazily load dayjs locales
@@ -19,8 +21,8 @@ dayjs.extend(isoWeek);
 
 const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
 
-if (Cookie.get("jodi-timezone") != timezone) {
-    Cookie.set("jodi-timezone", timezone, {
+if (Cookie.get(TIMEZONE_COOKIE) != timezone) {
+    Cookie.set(TIMEZONE_COOKIE, timezone, {
         maxAge: 34560000,
         sameSite: "lax"
     });

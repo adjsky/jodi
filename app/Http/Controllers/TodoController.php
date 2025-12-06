@@ -29,6 +29,7 @@ class TodoController extends Controller
         $todo->update($request->validate([
             'title' => 'sometimes|string',
             'description' => 'sometimes|nullable|string',
+            'color' => 'sometimes|nullable|hex_color',
         ]));
 
         return back();
