@@ -15,7 +15,10 @@
 
 <div
     {...props}
-    class={tw("grid grid-cols-[auto_1fr_auto] items-center gap-2", props.class)}
+    class={tw(
+        "grid grid-cols-[auto_1fr_auto] items-center gap-2 py-2.25",
+        props.class
+    )}
 >
     {@render checkbox()}
     {@render edit()}

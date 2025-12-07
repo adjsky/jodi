@@ -1,5 +1,5 @@
 <script lang="ts">
-    import { Check, ChevronDown, GripVertical } from "@lucide/svelte";
+    import { Check, GripVertical } from "@lucide/svelte";
     import { Todo } from "$/entities/todo";
     import Checkbox from "$/features/complete-todo/ui/Checkbox.svelte";
     import { m } from "$/paraglide/messages";
@@ -65,7 +65,7 @@
             {m["todos.no-todos"]()}
         </p>
     {:else}
-        <div class="mt-3 space-y-4.5">
+        <div class="mt-3">
             {#each Object.entries(groups) as [group, todos], idx (idx)}
                 {#if Object.keys(groups).length == 1 && group == m["todos.ungrouped"]()}
                     {@render list(todos)}
@@ -73,17 +73,12 @@
                     {@const completed = todos.filter(
                         (todo) => todo.completedAt != null
                     ).length}
-                    <div
-                        class="flex items-center justify-between not-first:mt-5"
-                    >
-                        <div class="font-medium">
-                            <span class="text-cream-500">
-                                {completed}/{todos.length}
-                            </span>
-                            <span class="text-cream-500">•</span>
-                            <span>{group}</span>
-                        </div>
-                        <button><ChevronDown class="text-2xl" /></button>
+                    <div class="mb-1 font-medium not-first:mt-4">
+                        <span class="text-cream-500">
+                            {completed}/{todos.length}
+                        </span>
+                        <span class="text-cream-500">•</span>
+                        <span>{group}</span>
                     </div>
                     {@render list(todos)}
                 {/if}
