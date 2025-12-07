@@ -35,5 +35,6 @@
             <Plus class="text-xl" />
         </button>
     {/snippet}
-    {#snippet content()}<Form />{/snippet}
+
+    <Form />
 </TodoSheet>

@@ -15,62 +15,60 @@
 
     type Props = {
         todo: App.Data.TodoDto;
-        onClose?: VoidFunction;
+        onclose?: VoidFunction;
     };
 
-    const { todo, onClose }: Props = $props();
+    const { todo, onclose }: Props = $props();
 </script>
 
-<div class="flex h-full flex-col">
-    <Form
-        {...optimisticEdit(todo.id)}
-        action={update(todo.id)}
-        options={visitOptions}
-        showProgress={false}
-        let:isDirty
-    >
-        <div class="flex items-center justify-between text-ms">
-            <h4
-                class="flex items-center gap-1.5 text-lg font-bold text-cream-800"
-            >
-                <CalendarFold />
-                {new Intl.DateTimeFormat(getLocale(), {
-                    day: "2-digit",
-                    year: "numeric",
-                    month: "short",
-                    weekday: "short"
-                }).format(new Date(todo.date))}
-            </h4>
-            <SaveOrClose
-                variant={isDirty ? "save" : "close"}
-                onclick={() => {
-                    if (!isDirty) {
-                        onClose?.();
-                    }
-                }}
-            />
-        </div>
-        <div
-            class={[
-                "mt-5 flex items-center gap-2",
-                todo.completedAt && "opacity-40"
-            ]}
-        >
-            <Checkbox {todo} class="size-6 text-lg" />
-            <Todo.Title name="title" value={todo.title} required />
-        </div>
-        <Todo.Description name="description" value={todo.description} />
-    </Form>
-
-    <div class="flex flex-grow items-end justify-between">
-        <Delete {todo} />
-        <Action disabled tooltip={m["todos.tooltips.repeat"]()}>
-            <RotateCw />
-        </Action>
-        <Color {todo} />
-        <Action disabled tooltip={m["todos.tooltips.notification"]()}>
-            <Bell />
-        </Action>
-        <Action tooltip={m["todos.tooltips.more"]()}><Ellipsis /></Action>
+<Form
+    {...optimisticEdit(todo.id)}
+    action={update(todo.id)}
+    options={visitOptions}
+    showProgress={false}
+    let:isDirty
+>
+    <div class="flex items-center justify-between text-ms">
+        <h4 class="flex items-center gap-1.5 text-lg font-bold text-cream-800">
+            <CalendarFold />
+            {new Intl.DateTimeFormat(getLocale(), {
+                day: "2-digit",
+                year: "numeric",
+                month: "short",
+                weekday: "short"
+            }).format(new Date(todo.date))}
+        </h4>
+        <SaveOrClose
+            variant={isDirty ? "save" : "close"}
+            onclick={() => {
+                if (!isDirty) {
+                    onclose?.();
+                }
+            }}
+        />
     </div>
+    <div
+        class={[
+            "mt-5 flex items-center gap-2",
+            todo.completedAt && "opacity-40"
+        ]}
+    >
+        <Checkbox {todo} class="size-6 text-lg" />
+        <Todo.Title name="title" value={todo.title} required />
+    </div>
+    <Todo.Description name="description" value={todo.description} />
+</Form>
+
+<div
+    class="absolute inset-x-0 bottom-0 z-10 flex flex-grow items-end justify-between bg-white px-4 pb-6"
+>
+    <Delete {todo} />
+    <Action disabled tooltip={m["todos.tooltips.repeat"]()}>
+        <RotateCw />
+    </Action>
+    <Color {todo} />
+    <Action disabled tooltip={m["todos.tooltips.notification"]()}>
+        <Bell />
+    </Action>
+    <Action tooltip={m["todos.tooltips.more"]()}><Ellipsis /></Action>
 </div>

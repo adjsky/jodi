@@ -35,7 +35,7 @@
     </Popover.Trigger>
     <Popover.Positioner>
         <Popover.Content
-            class="flex rounded-full px-1 outline outline-cream-950"
+            class="flex rounded-full bg-white px-1 outline outline-cream-950"
         >
             {#each colors as color (color)}
                 <!-- svelte-ignore a11y_consider_explicit_label -->

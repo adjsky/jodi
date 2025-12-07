@@ -27,7 +27,7 @@
 {:else}
     <button
         {...rest}
-        class={tw("text-lg leading-[1.5rem] font-bold text-brand", rest.class)}
+        class={tw("text-lg leading-[1.75rem] font-bold text-brand", rest.class)}
     >
         {m["common.save"]()}
     </button>

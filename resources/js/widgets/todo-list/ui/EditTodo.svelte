@@ -19,7 +19,5 @@
         }
     }
 >
-    {#snippet content()}
-        <Form onClose={onclose} todo={todo!} />
-    {/snippet}
+    <Form {onclose} todo={todo!} />
 </TodoSheet>

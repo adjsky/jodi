@@ -13,7 +13,7 @@
         snapPoints: number[];
         defaultSnapPoint?: number;
         class?: ClassName;
-        content: Snippet;
+        children: Snippet;
         trigger?: Snippet;
     };
 
@@ -24,7 +24,7 @@
         snapPoints,
         defaultSnapPoint,
         class: classname,
-        content,
+        children,
         trigger
     }: Props = $props();
 </script>
@@ -53,9 +53,9 @@
                 </BottomSheet.Handle>
             {/if}
             <BottomSheet.Content
-                class={tw("h-full w-full !px-4 !py-2", classname)}
+                class={tw("relative h-full w-full !px-4 !py-2", classname)}
             >
-                {@render content()}
+                {@render children()}
             </BottomSheet.Content>
         </BottomSheet.Sheet>
     </BottomSheet.Overlay>
