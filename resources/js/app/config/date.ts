@@ -1,14 +1,10 @@
 import * as Cookie from "$/shared/lib/cookie";
-import dayjs from "dayjs";
-import isoWeek from "dayjs/plugin/isoWeek";
 
 // TODO: remove when we can load locales lazily
 import "dayjs/locale/en";
 import "dayjs/locale/ru";
 
 import { TIMEZONE_COOKIE } from "$/shared/cfg/constants";
-
-dayjs.extend(isoWeek);
 
 // TODO: find out how to lazily load dayjs locales
 //

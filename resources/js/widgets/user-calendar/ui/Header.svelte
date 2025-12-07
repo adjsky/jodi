@@ -36,4 +36,5 @@
 
 <WeekCarousel
     bind:day={() => day, (v) => (searchParams.d = v.format("YYYY-MM-DD"))}
+    start={user.preferences.weekStartOn}
 />

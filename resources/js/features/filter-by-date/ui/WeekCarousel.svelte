@@ -4,15 +4,20 @@
 
     import { Week } from "../model/week.svelte";
 
+    import type { WeekStart } from "../model/week.svelte";
     import type { Dayjs } from "dayjs";
 
     type Props = {
         day: Dayjs;
+        start: WeekStart;
     };
 
-    let { day = $bindable() }: Props = $props();
+    let { day = $bindable(), start }: Props = $props();
 
-    const week = new Week(() => day);
+    const week = new Week(
+        () => day,
+        () => start
+    );
 </script>
 
 <div class="border-b border-cream-300 p-3 pb-5">
