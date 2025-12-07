@@ -42,7 +42,7 @@ export class HistoryView<T extends string | number | Record<string, unknown>> {
         const name = typeof nameOrMeta == "string" ? nameOrMeta : this.#name;
         const meta = typeof nameOrMeta != "string" ? nameOrMeta : metaOrNothing;
 
-        router.push({
+        void router.push({
             preserveScroll: true,
             preserveState: true,
             url: `${this.#url.pathname}${this.#url.search}#${typeof name == "string" ? name : this.#name}${meta ? `?${this.#compress(meta)}` : ""}`,
@@ -52,7 +52,7 @@ export class HistoryView<T extends string | number | Record<string, unknown>> {
 
     close() {
         if (!fromStore(page).current.__jodi_isHistoryModal) {
-            router.replace({
+            void router.replace({
                 preserveScroll: true,
                 preserveState: true,
                 url: this.#url.pathname + this.#url.search

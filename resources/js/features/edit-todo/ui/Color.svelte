@@ -5,7 +5,7 @@
     import { m } from "$/paraglide/messages";
     import { link } from "$/shared/inertia/link";
 
-    import { optimisticEdit, visitOptions } from "../cfg/inertia";
+    import { optimistic, visitOptions } from "../cfg/inertia";
     import Action from "./Action.svelte";
 
     type Props = {
@@ -42,7 +42,7 @@
                 <button
                     {@attach link(() => ({
                         ...visitOptions,
-                        ...optimisticEdit(todo.id),
+                        ...optimistic.edit(todo.id),
                         href: update(todo.id),
                         data: { color: color == "transparent" ? null : color },
                         showProgress: false

@@ -1,5 +1,5 @@
 diff --git a/node_modules/@inertiajs/core/dist/index.esm.js b/node_modules/@inertiajs/core/dist/index.esm.js
-index 3fa968f..f29398c 100644
+index 3fa968f..bba3c2f 100644
 --- a/node_modules/@inertiajs/core/dist/index.esm.js
 +++ b/node_modules/@inertiajs/core/dist/index.esm.js
 @@ -512,7 +512,6 @@ var CurrentPage = class {
@@ -45,14 +45,50 @@ index 3fa968f..f29398c 100644
    }
    isInertiaResponse() {
      return this.hasHeader("x-inertia");
-@@ -2253,6 +2261,7 @@ var Router = class {
+@@ -2095,13 +2103,13 @@ var Router = class {
+       keepAlive: options.keepAlive ?? false
+     });
+   }
+-  visit(href, options = {}) {
++  async visit(href, options = {}) {
+     const visit = this.getPendingVisit(href, {
+       ...options,
+       showProgress: options.showProgress ?? !options.async
+     });
+     const events = this.getVisitEvents(options);
+-    if (events.onBefore(visit) === false || !fireBeforeEvent(visit)) {
++    if (await events.onBefore(visit) === false || !fireBeforeEvent(visit)) {
+       return;
+     }
+     const requestStream = visit.async ? this.asyncRequestStream : this.syncRequestStream;
+@@ -2200,7 +2208,7 @@ var Router = class {
+     return page.resolve(component);
+   }
+   replace(params) {
+-    this.clientVisit(params, { replace: true });
++    return this.clientVisit(params, { replace: true });
+   }
+   replaceProp(name, value, options) {
+     this.replace({
+@@ -2240,7 +2248,7 @@ var Router = class {
+     );
+   }
+   push(params) {
+-    this.clientVisit(params);
++    return this.clientVisit(params);
+   }
+   clientVisit(params, { replace = false } = {}) {
+     const current = page.get();
+@@ -2253,7 +2261,8 @@ var Router = class {
      };
      const preserveScroll = RequestParams.resolvePreserveOption(params.preserveScroll ?? false, page2);
      const preserveState = RequestParams.resolvePreserveOption(params.preserveState ?? false, page2);
+-    page.set(page2, {
 +    page.__jodi_isHistoryModal = pageParams.__jodi_isHistoryModal;
-     page.set(page2, {
++    return page.set(page2, {
        replace,
        preserveScroll,
+       preserveState,
 @@ -2349,6 +2358,8 @@ var Router = class {
        }),
        onSuccess: options.onSuccess || (() => {
@@ -71,8 +107,26 @@ index 3fa968f..f29398c 100644
        });
      }
    }
+diff --git a/node_modules/@inertiajs/core/types/router.d.ts b/node_modules/@inertiajs/core/types/router.d.ts
+index 92fa7c7..cee9acf 100644
+--- a/node_modules/@inertiajs/core/types/router.d.ts
++++ b/node_modules/@inertiajs/core/types/router.d.ts
+@@ -29,11 +29,11 @@ export declare class Router {
+     clearHistory(): void;
+     decryptHistory(): Promise<Page>;
+     resolveComponent(component: string): Promise<Component>;
+-    replace<TProps = Page['props']>(params: ClientSideVisitOptions<TProps>): void;
++    replace<TProps = Page['props']>(params: ClientSideVisitOptions<TProps>): Promise<void>;
+     replaceProp<TProps = Page['props']>(name: string, value: unknown | ((oldValue: unknown, props: TProps) => unknown), options?: Pick<ClientSideVisitOptions, 'onError' | 'onFinish' | 'onSuccess'>): void;
+     appendToProp<TProps = Page['props']>(name: string, value: unknown | unknown[] | ((oldValue: unknown, props: TProps) => unknown | unknown[]), options?: Pick<ClientSideVisitOptions, 'onError' | 'onFinish' | 'onSuccess'>): void;
+     prependToProp<TProps = Page['props']>(name: string, value: unknown | unknown[] | ((oldValue: unknown, props: TProps) => unknown | unknown[]), options?: Pick<ClientSideVisitOptions, 'onError' | 'onFinish' | 'onSuccess'>): void;
+-    push<TProps = Page['props']>(params: ClientSideVisitOptions<TProps>): void;
++    push<TProps = Page['props']>(params: ClientSideVisitOptions<TProps>): Promise<void>;
+     protected clientVisit<TProps = Page['props']>(params: ClientSideVisitOptions<TProps>, { replace }?: {
+         replace?: boolean;
+     }): void;
 diff --git a/node_modules/@inertiajs/core/types/types.d.ts b/node_modules/@inertiajs/core/types/types.d.ts
-index 3fb2f61..4761be2 100644
+index 3fb2f61..65aacb6 100644
 --- a/node_modules/@inertiajs/core/types/types.d.ts
 +++ b/node_modules/@inertiajs/core/types/types.d.ts
 @@ -93,6 +93,7 @@ export interface Page<SharedProps extends PageProps = PageProps> {
@@ -91,6 +145,15 @@ index 3fb2f61..4761be2 100644
      onError?: (errors: Errors) => void;
      onFinish?: (visit: ClientSideVisitOptions<TProps>) => void;
      onSuccess?: (page: Page) => void;
+@@ -157,7 +159,7 @@ export type GlobalEventsMap<T extends RequestPayload = RequestPayload> = {
+         details: {
+             visit: PendingVisit<T>;
+         };
+-        result: boolean | void;
++        result: Promise<boolean | void> | boolean | void;
+     };
+     start: {
+         parameters: [PendingVisit<T>];
 @@ -263,6 +265,7 @@ export type VisitCallbacks<T extends RequestPayload = RequestPayload> = {
      onCancel: GlobalEventCallback<'cancel', T>;
      onSuccess: GlobalEventCallback<'success', T>;

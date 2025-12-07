@@ -8,7 +8,7 @@
     import { getLocale } from "$/paraglide/runtime";
     import SaveOrClose from "$/shared/ui/SaveOrClose.svelte";
 
-    import { optimisticEdit, visitOptions } from "../cfg/inertia";
+    import { optimistic, visitOptions } from "../cfg/inertia";
     import Action from "./Action.svelte";
     import Color from "./Color.svelte";
     import Delete from "./Delete.svelte";
@@ -22,7 +22,7 @@
 </script>
 
 <Form
-    {...optimisticEdit(todo.id)}
+    {...optimistic.edit(todo.id)}
     action={update(todo.id)}
     options={visitOptions}
     showProgress={false}
@@ -54,9 +54,12 @@
         ]}
     >
         <Checkbox {todo} class="size-6 text-lg" />
-        <Todo.Title name="title" value={todo.title} required />
+        <Todo.Title name="title" defaultValue={todo.title} required />
     </div>
-    <Todo.Description name="description" value={todo.description} />
+    <Todo.Description
+        name="description"
+        defaultValue={todo.description ?? ""}
+    />
 </Form>
 
 <div

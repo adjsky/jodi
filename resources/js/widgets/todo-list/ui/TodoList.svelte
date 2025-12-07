@@ -86,7 +86,17 @@
         </div>
     {/if}
 
-    <EditTodo todo={editView.meta} onclose={() => editView.close()} />
+    <EditTodo
+        bind:open={
+            () => editView.isOpen(),
+            (v) => {
+                if (!v) {
+                    editView.close();
+                }
+            }
+        }
+        todo={editView.meta}
+    />
 </section>
 
 {#snippet list(todos: App.Data.TodoDto[])}
@@ -114,7 +124,7 @@
                             class={[
                                 "table-cell overflow-hidden text-ellipsis whitespace-nowrap",
                                 todo.completedAt && "line-through",
-                                todo.color && "rounded-xl px-1"
+                                todo.color && "rounded-xl px-1.5"
                             ]}
                             style={todo.color
                                 ? `background: ${todo.color};`
