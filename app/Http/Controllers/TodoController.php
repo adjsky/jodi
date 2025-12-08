@@ -64,14 +64,44 @@ class TodoController extends Controller
             'category' => 'nullable|string',
         ]);
 
-        DB::beginTransaction();
+        // TODO: vibe coded, check later
+        DB::transaction(function () use ($todo, $data) {
+            $oldCategory = $todo->category;
+            $oldPosition = $todo->position;
+            $newCategory = $data['category'];
+            $newPosition = $data['position'];
 
-        Todo::setNewOrder([$todo->id], $data['position']);
+            if ($oldCategory !== $newCategory) {
+                Todo::where('category', $oldCategory)
+                    ->where('position', '>', $oldPosition)
+                    ->decrement('position');
 
-        $todo->category = $data['category'];
-        $todo->save();
+                Todo::where('category', $newCategory)
+                    ->where('position', '>=', $newPosition)
+                    ->increment('position');
 
-        DB::commit();
+                $todo->category = $newCategory;
+                $todo->position = $newPosition;
+                $todo->save();
+            } else {
+                if ($newPosition !== $oldPosition) {
+                    if ($newPosition > $oldPosition) {
+                        Todo::where('category', $oldCategory)
+                            ->where('position', '>', $oldPosition)
+                            ->where('position', '<=', $newPosition)
+                            ->decrement('position');
+                    } else {
+                        Todo::where('category', $oldCategory)
+                            ->where('position', '>=', $newPosition)
+                            ->where('position', '<', $oldPosition)
+                            ->increment('position');
+                    }
+
+                    $todo->position = $newPosition;
+                    $todo->save();
+                }
+            }
+        });
 
         return back();
     }
