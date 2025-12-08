@@ -23,4 +23,9 @@ class TodoPolicy
     {
         return $user->id == $todo->user_id;
     }
+
+    public function reorder(User $user, Todo $todo): bool
+    {
+        return $user->id == $todo->user_id;
+    }
 }

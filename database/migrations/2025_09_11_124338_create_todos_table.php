@@ -19,7 +19,7 @@ return new class extends Migration
             $table->string('title');
             $table->text('description')->nullable();
             $table->string('category')->nullable();
-            $table->integer('position')->nullable();
+            $table->integer('position');
             $table->date('todo_date');
             $table->foreignId('recurrence_id')->nullable()->constrained();
             $table->string('color')->nullable();

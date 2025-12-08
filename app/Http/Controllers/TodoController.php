@@ -6,6 +6,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Todo;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Gate;
 
 class TodoController extends Controller
@@ -50,6 +51,27 @@ class TodoController extends Controller
 
         $todo->completed_at = $todo->completed_at ? null : now();
         $todo->save();
+
+        return back();
+    }
+
+    public function reorder(Request $request, Todo $todo)
+    {
+        Gate::authorize('reorder', $todo);
+
+        $data = $request->validate([
+            'position' => 'integer',
+            'category' => 'nullable|string',
+        ]);
+
+        DB::beginTransaction();
+
+        Todo::setNewOrder([$todo->id], $data['position']);
+
+        $todo->category = $data['category'];
+        $todo->save();
+
+        DB::commit();
 
         return back();
     }

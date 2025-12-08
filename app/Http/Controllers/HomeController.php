@@ -20,8 +20,8 @@ class HomeController extends Controller
                 fn () => TodoDto::collect(
                     $this->user()->todos()
                         ->where('todo_date', '=', $date)
-                        ->orderBy('created_at', 'asc')
                         ->orderBy('category', 'asc')
+                        ->orderBy('position', 'asc')
                         ->get()
                 )
             ),

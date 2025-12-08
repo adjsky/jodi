@@ -38,6 +38,7 @@ Route::middleware('auth')->group(function () {
             Route::patch('/{todo}', 'update');
             Route::delete('/{todo}', 'destroy');
             Route::post('/{todo}/complete', 'complete');
+            Route::post('/{todo}/reorder', 'reorder');
         });
 
     Route::prefix('/me')
