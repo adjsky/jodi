@@ -5,11 +5,16 @@
 
     import InfoActionRow from "./InfoActionRow.svelte";
 
+    import type { RequestPayload, UrlMethodPair } from "@inertiajs/core";
+    import type { ClassName } from "$/shared/lib/styles";
     import type { Snippet } from "svelte";
-    import type { HTMLButtonAttributes } from "svelte/elements";
 
-    type Props = HTMLButtonAttributes & {
+    type Props = {
+        href: UrlMethodPair;
+        data?: RequestPayload;
         icon?: Snippet;
+        children?: Snippet;
+        class?: ClassName;
         selected?: boolean;
     };
 

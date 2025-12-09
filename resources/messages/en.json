@@ -45,21 +45,21 @@
     },
     "current-user": {
         "save": "Save",
+        "invite": "Invite",
         "account": {
             "title": "Account",
-            "name": "Name",
             "email": "Email",
+            "name": "Name",
             "friends": "Friends",
             "invitations": "Your invitations"
         },
         "app-settings": {
             "title": "App settings",
             "language": "Language",
-            "week-start-on": "Week start on"
+            "week-start": "Week start on"
         },
         "actions": {
-            "log-out": "Log out",
-            "delete-account": "Delete account"
+            "log-out": "Log out"
         },
         "days": {
             "monday": "Monday",

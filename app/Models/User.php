@@ -41,6 +41,12 @@ class User extends Authenticatable
         return $this->belongsToMany(User::class, 'user_friends', 'user_id', 'friend_id');
     }
 
+    /** @return HasMany<RegistrationInvitation,$this> */
+    public function invitations(): HasMany
+    {
+        return $this->hasMany(RegistrationInvitation::class, 'inviter_user_id', 'id');
+    }
+
     /** @return HasMany<UserOneTimePasswords,$this> */
     public function oneTimePasswords(): HasMany
     {

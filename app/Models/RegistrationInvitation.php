@@ -12,7 +12,11 @@ class RegistrationInvitation extends Model
     /** @use HasFactory<\Database\Factories\RegistrationInvitationFactory> */
     use HasFactory;
 
-    protected $fillable = [];
+    protected $fillable = [
+        'email',
+        'code',
+        'expires_at',
+    ];
 
     protected $hidden = [];
 

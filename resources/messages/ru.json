@@ -54,11 +54,10 @@
         "app-settings": {
             "title": "Настройки приложения",
             "language": "Язык",
-            "week-start-on": "Начало недели"
+            "week-start": "Начало недели"
         },
         "actions": {
-            "log-out": "Выйти",
-            "delete-account": "Удалить аккаунт"
+            "log-out": "Выйти"
         },
         "days": {
             "monday": "Понедельник",

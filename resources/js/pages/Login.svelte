@@ -5,10 +5,15 @@
     import AuthLayout from "$/app/ui/layouts/AuthLayout.svelte";
     import { m } from "$/paraglide/messages";
     import Cat from "$/shared/assets/cat.svg";
-    import { toastify } from "$/shared/inertia/visit/toastify";
+    import {
+        toastify,
+        useInitialToast
+    } from "$/shared/inertia/visit/toastify.svelte";
     import Button from "$/shared/ui/Button.svelte";
     import TextField from "$/shared/ui/TextField.svelte";
     import { login } from "$actions/LoginController";
+
+    useInitialToast();
 </script>
 
 <AuthLayout>

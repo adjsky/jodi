@@ -234,5 +234,9 @@
     "Web Server is Down": "Web Server is Down",
     "Whoops!": "Whoops!",
     "Yes": "Yes",
-    "You are receiving this email because we received a password reset request for your account.": "You are receiving this email because we received a password reset request for your account."
+    "You are receiving this email because we received a password reset request for your account.": "You are receiving this email because we received a password reset request for your account.",
+    "You were invited to Jodi": "You were invited to Jodi",
+    "User :email invited you": "User :email invited you",
+    "Join": "Join",
+    "URL signature is invalid. Request a new invitation.": "URL signature is invalid. Request a new invitation."
 }

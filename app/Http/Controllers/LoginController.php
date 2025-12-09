@@ -17,7 +17,7 @@ class LoginController extends Controller
         private OtpService $otpService
     ) {}
 
-    public function show()
+    public function show(Request $request)
     {
         return inertia('Login');
     }

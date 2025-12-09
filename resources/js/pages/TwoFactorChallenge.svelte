@@ -5,7 +5,7 @@
     import { m } from "$/paraglide/messages";
     import Froggy from "$/shared/assets/froggy.svg";
     import { useActionRateLimit } from "$/shared/inertia/use-action-rate-limit.svelte";
-    import { toastify } from "$/shared/inertia/visit/toastify";
+    import { toastify } from "$/shared/inertia/visit/toastify.svelte";
     import { toaster } from "$/shared/lib/toast";
     import Button from "$/shared/ui/Button.svelte";
     import OneTimePasswordInput from "$/shared/ui/OneTimePasswordInput.svelte";

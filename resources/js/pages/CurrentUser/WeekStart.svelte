@@ -1,30 +1,23 @@
 <script lang="ts">
+    import { page } from "@inertiajs/svelte";
     import { Calendar } from "@lucide/svelte";
+    import SettingsLayout from "$/app/ui/layouts/SettingLayout.svelte";
     import { User } from "$/entities/user";
     import { update } from "$/generated/actions/App/Http/Controllers/CurrentUserController";
     import { m } from "$/paraglide/messages";
-    import { link } from "$/shared/inertia/link";
-
-    import Layout from "./Layout.svelte";
-
-    import type { LayoutProps } from "../model/types";
-
-    type Props = LayoutProps & { weekStart: string };
-
-    const { weekStart, ...props }: Props = $props();
 
     const days = ["monday", "sunday"] as const;
+
+    const user = $derived($page.props.auth.user);
 </script>
 
-<Layout {...props}>
-    <User.Info.Block>
+<SettingsLayout title={m["current-user.app-settings.week-start"]()}>
+    <User.Info.Block class="py-5">
         {#each days as day (day)}
             <User.Info.SelectRow
-                {@attach link(() => ({
-                    href: update(),
-                    data: { preferences: { weekStartOn: day } }
-                }))}
-                selected={day == weekStart}
+                href={update()}
+                data={{ preferences: { weekStartOn: day } }}
+                selected={day == user.preferences.weekStartOn}
             >
                 {#snippet icon()}
                     <Calendar />
@@ -33,4 +26,4 @@
             </User.Info.SelectRow>
         {/each}
     </User.Info.Block>
-</Layout>
+</SettingsLayout>
