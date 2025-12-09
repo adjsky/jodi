@@ -50,6 +50,7 @@
         props.class
     )}
     data-completed={boolAttr(todo.completedAt)}
+    onclick={() => navigator.vibrate?.(100)}
 >
     <Check class="group-not-data-completed:hidden" />
 </button>
