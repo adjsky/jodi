@@ -5,6 +5,8 @@ import "./config/date";
 import { createInertiaApp } from "@inertiajs/svelte";
 import { hydrate, mount } from "svelte";
 
+import PersistentLayout from "./ui/layouts/PersistentLayout.svelte";
+
 import type { ResolvedComponent } from "@inertiajs/svelte";
 
 void createInertiaApp({
@@ -13,7 +15,8 @@ void createInertiaApp({
             "../pages/**/*.svelte",
             { eager: true }
         );
-        return pages[`../pages/${name}.svelte`];
+        const page = pages[`../pages/${name}.svelte`];
+        return { default: page.default, layout: PersistentLayout };
     },
     setup({ el, App, props }) {
         if (el && el.dataset.serverRendered === "true") {

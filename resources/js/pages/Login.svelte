@@ -5,15 +5,9 @@
     import AuthLayout from "$/app/ui/layouts/AuthLayout.svelte";
     import { m } from "$/paraglide/messages";
     import Cat from "$/shared/assets/cat.svg";
-    import {
-        toastify,
-        useInitialToast
-    } from "$/shared/inertia/visit/toastify.svelte";
     import Button from "$/shared/ui/Button.svelte";
     import TextField from "$/shared/ui/TextField.svelte";
     import { login } from "$actions/LoginController";
-
-    useInitialToast();
 </script>
 
 <AuthLayout>
@@ -23,13 +17,7 @@
         {/snippet}
     </Intro>
 
-    <Form
-        {...toastify()}
-        action={login()}
-        class="mt-13 space-y-4"
-        let:processing
-        let:errors
-    >
+    <Form action={login()} class="mt-13 space-y-4" let:processing let:errors>
         <TextField
             type="email"
             name="email"

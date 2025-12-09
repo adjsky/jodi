@@ -12,10 +12,18 @@
         required?: boolean;
         disabled?: boolean;
         readonly?: boolean;
+        input?: HTMLInputElement | null;
     };
 
-    const { error, indicator, required, disabled, readonly, ...props }: Props =
-        $props();
+    let {
+        error,
+        indicator,
+        required,
+        disabled,
+        readonly,
+        input = $bindable(null),
+        ...props
+    }: Props = $props();
 </script>
 
 <Field.Root invalid={Boolean(error)} {required} {disabled} readOnly={readonly}>
@@ -33,6 +41,7 @@
             </div>
         {/if}
         <Field.Input
+            bind:ref={input}
             {...props}
             class={tw(
                 "form-input size-full border-none bg-transparent px-4 text-md font-semibold text-cream-950 placeholder:text-cream-600 focus:ring-0",

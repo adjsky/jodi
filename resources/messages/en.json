@@ -3,7 +3,7 @@
     "common": {
         "or": "Or",
         "too-many-requests": "Too many requests. Try again later.",
-        "router-exception": "Unexpected error happened. Try again later.",
+        "unexpected-error": "Unexpected error happened. Try again later.",
         "save": "Save",
         "settings": "Settings"
     },
@@ -64,6 +64,14 @@
         "days": {
             "monday": "Monday",
             "sunday": "Sunday"
+        },
+        "invitations": {
+            "invitation": "Invitation",
+            "no-invitations": "Looks like you have nothing here. Let's add someone.",
+            "waiting": "Waiting...",
+            "registered": "Registered!",
+            "share": "Share the invitation link",
+            "delete": "Delete"
         }
     }
 }

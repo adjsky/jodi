@@ -5,7 +5,6 @@
     import { create } from "$/generated/actions/App/Http/Controllers/TodoController";
     import { getLocale } from "$/paraglide/runtime";
     import { useSearchParams } from "$/shared/inertia/use-search-params.svelte";
-    import { toastify } from "$/shared/inertia/visit/toastify.svelte";
     import SaveOrClose from "$/shared/ui/SaveOrClose.svelte";
     import dayjs from "dayjs";
 
@@ -14,7 +13,6 @@
 </script>
 
 <Form
-    {...toastify()}
     action={create()}
     options={{
         only: ["todos"],

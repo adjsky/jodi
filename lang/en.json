@@ -238,5 +238,7 @@
     "You were invited to Jodi": "You were invited to Jodi",
     "User :email invited you": "User :email invited you",
     "Join": "Join",
-    "URL signature is invalid. Request a new invitation.": "URL signature is invalid. Request a new invitation."
+    "URL signature is invalid. Request a new invitation.": "URL signature is invalid. Request a new invitation.",
+    "Waiting for user registration.": "Waiting for user registration.",
+    "Successfuly deleted invitation.": "Successfuly deleted invitation."
 }

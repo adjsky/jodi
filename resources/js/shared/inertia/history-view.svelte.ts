@@ -36,13 +36,13 @@ export class HistoryView<T extends string | number | Record<string, unknown>> {
         );
     }
 
-    open(meta?: T): void;
-    open(name: string, meta?: T): void;
-    open(nameOrMeta?: string | T, metaOrNothing?: T): void {
+    open(meta?: T): Promise<void>;
+    open(name: string, meta?: T): Promise<void>;
+    open(nameOrMeta?: string | T, metaOrNothing?: T): Promise<void> {
         const name = typeof nameOrMeta == "string" ? nameOrMeta : this.#name;
         const meta = typeof nameOrMeta != "string" ? nameOrMeta : metaOrNothing;
 
-        void router.push({
+        return router.push({
             preserveScroll: true,
             preserveState: true,
             url: `${this.#url.pathname}${this.#url.search}#${typeof name == "string" ? name : this.#name}${meta ? `?${this.#compress(meta)}` : ""}`,

@@ -1,30 +1,35 @@
 <script lang="ts">
-    import { page } from "@inertiajs/svelte";
-    import { Bell } from "@lucide/svelte";
-    import AppLayout from "$/app/ui/layouts/AppLayout.svelte";
+    import { Link, page } from "@inertiajs/svelte";
+    import { Bell, ChevronLeft } from "@lucide/svelte";
     import { User } from "$/entities/user";
     import {
         email,
         friends,
-        invitations,
         language,
         name,
         weekStart
     } from "$/generated/actions/App/Http/Controllers/CurrentUserController";
     import { logout } from "$/generated/actions/App/Http/Controllers/LoginController";
+    import invitations from "$/generated/actions/App/Http/Controllers/RegistrationInvitationController";
     import { home } from "$/generated/routes";
     import { m } from "$/paraglide/messages";
     import { getLocale } from "$/paraglide/runtime";
-    import { link } from "$/shared/inertia/link";
     import { LANGUAGES } from "$/shared/lib/language";
-    import BackButton from "$/shared/ui/BackButton.svelte";
+
+    type Props = {
+        nInvitations: number;
+    };
+
+    const { nInvitations }: Props = $props();
 
     const user = $derived($page.props.auth.user);
 </script>
 
-<AppLayout class="min-h-svh px-4 pt-3 pb-8">
+<main class="min-h-svh px-4 pt-3 pb-8">
     <header class="flex items-center justify-between">
-        <BackButton {@attach link(() => ({ href: home() }))} />
+        <Link href={home()} class="p-2">
+            <ChevronLeft class="text-4xl" />
+        </Link>
         <div
             class="absolute top-4 left-1/2 flex -translate-x-1/2 flex-col items-center gap-1.5"
         >
@@ -58,10 +63,10 @@
             0
         </User.Info.SettingRow>
         <User.Info.SettingRow
-            href={invitations()}
+            href={invitations.index()}
             title={m["current-user.account.invitations"]()}
         >
-            0
+            {nInvitations}
         </User.Info.SettingRow>
     </User.Info.Block>
 
@@ -90,4 +95,4 @@
     </User.Info.Block>
 
     <p class="mt-4 text-sm">&lt;{$page.version}&gt;</p>
-</AppLayout>
+</main>

@@ -4,7 +4,6 @@
     import SettingsLayout from "$/app/ui/layouts/SettingLayout.svelte";
     import { update } from "$/generated/actions/App/Http/Controllers/CurrentUserController";
     import { m } from "$/paraglide/messages";
-    import { toastify } from "$/shared/inertia/visit/toastify.svelte";
     import Button from "$/shared/ui/Button.svelte";
     import TextField from "$/shared/ui/TextField.svelte";
 
@@ -13,7 +12,6 @@
 
 <SettingsLayout title={m["current-user.account.name"]()}>
     <Form
-        {...toastify()}
         action={update()}
         class="flex flex-grow flex-col justify-between py-5"
         let:processing

@@ -1,0 +1,52 @@
+<script lang="ts">
+    import { Clipboard } from "@ark-ui/svelte";
+    import { Form } from "@inertiajs/svelte";
+    import { CheckIcon, ClipboardCopyIcon } from "@lucide/svelte";
+    import SettingsLayout from "$/app/ui/layouts/SettingLayout.svelte";
+    import {
+        destroy,
+        index
+    } from "$/generated/actions/App/Http/Controllers/RegistrationInvitationController";
+    import { m } from "$/paraglide/messages";
+    import Button from "$/shared/ui/Button.svelte";
+
+    type Props = {
+        invitation: App.Data.RegistrationInvitationDto;
+        shareUrl: string;
+    };
+
+    const { invitation, shareUrl }: Props = $props();
+</script>
+
+<SettingsLayout
+    backHref={index()}
+    title={m["current-user.invitations.invitation"]()}
+>
+    <div class="flex flex-grow flex-col justify-between py-5">
+        <!-- TODO: maybe use web share API? -->
+        <Clipboard.Root value={shareUrl}>
+            <Clipboard.Label class="font-semibold">
+                {m["current-user.invitations.share"]()}:
+            </Clipboard.Label>
+            <Clipboard.Control
+                class="mt-2 flex justify-between gap-1 rounded-lg border border-cream-950 bg-white p-2"
+            >
+                <Clipboard.Input class="w-full font-medium" />
+                <Clipboard.Trigger class="p-1">
+                    <Clipboard.Indicator>
+                        {#snippet copied()}
+                            <CheckIcon class="text-xl text-green" />
+                        {/snippet}
+                        <ClipboardCopyIcon class="text-xl " />
+                    </Clipboard.Indicator>
+                </Clipboard.Trigger>
+            </Clipboard.Control>
+        </Clipboard.Root>
+
+        <Form action={destroy(invitation.id)}>
+            <Button>
+                {m["current-user.invitations.delete"]()}
+            </Button>
+        </Form>
+    </div>
+</SettingsLayout>

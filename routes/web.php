@@ -6,6 +6,7 @@ use App\Domain\Auth\Notifications;
 use App\Http\Controllers\CurrentUserController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\LoginController;
+use App\Http\Controllers\RegistrationInvitationController;
 use App\Http\Controllers\SignupController;
 use App\Http\Controllers\TodoController;
 use App\Http\Controllers\TwoFactorChallengeController;
@@ -55,10 +56,17 @@ Route::middleware('auth')->group(function () {
             Route::get('/name', 'name');
             Route::get('/email', 'email');
             Route::get('/friends', 'friends');
-            Route::get('/invitations', 'invitations');
             Route::get('/language', 'language');
             Route::get('/week-start', 'weekStart');
             Route::patch('/', 'update');
+        });
+
+    Route::prefix('/me/invitations')
+        ->controller(RegistrationInvitationController::class)
+        ->group(function () {
+            Route::get('/', 'index')->name('invitations');
+            Route::get('/{invitation}', 'show');
+            Route::delete('/{invitation}', 'destroy');
             Route::post('/invite', 'invite');
         });
 });
