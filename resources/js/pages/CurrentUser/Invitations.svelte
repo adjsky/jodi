@@ -59,9 +59,7 @@
                     >
                         <div class="flex flex-col">
                             <span class="font-semibold">
-                                {invitation.registeredAt
-                                    ? m["current-user.invitations.registered"]()
-                                    : m["current-user.invitations.waiting"]()}
+                                {m["current-user.invitations.waiting"]()}
                             </span>
                             <span class="text-sm text-cream-400">
                                 {invitation.email}
@@ -78,7 +76,7 @@
                 inviteInput?.focus();
             }}
         >
-            {m["current-user.invite"]()}
+            {m["current-user.add"]()}
         </Button>
     </div>
 

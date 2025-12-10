@@ -28,7 +28,7 @@
 
     const skeletonClass: ClassName = $derived(
         tw(
-            "relative inline-flex w-full overflow-hidden rounded-lg bg-cream-900/10 leading-none select-none motion-safe:animate-pulse",
+            "relative inline-flex w-full animate-pulse overflow-hidden rounded-lg bg-cream-900/10 leading-none select-none",
             className
         )
     );

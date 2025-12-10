@@ -1,12 +1,13 @@
 <script lang="ts">
     import { Clipboard } from "@ark-ui/svelte";
-    import { Form } from "@inertiajs/svelte";
+    import { router } from "@inertiajs/svelte";
     import { CheckIcon, ClipboardCopyIcon } from "@lucide/svelte";
     import SettingsLayout from "$/app/ui/layouts/SettingLayout.svelte";
     import { destroy } from "$/generated/actions/App/Http/Controllers/RegistrationInvitationController";
     import { invitations } from "$/generated/routes";
     import { m } from "$/paraglide/messages";
     import Button from "$/shared/ui/Button.svelte";
+    import Confirmable from "$/shared/ui/Confirmable.svelte";
 
     type Props = {
         invitation: App.Data.RegistrationInvitationDto;
@@ -29,7 +30,7 @@
             <Clipboard.Control
                 class="mt-2 flex justify-between gap-1 rounded-lg border border-cream-950 bg-white p-2"
             >
-                <Clipboard.Input class="w-full font-medium" />
+                <Clipboard.Input class="w-full font-medium outline-none" />
                 <Clipboard.Trigger class="p-1">
                     <Clipboard.Indicator>
                         {#snippet copied()}
@@ -41,13 +42,19 @@
             </Clipboard.Control>
         </Clipboard.Root>
 
-        <Form
-            action={destroy(invitation.id)}
-            options={{ viewTransition: true }}
+        <Confirmable
+            title={m["current-user.invitations.delete-ahtung"]()}
+            onconfirm={() => {
+                router.visit(destroy(invitation.id), {
+                    viewTransition: true
+                });
+            }}
         >
-            <Button>
-                {m["current-user.invitations.delete"]()}
-            </Button>
-        </Form>
+            {#snippet children(props)}
+                <Button {...props}>
+                    {m["current-user.invitations.delete"]()}
+                </Button>
+            {/snippet}
+        </Confirmable>
     </div>
 </SettingsLayout>
