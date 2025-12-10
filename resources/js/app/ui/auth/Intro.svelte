@@ -14,7 +14,7 @@
     const { icon, title, description, ...props }: Props = $props();
 </script>
 
-<div {...props} class={tw("mx-auto w-max space-y-2.5", props.class)}>
+<div {...props} class={tw("mx-auto space-y-2.5", props.class)}>
     <div class="flex items-center justify-center gap-3">
         <img src={Logo} width={120} height={55} alt="" />
         {@render icon()}

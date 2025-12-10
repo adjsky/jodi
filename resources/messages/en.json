@@ -7,6 +7,10 @@
         "save": "Save",
         "settings": "Settings"
     },
+    "signup": {
+        "title": "Ready to make your day productive?",
+        "start": "Let's begin!"
+    },
     "login": {
         "title": "Log In",
         "email-placeholder": "Enter your email",
