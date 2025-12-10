@@ -84,7 +84,7 @@
 
     {#if view.isOpen()}
         <div class="fixed inset-0 z-10 flex flex-col bg-cream-50 px-4 py-3">
-            {@render header(m["current-user.invite"](), index())}
+            {@render header(m["current-user.invite"](), index(), false)}
             <Form
                 action={invite()}
                 class="flex flex-grow flex-col justify-between py-5"
