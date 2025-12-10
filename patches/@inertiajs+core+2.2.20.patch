@@ -1,8 +1,8 @@
 diff --git a/node_modules/@inertiajs/core/dist/index.esm.js b/node_modules/@inertiajs/core/dist/index.esm.js
-index 3fa968f..bba3c2f 100644
+index 7744084..fa77db2 100644
 --- a/node_modules/@inertiajs/core/dist/index.esm.js
 +++ b/node_modules/@inertiajs/core/dist/index.esm.js
-@@ -512,7 +512,6 @@ var CurrentPage = class {
+@@ -811,7 +811,6 @@ var CurrentPage = class {
        const isServer2 = typeof window === "undefined";
        const location = !isServer2 ? window.location : new URL(page2.url);
        const scrollRegions = !isServer2 && preserveScroll ? history.getScrollRegions() : [];
@@ -10,22 +10,22 @@ index 3fa968f..bba3c2f 100644
        return new Promise((resolve) => {
          replace ? history.replaceState(page2, () => resolve(null)) : history.pushState(page2, () => resolve(null));
        }).then(() => {
-@@ -881,6 +880,14 @@ var EventHandler = class {
+@@ -1198,6 +1197,14 @@ var EventHandler = class {
      return () => document.removeEventListener(type, listener);
    }
    handlePopstateEvent(event) {
 +    if (page.__jodi_isHistoryModal) {
 +        delete page.__jodi_isHistoryModal;
-+        const url = hrefToUrl(page.get().url)
-+        url.hash = ""
-+        const page2 = { ...page.get(), url: url.pathname + url.search }
++        const url = hrefToUrl(page.get().url);
++        url.hash = "";
++        const page2 = { ...page.get(), url: url.pathname + url.search };
 +        page.setQuietly(page2, { preserveState: true });
-+        return
++        return;
 +    }
      const state = event.state || null;
      if (state === null) {
        const url = hrefToUrl(page.get().url);
-@@ -1360,6 +1367,7 @@ var RequestParams = class _RequestParams {
+@@ -1418,6 +1425,7 @@ var RequestParams = class _RequestParams {
          onCancel: this.wrapCallback(params, "onCancel"),
          onSuccess: this.wrapCallback(params, "onSuccess"),
          onError: this.wrapCallback(params, "onError"),
@@ -33,19 +33,16 @@ index 3fa968f..bba3c2f 100644
          onCancelToken: this.wrapCallback(params, "onCancelToken"),
          onPrefetched: this.wrapCallback(params, "onPrefetched"),
          onPrefetching: this.wrapCallback(params, "onPrefetching")
-@@ -1654,9 +1662,9 @@ var Response = class _Response {
+@@ -1718,7 +1726,7 @@ var Response = class _Response {
        ...this.response,
        data: this.getDataFromResponse(this.response.data)
      };
 -    if (fireInvalidEvent(response)) {
 +    if (this.requestParams.all().onInvalid(response) !== false && fireInvalidEvent(response)) {
        return config.get("future.useDialogForErrorModal") ? dialog_default.show(response.data) : modal_default.show(response.data);
--    }
-+    };
+     }
    }
-   isInertiaResponse() {
-     return this.hasHeader("x-inertia");
-@@ -2095,13 +2103,13 @@ var Router = class {
+@@ -2175,13 +2183,13 @@ var Router = class {
        keepAlive: options.keepAlive ?? false
      });
    }
@@ -61,7 +58,7 @@ index 3fa968f..bba3c2f 100644
        return;
      }
      const requestStream = visit.async ? this.asyncRequestStream : this.syncRequestStream;
-@@ -2200,7 +2208,7 @@ var Router = class {
+@@ -2280,7 +2288,7 @@ var Router = class {
      return page.resolve(component);
    }
    replace(params) {
@@ -70,7 +67,7 @@ index 3fa968f..bba3c2f 100644
    }
    replaceProp(name, value, options) {
      this.replace({
-@@ -2240,7 +2248,7 @@ var Router = class {
+@@ -2320,7 +2328,7 @@ var Router = class {
      );
    }
    push(params) {
@@ -78,18 +75,16 @@ index 3fa968f..bba3c2f 100644
 +    return this.clientVisit(params);
    }
    clientVisit(params, { replace = false } = {}) {
-     const current = page.get();
-@@ -2253,7 +2261,8 @@ var Router = class {
+     this.clientVisitQueue.add(() => this.performClientVisit(params, { replace }));
+@@ -2336,6 +2344,7 @@ var Router = class {
      };
      const preserveScroll = RequestParams.resolvePreserveOption(params.preserveScroll ?? false, page2);
      const preserveState = RequestParams.resolvePreserveOption(params.preserveState ?? false, page2);
--    page.set(page2, {
 +    page.__jodi_isHistoryModal = pageParams.__jodi_isHistoryModal;
-+    return page.set(page2, {
+     return page.set(page2, {
        replace,
        preserveScroll,
-       preserveState,
-@@ -2349,6 +2358,8 @@ var Router = class {
+@@ -2433,6 +2442,8 @@ var Router = class {
        }),
        onSuccess: options.onSuccess || (() => {
        }),
@@ -98,20 +93,20 @@ index 3fa968f..bba3c2f 100644
        onError: options.onError || (() => {
        }),
        onPrefetched: options.onPrefetched || (() => {
-@@ -2360,7 +2371,7 @@ var Router = class {
+@@ -2444,7 +2455,7 @@ var Router = class {
    loadDeferredProps(deferred) {
      if (deferred) {
        Object.entries(deferred).forEach(([_, group]) => {
--        this.reload({ only: group });
-+        this.reload({ only: group, replace: true });
+-        this.doReload({ only: group, deferredProps: true });
++        this.doReload({ only: group, deferredProps: true, replace: true });
        });
      }
    }
 diff --git a/node_modules/@inertiajs/core/types/router.d.ts b/node_modules/@inertiajs/core/types/router.d.ts
-index 92fa7c7..cee9acf 100644
+index dcf6009..cb3bd96 100644
 --- a/node_modules/@inertiajs/core/types/router.d.ts
 +++ b/node_modules/@inertiajs/core/types/router.d.ts
-@@ -29,11 +29,11 @@ export declare class Router {
+@@ -34,11 +34,11 @@ export declare class Router {
      clearHistory(): void;
      decryptHistory(): Promise<Page>;
      resolveComponent(component: string): Promise<Component>;
@@ -126,18 +121,18 @@ index 92fa7c7..cee9acf 100644
          replace?: boolean;
      }): void;
 diff --git a/node_modules/@inertiajs/core/types/types.d.ts b/node_modules/@inertiajs/core/types/types.d.ts
-index 3fb2f61..1f7232c 100644
+index 3a76ca7..1aa779f 100644
 --- a/node_modules/@inertiajs/core/types/types.d.ts
 +++ b/node_modules/@inertiajs/core/types/types.d.ts
-@@ -93,6 +93,7 @@ export interface Page<SharedProps extends PageProps = PageProps> {
-     deepMergeProps?: string[];
-     matchPropsOn?: string[];
-     scrollProps?: Record<keyof PageProps, ScrollProp>;
+@@ -97,6 +97,7 @@ export interface Page<SharedProps extends PageProps = PageProps> {
+         prop: keyof PageProps;
+         expiresAt?: number | null;
+     }>;
 +    __jodi_isHistoryModal?: boolean;
      /** @internal */
      rememberedState: Record<string, unknown>;
  }
-@@ -110,6 +111,7 @@ export interface ClientSideVisitOptions<TProps = Page['props']> {
+@@ -114,6 +115,7 @@ export interface ClientSideVisitOptions<TProps = Page['props']> {
      preserveState?: VisitOptions['preserveState'];
      errorBag?: string | null;
      viewTransition?: VisitOptions['viewTransition'];
@@ -145,7 +140,7 @@ index 3fb2f61..1f7232c 100644
      onError?: (errors: Errors) => void;
      onFinish?: (visit: ClientSideVisitOptions<TProps>) => void;
      onSuccess?: (page: Page) => void;
-@@ -157,7 +159,7 @@ export type GlobalEventsMap<T extends RequestPayload = RequestPayload> = {
+@@ -161,7 +163,7 @@ export type GlobalEventsMap<T extends RequestPayload = RequestPayload> = {
          details: {
              visit: PendingVisit<T>;
          };
@@ -154,7 +149,7 @@ index 3fb2f61..1f7232c 100644
      };
      start: {
          parameters: [PendingVisit<T>];
-@@ -263,6 +265,7 @@ export type VisitCallbacks<T extends RequestPayload = RequestPayload> = {
+@@ -267,6 +269,7 @@ export type VisitCallbacks<T extends RequestPayload = RequestPayload> = {
      onCancel: GlobalEventCallback<'cancel', T>;
      onSuccess: GlobalEventCallback<'success', T>;
      onError: GlobalEventCallback<'error', T>;
@@ -162,7 +157,7 @@ index 3fb2f61..1f7232c 100644
      onPrefetched: GlobalEventCallback<'prefetched', T>;
      onPrefetching: GlobalEventCallback<'prefetching', T>;
  };
-@@ -364,6 +367,7 @@ export interface LinkComponentBaseProps extends Partial<Pick<Visit<RequestPayloa
+@@ -370,6 +373,7 @@ export interface LinkComponentBaseProps extends Partial<Pick<Visit<RequestPayloa
      prefetch: boolean | LinkPrefetchOption | LinkPrefetchOption[];
      cacheFor: CacheForOption | CacheForOption[];
      cacheTags: string | string[];
@@ -170,7 +165,7 @@ index 3fb2f61..1f7232c 100644
  }> {
  }
  type PrefetchObject = {
-@@ -408,7 +412,7 @@ export type UrlMethodPair = {
+@@ -415,7 +419,7 @@ export type UrlMethodPair = {
      url: string;
      method: Method;
  };

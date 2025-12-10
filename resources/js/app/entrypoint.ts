@@ -19,8 +19,7 @@ void createInertiaApp({
         const page = pages[`../pages/${name}.svelte`];
         return {
             default: page.default,
-            layout: (h, page) =>
-                h(PersistentLayout as LegacyComponentType, [page])
+            layout: PersistentLayout as LegacyComponentType
         };
     },
     setup({ el, App, props }) {
