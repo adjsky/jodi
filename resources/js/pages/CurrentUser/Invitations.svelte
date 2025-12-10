@@ -1,6 +1,6 @@
 <script lang="ts">
     import { Form, Link } from "@inertiajs/svelte";
-    import { ChevronRight, User } from "@lucide/svelte";
+    import { ChevronRight, Mail } from "@lucide/svelte";
     import SettingsLayout, {
         header
     } from "$/app/ui/layouts/SettingLayout.svelte";
@@ -99,7 +99,7 @@
                     error={errors.email}
                     required
                 >
-                    {#snippet indicator()}<User />{/snippet}
+                    {#snippet indicator()}<Mail />{/snippet}
                 </TextField>
                 <Button disabled={processing}>
                     {m["current-user.invite"]()}

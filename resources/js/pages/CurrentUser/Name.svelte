@@ -1,6 +1,6 @@
 <script lang="ts">
     import { Form, page } from "@inertiajs/svelte";
-    import { User } from "@lucide/svelte";
+    import { AtSign } from "@lucide/svelte";
     import SettingsLayout from "$/app/ui/layouts/SettingLayout.svelte";
     import { update } from "$/generated/actions/App/Http/Controllers/CurrentUserController";
     import { m } from "$/paraglide/messages";
@@ -26,7 +26,7 @@
             defaultValue={user.name}
             required
         >
-            {#snippet indicator()}<User />{/snippet}
+            {#snippet indicator()}<AtSign />{/snippet}
         </TextField>
 
         <Button type="submit" disabled={processing}>
