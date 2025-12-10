@@ -4,13 +4,14 @@ declare(strict_types=1);
 
 namespace App\Models;
 
+use App\Support\Sqids\HasSqid;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 class RegistrationInvitation extends Model
 {
     /** @use HasFactory<\Database\Factories\RegistrationInvitationFactory> */
-    use HasFactory;
+    use HasFactory, HasSqid;
 
     protected $fillable = [
         'email',

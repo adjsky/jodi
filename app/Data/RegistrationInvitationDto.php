@@ -13,7 +13,7 @@ use Spatie\TypeScriptTransformer\Attributes\TypeScript;
 class RegistrationInvitationDto extends Data
 {
     public function __construct(
-        public int $id,
+        public string $id,
         public string $email,
         public ?Carbon $registeredAt
     ) {}
@@ -21,7 +21,7 @@ class RegistrationInvitationDto extends Data
     public static function fromModel(RegistrationInvitation $invitation): self
     {
         return new self(
-            $invitation->id,
+            $invitation->sqid,
             $invitation->email,
             $invitation->registered_at
         );
