@@ -4,8 +4,13 @@ import { fromStore } from "svelte/store";
 
 // TODO: somehow handle broken hashes?
 
+export type HistoryViewOptions = {
+    viewTransition?: boolean;
+};
+
 export class HistoryView<T extends string | number | Record<string, unknown>> {
     #name?: string;
+    #options?: HistoryViewOptions;
 
     #url = $derived(new URL(fromStore(page).current.url, location.origin));
 
@@ -20,8 +25,9 @@ export class HistoryView<T extends string | number | Record<string, unknown>> {
         return this.#decompress(this.#hash.meta) as T;
     });
 
-    constructor(name?: string) {
+    constructor(name?: string, options?: HistoryViewOptions) {
         this.#name = name;
+        this.#options = options;
     }
 
     get meta() {
@@ -46,7 +52,8 @@ export class HistoryView<T extends string | number | Record<string, unknown>> {
             preserveScroll: true,
             preserveState: true,
             url: `${this.#url.pathname}${this.#url.search}#${typeof name == "string" ? name : this.#name}${meta ? `?${this.#compress(meta)}` : ""}`,
-            __jodi_isHistoryModal: true
+            __jodi_isHistoryModal: true,
+            viewTransition: this.#options?.viewTransition
         });
     }
 

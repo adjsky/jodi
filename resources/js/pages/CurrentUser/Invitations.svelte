@@ -23,7 +23,7 @@
 
     let inviteInput = $state<HTMLInputElement | null>(null);
 
-    const view = new HistoryView("invite");
+    const view = new HistoryView("invite", { viewTransition: true });
 </script>
 
 <SettingsLayout title={m["current-user.account.invitations"]()}>
@@ -84,7 +84,7 @@
 
     {#if view.isOpen()}
         <div class="fixed inset-0 z-10 flex flex-col bg-cream-50 px-4 py-3">
-            {@render header(m["current-user.invite"](), index(), false)}
+            {@render header(m["current-user.invite"](), index())}
             <Form
                 action={invite()}
                 class="flex flex-grow flex-col justify-between py-5"
