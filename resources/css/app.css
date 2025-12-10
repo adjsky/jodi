@@ -3,6 +3,8 @@
 @import "tailwindcss";
 @import "tw-animate-css";
 
+@import "./view-transition.css";
+
 @plugin '@tailwindcss/forms' {
     strategy: "class";
 }

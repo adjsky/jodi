@@ -13,15 +13,21 @@
     type Props = {
         title: string;
         backHref?: UrlMethodPair;
+        viewTransition?: boolean;
         children: Snippet;
     };
 
-    const { title, backHref, children }: Props = $props();
+    const {
+        title,
+        backHref,
+        viewTransition = true,
+        children
+    }: Props = $props();
 </script>
 
-{#snippet header(title: string, href: UrlMethodPair)}
+{#snippet header(title: string, href: UrlMethodPair, viewTransition = true)}
     <div class="relative flex items-center">
-        <Link {href} class="p-2">
+        <Link {href} {viewTransition} class="p-2">
             <ChevronLeft class="text-4xl" />
         </Link>
         <span
@@ -33,6 +39,6 @@
 {/snippet}
 
 <main class="flex min-h-svh flex-col bg-cream-50 px-4 py-3">
-    {@render header(title, backHref ?? index())}
+    {@render header(title, backHref ?? index(), viewTransition)}
     {@render children()}
 </main>

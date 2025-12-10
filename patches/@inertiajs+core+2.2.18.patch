@@ -126,7 +126,7 @@ index 92fa7c7..cee9acf 100644
          replace?: boolean;
      }): void;
 diff --git a/node_modules/@inertiajs/core/types/types.d.ts b/node_modules/@inertiajs/core/types/types.d.ts
-index 3fb2f61..65aacb6 100644
+index 3fb2f61..1f7232c 100644
 --- a/node_modules/@inertiajs/core/types/types.d.ts
 +++ b/node_modules/@inertiajs/core/types/types.d.ts
 @@ -93,6 +93,7 @@ export interface Page<SharedProps extends PageProps = PageProps> {
@@ -170,3 +170,12 @@ index 3fb2f61..65aacb6 100644
  }> {
  }
  type PrefetchObject = {
+@@ -408,7 +412,7 @@ export type UrlMethodPair = {
+     url: string;
+     method: Method;
+ };
+-export type FormComponentOptions = Pick<VisitOptions, 'preserveScroll' | 'preserveState' | 'preserveUrl' | 'replace' | 'only' | 'except' | 'reset'>;
++export type FormComponentOptions = Pick<VisitOptions, 'preserveScroll' | 'preserveState' | 'preserveUrl' | 'replace' | 'only' | 'except' | 'reset' | "viewTransition">;
+ export type FormComponentProps = Partial<Pick<Visit, 'headers' | 'queryStringArrayFormat' | 'errorBag' | 'showProgress' | 'invalidateCacheTags'> & Omit<VisitCallbacks, 'onPrefetched' | 'onPrefetching'>> & {
+     method?: Method | Uppercase<Method>;
+     action?: string | UrlMethodPair;

@@ -3,6 +3,7 @@
     import { Calendar } from "@lucide/svelte";
     import { User } from "$/entities/user";
     import { WeekCarousel } from "$/features/filter-by-date";
+    import { me } from "$/generated/routes";
     import { getLocale } from "$/paraglide/runtime";
     import { useSearchParams } from "$/shared/inertia/use-search-params.svelte";
     import dayjs from "dayjs";
@@ -31,7 +32,7 @@
             }).format(day.toDate())}
         </h2>
     </div>
-    <Link href="/me"><User.Avatar name={user.name} /></Link>
+    <Link href={me()} viewTransition><User.Avatar name={user.name} /></Link>
 </header>
 
 <WeekCarousel

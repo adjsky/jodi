@@ -54,6 +54,7 @@
                 {#each invitations as invitation (invitation.email)}
                     <Link
                         href={show(invitation.id)}
+                        viewTransition
                         class="border-gray-950 flex items-center justify-between rounded-xl border bg-white px-4 py-3"
                     >
                         <div class="flex flex-col">

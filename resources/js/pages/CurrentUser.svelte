@@ -27,7 +27,7 @@
 
 <main class="min-h-svh px-4 pt-3 pb-8">
     <header class="flex items-center justify-between">
-        <Link href={home()} class="p-2">
+        <Link href={home()} viewTransition class="p-2">
             <ChevronLeft class="text-4xl" />
         </Link>
         <div

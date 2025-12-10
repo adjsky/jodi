@@ -14,6 +14,7 @@
     <Form
         action={update()}
         class="flex flex-grow flex-col justify-between py-5"
+        options={{ viewTransition: true }}
         let:processing
         let:errors
     >

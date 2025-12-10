@@ -3,10 +3,8 @@
     import { Form } from "@inertiajs/svelte";
     import { CheckIcon, ClipboardCopyIcon } from "@lucide/svelte";
     import SettingsLayout from "$/app/ui/layouts/SettingLayout.svelte";
-    import {
-        destroy,
-        index
-    } from "$/generated/actions/App/Http/Controllers/RegistrationInvitationController";
+    import { destroy } from "$/generated/actions/App/Http/Controllers/RegistrationInvitationController";
+    import { invitations } from "$/generated/routes";
     import { m } from "$/paraglide/messages";
     import Button from "$/shared/ui/Button.svelte";
 
@@ -19,7 +17,7 @@
 </script>
 
 <SettingsLayout
-    backHref={index()}
+    backHref={invitations()}
     title={m["current-user.invitations.invitation"]()}
 >
     <div class="flex flex-grow flex-col justify-between py-5">
@@ -43,7 +41,10 @@
             </Clipboard.Control>
         </Clipboard.Root>
 
-        <Form action={destroy(invitation.id)}>
+        <Form
+            action={destroy(invitation.id)}
+            options={{ viewTransition: true }}
+        >
             <Button>
                 {m["current-user.invitations.delete"]()}
             </Button>
