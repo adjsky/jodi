@@ -8,6 +8,7 @@ import { hydrate, mount } from "svelte";
 import PersistentLayout from "./ui/layouts/PersistentLayout.svelte";
 
 import type { ResolvedComponent } from "@inertiajs/svelte";
+import type { LegacyComponentType } from "svelte/legacy";
 
 void createInertiaApp({
     resolve(name) {
@@ -16,7 +17,11 @@ void createInertiaApp({
             { eager: true }
         );
         const page = pages[`../pages/${name}.svelte`];
-        return { default: page.default, layout: PersistentLayout };
+        return {
+            default: page.default,
+            layout: (h, page) =>
+                h(PersistentLayout as LegacyComponentType, [page])
+        };
     },
     setup({ el, App, props }) {
         if (el && el.dataset.serverRendered === "true") {
