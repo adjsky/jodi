@@ -25,6 +25,7 @@ Route::middleware('guest')->group(function () {
         ->controller(SignupController::class)
         ->group(function () {
             Route::get('/{code}', 'show')->name('signup');
+            Route::post('/{code}', 'signup');
         });
 
     Route::prefix('/two-factor-challenge')

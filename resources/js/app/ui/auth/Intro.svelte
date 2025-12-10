@@ -21,6 +21,6 @@
     </div>
     <h1 class="text-center text-3xl font-bold">{title}</h1>
     {#if description}
-        <p>{description}</p>
+        <p class="text-center">{description}</p>
     {/if}
 </div>

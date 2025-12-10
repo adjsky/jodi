@@ -10,8 +10,16 @@
         "yes": "Yes"
     },
     "signup": {
-        "title": "Ready to make your day productive?",
-        "start": "Let's begin!"
+        "intro": {
+            "title": "Ready to make your day productive?",
+            "start": "Let's get started!"
+        },
+        "step.start": {
+            "title": "Let's begin!",
+            "description": "Set up your account credentials.",
+            "name-placeholder": "Enter your name",
+            "submit": "Continue"
+        }
     },
     "login": {
         "title": "Log In",
