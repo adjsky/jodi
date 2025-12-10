@@ -39,7 +39,7 @@ class SignupController extends Controller
 
             $inviter = User::findOrFail($invitation->inviter_user_id);
 
-            $user->friends()->attach($invitation->inviter_user_id);
+            $user->friends()->attach($inviter->id);
             $inviter->friends()->attach($user->id);
 
             $invitation->delete();
