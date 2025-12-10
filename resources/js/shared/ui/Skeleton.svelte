@@ -26,9 +26,11 @@
 
     const { class: className, style, grow, inline = true }: Props = $props();
 
-    const skeletonClass: ClassName = tw(
-        "relative inline-flex w-full overflow-hidden rounded-lg bg-cream-900/10 leading-none select-none motion-safe:animate-pulse",
-        className
+    const skeletonClass: ClassName = $derived(
+        tw(
+            "relative inline-flex w-full overflow-hidden rounded-lg bg-cream-900/10 leading-none select-none motion-safe:animate-pulse",
+            className
+        )
     );
 </script>
 
