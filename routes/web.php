@@ -2,6 +2,7 @@
 
 declare(strict_types=1);
 
+use App\Domain\Auth\Mail;
 use App\Domain\Auth\Notifications;
 use App\Http\Controllers\CurrentUserController;
 use App\Http\Controllers\HomeController;
@@ -53,12 +54,12 @@ Route::middleware('auth')->group(function () {
         ->controller(CurrentUserController::class)
         ->group(function () {
             Route::get('/', 'index')->name('me');
+            Route::patch('/', 'update');
             Route::get('/name', 'name');
             Route::get('/email', 'email');
             Route::get('/friends', 'friends');
             Route::get('/language', 'language');
             Route::get('/week-start', 'weekStart');
-            Route::patch('/', 'update');
         });
 
     Route::prefix('/me/invitations')
@@ -75,5 +76,9 @@ if (app()->isLocal()) {
     Route::get(
         '/mail/otp',
         fn () => new Notifications\OneTimeLoginCode('042712')->toMail()
+    );
+    Route::get(
+        '/mail/invite-to-jodi',
+        fn () => new Mail\InviteToJodi('kirill.t@tuta.io', 'http://example.com')
     );
 }
