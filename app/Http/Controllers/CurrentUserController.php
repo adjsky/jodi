@@ -11,7 +11,8 @@ class CurrentUserController extends Controller
     public function index(Request $request)
     {
         return inertia('CurrentUser', [
-            'nInvitations' => $this->user()->invitations()->count(),
+            'nInvitations' => $this->user()->invitations->count(),
+            'nFriends' => $this->user()->friends->count(),
         ]);
     }
 
@@ -23,11 +24,6 @@ class CurrentUserController extends Controller
     public function email(Request $request)
     {
         return inertia('CurrentUser/Email');
-    }
-
-    public function friends(Request $request)
-    {
-        return inertia('CurrentUser/Friends');
     }
 
     public function language(Request $request)

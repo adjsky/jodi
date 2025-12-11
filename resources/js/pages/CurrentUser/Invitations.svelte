@@ -57,13 +57,13 @@
                         viewTransition
                         class="border-gray-950 flex items-center justify-between rounded-xl border bg-white px-4 py-3"
                     >
-                        <div class="flex flex-col">
-                            <span class="font-semibold">
+                        <div>
+                            <p class="font-semibold">
                                 {m["current-user.invitations.waiting"]()}
-                            </span>
-                            <span class="text-sm text-cream-400">
+                            </p>
+                            <p class="text-sm text-cream-400">
                                 {invitation.email}
-                            </span>
+                            </p>
                         </div>
                         <ChevronRight class="text-xl" />
                     </Link>

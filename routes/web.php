@@ -5,6 +5,7 @@ declare(strict_types=1);
 use App\Domain\Auth\Mail;
 use App\Domain\Auth\Notifications;
 use App\Http\Controllers\CurrentUserController;
+use App\Http\Controllers\FriendsController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\LoginController;
 use App\Http\Controllers\RegistrationInvitationController;
@@ -70,6 +71,12 @@ Route::middleware('auth')->group(function () {
             Route::get('/{invitation}', 'show');
             Route::delete('/{invitation}', 'destroy');
             Route::post('/invite', 'invite');
+        });
+
+    Route::prefix('/me/friends')
+        ->controller(FriendsController::class)
+        ->group(function () {
+            Route::get('/', 'index')->name('friends');
         });
 });
 

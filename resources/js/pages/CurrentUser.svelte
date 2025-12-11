@@ -4,23 +4,21 @@
     import { User } from "$/entities/user";
     import {
         email,
-        friends,
         language,
         name,
         weekStart
     } from "$/generated/actions/App/Http/Controllers/CurrentUserController";
-    import { logout } from "$/generated/actions/App/Http/Controllers/LoginController";
-    import invitations from "$/generated/actions/App/Http/Controllers/RegistrationInvitationController";
-    import { home } from "$/generated/routes";
+    import { friends, home, invitations, logout } from "$/generated/routes";
     import { m } from "$/paraglide/messages";
     import { getLocale } from "$/paraglide/runtime";
     import { LANGUAGES } from "$/shared/lib/language";
 
     type Props = {
         nInvitations: number;
+        nFriends: number;
     };
 
-    const { nInvitations }: Props = $props();
+    const { nInvitations, nFriends }: Props = $props();
 
     const user = $derived($page.props.auth.user);
 </script>
@@ -60,10 +58,10 @@
             href={friends()}
             title={m["current-user.account.friends"]()}
         >
-            0
+            {nFriends}
         </User.Info.SettingRow>
         <User.Info.SettingRow
-            href={invitations.index()}
+            href={invitations()}
             title={m["current-user.account.invitations"]()}
         >
             {nInvitations}

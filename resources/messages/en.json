@@ -87,6 +87,9 @@
             "share": "Share the invitation link",
             "delete": "Delete",
             "delete-ahtung": "Are you sure you want to delete this invitation?"
+        },
+        "friends": {
+            "no-friends": "You have no friends. What a shame."
         }
     }
 }
