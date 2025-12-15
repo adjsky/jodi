@@ -53,6 +53,6 @@ class CurrentUserController extends Controller
 
         $this->user()->update($data);
 
-        return to_route('me')->with('success', __('All good.'));
+        return to_route('me');
     }
 }

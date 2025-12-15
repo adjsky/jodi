@@ -20,7 +20,7 @@ return new class extends Migration
             $table->text('description')->nullable();
             $table->string('location')->nullable();
             $table->foreignId('recurrence_id')->nullable()->constrained();
-            $table->datetime('starts_at');
+            $table->datetime('starts_at')->index();
             $table->datetime('ends_at')->nullable();
             $table->boolean('is_all_day');
             $table->datetime('notify_at')->nullable();

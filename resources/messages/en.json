@@ -7,7 +7,8 @@
         "save": "Save",
         "settings": "Settings",
         "no": "No",
-        "yes": "Yes"
+        "yes": "Yes",
+        "required-field": "Please fill out this field"
     },
     "signup": {
         "intro": {
@@ -35,7 +36,11 @@
         "continue": "Continue",
         "continue-in": "Continue in {seconds}s"
     },
+    "home": {
+        "empty-day": "Woohoo! Your day is completely free. Enjoy the downtime or click + to plan something."
+    },
     "todos": {
+        "add": "Add todo",
         "title": "Todos",
         "ungrouped": "No group",
         "no-todos": "Looks like you have nothing to do. Click + to add a todo.",
@@ -54,6 +59,16 @@
         },
         "placeholders": {
             "title": "Task",
+            "description": "Add a few extra notes here..."
+        }
+    },
+    "events": {
+        "title": "Events",
+        "add": "Add event",
+        "no-events": "No events scheduled today.",
+        "all-day": "All day",
+        "placeholders": {
+            "title": "Event",
             "description": "Add a few extra notes here..."
         }
     },

@@ -5,6 +5,7 @@ declare(strict_types=1);
 use App\Domain\Auth\Mail;
 use App\Domain\Auth\Notifications;
 use App\Http\Controllers\CurrentUserController;
+use App\Http\Controllers\EventController;
 use App\Http\Controllers\FriendsController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\LoginController;
@@ -42,7 +43,7 @@ Route::middleware('auth')->group(function () {
     Route::get('/', [HomeController::class, 'show'])->name('home');
     Route::post('/logout', [LoginController::class, 'logout'])->name('logout');
 
-    Route::prefix('/todo')
+    Route::prefix('/todos')
         ->controller(TodoController::class)
         ->group(function () {
             Route::post('/', 'create');
@@ -50,6 +51,12 @@ Route::middleware('auth')->group(function () {
             Route::delete('/{todo}', 'destroy');
             Route::post('/{todo}/complete', 'complete');
             Route::post('/{todo}/reorder', 'reorder');
+        });
+
+    Route::prefix('/events')
+        ->controller(EventController::class)
+        ->group(function () {
+            Route::post('/', 'create');
         });
 
     Route::prefix('/me')

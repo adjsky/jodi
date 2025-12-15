@@ -23,7 +23,7 @@ class SignupController extends Controller
 
     public function signup(Request $request, string $code)
     {
-        $data = $request->validate(['name' => 'string|min:1|max:36']);
+        $data = $request->validate(['name' => 'required|string|min:1|max:36']);
 
         $user = DB::transaction(function () use ($code, $data) {
             $invitation = RegistrationInvitation::where('code', '=', $code)->firstOrFail();

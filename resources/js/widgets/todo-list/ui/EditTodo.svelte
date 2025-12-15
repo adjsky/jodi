@@ -1,7 +1,6 @@
 <script lang="ts">
     import { Form } from "$/features/edit-todo";
-
-    import TodoSheet from "./TodoSheet.svelte";
+    import Sheet from "$/shared/ui/Sheet.svelte";
 
     type Props = {
         open: boolean;
@@ -11,9 +10,15 @@
     let { open = $bindable(), todo }: Props = $props();
 </script>
 
-<TodoSheet bind:open>
+<Sheet
+    bind:open
+    defaultSnapPoint={0.6}
+    snapPoints={[0.6, 0.95]}
+    background="var(--color-white)"
+    grip="var(--color-cream-300)"
+>
     <Form
         todo={todo ?? ({} as App.Data.TodoDto)}
         onclose={() => (open = false)}
     />
-</TodoSheet>
+</Sheet>

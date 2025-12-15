@@ -20,7 +20,7 @@
     );
 </script>
 
-<div class="border-b border-cream-300 p-3 pb-5">
+<div class="border-b border-cream-300 p-3 pt-1 pb-5">
     <div class="flex h-12 items-stretch">
         <button
             onclick={() => (day = week.previous())}

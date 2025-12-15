@@ -13,16 +13,23 @@ class Event extends Model
     /** @use HasFactory<\Database\Factories\EventFactory> */
     use HasFactory;
 
-    protected $fillable = [];
+    protected $fillable = [
+        'title',
+        'description',
+        'is_all_day',
+        'starts_at',
+        'ends_at',
+    ];
 
     protected $hidden = [];
 
     /**
-     * @return array{notify_at: "datetime", starts_at: "datetime", ends_at: "datetime"}
+     * @return array{is_all_day: "boolean", notify_at: "datetime", starts_at: "datetime", ends_at: "datetime"}
      */
     protected function casts(): array
     {
         return [
+            'is_all_day' => 'boolean',
             'notify_at' => 'datetime',
             'starts_at' => 'datetime',
             'ends_at' => 'datetime',

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers;
 
+use App\Data\EventDto;
 use App\Data\TodoDto;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
@@ -19,9 +20,17 @@ class HomeController extends Controller
             'todos' => Inertia::defer(
                 fn () => TodoDto::collect(
                     $this->user()->todos()
-                        ->where('todo_date', '=', $date)
+                        ->whereDate('todo_date', $date)
                         ->orderBy('category', 'asc')
                         ->orderBy('position', 'asc')
+                        ->get()
+                )
+            ),
+            'events' => Inertia::defer(
+                fn () => EventDto::collect(
+                    $this->user()->events()
+                        ->whereDate('starts_at', $date)
+                        ->orderBy('starts_at', 'asc')
                         ->get()
                 )
             ),

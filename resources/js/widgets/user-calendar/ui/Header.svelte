@@ -19,7 +19,9 @@
     const day = $derived(dayjs(searchParams["d"]).locale(getLocale()));
 </script>
 
-<header class="flex items-center justify-between pr-6 pl-3">
+<header
+    class="sticky top-0 z-10 flex items-center justify-between bg-cream-50 py-2 pr-6 pl-3"
+>
     <button class="p-2.5"><Calendar class="text-3xl" /></button>
     <div class="absolute left-1/2 -translate-x-1/2">
         <h1 class="text-center text-xl font-bold">
@@ -32,7 +34,9 @@
             }).format(day.toDate())}
         </h2>
     </div>
-    <Link href={me()} viewTransition><User.Avatar name={user.name} /></Link>
+    <Link href={me()} viewTransition>
+        <User.Avatar name={user.name} />
+    </Link>
 </header>
 
 <WeekCarousel

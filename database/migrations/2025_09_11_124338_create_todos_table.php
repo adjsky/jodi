@@ -20,7 +20,7 @@ return new class extends Migration
             $table->text('description')->nullable();
             $table->string('category')->nullable();
             $table->integer('position');
-            $table->date('todo_date');
+            $table->date('todo_date')->index();
             $table->foreignId('recurrence_id')->nullable()->constrained();
             $table->string('color')->nullable();
             $table->datetime('completed_at')->nullable();

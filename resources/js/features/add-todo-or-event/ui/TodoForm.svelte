@@ -22,7 +22,7 @@
     }}
     let:processing
 >
-    <input name="todo_date" value={day.format("YYYY-MM-DD")} hidden />
+    <input name="date" value={day.format("YYYY-MM-DD")} hidden />
     <div class="flex items-center justify-between text-ms">
         <h4 class="flex items-center gap-1.5 text-lg font-bold text-cream-800">
             <CalendarFold />
@@ -36,5 +36,5 @@
         <SaveOrClose variant="save" disabled={processing} />
     </div>
     <Todo.Title class="mt-5" name="title" required autofocus />
-    <Todo.Description name="description" />
+    <Todo.Description name="description" class="mt-6" />
 </Form>

@@ -2,6 +2,8 @@ import { page, router } from "@inertiajs/svelte";
 import lz from "lz-string";
 import { fromStore } from "svelte/store";
 
+import type { ClientSideVisitOptions } from "@inertiajs/core";
+
 // TODO: somehow handle broken hashes?
 
 export type HistoryViewOptions = {
@@ -48,13 +50,19 @@ export class HistoryView<T extends string | number | Record<string, unknown>> {
         const name = typeof nameOrMeta == "string" ? nameOrMeta : this.#name;
         const meta = typeof nameOrMeta != "string" ? nameOrMeta : metaOrNothing;
 
-        return router.push({
+        const options: ClientSideVisitOptions = {
             preserveScroll: true,
             preserveState: true,
             url: `${this.#url.pathname}${this.#url.search}#${typeof name == "string" ? name : this.#name}${meta ? `?${this.#compress(meta)}` : ""}`,
             __jodi_isHistoryModal: true,
             viewTransition: this.#options?.viewTransition
-        });
+        };
+
+        if (this.#hash.view) {
+            return router.replace(options);
+        } else {
+            return router.push(options);
+        }
     }
 
     close() {

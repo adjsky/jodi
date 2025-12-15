@@ -37,7 +37,7 @@ class RegistrationInvitationController extends Controller
     public function invite(Request $request)
     {
         $data = $request->validate([
-            'email' => 'email',
+            'email' => 'required|email',
         ]);
 
         $code = strtolower((string) Str::ulid());

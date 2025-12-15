@@ -9,7 +9,6 @@
     import { tw } from "$/shared/lib/styles";
     import Skeleton from "$/shared/ui/Skeleton.svelte";
 
-    import AddTodo from "./AddTodo.svelte";
     import EditTodo from "./EditTodo.svelte";
 
     import type { SvelteHTMLElements } from "svelte/elements";
@@ -32,12 +31,9 @@
 </script>
 
 <section {...rest} class={tw("px-4", rest.class)}>
-    <div class="flex items-center justify-between">
-        <div class="flex items-center gap-1.5">
-            <Check class="text-3xl" />
-            <h3 class="text-lg font-bold">{m["todos.title"]()}</h3>
-        </div>
-        <AddTodo {loading} />
+    <div class="flex items-center gap-1.5">
+        <Check class="text-3xl" />
+        <h3 class="text-lg font-bold">{m["todos.title"]()}</h3>
     </div>
 
     {#if todos?.length == 0}
@@ -54,7 +50,7 @@
             {m["todos.no-todos"]()}
         </p>
     {:else}
-        <div class="mt-3">
+        <div class="mt-4">
             {#each Object.entries(groups) as [group, todos] (group)}
                 <div {@attach droppable(group)} class="not-first:mt-4">
                     {#if Object.keys(groups).length == 1 && group == m["todos.ungrouped"]()}
@@ -104,9 +100,7 @@
                     disabled={loading}
                     class="relative table w-full table-fixed text-start text-lg font-medium outline-none"
                     data-part="edit"
-                    onclick={() => {
-                        editView.open(todo);
-                    }}
+                    onclick={() => editView.open(todo)}
                 >
                     {#if loading}
                         <Skeleton

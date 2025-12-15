@@ -1,12 +1,35 @@
 diff --git a/node_modules/@inertiajs/core/dist/index.esm.js b/node_modules/@inertiajs/core/dist/index.esm.js
-index 7744084..26294bd 100644
+index 7744084..cfebdd2 100644
 --- a/node_modules/@inertiajs/core/dist/index.esm.js
 +++ b/node_modules/@inertiajs/core/dist/index.esm.js
-@@ -811,7 +811,6 @@ var CurrentPage = class {
+@@ -566,12 +566,13 @@ var prefetchedRequests = new PrefetchedRequests();
+ // src/scroll.ts
+ var Scroll = class {
+   static save() {
+-    history.saveScrollPositions(
+-      Array.from(this.regions()).map((region) => ({
+-        top: region.scrollTop,
+-        left: region.scrollLeft
+-      }))
+-    );
++    history.saveScrollPositions(this.getScrollRegions())
++  }
++  static getScrollRegions() {
++    return Array.from(this.regions()).map((region) => ({
++      top: region.scrollTop,
++      left: region.scrollLeft,
++    }))
+   }
+   static regions() {
+     return document.querySelectorAll("[scroll-region]");
+@@ -809,9 +810,7 @@ var CurrentPage = class {
+       }
+       page2.rememberedState ?? (page2.rememberedState = {});
        const isServer2 = typeof window === "undefined";
-       const location = !isServer2 ? window.location : new URL(page2.url);
-       const scrollRegions = !isServer2 && preserveScroll ? history.getScrollRegions() : [];
+-      const location = !isServer2 ? window.location : new URL(page2.url);
+-      const scrollRegions = !isServer2 && preserveScroll ? history.getScrollRegions() : [];
 -      replace = replace || isSameUrlWithoutHash(hrefToUrl(page2.url), location);
++      const scrollRegions = !isServer2 && preserveScroll ? Scroll.getScrollRegions() : [];
        return new Promise((resolve) => {
          replace ? history.replaceState(page2, () => resolve(null)) : history.pushState(page2, () => resolve(null));
        }).then(() => {

@@ -13,12 +13,19 @@ class TodoController extends Controller
 {
     public function create(Request $request)
     {
-        $this->user()->todos()->create($request->validate([
+        $data = $request->validate([
             'title' => 'required|string',
             'description' => 'nullable|string',
             'category' => 'nullable|string',
-            'todo_date' => 'date_format:Y-m-d',
-        ]));
+            'date' => 'required|date_format:Y-m-d',
+        ]);
+
+        $this->user()->todos()->create([
+            'title' => $data['title'],
+            'description' => $data['description'] ?? null,
+            'category' => $data['category'] ?? null,
+            'todo_date' => $data['date'],
+        ]);
 
         return back();
     }
