@@ -4,55 +4,38 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers;
 
-use App\Models\Todo;
-use Carbon\CarbonImmutable;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Gate;
+use App\Http\Requests\Event\CreateRequest;
+use App\Http\Requests\Event\DestroyRequest;
+use App\Http\Requests\Event\UpdateRequest;
+use App\Models\Event;
 
 class EventController extends Controller
 {
-    public function create(Request $request)
+    public function create(CreateRequest $request)
     {
-        $data = $request->validate([
-            'title' => 'required|string',
-            'description' => 'nullable|string',
-            'date' => 'required|date_format:Y-m-d',
-            'isAllDay' => 'required|boolean',
-            'startsAt' => 'required|date_format:H:i',
-            'endsAt' => 'nullable|date_format:H:i',
-        ]);
-
-        $date = CarbonImmutable::parse($data['date']);
+        $data = $request->validated();
 
         $this->user()->events()->create([
             'title' => $data['title'],
             'description' => $data['description'] ?? null,
             'is_all_day' => $data['isAllDay'],
-            'starts_at' => $date->setTimeFromTimeString($data['startsAt']),
-            'ends_at' => $request->has('endsAt') ? $date->setTimeFromTimeString($data['endsAt']) : null,
+            'starts_at' => $data['startsAt'],
+            'ends_at' => $data['endsAt'] ?? null,
         ]);
 
         return back();
     }
 
-    public function update(Request $request, Todo $todo)
+    public function update(UpdateRequest $request, Event $event)
     {
-        Gate::authorize('update', $todo);
-
-        $todo->update($request->validate([
-            'title' => 'sometimes|string',
-            'description' => 'sometimes|nullable|string',
-            'color' => 'sometimes|nullable|hex_color',
-        ]));
+        $event->update($request->validated());
 
         return back();
     }
 
-    public function destroy(Request $request, Todo $todo)
+    public function destroy(DestroyRequest $request, Event $event)
     {
-        Gate::authorize('destroy', $todo);
-
-        $todo->delete();
+        $event->delete();
 
         return back();
     }

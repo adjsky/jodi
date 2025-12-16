@@ -4,21 +4,19 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\Todo\CompleteRequest;
+use App\Http\Requests\Todo\CreateRequest;
+use App\Http\Requests\Todo\DestroyRequest;
+use App\Http\Requests\Todo\ReorderRequest;
+use App\Http\Requests\Todo\UpdateRequest;
 use App\Models\Todo;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Gate;
 
 class TodoController extends Controller
 {
-    public function create(Request $request)
+    public function create(CreateRequest $request)
     {
-        $data = $request->validate([
-            'title' => 'required|string',
-            'description' => 'nullable|string',
-            'category' => 'nullable|string',
-            'date' => 'required|date_format:Y-m-d',
-        ]);
+        $data = $request->validated();
 
         $this->user()->todos()->create([
             'title' => $data['title'],
@@ -30,46 +28,31 @@ class TodoController extends Controller
         return back();
     }
 
-    public function update(Request $request, Todo $todo)
+    public function update(UpdateRequest $request, Todo $todo)
     {
-        Gate::authorize('update', $todo);
-
-        $todo->update($request->validate([
-            'title' => 'sometimes|string',
-            'description' => 'sometimes|nullable|string',
-            'color' => 'sometimes|nullable|hex_color',
-        ]));
+        $todo->update($request->validated());
 
         return back();
     }
 
-    public function destroy(Request $request, Todo $todo)
+    public function destroy(DestroyRequest $request, Todo $todo)
     {
-        Gate::authorize('destroy', $todo);
-
         $todo->delete();
 
         return back();
     }
 
-    public function complete(Request $request, Todo $todo)
+    public function complete(CompleteRequest $request, Todo $todo)
     {
-        Gate::authorize('complete', $todo);
-
         $todo->completed_at = $todo->completed_at ? null : now();
         $todo->save();
 
         return back();
     }
 
-    public function reorder(Request $request, Todo $todo)
+    public function reorder(ReorderRequest $request, Todo $todo)
     {
-        Gate::authorize('reorder', $todo);
-
-        $data = $request->validate([
-            'position' => 'integer',
-            'category' => 'nullable|string',
-        ]);
+        $data = $request->validated();
 
         // TODO: vibe coded, check later
         DB::transaction(function () use ($todo, $data) {

@@ -5,6 +5,10 @@ import "dayjs/locale/en";
 import "dayjs/locale/ru";
 
 import { TIMEZONE_COOKIE } from "$/shared/cfg/constants";
+import dayjs from "dayjs";
+import utc from "dayjs/plugin/utc";
+
+dayjs.extend(utc);
 
 // TODO: find out how to lazily load dayjs locales
 //

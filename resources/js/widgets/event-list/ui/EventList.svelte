@@ -51,7 +51,7 @@
                             {#if loading}
                                 <Skeleton inline style="width: 60px" />
                             {:else}
-                                {dayjs(event.startsAt).format("HH:MM")}
+                                {dayjs(event.startsAt).format("HH:mm")}
                             {/if}
                         </time>
                     {/snippet}

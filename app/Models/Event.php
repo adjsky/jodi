@@ -19,6 +19,7 @@ class Event extends Model
         'is_all_day',
         'starts_at',
         'ends_at',
+        'color',
     ];
 
     protected $hidden = [];

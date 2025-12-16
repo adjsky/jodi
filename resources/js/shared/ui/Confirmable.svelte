@@ -10,17 +10,19 @@
 
     type Props = {
         title: string;
-        children: Snippet<[HTMLButtonAttributes]>;
-        onconfirm?: VoidFunction;
+        children: Snippet<[() => HTMLButtonAttributes]>;
+        onconfirm?: () => boolean | void;
         onabort?: VoidFunction;
     };
 
     const { title, children, onconfirm, onabort }: Props = $props();
+
+    let open = $state(false);
 </script>
 
-<Dialog.Root>
+<Dialog.Root bind:open>
     <Dialog.Trigger>
-        {#snippet asChild(props)}{@render children(props())}{/snippet}
+        {#snippet asChild(props)}{@render children(props)}{/snippet}
     </Dialog.Trigger>
     <Portal>
         <Dialog.Backdrop
@@ -52,7 +54,13 @@
                             </Button>
                         {/snippet}
                     </Dialog.CloseTrigger>
-                    <Button onclick={onconfirm}>
+                    <Button
+                        onclick={() => {
+                            if (onconfirm?.()) {
+                                open = false;
+                            }
+                        }}
+                    >
                         {m["common.yes"]()}
                     </Button>
                 </div>

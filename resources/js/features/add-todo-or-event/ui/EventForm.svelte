@@ -27,7 +27,14 @@
     }}
     transform={(data) => ({
         ...data,
-        date: day.format("YYYY-MM-DD"),
+        startsAt: dayjs(day.format(`YYYY-MM-DD ${data.startsAt}`))
+            .utc()
+            .toISOString(),
+        endsAt: data.endsAt
+            ? dayjs(day.format(`YYYY-MM-DD ${data.endsAt}`))
+                  .utc()
+                  .toISOString()
+            : null,
         isAllDay: Boolean(data.isAllDay)
     })}
     let:processing

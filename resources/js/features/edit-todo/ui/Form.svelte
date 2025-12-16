@@ -28,7 +28,7 @@
     showProgress={false}
     let:isDirty
 >
-    <div class="flex items-center justify-between text-ms">
+    <div class="flex items-center justify-between">
         <h4 class="flex items-center gap-1.5 text-lg font-bold text-cream-800">
             <CalendarFold />
             {new Intl.DateTimeFormat(getLocale(), {
@@ -63,7 +63,7 @@
 </Form>
 
 <div
-    class="absolute inset-x-0 bottom-0 z-10 flex flex-grow items-end justify-between bg-white px-4 pb-6"
+    class="absolute inset-x-0 bottom-0 z-10 flex items-end justify-between bg-white px-4 pb-6"
 >
     <Delete {todo} />
     <Action disabled tooltip={m["todos.tooltips.repeat"]()}>

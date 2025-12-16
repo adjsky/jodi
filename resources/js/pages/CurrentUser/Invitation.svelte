@@ -51,7 +51,7 @@
             }}
         >
             {#snippet children(props)}
-                <Button {...props}>
+                <Button {...props()}>
                     {m["current-user.invitations.delete"]()}
                 </Button>
             {/snippet}

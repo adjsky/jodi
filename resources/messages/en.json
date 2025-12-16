@@ -45,6 +45,7 @@
         "ungrouped": "No group",
         "no-todos": "Looks like you have nothing to do. Click + to add a todo.",
         "select-color": "Select color",
+        "delete-ahtung": "Are you sure you want to delete this todo?",
         "tooltips": {
             "delete": "Delete",
             "repeat": "Repeat",
@@ -67,6 +68,19 @@
         "add": "Add event",
         "no-events": "No events scheduled today.",
         "all-day": "All day",
+        "select-color": "Select color",
+        "delete-ahtung": "Are you sure you want to delete this event?",
+        "tooltips": {
+            "delete": "Delete",
+            "repeat": "Repeat",
+            "color": "Color",
+            "notification": "Notification",
+            "more": "More"
+        },
+        "errors": {
+            "edit": "Failed to update event. Try again later.",
+            "delete": "Failed to delete event. Try again later."
+        },
         "placeholders": {
             "title": "Event",
             "description": "Add a few extra notes here..."

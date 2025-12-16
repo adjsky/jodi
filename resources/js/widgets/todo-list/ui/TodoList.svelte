@@ -44,7 +44,7 @@
             alt=""
             loading="lazy"
             decoding="async"
-            class="mx-auto mt-24 max-w-30"
+            class="mx-auto mt-15 max-w-30"
         />
         <p class="mx-auto mt-8 max-w-3/4 text-center text-lg font-medium">
             {m["todos.no-todos"]()}

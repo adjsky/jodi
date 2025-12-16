@@ -57,6 +57,8 @@ Route::middleware('auth')->group(function () {
         ->controller(EventController::class)
         ->group(function () {
             Route::post('/', 'create');
+            Route::patch('/{event}', 'update');
+            Route::delete('/{event}', 'destroy');
         });
 
     Route::prefix('/me')

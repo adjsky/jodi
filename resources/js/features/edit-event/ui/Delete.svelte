@@ -1,7 +1,7 @@
 <script lang="ts">
     import { router } from "@inertiajs/svelte";
     import { Trash } from "@lucide/svelte";
-    import { destroy } from "$/generated/actions/App/Http/Controllers/TodoController";
+    import { destroy } from "$/generated/actions/App/Http/Controllers/EventController";
     import { m } from "$/paraglide/messages";
     import Confirmable from "$/shared/ui/Confirmable.svelte";
 
@@ -9,25 +9,25 @@
     import Action from "./Action.svelte";
 
     type Props = {
-        todo: App.Data.TodoDto;
+        event: App.Data.EventDto;
     };
 
-    const { todo }: Props = $props();
+    const { event }: Props = $props();
 </script>
 
 <Confirmable
-    title={m["todos.delete-ahtung"]()}
+    title={m["events.delete-ahtung"]()}
     onconfirm={() => {
-        router.visit(destroy(todo.id), {
+        router.visit(destroy(event.id), {
             ...visitOptions,
-            ...optimistic.delete(todo.id),
+            ...optimistic.delete(event.id),
             showProgress: false
         });
         return true;
     }}
 >
     {#snippet children(props)}
-        <Action {...props()} tooltip={m["todos.tooltips.delete"]()}>
+        <Action {...props()} tooltip={m["events.tooltips.delete"]()}>
             <Trash />
         </Action>
     {/snippet}
