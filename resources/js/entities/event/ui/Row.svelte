@@ -15,7 +15,10 @@
 
 <button
     {...props}
-    class={tw("flex items-center gap-3 py-2.25 text-lg", props.class)}
+    class={tw(
+        "flex items-center gap-2 rounded-xl border border-cream-200 bg-brand/10 px-2 py-2.25 text-lg",
+        props.class
+    )}
 >
     {@render time()}
     {@render title()}

@@ -39,6 +39,12 @@
     action={update(event.id)}
     options={visitOptions}
     showProgress={false}
+    transform={(data) => ({
+        ...data,
+        startsAt: data.startsAt || undefined,
+        endsAt: data.endsAt || undefined,
+        isAllDay: Boolean(data.isAllDay)
+    })}
     let:isDirty
 >
     <div class="flex items-center justify-between">

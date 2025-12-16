@@ -120,7 +120,7 @@
             {#snippet edit()}
                 <button
                     disabled={loading}
-                    class="relative table w-full table-fixed text-start text-lg font-medium outline-none"
+                    class="relative table w-full table-fixed text-start text-lg font-medium"
                     data-part="edit"
                     onclick={() => editView.open(todo)}
                 >

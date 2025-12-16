@@ -56,7 +56,7 @@
         <h3 class="text-lg font-bold">{m["events.title"]()}</h3>
     </div>
 
-    <div class="border-b border-cream-300 py-4">
+    <div class="mt-4 space-y-2">
         {#if renderableEvents.length == 0}
             <p class="mx-auto text-center font-medium text-cream-500">
                 {m["events.no-events"]()}
@@ -68,7 +68,10 @@
                     onclick={() => editView.open(event)}
                 >
                     {#snippet time()}
-                        <time datetime={event?.startsAt} class="font-semibold">
+                        <time
+                            datetime={event?.startsAt}
+                            class="text-xl font-black text-brand"
+                        >
                             {#if loading}
                                 <Skeleton inline style="width: 60px" />
                             {:else}
@@ -77,7 +80,9 @@
                         </time>
                     {/snippet}
                     {#snippet title()}
-                        <span class="table w-full table-fixed text-start">
+                        <span
+                            class="table w-full table-fixed text-start font-medium"
+                        >
                             {#if loading}
                                 <Skeleton
                                     inline
