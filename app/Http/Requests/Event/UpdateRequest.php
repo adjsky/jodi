@@ -4,10 +4,13 @@ declare(strict_types=1);
 
 namespace App\Http\Requests\Event;
 
+use App\Support\FormRequest\ConvertsToSnakeCase;
 use Illuminate\Foundation\Http\FormRequest;
 
 class UpdateRequest extends FormRequest
 {
+    use ConvertsToSnakeCase;
+
     public function authorize(): bool
     {
         return $this->user()?->can('update', $this->event) ?? false;
@@ -20,6 +23,9 @@ class UpdateRequest extends FormRequest
             'title' => 'sometimes|string',
             'description' => 'sometimes|nullable|string',
             'color' => 'sometimes|nullable|hex_color',
+            'isAllDay' => 'sometimes|boolean',
+            'startsAt' => 'sometimes|date',
+            'endsAt' => 'sometimes|date',
         ];
     }
 }

@@ -4,10 +4,13 @@ declare(strict_types=1);
 
 namespace App\Http\Requests\Todo;
 
+use App\Support\FormRequest\ConvertsToSnakeCase;
 use Illuminate\Foundation\Http\FormRequest;
 
 class UpdateRequest extends FormRequest
 {
+    use ConvertsToSnakeCase;
+
     public function authorize(): bool
     {
         return $this->user()?->can('update', $this->todo) ?? false;

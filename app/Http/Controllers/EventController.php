@@ -13,22 +13,14 @@ class EventController extends Controller
 {
     public function create(CreateRequest $request)
     {
-        $data = $request->validated();
-
-        $this->user()->events()->create([
-            'title' => $data['title'],
-            'description' => $data['description'] ?? null,
-            'is_all_day' => $data['isAllDay'],
-            'starts_at' => $data['startsAt'],
-            'ends_at' => $data['endsAt'] ?? null,
-        ]);
+        $this->user()->events()->create($request->validatedInSnakeCase());
 
         return back();
     }
 
     public function update(UpdateRequest $request, Event $event)
     {
-        $event->update($request->validated());
+        $event->update($request->validatedInSnakeCase());
 
         return back();
     }

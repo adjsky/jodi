@@ -16,21 +16,14 @@ class TodoController extends Controller
 {
     public function create(CreateRequest $request)
     {
-        $data = $request->validated();
-
-        $this->user()->todos()->create([
-            'title' => $data['title'],
-            'description' => $data['description'] ?? null,
-            'category' => $data['category'] ?? null,
-            'todo_date' => $data['date'],
-        ]);
+        $this->user()->todos()->create($request->validatedInSnakeCase());
 
         return back();
     }
 
     public function update(UpdateRequest $request, Todo $todo)
     {
-        $todo->update($request->validated());
+        $todo->update($request->validatedInSnakeCase());
 
         return back();
     }
