@@ -89,5 +89,5 @@
     <Action disabled tooltip={m["todos.tooltips.notification"]()}>
         <Bell />
     </Action>
-    <Action tooltip={m["todos.tooltips.more"]()}><Ellipsis /></Action>
+    <Action disabled tooltip={m["todos.tooltips.more"]()}><Ellipsis /></Action>
 </div>

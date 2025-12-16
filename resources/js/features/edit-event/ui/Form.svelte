@@ -123,5 +123,5 @@
     <Action disabled tooltip={m["events.tooltips.notification"]()}>
         <Bell />
     </Action>
-    <Action tooltip={m["events.tooltips.more"]()}><Ellipsis /></Action>
+    <Action disabled tooltip={m["events.tooltips.more"]()}><Ellipsis /></Action>
 </div>
