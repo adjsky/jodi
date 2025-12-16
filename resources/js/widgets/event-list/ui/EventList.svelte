@@ -47,7 +47,7 @@
                     onclick={() => editView.open(event)}
                 >
                     {#snippet time()}
-                        <time datetime={event?.startsAt}>
+                        <time datetime={event?.startsAt} class="font-semibold">
                             {#if loading}
                                 <Skeleton inline style="width: 60px" />
                             {:else}
@@ -56,9 +56,7 @@
                         </time>
                     {/snippet}
                     {#snippet title()}
-                        <span
-                            class="relative table w-full table-fixed text-start"
-                        >
+                        <span class="table w-full table-fixed text-start">
                             {#if loading}
                                 <Skeleton
                                     inline

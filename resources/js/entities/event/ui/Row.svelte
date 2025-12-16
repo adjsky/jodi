@@ -13,7 +13,10 @@
     const { time, title, ...props }: Props = $props();
 </script>
 
-<button {...props} class={tw("flex items-center gap-3 text-lg", props.class)}>
+<button
+    {...props}
+    class={tw("flex items-center gap-3 py-2.25 text-lg", props.class)}
+>
     {@render time()}
     {@render title()}
 </button>
