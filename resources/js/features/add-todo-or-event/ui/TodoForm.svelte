@@ -22,7 +22,7 @@
     }}
     let:processing
 >
-    <input name="date" value={day.format("YYYY-MM-DD")} hidden />
+    <input name="todoDate" value={day.format("YYYY-MM-DD")} hidden />
     <div class="flex items-center justify-between text-ms">
         <h4 class="flex items-center gap-1.5 text-lg font-bold text-cream-800">
             <CalendarFold />

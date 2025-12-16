@@ -6,8 +6,11 @@
     import { m } from "$/paraglide/messages";
     import PencilNote from "$/shared/assets/pencil-note.svg";
     import { HistoryView } from "$/shared/inertia/history-view.svelte";
+    import { prefersLightText } from "$/shared/lib/color";
     import { tw } from "$/shared/lib/styles";
     import Skeleton from "$/shared/ui/Skeleton.svelte";
+    import { isDeepEqual } from "remeda";
+    import { watch } from "runed";
 
     import EditTodo from "./EditTodo.svelte";
 
@@ -27,6 +30,21 @@
             () => todos,
             () => loading
         )
+    );
+
+    watch(
+        () => [editView.meta],
+        () => {
+            const todo = todos?.find((t) => t.id == editView.meta?.id);
+
+            if (!todo) {
+                return;
+            }
+
+            if (!isDeepEqual(editView.meta, todo)) {
+                void editView.open(todo);
+            }
+        }
     );
 </script>
 
@@ -115,7 +133,8 @@
                                 todo.color && "rounded-xl px-1.5"
                             ]}
                             style={todo.color
-                                ? `background: ${todo.color};`
+                                ? `background: ${todo.color};` +
+                                  `color: var(--${prefersLightText(todo.color) ? "color-white" : "color-cream-950"}`
                                 : null}
                         >
                             {todo.title}

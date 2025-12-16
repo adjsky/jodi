@@ -23,7 +23,7 @@ class CreateRequest extends FormRequest
             'title' => 'required|string',
             'description' => 'nullable|string',
             'category' => 'nullable|string',
-            'date' => 'required|date_format:Y-m-d',
+            'todoDate' => 'required|date_format:Y-m-d',
         ];
     }
 }

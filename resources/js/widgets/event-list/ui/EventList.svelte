@@ -6,6 +6,8 @@
     import { tw } from "$/shared/lib/styles";
     import Skeleton from "$/shared/ui/Skeleton.svelte";
     import dayjs from "dayjs";
+    import { isDeepEqual } from "remeda";
+    import { watch } from "runed";
 
     import EditEvent from "./EditEvent.svelte";
 
@@ -27,6 +29,21 @@
     );
 
     const editView = new HistoryView<App.Data.EventDto>("edit-event");
+
+    watch(
+        () => [editView.meta],
+        () => {
+            const event = events?.find((e) => e.id == editView.meta?.id);
+
+            if (!event) {
+                return;
+            }
+
+            if (!isDeepEqual(editView.meta, event)) {
+                void editView.open(event);
+            }
+        }
+    );
 </script>
 
 <section {...rest} class={tw("px-4", rest.class)}>

@@ -15,6 +15,8 @@
 
     const { tooltip, current, ...options }: Props = $props();
 
+    let open = $state(false);
+
     const colors = [
         "transparent",
         "#CD2C54",
@@ -26,7 +28,7 @@
     ];
 </script>
 
-<Popover.Root>
+<Popover.Root bind:open>
     <Popover.Trigger>
         {#snippet asChild(props)}
             <Action {...props()} {tooltip}>
@@ -53,6 +55,7 @@
                         data: { color: color == "transparent" ? null : color },
                         showProgress: false
                     }))}
+                    onclick={() => (open = false)}
                     class="flex h-10 w-11.25 items-center justify-center"
                 >
                     <span
