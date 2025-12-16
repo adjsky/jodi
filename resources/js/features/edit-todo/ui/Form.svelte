@@ -2,16 +2,19 @@
     import { Form } from "@inertiajs/svelte";
     import { Bell, CalendarFold, Ellipsis, RotateCw } from "@lucide/svelte";
     import { Todo } from "$/entities/todo";
+    import Action from "$/features/_shared/action-toolbar/Action.svelte";
+    import Color from "$/features/_shared/action-toolbar/Color.svelte";
+    import Delete from "$/features/_shared/action-toolbar/Delete.svelte";
     import { Checkbox } from "$/features/complete-todo";
-    import { update } from "$/generated/actions/App/Http/Controllers/TodoController";
+    import {
+        destroy,
+        update
+    } from "$/generated/actions/App/Http/Controllers/TodoController";
     import { m } from "$/paraglide/messages";
     import { getLocale } from "$/paraglide/runtime";
     import SaveOrClose from "$/shared/ui/SaveOrClose.svelte";
 
     import { optimistic, visitOptions } from "../cfg/inertia";
-    import Action from "./Action.svelte";
-    import Color from "./Color.svelte";
-    import Delete from "./Delete.svelte";
 
     type Props = {
         todo: App.Data.TodoDto;
@@ -65,11 +68,24 @@
 <div
     class="absolute inset-x-0 bottom-0 z-10 flex items-end justify-between bg-white px-4 pb-6"
 >
-    <Delete {todo} />
+    <Delete
+        title={m["todos.delete-ahtung"]()}
+        tooltip={m["todos.tooltips.delete"]()}
+        href={destroy(todo.id)}
+        {...visitOptions}
+        {...optimistic.delete(todo.id)}
+    />
     <Action disabled tooltip={m["todos.tooltips.repeat"]()}>
         <RotateCw />
     </Action>
-    <Color {todo} />
+    <Color
+        {...visitOptions}
+        {...optimistic.edit(todo.id, true)}
+        href={update(todo.id)}
+        tooltip={m["todos.tooltips.color"]()}
+        current={todo.color}
+        preserveUrl
+    />
     <Action disabled tooltip={m["todos.tooltips.notification"]()}>
         <Bell />
     </Action>

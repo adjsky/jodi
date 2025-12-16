@@ -8,7 +8,13 @@
         RotateCw
     } from "@lucide/svelte";
     import { Event } from "$/entities/event";
-    import { update } from "$/generated/actions/App/Http/Controllers/EventController";
+    import Action from "$/features/_shared/action-toolbar/Action.svelte";
+    import Color from "$/features/_shared/action-toolbar/Color.svelte";
+    import Delete from "$/features/_shared/action-toolbar/Delete.svelte";
+    import {
+        destroy,
+        update
+    } from "$/generated/actions/App/Http/Controllers/EventController";
     import { m } from "$/paraglide/messages";
     import { getLocale } from "$/paraglide/runtime";
     import SaveOrClose from "$/shared/ui/SaveOrClose.svelte";
@@ -17,9 +23,6 @@
     import dayjs from "dayjs";
 
     import { optimistic, visitOptions } from "../cfg/inertia";
-    import Action from "./Action.svelte";
-    import Color from "./Color.svelte";
-    import Delete from "./Delete.svelte";
 
     type Props = {
         event: App.Data.EventDto;
@@ -99,11 +102,24 @@
 <div
     class="absolute inset-x-0 bottom-0 z-10 flex items-end justify-between bg-white px-4 pb-6"
 >
-    <Delete {event} />
+    <Delete
+        title={m["events.delete-ahtung"]()}
+        tooltip={m["events.tooltips.delete"]()}
+        href={destroy(event.id)}
+        {...visitOptions}
+        {...optimistic.delete(event.id)}
+    />
     <Action disabled tooltip={m["events.tooltips.repeat"]()}>
         <RotateCw />
     </Action>
-    <Color {event} />
+    <Color
+        {...visitOptions}
+        {...optimistic.edit(event.id)}
+        href={update(event.id)}
+        tooltip={m["events.tooltips.color"]()}
+        current={event.color}
+        preserveUrl
+    />
     <Action disabled tooltip={m["events.tooltips.notification"]()}>
         <Bell />
     </Action>

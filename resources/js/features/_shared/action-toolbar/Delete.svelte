@@ -5,29 +5,31 @@
     import { m } from "$/paraglide/messages";
     import Confirmable from "$/shared/ui/Confirmable.svelte";
 
-    import { optimistic, visitOptions } from "../cfg/inertia";
     import Action from "./Action.svelte";
 
-    type Props = {
-        todo: App.Data.TodoDto;
+    import type { UrlMethodPair, VisitOptions } from "@inertiajs/core";
+
+    type Props = VisitOptions & {
+        href: UrlMethodPair;
+        title: string;
+        tooltip: string;
     };
 
-    const { todo }: Props = $props();
+    const { tooltip, title, href, ...options }: Props = $props();
 </script>
 
 <Confirmable
-    title={m["todos.delete-ahtung"]()}
+    {title}
     onconfirm={() => {
-        router.visit(destroy(todo.id), {
-            ...visitOptions,
-            ...optimistic.delete(todo.id),
+        router.visit(href, {
+            ...options,
             showProgress: false
         });
         return true;
     }}
 >
     {#snippet children(props)}
-        <Action {...props()} tooltip={m["todos.tooltips.delete"]()}>
+        <Action {...props()} {tooltip}>
             <Trash />
         </Action>
     {/snippet}

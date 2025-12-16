@@ -1,18 +1,19 @@
 <script lang="ts">
     import { Popover } from "@ark-ui/svelte";
     import { Circle } from "@lucide/svelte";
-    import { update } from "$/generated/actions/App/Http/Controllers/EventController";
-    import { m } from "$/paraglide/messages";
     import { link } from "$/shared/inertia/link";
 
-    import { optimistic, visitOptions } from "../cfg/inertia";
     import Action from "./Action.svelte";
 
-    type Props = {
-        event: App.Data.EventDto;
-    };
+    import type { LinkComponentBaseProps, VisitOptions } from "@inertiajs/core";
 
-    const { event }: Props = $props();
+    type Props = VisitOptions &
+        Pick<LinkComponentBaseProps, "href"> & {
+            tooltip: string;
+            current: string | null;
+        };
+
+    const { tooltip, current, ...options }: Props = $props();
 
     const colors = [
         "transparent",
@@ -28,8 +29,15 @@
 <Popover.Root>
     <Popover.Trigger>
         {#snippet asChild(props)}
-            <Action {...props()} tooltip={m["events.tooltips.color"]()}>
-                <Circle />
+            <Action {...props()} {tooltip}>
+                {#if current}
+                    <span
+                        class="block size-5 rounded-full outline-1 outline-cream-950"
+                        style="background: {current};"
+                    ></span>
+                {:else}
+                    <Circle />
+                {/if}
             </Action>
         {/snippet}
     </Popover.Trigger>
@@ -41,9 +49,7 @@
                 <!-- svelte-ignore a11y_consider_explicit_label -->
                 <button
                     {@attach link(() => ({
-                        ...visitOptions,
-                        ...optimistic.edit(event.id),
-                        href: update(event.id),
+                        ...options,
                         data: { color: color == "transparent" ? null : color },
                         showProgress: false
                     }))}
