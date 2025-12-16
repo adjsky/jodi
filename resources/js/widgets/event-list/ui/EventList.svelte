@@ -66,6 +66,7 @@
                 <Event.Row
                     disabled={loading}
                     onclick={() => editView.open(event)}
+                    color={event.color}
                 >
                     {#snippet time()}
                         <time
