@@ -1,0 +1,105 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="300" height="231" fill="none">
+    <path
+        stroke="#F67A3E"
+        stroke-linejoin="round"
+        stroke-miterlimit="10"
+        stroke-width="10"
+        d="M22.518 25.026S-1.512 194.424 6.716 201.645C14.944 208.868 67.444 209 67.444 209h75.746s-11.552-12.213-2.873-27.577C148.996 166.059 170.5 173 170.5 173S146.064 30.804 143.19 27.915c-2.873-2.889-94.944-16.677-120.672-2.889Z"
+    />
+    <path
+        fill="#FCCA59"
+        d="m146.5 34-5.5-9.5L158.5 5l12.5 6 15 27.5L221.5 49l7.5-7 42-16 7 8-3 42 14.5 27-11.5 19 16.5 29-5 25.5-19 9.5-1.5 11-17 20.5-50.5 10.5-43.5-8.5-20-22.5 6-20.5 30.5-4.5-28-138Z"
+    />
+    <path
+        stroke="#F67A3E"
+        stroke-linecap="round"
+        stroke-width="5"
+        d="m99.564 79.562-29.015.731"
+    />
+    <path
+        stroke="#FCCA59"
+        stroke-linecap="round"
+        stroke-width="5"
+        d="m130.564 94.562-56.982 1.434M130.564 124.562l-33.99.856M126.576 78.562l-16.994.428"
+    />
+    <path
+        stroke="#F67A3E"
+        stroke-linecap="round"
+        stroke-width="5"
+        d="m109.564 109.562-29.015.731"
+    />
+    <path
+        stroke="#FCCA59"
+        stroke-linecap="round"
+        stroke-width="5"
+        d="m136.576 108.562-16.994.428"
+    />
+    <path
+        stroke="#FCCA59"
+        stroke-linecap="round"
+        stroke-width="8"
+        d="m104.257 52.725.468 7.018M86.257 52.725l.468 7.018M66.257 52.725l.468 7.018M122.257 52.725l.468 7.018"
+    />
+    <path
+        stroke="#F67A3E"
+        stroke-linejoin="round"
+        stroke-miterlimit="10"
+        stroke-width="10"
+        d="M26 26c4 10 31 141.5 39 181.5"
+    />
+    <path
+        stroke="#F67A3E"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+        stroke-miterlimit="10"
+        stroke-width="10"
+        d="M64 19.253c1.807-6.514 4.056-6.852 4.585-7.222.53-.37 7.906 2.372 2.36 18.969M89 16.871c2.008-6.17 4.507-6.491 5.095-6.842.588-.35 8.784 2.248 2.62 17.971M115 19.253c1.807-6.514 4.056-6.852 4.585-7.222.53-.37 7.906 2.372 2.359 18.969M137 25.815s15.722-21.42 25.587-20.802c9.865.618 23.737 32.592 23.737 32.592s6.628 1.236 18.65 4.789c12.023 3.553 15.723 6.642 15.723 6.642s44.545-30.05 54.255-20.74c9.711 9.31 0 49.161 0 49.161s17.572 12.512 13.41 29.195c-4.161 16.682-26.973 28.729-55.18 29.348M277.851 125s19.252 15.094 16.959 34.193C292.518 178.292 276.465 187.379 245 192"
+    />
+    <path
+        stroke="#F67A3E"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+        stroke-miterlimit="10"
+        stroke-width="10"
+        d="M269.973 189.033s3.47 35.862-67.718 36.944c-71.186 1.083-62.966-36.944-62.966-36.944s3.985-20.642 25.752-16.478c28.116 6.046 37.637 15.663 61.963 19.571"
+    />
+    <circle cx="84" cy="164" r="4" fill="#FCCA59" />
+    <circle cx="98" cy="163" r="4" fill="#FCCA59" />
+    <circle cx="112" cy="162" r="4" fill="#FCCA59" />
+    <circle cx="126" cy="161" r="4" fill="#F67A3E" />
+    <circle cx="140" cy="159" r="4" fill="#F67A3E" />
+    <circle cx="110" cy="148" r="4" fill="#FCCA59" />
+    <circle cx="124" cy="147" r="4" fill="#F67A3E" />
+    <circle cx="138" cy="145" r="4" fill="#F67A3E" />
+    <circle cx="86" cy="178" r="4" fill="#FCCA59" />
+    <circle cx="100" cy="177" r="4" fill="#FCCA59" />
+    <circle cx="114" cy="176" r="4" fill="#FCCA59" />
+    <circle cx="128" cy="175" r="4" fill="#F67A3E" />
+    <circle cx="89" cy="192" r="4" fill="#FCCA59" />
+    <circle cx="103" cy="191" r="4" fill="#FCCA59" />
+    <circle cx="117" cy="190" r="4" fill="#FCCA59" />
+    <path
+        fill="#F67A3E"
+        stroke="#F67A3E"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+        stroke-miterlimit="10"
+        stroke-width="10"
+        d="M23.748 38S5.44 184.678 11.078 195.869C16.714 207.062 51.186 209.453 56.5 205c5.314-4.453-25-161-32.752-167Z"
+    />
+    <circle cx="210.5" cy="100.5" r="7.5" fill="#F67A3E" />
+    <ellipse cx="224" cy="114.5" fill="#FDD67F" rx="11" ry="7.5" />
+    <ellipse
+        cx="188.001"
+        cy="107.71"
+        fill="#F67A3E"
+        rx="7.5"
+        ry="3"
+        transform="rotate(13.868 188.001 107.71)"
+    />
+    <circle cx="167.5" cy="89.5" r="7.5" fill="#F67A3E" />
+    <path
+        fill="#FCCA59"
+        d="M23.198 59.255c.205-2.321 3.542-2.476 3.96-.183l25.845 141.701a2 2 0 0 1-2.247 2.34l-37.876-5.348a2 2 0 0 1-1.713-2.156L23.198 59.256Z"
+    />
+</svg>
