@@ -33,6 +33,10 @@
     watch(
         () => [editView.meta],
         () => {
+            if (!editView.isOpen()) {
+                return;
+            }
+
             const event = events?.find((e) => e.id == editView.meta?.id);
 
             if (!event) {

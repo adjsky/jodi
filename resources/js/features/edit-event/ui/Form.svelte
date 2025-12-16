@@ -114,7 +114,7 @@
     </Action>
     <Color
         {...visitOptions}
-        {...optimistic.edit(event.id)}
+        {...optimistic.edit(event.id, true)}
         href={update(event.id)}
         tooltip={m["events.tooltips.color"]()}
         current={event.color}

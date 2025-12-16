@@ -35,6 +35,10 @@
     watch(
         () => [editView.meta],
         () => {
+            if (!editView.isOpen()) {
+                return;
+            }
+
             const todo = todos?.find((t) => t.id == editView.meta?.id);
 
             if (!todo) {

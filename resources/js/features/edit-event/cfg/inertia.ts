@@ -11,7 +11,7 @@ export const visitOptions: VisitOptions = {
 };
 
 export const optimistic = {
-    edit: (id: number) =>
+    edit: (id: number, keepHash = false) =>
         _optimistic(
             (prev, data) => ({
                 todos: prev.todos.map((t: App.Data.EventDto) =>
@@ -21,7 +21,7 @@ export const optimistic = {
             {
                 error: m["events.errors.edit"](),
                 isHistoryView: true,
-                omitHash: true
+                omitHash: !keepHash
             }
         ),
     delete: (id: number) =>
