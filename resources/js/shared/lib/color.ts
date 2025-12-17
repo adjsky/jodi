@@ -1,4 +1,4 @@
-export function prefersLightText(hex: string, threshold = 0.5) {
+export function prefersLightText(hex: string, threshold = 0.6) {
     const cleanHex = hex.startsWith("#") ? hex.slice(1) : hex;
 
     const r = parseInt(cleanHex.substring(0, 2), 16);

@@ -134,12 +134,12 @@
                             class={[
                                 "table-cell overflow-hidden text-ellipsis whitespace-nowrap",
                                 todo.completedAt && "line-through",
-                                todo.color && "rounded-xl px-1.5"
+                                todo.color && [
+                                    "rounded-xl px-1.5",
+                                    prefersLightText(todo.color) && "text-white"
+                                ]
                             ]}
-                            style={todo.color
-                                ? `background: ${todo.color};` +
-                                  `color: var(--${prefersLightText(todo.color) ? "color-white" : "color-cream-950"}`
-                                : null}
+                            style="background: {todo.color ?? 'transparent'};"
                         >
                             {todo.title}
                         </span>

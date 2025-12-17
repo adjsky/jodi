@@ -21,7 +21,7 @@
         !color && "bg-brand/10",
         props.class
     )}
-    style={color ? `background: ${color};` : null}
+    style={color ? `background: ${color}1a;` : null}
 >
     {@render time()}
     {@render title()}
