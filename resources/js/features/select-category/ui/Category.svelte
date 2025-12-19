@@ -59,6 +59,16 @@
         const categories = $page.props["categories"];
         if (categories) set(categories);
     });
+
+    const showReset = $derived(categoryInputValue != "");
+    const showCreate = $derived(
+        categoryInputValue != "" &&
+            categoryInputValue != selected &&
+            !collection().has(categoryInputValue)
+    );
+    const showCategories = $derived(collection().size != 0);
+
+    const showContent = $derived(showReset || showCreate || showCategories);
 </script>
 
 <input
@@ -84,7 +94,8 @@
             <Combobox.Input
                 bind:ref={categoryInput}
                 {@attach autoresize}
-                class={["min-w-10 px-2.5 py-0.5 font-bold outline-none"]}
+                class="rounded-full px-2.5 py-0.5 font-bold outline outline-cream-400 outline-dashed placeholder:text-cream-700"
+                placeholder="+ {m['todos.category']()}"
             />
         {:else}
             <button
@@ -92,7 +103,8 @@
                 class={[
                     "flex items-center gap-1 rounded-full px-2.5 py-0.5 font-bold",
                     selected && "bg-peach",
-                    !selected && "outline outline-cream-400 outline-dashed"
+                    !selected &&
+                        "text-cream-700 outline outline-cream-400 outline-dashed"
                 ]}
                 onclick={ontrigger}
             >
@@ -107,10 +119,13 @@
     </Combobox.Control>
     <Combobox.Positioner>
         <Combobox.Content
-            class="min-w-40 rounded-xl bg-white px-3 py-2 font-bold outline outline-cream-950"
+            class={[
+                "min-w-40 rounded-xl bg-white px-3 py-2 font-bold outline outline-cream-950",
+                !showContent && "invisible"
+            ]}
             onclick={(e) => e.stopPropagation()}
         >
-            {#if collection().size != 0}
+            {#if showCategories}
                 <Combobox.ItemGroup class="max-h-45 overflow-scroll">
                     {#each collection().items as item (item)}
                         <Combobox.Item
@@ -124,7 +139,7 @@
                 </Combobox.ItemGroup>
             {/if}
             <Combobox.ItemGroup>
-                {#if categoryInputValue != "" && categoryInputValue != selected && !collection().has(categoryInputValue)}
+                {#if showCreate}
                     <Combobox.Item
                         item={categoryInputValue}
                         class="cursor-pointer px-1 py-2"
@@ -135,7 +150,7 @@
                         </Combobox.ItemText>
                     </Combobox.Item>
                 {/if}
-                {#if categoryInputValue != ""}
+                {#if showReset}
                     <Combobox.Item item="" class="cursor-pointer px-1 py-2">
                         <Combobox.ItemText
                             class="flex items-center gap-1 text-red"
