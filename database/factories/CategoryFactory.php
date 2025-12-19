@@ -7,9 +7,9 @@ namespace Database\Factories;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
- * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\Todo>
+ * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\Category>
  */
-class TodoFactory extends Factory
+class CategoryFactory extends Factory
 {
     /**
      * Define the model's default state.
@@ -19,9 +19,7 @@ class TodoFactory extends Factory
     public function definition(): array
     {
         return [
-            'title' => fake()->sentence(rand(3, 8)),
-            'description' => fake()->optional(0.7)->paragraph(rand(1, 3)),
-            'todo_date' => now()->format('Y-m-d'),
+            'name' => fake()->word(),
         ];
     }
 }

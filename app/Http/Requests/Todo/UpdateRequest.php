@@ -23,6 +23,7 @@ class UpdateRequest extends FormRequest
             'title' => 'sometimes|string',
             'description' => 'sometimes|nullable|string',
             'color' => 'sometimes|nullable|hex_color',
+            'category' => 'sometimes|nullable|string',
         ];
     }
 }

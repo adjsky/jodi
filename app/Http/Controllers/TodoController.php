@@ -16,14 +16,35 @@ class TodoController extends Controller
 {
     public function create(CreateRequest $request)
     {
-        $this->user()->todos()->create($request->validatedInSnakeCase());
+        $data = $request->validatedInSnakeCase();
+        $category = isset($data['category'])
+            ? $this->user()->categories()->firstOrCreate(['name' => $data['category']])
+            : null;
+
+        $this->user()->todos()->create([...$data, 'category_id' => $category?->id]);
 
         return back();
     }
 
     public function update(UpdateRequest $request, Todo $todo)
     {
-        $todo->update($request->validatedInSnakeCase());
+        $data = $request->validatedInSnakeCase();
+
+        DB::transaction(function () use ($data, $todo) {
+            $todo->fill($data);
+
+            if ($todo->isDirty('position')) {
+                $todo->position = $todo->getHighestOrderNumber();
+            }
+
+            if (isset($data['category'])) {
+                $todo->category_id = $this->user()
+                    ->categories()
+                    ->firstOrCreate(['name' => $data['category']])->id;
+            }
+
+            $todo->save();
+        });
 
         return back();
     }
@@ -49,41 +70,46 @@ class TodoController extends Controller
 
         // TODO: vibe coded, check later
         DB::transaction(function () use ($todo, $data) {
-            $oldCategory = $todo->category;
+            $oldCategory = $todo->category_id;
             $oldPosition = $todo->position;
-            $newCategory = $data['category'];
+
+            $newCategory = $data['category']
+                ? $this->user()->categories()->where('name', $data['category'])->firstOrFail()->id
+                : null;
             $newPosition = $data['position'];
 
+            if ($oldCategory === $newCategory && $oldPosition === $newPosition) {
+                return;
+            }
+
             if ($oldCategory !== $newCategory) {
-                Todo::where('category', $oldCategory)
+                Todo::where('category_id', $oldCategory)
                     ->where('position', '>', $oldPosition)
                     ->decrement('position');
 
-                Todo::where('category', $newCategory)
+                Todo::where('category_id', $newCategory)
                     ->where('position', '>=', $newPosition)
                     ->increment('position');
 
-                $todo->category = $newCategory;
+                $todo->category_id = $newCategory;
                 $todo->position = $newPosition;
-                $todo->save();
             } else {
-                if ($newPosition !== $oldPosition) {
-                    if ($newPosition > $oldPosition) {
-                        Todo::where('category', $oldCategory)
-                            ->where('position', '>', $oldPosition)
-                            ->where('position', '<=', $newPosition)
-                            ->decrement('position');
-                    } else {
-                        Todo::where('category', $oldCategory)
-                            ->where('position', '>=', $newPosition)
-                            ->where('position', '<', $oldPosition)
-                            ->increment('position');
-                    }
-
-                    $todo->position = $newPosition;
-                    $todo->save();
+                if ($newPosition > $oldPosition) {
+                    Todo::where('category_id', $oldCategory)
+                        ->where('position', '>', $oldPosition)
+                        ->where('position', '<=', $newPosition)
+                        ->decrement('position');
+                } else {
+                    Todo::where('category_id', $oldCategory)
+                        ->where('position', '>=', $newPosition)
+                        ->where('position', '<', $oldPosition)
+                        ->increment('position');
                 }
+
+                $todo->position = $newPosition;
             }
+
+            $todo->save();
         });
 
         return back();

@@ -54,6 +54,12 @@ class User extends Authenticatable
         return $this->hasMany(UserOneTimePasswords::class);
     }
 
+    /** @return HasMany<Category,$this> */
+    public function categories(): HasMany
+    {
+        return $this->hasMany(Category::class);
+    }
+
     /** @return HasMany<Todo,$this> */
     public function todos(): HasMany
     {

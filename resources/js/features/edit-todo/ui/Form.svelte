@@ -1,11 +1,12 @@
 <script lang="ts">
     import { Form } from "@inertiajs/svelte";
-    import { Bell, CalendarFold, Ellipsis, RotateCw } from "@lucide/svelte";
+    import { Bell, Ellipsis, RotateCw } from "@lucide/svelte";
     import { Todo } from "$/entities/todo";
     import Action from "$/features/_shared/action-toolbar/Action.svelte";
     import Color from "$/features/_shared/action-toolbar/Color.svelte";
     import Delete from "$/features/_shared/action-toolbar/Delete.svelte";
     import { Checkbox } from "$/features/complete-todo";
+    import { Category } from "$/features/select-category";
     import {
         destroy,
         update
@@ -32,15 +33,17 @@
     let:isDirty
 >
     <div class="flex items-center justify-between">
-        <h4 class="flex items-center gap-1.5 text-lg font-bold text-cream-800">
-            <CalendarFold />
-            {new Intl.DateTimeFormat(getLocale(), {
-                day: "2-digit",
-                year: "numeric",
-                month: "short",
-                weekday: "short"
-            }).format(new Date(todo.date))}
-        </h4>
+        <div class="flex items-center gap-3">
+            <h4 class="text-lg font-bold text-cream-800">
+                {new Intl.DateTimeFormat(getLocale(), {
+                    day: "2-digit",
+                    year: "numeric",
+                    month: "short",
+                    weekday: "short"
+                }).format(new Date(todo.date))}
+            </h4>
+            <Category name="category" defaultValue={todo.category} />
+        </div>
         <SaveOrClose
             variant={isDirty ? "save" : "close"}
             onclick={() => {
@@ -52,7 +55,7 @@
     </div>
     <div
         class={[
-            "mt-5 flex items-center gap-2",
+            "mt-4 flex items-center gap-2",
             todo.completedAt && "opacity-40"
         ]}
     >
@@ -62,6 +65,7 @@
     <Todo.Description
         name="description"
         defaultValue={todo.description ?? ""}
+        class="mt-6"
     />
 </Form>
 

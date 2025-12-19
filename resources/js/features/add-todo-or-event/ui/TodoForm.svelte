@@ -1,7 +1,7 @@
 <script lang="ts">
     import { Form } from "@inertiajs/svelte";
-    import { CalendarFold } from "@lucide/svelte";
     import { Todo } from "$/entities/todo";
+    import { Category } from "$/features/select-category";
     import { create } from "$/generated/actions/App/Http/Controllers/TodoController";
     import { getLocale } from "$/paraglide/runtime";
     import { useSearchParams } from "$/shared/inertia/use-search-params.svelte";
@@ -24,15 +24,17 @@
 >
     <input name="todoDate" value={day.format("YYYY-MM-DD")} hidden />
     <div class="flex items-center justify-between text-ms">
-        <h4 class="flex items-center gap-1.5 text-lg font-bold text-cream-800">
-            <CalendarFold />
-            {new Intl.DateTimeFormat(day.locale(), {
-                day: "2-digit",
-                year: "numeric",
-                month: "short",
-                weekday: "short"
-            }).format(day.toDate())}
-        </h4>
+        <div class="flex items-center gap-3">
+            <h4 class="text-lg font-bold text-cream-800">
+                {new Intl.DateTimeFormat(getLocale(), {
+                    day: "2-digit",
+                    year: "numeric",
+                    month: "short",
+                    weekday: "short"
+                }).format(new Date(day.toDate()))}
+            </h4>
+            <Category name="category" />
+        </div>
         <SaveOrClose variant="save" disabled={processing} />
     </div>
     <Todo.Title class="mt-5" name="title" required autofocus />

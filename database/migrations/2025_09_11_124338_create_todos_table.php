@@ -18,7 +18,7 @@ return new class extends Migration
             $table->foreignId('user_id')->index()->constrained();
             $table->string('title');
             $table->text('description')->nullable();
-            $table->string('category')->nullable();
+            $table->foreignId('category_id')->nullable()->index()->constrained()->nullOnDelete();
             $table->integer('position');
             $table->date('todo_date')->index();
             $table->foreignId('recurrence_id')->nullable()->constrained();

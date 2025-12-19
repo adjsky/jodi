@@ -29,7 +29,7 @@ class TodoDto extends Data
             $todo->id,
             $todo->title,
             $todo->description,
-            $todo->category,
+            $todo->category?->name,
             $todo->color,
             $todo->todo_date,
             $todo->completed_at,

@@ -20,10 +20,12 @@ class HomeController extends Controller
             'todos' => Inertia::defer(
                 fn () => TodoDto::collect(
                     $this->user()->todos()
-                        ->whereDate('todo_date', $date)
-                        ->orderBy('category', 'asc')
-                        ->orderBy('position', 'asc')
+                        ->with('category')
+                        ->whereDate('todos.todo_date', $date)
+                        ->orderBy('todos.position', 'asc')
                         ->get()
+                        ->sortBy(fn ($todo) => $todo->category?->name)
+                        ->values()
                 )
             ),
             'events' => Inertia::defer(
@@ -33,6 +35,10 @@ class HomeController extends Controller
                         ->orderBy('starts_at', 'asc')
                         ->get()
                 )
+            ),
+            'categories' => Inertia::defer(
+                fn () => $this->user()->categories->pluck('name'),
+                'other'
             ),
         ]);
     }

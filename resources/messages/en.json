@@ -4,7 +4,6 @@
         "or": "Or",
         "too-many-requests": "Too many requests. Try again later.",
         "unexpected-error": "Unexpected error happened. Try again later.",
-        "save": "Save",
         "settings": "Settings",
         "no": "No",
         "yes": "Yes",
@@ -46,6 +45,9 @@
         "no-todos": "Looks like you have nothing to do. Click + to add a todo.",
         "select-color": "Select color",
         "delete-ahtung": "Are you sure you want to delete this todo?",
+        "category": "Category",
+        "create-new-category": "Create new",
+        "reset-category": "Reset",
         "tooltips": {
             "delete": "Delete",
             "repeat": "Repeat",

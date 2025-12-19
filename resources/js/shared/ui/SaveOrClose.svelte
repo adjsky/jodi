@@ -1,6 +1,5 @@
 <script lang="ts">
-    import { X } from "@lucide/svelte";
-    import { m } from "$/paraglide/messages";
+    import { Check, X } from "@lucide/svelte";
 
     import { tw } from "../lib/styles";
 
@@ -13,22 +12,19 @@
     const { variant, ...rest }: Props = $props();
 </script>
 
-{#if variant == "close"}
-    <button
-        {...rest}
-        type="button"
-        class={tw(
-            "flex size-7 items-center justify-center rounded-full bg-cream-100",
-            rest.class
-        )}
-    >
+<button
+    {...rest}
+    type={variant == "save" ? "submit" : "button"}
+    class={tw(
+        "flex size-7 shrink-0 items-center justify-center rounded-full",
+        variant == "close" && "bg-cream-100",
+        variant == "save" && "bg-brand",
+        rest.class
+    )}
+>
+    {#if variant == "close"}
         <X class="text-xl text-cream-700" />
-    </button>
-{:else}
-    <button
-        {...rest}
-        class={tw("text-lg leading-[1.75rem] font-bold text-brand", rest.class)}
-    >
-        {m["common.save"]()}
-    </button>
-{/if}
+    {:else}
+        <Check class="text-xl text-white" />
+    {/if}
+</button>
