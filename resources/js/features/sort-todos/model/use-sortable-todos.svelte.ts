@@ -72,36 +72,31 @@ export function useSortableTodos(
     const sortable =
         (id: number, group: string, index: number): Attachment =>
         (element) => {
-            $effect(() => {
-                const sortable = new Sortable(
-                    { id, index, group, element, type: "todo", accept: "todo" },
-                    manager
-                );
-                return () => sortable.unregister();
-            });
+            const sortable = new Sortable(
+                { id, index, group, element, type: "todo", accept: "todo" },
+                manager
+            );
+            return () => sortable?.unregister();
         };
 
     const droppable =
         (id: string): Attachment =>
         (element) => {
-            $effect(() => {
-                const droppable = new Droppable(
-                    {
-                        id,
-                        element,
-                        type: "group",
-                        accept: "todo",
-                        collisionPriority: CollisionPriority.Low
-                    },
-                    manager
-                );
-                return () => droppable.unregister();
-            });
+            const droppable = new Droppable(
+                {
+                    id,
+                    element,
+                    type: "group",
+                    accept: "todo",
+                    collisionPriority: CollisionPriority.Low
+                },
+                manager
+            );
+            return () => droppable.unregister();
         };
 
     return {
-        sortable,
-        droppable,
+        attachments: { sortable, droppable },
         get groups() {
             return groups;
         }

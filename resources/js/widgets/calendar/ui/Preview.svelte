@@ -3,9 +3,11 @@
     import { Calendar } from "@lucide/svelte";
     import { User } from "$/entities/user";
     import { WeekCarousel } from "$/features/filter-by-date";
-    import { me } from "$/generated/routes";
+    import { home, me } from "$/generated/routes";
     import { getLocale } from "$/paraglide/runtime";
+    import { HistoryView } from "$/shared/inertia/history-view.svelte";
     import { useSearchParams } from "$/shared/inertia/use-search-params.svelte";
+    import FloatingView from "$/shared/ui/FloatingView.svelte";
     import dayjs from "dayjs";
     import { capitalize } from "remeda";
 
@@ -17,12 +19,16 @@
 
     const searchParams = useSearchParams({ showProgress: true });
     const day = $derived(dayjs(searchParams["d"]).locale(getLocale()));
+
+    const view = new HistoryView("calendar", { viewTransition: true });
 </script>
 
 <header
     class="sticky top-0 z-10 flex items-center justify-between bg-cream-50 py-2 pr-6 pl-3"
 >
-    <button class="p-2.5"><Calendar class="text-3xl" /></button>
+    <button class="p-2.5" onclick={() => view.open()}>
+        <Calendar class="text-3xl" />
+    </button>
     <div class="absolute left-1/2 -translate-x-1/2">
         <h1 class="text-center text-xl font-bold">
             {capitalize(day.format("dddd"))}
@@ -38,6 +44,10 @@
         <User.Avatar name={user.name} />
     </Link>
 </header>
+
+{#if view.isOpen()}
+    <FloatingView back={home()} viewTransition>qwe</FloatingView>
+{/if}
 
 <WeekCarousel
     bind:day={() => day, (v) => (searchParams.d = v.format("YYYY-MM-DD"))}

@@ -25,11 +25,9 @@
 
     const editView = new HistoryView<App.Data.TodoDto>("edit-todo");
 
-    const { sortable, droppable, groups } = $derived(
-        useSortableTodos(
-            () => todos,
-            () => loading
-        )
+    const st = useSortableTodos(
+        () => todos,
+        () => loading
     );
 
     watch(
@@ -73,9 +71,12 @@
         </p>
     {:else}
         <div class="mt-4">
-            {#each Object.entries(groups) as [group, todos] (group)}
-                <div {@attach droppable(group)} class="not-first:mt-4">
-                    {#if Object.keys(groups).length == 1 && group == m["todos.ungrouped"]()}
+            {#each Object.entries(st.groups) as [group, todos] (group)}
+                <div
+                    {@attach st.attachments.droppable(group)}
+                    class="not-first:mt-4"
+                >
+                    {#if Object.keys(st.groups).length == 1 && group == m["todos.ungrouped"]()}
                         {@render list(group, todos)}
                     {:else}
                         {@const completed = todos.filter(
@@ -111,7 +112,7 @@
 {#snippet list(group: string, todos: App.Data.TodoDto[])}
     {#each todos as todo, index (todo.id)}
         <Todo.Row
-            {@attach sortable(todo.id, group, index)}
+            {@attach st.attachments.sortable(todo.id, group, index)}
             class={todo.completedAt && "opacity-40"}
         >
             {#snippet checkbox()}

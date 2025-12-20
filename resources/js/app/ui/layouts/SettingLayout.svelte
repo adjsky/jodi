@@ -1,7 +1,3 @@
-<script module lang="ts">
-    export { header };
-</script>
-
 <script lang="ts">
     import { Link } from "@inertiajs/svelte";
     import { ChevronLeft } from "@lucide/svelte";
@@ -12,22 +8,17 @@
 
     type Props = {
         title: string;
-        backHref?: UrlMethodPair;
+        back?: UrlMethodPair;
         viewTransition?: boolean;
         children: Snippet;
     };
 
-    const {
-        title,
-        backHref,
-        viewTransition = true,
-        children
-    }: Props = $props();
+    const { title, back, viewTransition = true, children }: Props = $props();
 </script>
 
-{#snippet header(title: string, href: UrlMethodPair, viewTransition = true)}
+<main class="flex min-h-svh flex-col bg-cream-50 px-4 py-3">
     <div class="relative flex items-center">
-        <Link {href} {viewTransition} class="p-2">
+        <Link href={back ?? index()} {viewTransition} class="p-2">
             <ChevronLeft class="text-4xl" />
         </Link>
         <span
@@ -36,9 +27,6 @@
             {title}
         </span>
     </div>
-{/snippet}
 
-<main class="flex min-h-svh flex-col bg-cream-50 px-4 py-3">
-    {@render header(title, backHref ?? index(), viewTransition)}
     {@render children()}
 </main>

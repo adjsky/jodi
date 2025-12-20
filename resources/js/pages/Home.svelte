@@ -3,9 +3,9 @@
     import { AddTodoOrEvent } from "$/features/add-todo-or-event";
     import { m } from "$/paraglide/messages";
     import CalendarCat from "$/shared/assets/calendar-cat.svg";
+    import { CalendarPreview } from "$/widgets/calendar";
     import EventList from "$/widgets/event-list/ui/EventList.svelte";
     import { TodoList } from "$/widgets/todo-list";
-    import { UserCalendarHeader } from "$/widgets/user-calendar";
 
     type Props = {
         todos: App.Data.TodoDto[];
@@ -19,7 +19,7 @@
 </script>
 
 <main class="pb-20">
-    <UserCalendarHeader user={$page.props.auth.user} />
+    <CalendarPreview user={$page.props.auth.user} />
 
     {#if todos?.length === 0 && events?.length === 0}
         <img

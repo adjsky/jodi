@@ -18,7 +18,7 @@
 </script>
 
 <SettingsLayout
-    backHref={invitations()}
+    back={invitations()}
     title={m["current-user.invitations.invitation"]()}
 >
     <div class="flex flex-grow flex-col justify-between py-5">

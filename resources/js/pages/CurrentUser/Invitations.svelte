@@ -1,9 +1,7 @@
 <script lang="ts">
     import { Form, Link } from "@inertiajs/svelte";
     import { ChevronRight, Mail } from "@lucide/svelte";
-    import SettingsLayout, {
-        header
-    } from "$/app/ui/layouts/SettingLayout.svelte";
+    import SettingsLayout from "$/app/ui/layouts/SettingLayout.svelte";
     import {
         index,
         invite,
@@ -13,6 +11,7 @@
     import Dino from "$/shared/assets/dino.svg";
     import { HistoryView } from "$/shared/inertia/history-view.svelte";
     import Button from "$/shared/ui/Button.svelte";
+    import FloatingView from "$/shared/ui/FloatingView.svelte";
     import TextField from "$/shared/ui/TextField.svelte";
 
     type Props = {
@@ -81,8 +80,11 @@
     </div>
 
     {#if view.isOpen()}
-        <div class="fixed inset-0 z-10 flex flex-col bg-cream-50 px-4 py-3">
-            {@render header(m["current-user.invite"](), index())}
+        <FloatingView
+            back={index()}
+            title={m["current-user.invite"]()}
+            viewTransition
+        >
             <Form
                 action={invite()}
                 class="flex flex-grow flex-col justify-between py-5"
@@ -103,6 +105,6 @@
                     {m["current-user.invite"]()}
                 </Button>
             </Form>
-        </div>
+        </FloatingView>
     {/if}
 </SettingsLayout>
