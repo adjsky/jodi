@@ -67,7 +67,7 @@
         {/each}
     </div>
 
-    <div bind:this={monthsContainer} class="mt-2 overflow-y-scroll pb-12">
+    <div bind:this={monthsContainer} class="mt-2 overflow-y-scroll">
         {#each year.months() as month (month.name)}
             {@render table(month)}
         {/each}
