@@ -17,7 +17,7 @@
 </script>
 
 <div class="fixed inset-0 z-10 flex flex-col bg-cream-50 px-4 py-3">
-    <div class="relative flex items-center">
+    <div class="relative flex items-center justify-between">
         <Link href={back} {viewTransition} class="p-2">
             <ChevronLeft class="text-4xl" />
         </Link>

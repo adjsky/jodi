@@ -1,21 +1,30 @@
 <script lang="ts">
+    import { DateFormatter } from "@internationalized/date";
     import { ChevronLeft, ChevronRight } from "@lucide/svelte";
+    import { getLocale } from "$/paraglide/runtime";
+    import { TIMEZONE } from "$/shared/cfg/constants";
     import { boolAttr } from "runed";
 
+    import { compareDates } from "../helpers/date";
     import { Week } from "../model/week.svelte";
 
-    import type { WeekStart } from "../model/week.svelte";
-    import type { Dayjs } from "dayjs";
+    import type { WeekStart } from "../cfg/preferences";
+    import type { CalendarDate } from "@internationalized/date";
 
     type Props = {
-        day: Dayjs;
+        selected: CalendarDate;
+        cursor: CalendarDate;
         start: WeekStart;
     };
 
-    let { day = $bindable(), start }: Props = $props();
+    let {
+        selected = $bindable(),
+        cursor = $bindable(),
+        start
+    }: Props = $props();
 
     const week = new Week(
-        () => day,
+        () => cursor,
         () => start
     );
 </script>
@@ -23,35 +32,39 @@
 <div class="border-b border-cream-300 p-3 pt-1 pb-5">
     <div class="flex h-12 items-stretch">
         <button
-            onclick={() => (day = week.previous())}
+            onclick={() => (cursor = week.previous())}
             class="flex w-7 shrink-0 items-center justify-center text-2xl text-cream-700"
         >
             <ChevronLeft />
         </button>
         <div class="grid w-full grid-cols-7">
-            {#each week.days as d (d.day())}
+            {#each week.days as date (date.day)}
+                {@const compare = compareDates(selected, date)}
                 <button
-                    onclick={() => (day = d)}
+                    onclick={() => (selected = date)}
                     class="group flex flex-col items-center justify-between"
-                    data-selected={boolAttr(day.isSame(d, "date"))}
+                    data-selected={boolAttr(compare == "selected")}
+                    data-selected-ghost={boolAttr(compare == "ghost")}
                 >
                     <span
                         class="text-xs font-semibold text-cream-500"
                         data-part="day-name"
                     >
-                        {d.format("dd")}
+                        {new DateFormatter(getLocale(), {
+                            weekday: "short"
+                        }).format(date.toDate(TIMEZONE))}
                     </span>
                     <span
                         class="relative font-semibold text-cream-800 group-data-selected:text-lg group-data-selected:text-white"
                         data-part="day-number"
                     >
-                        {d.date()}
+                        {date.day}
                     </span>
                 </button>
             {/each}
         </div>
         <button
-            onclick={() => (day = week.next())}
+            onclick={() => (cursor = week.next())}
             class="flex w-7 shrink-0 items-center justify-center text-2xl text-cream-700"
         >
             <ChevronRight />
@@ -60,7 +73,8 @@
 </div>
 
 <style>
-    button[data-selected] [data-part="day-number"]::after {
+    button:is([data-selected], [data-selected-ghost])
+        [data-part="day-number"]::after {
         content: "";
 
         position: absolute;
@@ -71,8 +85,15 @@
         width: 2.25rem;
         height: 2.25rem;
 
-        background: var(--color-brand);
         border-radius: 50%;
         z-index: -1;
+    }
+
+    button[data-selected] [data-part="day-number"]::after {
+        background: var(--color-brand);
+    }
+
+    button[data-selected-ghost] [data-part="day-number"]::after {
+        border: 1px dashed var(--color-cream-400);
     }
 </style>

@@ -1,50 +1,36 @@
+import { startOfWeek } from "@internationalized/date";
+import { getLocale } from "$/paraglide/runtime";
 import { extract } from "runed";
 
-import type { Dayjs } from "dayjs";
+import { DMAP } from "../cfg/preferences";
+import { getWeekDays } from "../helpers/date";
+
+import type { WeekStart } from "../cfg/preferences";
+import type { CalendarDate } from "@internationalized/date";
 import type { Getter } from "runed";
 
-export type WeekStart = "monday" | "sunday";
-
-const DMAP: { [D in WeekStart]: number } = { monday: 1, sunday: 0 };
-
 export class Week {
-    #day: Getter<Dayjs>;
+    #cursor: Getter<CalendarDate>;
     #start: Getter<WeekStart>;
 
-    constructor(day: Getter<Dayjs>, start: Getter<WeekStart>) {
-        this.#day = day;
+    constructor(cursor: Getter<CalendarDate>, start: Getter<WeekStart>) {
+        this.#cursor = cursor;
         this.#start = start;
     }
 
     get days() {
-        const start = this.#startOfWeek(extract(this.#day));
-        const days = [] as Dayjs[];
-
-        for (let i = 0; i < 7; i++) {
-            const day = start.add(i, "day");
-            days.push(day);
-        }
-
-        return days;
+        return getWeekDays(this.#startOfWeek(extract(this.#cursor)));
     }
 
     next() {
-        return this.#startOfWeek(extract(this.#day).add(1, "week"));
+        return this.#startOfWeek(extract(this.#cursor).add({ weeks: 1 }));
     }
 
     previous() {
-        return this.#startOfWeek(extract(this.#day).subtract(1, "week"));
+        return this.#startOfWeek(extract(this.#cursor).subtract({ weeks: 1 }));
     }
 
-    #startOfWeek(day: Dayjs) {
-        const actualWeekDay = day.day();
-        const expectedWeekDay = DMAP[extract(this.#start)];
-
-        const diff =
-            actualWeekDay < expectedWeekDay
-                ? 7 - (expectedWeekDay - actualWeekDay)
-                : actualWeekDay - expectedWeekDay;
-
-        return day.subtract(diff, "day");
+    #startOfWeek(date: CalendarDate) {
+        return startOfWeek(date, getLocale(), DMAP[extract(this.#start)]);
     }
 }

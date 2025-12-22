@@ -1,15 +1,14 @@
 <script lang="ts">
     import { Link } from "@inertiajs/svelte";
+    import { DateFormatter, parseDate, today } from "@internationalized/date";
     import { Calendar } from "@lucide/svelte";
     import { User } from "$/entities/user";
-    import { WeekCarousel } from "$/features/filter-by-date";
-    import { home, me } from "$/generated/routes";
+    import { WeekCarousel, YearCalendar } from "$/features/filter-by-date";
+    import { me } from "$/generated/routes";
     import { getLocale } from "$/paraglide/runtime";
+    import { TIMEZONE } from "$/shared/cfg/constants";
     import { HistoryView } from "$/shared/inertia/history-view.svelte";
     import { useSearchParams } from "$/shared/inertia/use-search-params.svelte";
-    import FloatingView from "$/shared/ui/FloatingView.svelte";
-    import dayjs from "dayjs";
-    import { capitalize } from "remeda";
 
     import type { AppPageProps } from "$/globals";
 
@@ -18,7 +17,11 @@
     const { user }: Props = $props();
 
     const searchParams = useSearchParams({ showProgress: true });
-    const day = $derived(dayjs(searchParams["d"]).locale(getLocale()));
+
+    const selected = $derived(
+        searchParams["d"] ? parseDate(searchParams["d"]) : today(TIMEZONE)
+    );
+    let cursor = $derived(selected);
 
     const view = new HistoryView("calendar", { viewTransition: true });
 </script>
@@ -31,13 +34,15 @@
     </button>
     <div class="absolute left-1/2 -translate-x-1/2">
         <h1 class="text-center text-xl font-bold">
-            {capitalize(day.format("dddd"))}
+            {new DateFormatter(getLocale(), { weekday: "long" }).format(
+                cursor.toDate(TIMEZONE)
+            )}
         </h1>
         <h2 class="text-center text-sm text-cream-600">
-            {new Intl.DateTimeFormat(day.locale(), {
+            {new DateFormatter(getLocale(), {
                 year: "numeric",
                 month: "long"
-            }).format(day.toDate())}
+            }).format(cursor.toDate(TIMEZONE))}
         </h2>
     </div>
     <Link href={me()} viewTransition>
@@ -45,11 +50,12 @@
     </Link>
 </header>
 
-{#if view.isOpen()}
-    <FloatingView back={home()} viewTransition>qwe</FloatingView>
-{/if}
-
 <WeekCarousel
-    bind:day={() => day, (v) => (searchParams.d = v.format("YYYY-MM-DD"))}
+    bind:selected={() => selected, (v) => (searchParams["d"] = v.toString())}
+    bind:cursor
     start={user.preferences.weekStartOn}
 />
+
+{#if view.isOpen()}
+    <YearCalendar {selected} start={user.preferences.weekStartOn} />
+{/if}
