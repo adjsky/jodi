@@ -25,7 +25,7 @@ class CreateRequest extends FormRequest
             'isAllDay' => 'required|boolean',
             'startsAt' => 'required|date',
             'endsAt' => 'nullable|date',
-            'notifyAt' => 'required|date',
+            'notifyAt' => 'nullable|date',
         ];
     }
 }

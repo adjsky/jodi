@@ -1,5 +1,6 @@
 /// <reference types="svelte" />
 /// <reference types="vite/client" />
+/// <reference types="vite-plugin-pwa/svelte" />
 
 declare module "@inertiajs/core" {
     interface PageProps extends InertiaPageProps, AppPageProps {}

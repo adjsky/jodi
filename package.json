@@ -8,6 +8,7 @@
         "lint": "eslint",
         "format": "prettier",
         "check": "svelte-check",
+        "generate-pwa-assets": "pwa-assets-generator --preset=minimal-2023 public/favicon.svg",
         "postinstall": "patch-package"
     },
     "devDependencies": {
@@ -28,6 +29,7 @@
         "@tailwindcss/forms": "^0.5.10",
         "@tailwindcss/vite": "^4.1.13",
         "@types/node": "^24",
+        "@vite-pwa/assets-generator": "^1.0.2",
         "better-typescript-lib": "^2.12.0",
         "concurrently": "^9.0.1",
         "dayjs": "^1.11.19",
@@ -54,6 +56,7 @@
         "typescript": "^5.9.2",
         "typescript-eslint": "^8.44.0",
         "vite": "^7.1.5",
+        "vite-plugin-pwa": "^1.2.0",
         "vite-tsconfig-paths": "^5.1.4"
     }
 }

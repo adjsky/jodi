@@ -25,21 +25,18 @@
         preserveScroll: true,
         replace: true
     }}
-    transform={(data) => {
-        const startsAt = dayjs(day.format(`YYYY-MM-DD ${data.startsAt}`)).utc();
-
-        return {
-            ...data,
-            startsAt: startsAt.toISOString(),
-            endsAt: data.endsAt
-                ? dayjs(day.format(`YYYY-MM-DD ${data.endsAt}`))
-                      .utc()
-                      .toISOString()
-                : null,
-            isAllDay: Boolean(data.isAllDay),
-            notifyAt: startsAt.subtract(1, "hour").toISOString()
-        };
-    }}
+    transform={(data) => ({
+        ...data,
+        startsAt: dayjs(day.format(`YYYY-MM-DD ${data.startsAt}`))
+            .utc()
+            .toISOString(),
+        endsAt: data.endsAt
+            ? dayjs(day.format(`YYYY-MM-DD ${data.endsAt}`))
+                  .utc()
+                  .toISOString()
+            : null,
+        isAllDay: Boolean(data.isAllDay)
+    })}
     let:processing
 >
     <div class="flex items-center justify-between">

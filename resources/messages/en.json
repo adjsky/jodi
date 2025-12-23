@@ -9,6 +9,10 @@
         "yes": "Yes",
         "required-field": "Please fill out this field"
     },
+    "pwa-update": {
+        "title": "An update is ready to install.",
+        "action": "Refresh page"
+    },
     "signup": {
         "intro": {
             "title": "Ready to make your day productive?",

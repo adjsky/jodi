@@ -24,7 +24,7 @@ return new class extends Migration
             $table->datetime('starts_at')->index();
             $table->datetime('ends_at')->nullable();
             $table->boolean('is_all_day');
-            $table->datetime('notify_at')->index();
+            $table->datetime('notify_at')->nullable()->index();
             $table->timestamps();
         });
     }
