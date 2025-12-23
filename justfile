@@ -1,5 +1,12 @@
 # https://just.systems
 
+init:
+    php -r "file_exists('.env') || copy('.env.example', '.env');"
+    php -r "file_exists('database/database.sqlite') || touch('database/database.sqlite');"
+    php artisan key:generate --ansi
+    php artisan migrate --graceful --ansi --seed
+    php artisan webpush:vapid
+
 [parallel]
 dev: dev-server dev-queue dev-logs dev-vite
 
