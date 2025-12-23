@@ -5,6 +5,7 @@ declare(strict_types=1);
 use App\Domain\Auth\Mail;
 use App\Domain\Auth\Notifications;
 use App\Http\Controllers\CurrentUserController;
+use App\Http\Controllers\DaySummaryController;
 use App\Http\Controllers\EventController;
 use App\Http\Controllers\FriendsController;
 use App\Http\Controllers\HomeController;
@@ -87,6 +88,10 @@ Route::middleware('auth')->group(function () {
         ->group(function () {
             Route::get('/', 'index')->name('friends');
         });
+
+    Route::get('/day-summary/{year}', [DaySummaryController::class, 'get'])
+        ->whereNumber('year')
+        ->name('day-summary');
 });
 
 if (app()->isLocal()) {

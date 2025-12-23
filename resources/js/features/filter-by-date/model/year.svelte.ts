@@ -16,8 +16,6 @@ import type { WeekStart } from "../cfg/preferences";
 import type { CalendarDate } from "@internationalized/date";
 import type { Getter } from "runed";
 
-export type Month = { name: string; date: CalendarDate };
-
 export class Year {
     #cursor: CalendarDate;
     #start: Getter<WeekStart>;
@@ -31,7 +29,7 @@ export class Year {
         return this.#cursor.year;
     }
 
-    months(): Month[] {
+    months() {
         const start = startOfYear(extract(this.#cursor));
         const formatter = new DateFormatter(getLocale(), { month: "long" });
 
@@ -44,13 +42,13 @@ export class Year {
         });
     }
 
-    weeks(month: Month) {
-        const nWeeks = this.#weeksInMonth(month.date);
-        const start = this.#startOfWeek(month.date);
+    weeks(date: CalendarDate) {
+        const nWeeks = this.#weeksInMonth(date);
+        const start = this.#startOfWeek(date);
 
         return Array.from({ length: nWeeks }).map((_, idx) =>
             getWeekDays(start.add({ weeks: idx })).map((date) => ({
-                isWithinMonth: month.date.month == date.month,
+                isWithinMonth: date.month == date.month,
                 date
             }))
         );

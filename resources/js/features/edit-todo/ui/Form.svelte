@@ -34,7 +34,7 @@
 >
     <div class="flex items-center justify-between">
         <div class="flex items-center gap-3">
-            <h4 class="text-lg font-bold text-cream-800">
+            <h4 class="text-lg font-bold">
                 {new Intl.DateTimeFormat(getLocale(), {
                     day: "2-digit",
                     year: "numeric",

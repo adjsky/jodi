@@ -1,17 +1,14 @@
 <script lang="ts">
     import { ChevronLeft, ChevronRight } from "@lucide/svelte";
     import { home } from "$/generated/routes";
-    import { link } from "$/shared/inertia/link";
     import Button from "$/shared/ui/Button.svelte";
     import FloatingView from "$/shared/ui/FloatingView.svelte";
-    import { boolAttr } from "runed";
     import { onMount } from "svelte";
 
-    import { compareDates } from "../helpers/date";
     import { Year } from "../model/year.svelte";
+    import Month from "./Month.svelte";
 
     import type { WeekStart } from "../cfg/preferences";
-    import type { Month } from "../model/year.svelte";
     import type { CalendarDate } from "@internationalized/date";
 
     type Props = {
@@ -21,20 +18,18 @@
 
     const { selected, start }: Props = $props();
 
-    let monthsContainer = $state<HTMLElement | null>(null);
+    let monthsNode = $state<HTMLElement | null>(null);
+
+    onMount(() => {
+        monthsNode?.querySelector("button[data-selected]")?.scrollIntoView();
+    });
 
     const year = $derived(new Year(selected, () => start));
 
-    function goToYear(direction: "next" | "previous") {
+    function gotoYear(direction: "next" | "previous") {
         year[direction]();
-        monthsContainer?.scrollTo({ top: 0, left: 0, behavior: "smooth" });
+        monthsNode?.scrollTo({ top: 0, left: 0, behavior: "smooth" });
     }
-
-    onMount(() => {
-        monthsContainer
-            ?.querySelector("button[data-selected]")
-            ?.scrollIntoView();
-    });
 </script>
 
 <FloatingView back={home()} viewTransition>
@@ -46,14 +41,14 @@
                 <Button
                     variant="secondary"
                     class="h-auto rounded-full p-2"
-                    onclick={() => goToYear("previous")}
+                    onclick={() => gotoYear("previous")}
                 >
                     <ChevronLeft />
                 </Button>
                 <Button
                     variant="secondary"
                     class="h-auto rounded-full p-2"
-                    onclick={() => goToYear("next")}
+                    onclick={() => gotoYear("next")}
                 >
                     <ChevronRight />
                 </Button>
@@ -67,62 +62,9 @@
         {/each}
     </div>
 
-    <div bind:this={monthsContainer} class="mt-2 overflow-y-scroll">
+    <div bind:this={monthsNode} class="mt-2 overflow-y-scroll">
         {#each year.months() as month (month.name)}
-            {@render table(month)}
+            <Month {...month} {year} {selected} container={monthsNode} />
         {/each}
     </div>
 </FloatingView>
-
-{#snippet table(month: Month)}
-    <table class="w-full">
-        <caption class="pb-1 text-right text-xl font-bold">
-            {month.name}
-        </caption>
-        <tbody>
-            {#each year.weeks(month) as week, idx (idx)}
-                <tr class="grid grid-cols-7 border-t border-cream-200">
-                    {#each week as { date, isWithinMonth } (date.day)}
-                        <td>
-                            <button
-                                {@attach link(() => ({
-                                    href: home({
-                                        query: { d: date.toString() }
-                                    }),
-                                    viewTransition: true,
-                                    replace: true
-                                }))}
-                                class={[
-                                    "relative flex w-full items-center justify-center pt-2 pb-8 text-lg data-selected:font-bold data-selected:text-white",
-                                    !isWithinMonth && "hidden"
-                                ]}
-                                data-selected={boolAttr(
-                                    compareDates(selected, date) == "selected"
-                                )}
-                            >
-                                {date.day}
-                            </button>
-                        </td>
-                    {/each}
-                </tr>
-            {/each}
-        </tbody>
-    </table>
-{/snippet}
-
-<style>
-    button[data-selected]::after {
-        content: "";
-
-        position: absolute;
-        left: 50%;
-        transform: translateX(-50%);
-
-        width: 2.25rem;
-        height: 2.25rem;
-
-        border-radius: 50%;
-        z-index: -1;
-        background: var(--color-brand);
-    }
-</style>

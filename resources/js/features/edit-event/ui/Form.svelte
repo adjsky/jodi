@@ -48,7 +48,7 @@
     let:isDirty
 >
     <div class="flex items-center justify-between">
-        <h4 class="flex items-center gap-1.5 text-lg font-bold text-cream-800">
+        <h4 class="flex items-center gap-1.5 text-lg font-bold">
             <CalendarClock />
             {new Intl.DateTimeFormat(getLocale(), {
                 day: "2-digit",
