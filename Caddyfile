@@ -2,7 +2,7 @@
 	frankenphp
 }
 
-localhost:8000 {
+http://localhost:8000 {
 	root public/
 
 	header /build/sw.js Service-Worker-Allowed "/"

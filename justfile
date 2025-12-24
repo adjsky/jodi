@@ -1,5 +1,6 @@
 # https://just.systems
 
+# move initialization logic to a custom artisan command
 init:
     php -r "file_exists('.env') || copy('.env.example', '.env');"
     php -r "file_exists('database/database.sqlite') || touch('database/database.sqlite');"
@@ -23,4 +24,4 @@ dev-vite:
     npm run dev
 
 preview:
-    npm run build && APP_URL=https://localhost:8000 frankenphp run
+    npm run build && frankenphp run
