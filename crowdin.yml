@@ -24,7 +24,7 @@
 files:
   [
     {
-      "source": "/resoucres/messages/en.json",
+      "source": "/resources/messages/en.json",
       "translation": "/resources/messages/%two_letters_code%.json"
     },
     {
