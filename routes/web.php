@@ -10,6 +10,7 @@ use App\Http\Controllers\EventController;
 use App\Http\Controllers\FriendsController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\LoginController;
+use App\Http\Controllers\PushSubscriptionController;
 use App\Http\Controllers\RegistrationInvitationController;
 use App\Http\Controllers\SignupController;
 use App\Http\Controllers\TodoController;
@@ -72,6 +73,7 @@ Route::middleware('auth')->group(function () {
             Route::get('/friends', 'friends');
             Route::get('/language', 'language');
             Route::get('/week-start', 'weekStart');
+            Route::get('/notifications', 'notifications');
         });
 
     Route::prefix('/me/invitations')
@@ -89,9 +91,14 @@ Route::middleware('auth')->group(function () {
             Route::get('/', 'index')->name('friends');
         });
 
-    Route::get('/day-summary/{year}', [DaySummaryController::class, 'get'])
-        ->whereNumber('year')
-        ->name('day-summary');
+    Route::prefix('/push-subscriptions')
+        ->controller(PushSubscriptionController::class)
+        ->group(function () {
+            Route::post('/', 'create');
+            Route::delete('/', 'destroy');
+        });
+
+    Route::get('/day-summary/{year}', [DaySummaryController::class, 'get'])->name('day-summary');
 });
 
 if (app()->isLocal()) {

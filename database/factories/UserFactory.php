@@ -25,6 +25,7 @@ class UserFactory extends Factory
             'preferences' => [
                 'locale' => 'en',
                 'weekStartOn' => 'monday',
+                'notifications' => 'push',
             ],
             'remember_token' => Str::random(10),
         ];

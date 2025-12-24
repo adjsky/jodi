@@ -18,6 +18,7 @@ class DaySummaryController extends Controller
             ->whereYear('starts_at', $year)
             ->where(function ($query) use ($months) {
                 foreach ($months as $month) {
+                    // TODO: use a date range to account for timezones
                     $query->orWhereMonth('starts_at', $month);
                 }
             })

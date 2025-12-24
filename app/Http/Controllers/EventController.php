@@ -8,12 +8,17 @@ use App\Http\Requests\Event\CreateRequest;
 use App\Http\Requests\Event\DestroyRequest;
 use App\Http\Requests\Event\UpdateRequest;
 use App\Models\Event;
+use Carbon\Carbon;
 
 class EventController extends Controller
 {
     public function create(CreateRequest $request)
     {
-        $this->user()->events()->create($request->validatedInSnakeCase());
+        $data = $request->validatedInSnakeCase();
+        // TODO: should subHours(x) be a preference or configuration?
+        $data['notify_at'] = Carbon::parse($data['starts_at'])->subHours(3);
+
+        $this->user()->events()->create($data);
 
         return back();
     }

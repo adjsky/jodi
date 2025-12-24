@@ -25,6 +25,7 @@ return new class extends Migration
             $table->datetime('ends_at')->nullable();
             $table->boolean('is_all_day');
             $table->datetime('notify_at')->nullable()->index();
+            $table->enum('notify_status', ['processing', 'sent'])->nullable()->index();
             $table->timestamps();
         });
     }

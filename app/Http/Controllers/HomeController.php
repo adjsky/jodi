@@ -6,6 +6,7 @@ namespace App\Http\Controllers;
 
 use App\Data\EventDto;
 use App\Data\TodoDto;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 
@@ -14,7 +15,12 @@ class HomeController extends Controller
     public function show(Request $request)
     {
         $search = $request->validate(['d' => 'nullable|date_format:Y-m-d']);
-        $date = $search['d'] ?? now($request->cookies->getString('jodi-timezone'))->toDateString();
+        $tz = $request->cookies->getString('jodi-timezone');
+
+        $date = $search['d'] ?? now($tz)->toDateString();
+
+        $startUtc = Carbon::parse($date, $tz)->startOfDay()->setTimezone('UTC');
+        $endUtc = Carbon::parse($date, $tz)->endOfDay()->setTimezone('UTC');
 
         return inertia('Home', [
             'todos' => Inertia::defer(
@@ -31,7 +37,7 @@ class HomeController extends Controller
             'events' => Inertia::defer(
                 fn () => EventDto::collect(
                     $this->user()->events()
-                        ->whereDate('starts_at', $date)
+                        ->whereBetween('starts_at', [$startUtc, $endUtc])
                         ->orderBy('starts_at', 'asc')
                         ->get()
                 )

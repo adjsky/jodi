@@ -7,7 +7,8 @@
         "settings": "Settings",
         "no": "No",
         "yes": "Yes",
-        "required-field": "Please fill out this field"
+        "required-field": "Please fill out this field",
+        "pushesAreNotSupported": "Your browser does not support push notifications. Please try a different browser or switch to email notifications."
     },
     "pwa-update": {
         "title": "An update is ready to install.",
@@ -106,7 +107,8 @@
         "app-settings": {
             "title": "App settings",
             "language": "Language",
-            "week-start": "Week start on"
+            "week-start": "Week start on",
+            "notifications": "Notifications"
         },
         "actions": {
             "log-out": "Log out"
@@ -114,6 +116,10 @@
         "days": {
             "monday": "Monday",
             "sunday": "Sunday"
+        },
+        "notifications": {
+            "push": "Push",
+            "mail": "Mail"
         },
         "invitations": {
             "invitation": "Invitation",

@@ -6,6 +6,10 @@ declare module "@inertiajs/core" {
     interface PageProps extends InertiaPageProps, AppPageProps {}
 }
 
+declare global {
+    export const __VAPID_PUBLIC_KEY__: string;
+}
+
 export interface AppPageProps {
     search: Record<string, string>;
     auth: {
@@ -16,6 +20,7 @@ export interface AppPageProps {
             preferences: {
                 locale: string;
                 weekStartOn: "monday" | "sunday";
+                notifications: "push" | "mail";
             };
         };
     };

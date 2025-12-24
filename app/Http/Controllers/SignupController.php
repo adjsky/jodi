@@ -34,6 +34,7 @@ class SignupController extends Controller
                 'preferences' => [
                     'locale' => app()->getLocale(),
                     'weekStartOn' => 'monday',
+                    'notifications' => 'push',
                 ],
             ]);
 

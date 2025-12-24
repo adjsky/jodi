@@ -36,6 +36,11 @@ class CurrentUserController extends Controller
         return inertia('CurrentUser/WeekStart');
     }
 
+    public function notifications(Request $request)
+    {
+        return inertia('CurrentUser/Notifications');
+    }
+
     public function update(Request $request)
     {
         $data = $request->validate([

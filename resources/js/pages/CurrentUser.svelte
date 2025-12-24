@@ -6,12 +6,14 @@
         email,
         language,
         name,
+        notifications,
         weekStart
     } from "$/generated/actions/App/Http/Controllers/CurrentUserController";
     import { friends, home, invitations, logout } from "$/generated/routes";
     import { m } from "$/paraglide/messages";
     import { getLocale } from "$/paraglide/runtime";
     import { LANGUAGES } from "$/shared/lib/language";
+    import { destroyPushSubscription } from "$/shared/lib/push-notifications.svelte";
 
     type Props = {
         nInvitations: number;
@@ -84,13 +86,24 @@
         >
             {m[`current-user.days.${user.preferences.weekStartOn}`]()}
         </User.Info.SettingRow>
+        <User.Info.SettingRow
+            href={notifications()}
+            title={m["current-user.app-settings.notifications"]()}
+        >
+            {m[
+                `current-user.notifications.${user.preferences.notifications}`
+            ]()}
+        </User.Info.SettingRow>
     </User.Info.Block>
 
     <User.Info.Block class="mt-10">
-        <User.Info.ActionRow href={logout()}>
+        <User.Info.ActionRow
+            href={logout()}
+            onclick={() => destroyPushSubscription()}
+        >
             {m["current-user.actions.log-out"]()}
         </User.Info.ActionRow>
     </User.Info.Block>
 
-    <p class="mt-4 text-sm">&lt;{$page.version}&gt;</p>
+    <!-- <p class="mt-4 text-sm">&lt;{$page.version}&gt;</p> -->
 </main>

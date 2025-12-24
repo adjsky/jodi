@@ -4,22 +4,26 @@ declare(strict_types=1);
 
 namespace App\Notifications;
 
+use App\Models\User;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
+use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
 use NotificationChannels\WebPush\DeclarativeWebPushMessage;
 use NotificationChannels\WebPush\WebPushChannel;
 
-class EventRemind extends Notification implements ShouldQueue
+class EventReminder extends Notification implements ShouldQueue
 {
     use Queueable;
 
     public function __construct() {}
 
     /** @return array<int, string> */
-    public function via(): array
+    public function via(User $user): array
     {
-        return [WebPushChannel::class];
+        return $user->preferences['notifications'] == 'push'
+            ? [WebPushChannel::class]
+            : ['mail'];
     }
 
     public function toWebPush(): DeclarativeWebPushMessage
@@ -27,5 +31,12 @@ class EventRemind extends Notification implements ShouldQueue
         return (new DeclarativeWebPushMessage)
             ->title('Event starts soon.')
             ->body('Event starts soon.');
+    }
+
+    public function toMail(): MailMessage
+    {
+        return (new MailMessage)
+            ->subject('Event starts soon.')
+            ->markdown('mail.event-reminder');
     }
 }
