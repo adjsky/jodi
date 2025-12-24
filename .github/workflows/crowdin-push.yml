@@ -1,6 +1,7 @@
 name: Push to Crowdin
 
 on:
+  workflow_dispatch:
   push:
     branches: [master]
     paths:
