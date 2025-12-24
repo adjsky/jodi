@@ -1,0 +1,38 @@
+#
+# Basic Crowdin CLI configuration
+# See https://crowdin.github.io/crowdin-cli/configuration for more information
+# See https://support.crowdin.com/developer/configuration-file/ for all available options
+#
+
+#
+# Your Crowdin credentials
+#
+"project_id": "854722"
+"base_path": "."
+"base_url": "https://api.crowdin.com"
+
+#
+# Defines whether to preserve the original directory structure in the Crowdin project
+# Recommended to set to true
+#
+"preserve_hierarchy": true
+
+#
+# Files configuration.
+# See https://support.crowdin.com/developer/configuration-file/ for all available options
+#
+files:
+  [
+    {
+      "source": "/resoucres/messages/en.json",
+      "translation": "/resources/messages/%two_letters_code%.json"
+    },
+    {
+      "source": "/lang/en/*.php",
+      "translation": "/lang/%two_letters_code%/%original_file_name%"
+    },
+    {
+      "source": "/lang/en.json",
+      "translation": "/lang/%two_letters_code%.json"
+    }
+  ]

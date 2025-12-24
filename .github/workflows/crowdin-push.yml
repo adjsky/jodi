@@ -1,0 +1,20 @@
+name: Push to Crowdin
+
+on:
+  push:
+    branches: [master]
+    paths:
+      - "lang/**"
+      - "/resoucres/messages/**"
+
+jobs:
+  push-to-crowdin:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: crowdin/github-action@v2
+        with:
+          upload_sources: true
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          CROWDIN_PERSONAL_TOKEN: ${{ secrets.CROWDIN_TOKEN }}

@@ -1,0 +1,18 @@
+name: Pull from Crowdin
+
+on:
+  workflow_dispatch:
+
+jobs:
+  pull-from-crowdin:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: crowdin/github-action@v2
+        with:
+          download_translations: true
+          create_pull_request: true
+          pull_request_title: "chore: update translations from Crowdin"
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          CROWDIN_PERSONAL_TOKEN: ${{ secrets.CROWDIN_TOKEN }}
