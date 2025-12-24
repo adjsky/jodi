@@ -21,6 +21,7 @@ class Event extends Model
         'starts_at',
         'ends_at',
         'notify_at',
+        'notify_status',
         'color',
     ];
 

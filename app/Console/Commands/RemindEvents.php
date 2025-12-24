@@ -19,14 +19,13 @@ class RemindEvents extends Command
         Event::with('user')
             ->whereDate('notify_at', '<=', now())
             ->where('notify_status', '!=', 'sent')
-            ->orWhereNull('notify_status')
             ->chunk(100, function ($events) {
                 foreach ($events as $event) {
                     if (! $event->user) {
                         continue;
                     }
 
-                    $event->user->notify(new EventReminder);
+                    $event->user->notify(new EventReminder($event));
                     $event->notify_status = 'processing';
                     $event->save();
                 }

@@ -17,6 +17,7 @@ class EventController extends Controller
         $data = $request->validatedInSnakeCase();
         // TODO: should subHours(x) be a preference or configuration?
         $data['notify_at'] = Carbon::parse($data['starts_at'])->subHours(3);
+        $data['notify_status'] = 'waiting';
 
         $this->user()->events()->create($data);
 

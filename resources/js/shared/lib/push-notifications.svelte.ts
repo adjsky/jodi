@@ -18,34 +18,12 @@ export const ensurePushSubscription: Attachment<HTMLButtonElement> = (node) => {
         return;
     }
 
-    node.addEventListener("click", ensure);
+    node.addEventListener("click", _ensurePushSubscription);
 
-    return () => node.removeEventListener("click", ensure);
+    return () => node.removeEventListener("click", _ensurePushSubscription);
 };
 
-export async function destroyPushSubscription() {
-    const pushManager = await getPushManager();
-
-    if (!pushManager) {
-        return;
-    }
-
-    const subscription = await pushManager.getSubscription();
-
-    if (!subscription) {
-        return;
-    }
-
-    await subscription.unsubscribe();
-
-    const { url, method } = destroy();
-    await fetch(url, {
-        method,
-        body: JSON.stringify({ endpoint: subscription.endpoint })
-    });
-}
-
-async function ensure() {
+async function _ensurePushSubscription() {
     if (!("serviceWorker" in navigator) || !("PushManager" in window)) {
         return warn();
     }
@@ -70,13 +48,44 @@ async function ensure() {
     const jsonSubscription = subscription.toJSON();
 
     const { url, method } = create();
+
     await fetch(url, {
         method,
+        headers: {
+            Accept: "application/json",
+            "Content-Type": "application/json"
+        },
         body: JSON.stringify({
             endpoint: jsonSubscription.endpoint,
             key: jsonSubscription.keys?.p256dh,
             token: jsonSubscription.keys?.auth
         })
+    });
+}
+
+export async function destroyPushSubscription() {
+    const pushManager = await getPushManager();
+
+    if (!pushManager) {
+        return;
+    }
+
+    const subscription = await pushManager.getSubscription();
+
+    if (!subscription) {
+        return;
+    }
+
+    await subscription.unsubscribe();
+
+    const { url, method } = destroy();
+    await fetch(url, {
+        method,
+        headers: {
+            Accept: "application/json",
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify({ endpoint: subscription.endpoint })
     });
 }
 

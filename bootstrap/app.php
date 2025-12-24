@@ -23,6 +23,7 @@ return Application::configure(basePath: dirname(__DIR__))
             RequestIdMiddleware::class,
             InertiaMiddleware::class,
         ]);
+        $middleware->validateCsrfTokens(except: ['push-subscriptions']);
     })
     ->withExceptions(function (Exceptions $exceptions): void {
         $exceptions->respond(

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Notifications;
 
+use App\Models\Event;
 use App\Models\User;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
@@ -16,7 +17,7 @@ class EventReminder extends Notification implements ShouldQueue
 {
     use Queueable;
 
-    public function __construct() {}
+    public function __construct(public Event $event) {}
 
     /** @return array<int, string> */
     public function via(User $user): array
@@ -30,7 +31,8 @@ class EventReminder extends Notification implements ShouldQueue
     {
         return (new DeclarativeWebPushMessage)
             ->title('Event starts soon.')
-            ->body('Event starts soon.');
+            ->body('Event starts soon.')
+            ->navigate('https://localhost:8000');
     }
 
     public function toMail(): MailMessage
