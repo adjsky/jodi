@@ -33,8 +33,7 @@ class SignupController extends Controller
                 'name' => $data['name'],
                 'preferences' => [
                     'locale' => app()->getLocale(),
-                    'weekStartOn' => 'monday',
-                    'notifications' => 'push',
+                    ...config('jodi.preferences'),
                 ],
             ]);
 

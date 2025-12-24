@@ -24,8 +24,7 @@ class UserFactory extends Factory
             'email' => fake()->unique()->safeEmail(),
             'preferences' => [
                 'locale' => 'en',
-                'weekStartOn' => 'monday',
-                'notifications' => 'push',
+                ...config('jodi.preferences'),
             ],
             'remember_token' => Str::random(10),
         ];

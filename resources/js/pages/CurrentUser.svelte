@@ -105,5 +105,5 @@
         </User.Info.ActionRow>
     </User.Info.Block>
 
-    <!-- <p class="mt-4 text-sm">&lt;{$page.version}&gt;</p> -->
+    <p class="mt-4 text-sm">v.{$page.props.version}</p>
 </main>

@@ -11,6 +11,7 @@ declare global {
 }
 
 export interface AppPageProps {
+    version: string;
     search: Record<string, string>;
     auth: {
         user: {
