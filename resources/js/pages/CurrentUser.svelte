@@ -99,7 +99,7 @@
     <User.Info.Block class="mt-10">
         <User.Info.ActionRow
             href={logout()}
-            onclick={() => destroyPushSubscription()}
+            onBefore={() => destroyPushSubscription()}
         >
             {m["current-user.actions.log-out"]()}
         </User.Info.ActionRow>

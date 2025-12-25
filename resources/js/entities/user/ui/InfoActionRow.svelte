@@ -2,11 +2,15 @@
     import { Link } from "@inertiajs/svelte";
     import { tw } from "$/shared/lib/styles";
 
-    import type { RequestPayload, UrlMethodPair } from "@inertiajs/core";
+    import type {
+        RequestPayload,
+        UrlMethodPair,
+        VisitCallbacks
+    } from "@inertiajs/core";
     import type { ClassName } from "$/shared/lib/styles";
     import type { Snippet } from "svelte";
 
-    type Props = {
+    type Props = Partial<VisitCallbacks> & {
         startIcon?: Snippet;
         endIcon?: Snippet;
         href: UrlMethodPair;

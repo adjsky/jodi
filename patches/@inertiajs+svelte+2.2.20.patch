@@ -31,29 +31,85 @@ index dcaf4ad..6fa18fd 100644
          disableWhileProcessing?: boolean | undefined;
          invalidateCacheTags?: string | string[] | undefined;
 diff --git a/node_modules/@inertiajs/svelte/dist/components/Link.svelte b/node_modules/@inertiajs/svelte/dist/components/Link.svelte
-index 7b7ed7b..679e04c 100644
+index 7b7ed7b..e5b8d7d 100644
 --- a/node_modules/@inertiajs/svelte/dist/components/Link.svelte
 +++ b/node_modules/@inertiajs/svelte/dist/components/Link.svelte
-@@ -17,6 +17,18 @@ export let prefetch = false;
- export let cacheFor = 0;
- export let cacheTags = [];
- export let viewTransition = false;
-+export let onCancelToken = undefined
-+export let onBefore = undefined
-+export let onBeforeUpdate = undefined
-+export let onStart = undefined
-+export let onProgress = undefined
-+export let onFinish = undefined
-+export let onCancel = undefined
-+export let onSuccess = undefined
-+export let onError = undefined
-+export let onInvalid = undefined
-+export let onPrefetched = undefined
-+export let onPrefetching = undefined
- $: _method = isUrlMethodPair(href) ? href.method : method;
- $: _href = isUrlMethodPair(href) ? href.url : href;
- $: asProp = _method !== "get" ? "button" : as.toLowerCase();
-@@ -46,28 +58,21 @@ $: elProps = {
+@@ -1,32 +1,50 @@
+-<script>import { isUrlMethodPair } from "@inertiajs/core";
++<script>
++import { isUrlMethodPair } from "@inertiajs/core";
+ import { inertia } from "../index";
+-export let href = "";
+-export let as = "a";
+-export let data = {};
+-export let method = "get";
+-export let replace = false;
+-export let preserveScroll = false;
+-export let preserveState = null;
+-export let preserveUrl = false;
+-export let only = [];
+-export let except = [];
+-export let headers = {};
+-export let queryStringArrayFormat = "brackets";
+-export let async = false;
+-export let prefetch = false;
+-export let cacheFor = 0;
+-export let cacheTags = [];
+-export let viewTransition = false;
+-$: _method = isUrlMethodPair(href) ? href.method : method;
+-$: _href = isUrlMethodPair(href) ? href.url : href;
+-$: asProp = _method !== "get" ? "button" : as.toLowerCase();
+-$: elProps = {
++
++const {
++    href = "",
++    as = "a",
++    data = {},
++    method = "get",
++    replace = false,
++    preserveScroll = false,
++    preserveState = null,
++    preserveUrl = false,
++    only = [],
++    except = [],
++    headers = {},
++    queryStringArrayFormat = "brackets",
++    async = false,
++    prefetch = false,
++    cacheFor = 0,
++    cacheTags = [],
++    viewTransition = false,
++    onCancelToken,
++    onBefore,
++    onBeforeUpdate,
++    onStart,
++    onProgress,
++    onFinish,
++    onCancel,
++    onSuccess,
++    onError,
++    onInvalid,
++    onPrefetched,
++    onPrefetching,
++    children,
++    ...rest
++} = $props()
++
++const _method = $derived(isUrlMethodPair(href) ? href.method : method));
++const _href = $derived(isUrlMethodPair(href) ? href.url : href);
++const asProp = $derived(_method !== "get" ? "button" : as.toLowerCase());
++const elProps = $derived({
+   a: { href: _href },
+   button: { type: "button" }
+-}[asProp] || {};
++}[asProp] || {});
+ </script>
+ 
+-<!-- svelte-ignore a11y-no-static-element-interactions -->
+ <svelte:element
+   this={asProp}
+   use:inertia={{
+@@ -46,28 +64,21 @@ $: elProps = {
      cacheFor,
      cacheTags,
      viewTransition,
@@ -70,7 +126,8 @@ index 7b7ed7b..679e04c 100644
 +    onPrefetched,
 +    onPrefetching
    }}
-   {...$$restProps}
+-  {...$$restProps}
++  {...rest}
    {...elProps}
 -  on:focus
 -  on:blur
@@ -92,7 +149,8 @@ index 7b7ed7b..679e04c 100644
 -  on:prefetching
 -  on:prefetched
  >
-   <slot />
+-  <slot />
++  {@render children?.()}
  </svelte:element>
 diff --git a/node_modules/@inertiajs/svelte/dist/components/Link.svelte.d.ts b/node_modules/@inertiajs/svelte/dist/components/Link.svelte.d.ts
 index add7fca..5170435 100644

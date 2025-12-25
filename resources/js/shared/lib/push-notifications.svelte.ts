@@ -4,7 +4,7 @@ import {
     destroy
 } from "$/generated/actions/App/Http/Controllers/PushSubscriptionController";
 import { m } from "$/paraglide/messages";
-import { fromStore } from "svelte/store";
+import { get } from "svelte/store";
 
 import { urlBase64ToUint8Array } from "./buffer";
 import { toaster } from "./toast";
@@ -12,9 +12,7 @@ import { toaster } from "./toast";
 import type { Attachment } from "svelte/attachments";
 
 export const ensurePushSubscription: Attachment<HTMLButtonElement> = (node) => {
-    const user = $derived(fromStore(page).current.props.auth.user);
-
-    if (user.preferences.notifications != "push") {
+    if (get(page).props.auth.user.preferences.notifications != "push") {
         return;
     }
 
