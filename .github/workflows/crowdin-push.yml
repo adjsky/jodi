@@ -6,7 +6,7 @@ on:
     branches: [master]
     paths:
       - "lang/**"
-      - "/resoucres/messages/**"
+      - "resources/messages/**"
 
 jobs:
   push-to-crowdin:
