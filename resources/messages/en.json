@@ -15,7 +15,7 @@
             "title": "Configure notifications to receive reminders for your upcoming events and tasks.",
             "action": "Proceed"
         },
-        "no-permission": "Looks like you denied notification permission. Please enable notification permission in your browser settings.",
+        "no-permission": "Looks like you denied notification permission. Please enable it in your browser settings.",
         "failed-to-subscribe": "Unknown error happened while creating a push subscription. Please try again.",
         "success-subscribe": "Successfully allowed push notifications."
     },

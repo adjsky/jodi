@@ -10,7 +10,6 @@ import { get } from "svelte/store";
 
 import { createActionBanner } from "../ui/ActionBanner.svelte";
 import { urlBase64ToUint8Array } from "./buffer";
-import { toaster } from "./toast";
 
 const CHECK_SUPPORT_LS_KEY = "jodi:notifications:check-support";
 const CONFIGURE_LS_KEY = "jodi:notifications:banner_last_opened_at";
@@ -48,19 +47,10 @@ export async function subscribeToPushNotifications() {
     let subscription = await pushManager.getSubscription();
     if (subscription) return;
 
-    try {
-        subscription = await pushManager.subscribe({
-            userVisibleOnly: true,
-            applicationServerKey: urlBase64ToUint8Array(__VAPID_PUBLIC_KEY__)
-        });
-    } catch (e) {
-        if (e instanceof Error && e.name == "NotAllowedError") {
-            toaster.info({ title: m["push-notifications.no-permission"]() });
-        }
-
-        console.error(e);
-        return;
-    }
+    subscription = await pushManager.subscribe({
+        userVisibleOnly: true,
+        applicationServerKey: urlBase64ToUint8Array(__VAPID_PUBLIC_KEY__)
+    });
 
     const jsonSubscription = subscription.toJSON();
 
@@ -135,15 +125,11 @@ export function useNotificationsInitBanner() {
         }
 
         if (localStorage.getItem(CONFIGURE_LS_KEY) == null) {
+            localStorage.setItem(CONFIGURE_LS_KEY, new Date().toISOString());
             createActionBanner(m["push-notifications.configure.title"](), {
                 action: m["push-notifications.configure.action"](),
-                autoclose: false,
                 onAccept() {
-                    localStorage.setItem(
-                        CONFIGURE_LS_KEY,
-                        new Date().toISOString()
-                    );
-                    router.visit(notifications());
+                    router.visit(notifications(), { viewTransition: true });
                 }
             });
         }
