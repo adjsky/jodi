@@ -12,7 +12,7 @@
     import dayjs from "dayjs";
 
     const searchParams = useSearchParams();
-    const day = $state(dayjs(searchParams["d"]).locale(getLocale()));
+    const day = $state(dayjs(searchParams["d"]));
 
     let isAllDay = $state(false);
 </script>
@@ -42,7 +42,7 @@
     <div class="flex items-center justify-between">
         <h4 class="flex items-center gap-1.5 text-lg font-bold">
             <CalendarClock />
-            {new Intl.DateTimeFormat(day.locale(), {
+            {new Intl.DateTimeFormat(getLocale(), {
                 day: "2-digit",
                 year: "numeric",
                 month: "short",

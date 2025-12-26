@@ -9,7 +9,7 @@
     import dayjs from "dayjs";
 
     const searchParams = useSearchParams();
-    const day = $state(dayjs(searchParams["d"]).locale(getLocale()));
+    const day = $state(dayjs(searchParams["d"]));
 </script>
 
 <Form
