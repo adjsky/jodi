@@ -6,7 +6,6 @@
     import { m } from "$/paraglide/messages";
     import { getLocale } from "$/paraglide/runtime";
     import { useSearchParams } from "$/shared/inertia/use-search-params.svelte";
-    import { ensurePushSubscription } from "$/shared/lib/push-notifications.svelte";
     import SaveOrClose from "$/shared/ui/SaveOrClose.svelte";
     import Switch from "$/shared/ui/Switch.svelte";
     import TimeInput from "$/shared/ui/TimeInput.svelte";
@@ -50,11 +49,7 @@
                 weekday: "short"
             }).format(day.toDate())}
         </h4>
-        <SaveOrClose
-            {@attach ensurePushSubscription}
-            variant="save"
-            disabled={processing}
-        />
+        <SaveOrClose variant="save" disabled={processing} />
     </div>
     <Event.Title class="mt-5" name="title" required autofocus />
     <div class="mt-3 flex items-center gap-4 text-lg">

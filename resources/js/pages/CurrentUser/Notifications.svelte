@@ -1,29 +1,75 @@
 <script lang="ts">
     import { page } from "@inertiajs/svelte";
-    import { Bell } from "@lucide/svelte";
+    import { Bell, BellRing, Mail } from "@lucide/svelte";
     import SettingsLayout from "$/app/ui/layouts/SettingLayout.svelte";
     import { User } from "$/entities/user";
     import { update } from "$/generated/actions/App/Http/Controllers/CurrentUserController";
     import { m } from "$/paraglide/messages";
-
-    const variants = ["push", "mail"] as const;
+    import {
+        checkPushNotificationsNeed,
+        checkPushNotificationsSupport,
+        subscribeToPushNotifications
+    } from "$/shared/lib/push-notifications";
+    import { toaster } from "$/shared/lib/toast";
+    import Button from "$/shared/ui/Button.svelte";
+    import { onMount } from "svelte";
 
     const user = $derived($page.props.auth.user);
+
+    let showAllowPushButton = $state(false);
+
+    onMount(async () => {
+        const hasNeed = await checkPushNotificationsNeed();
+        const hasSupport = checkPushNotificationsSupport();
+
+        showAllowPushButton = hasNeed && hasSupport;
+    });
 </script>
 
 <SettingsLayout title={m["current-user.app-settings.notifications"]()}>
     <User.Info.Block class="py-5">
-        {#each variants as variant (variant)}
-            <User.Info.SelectRow
-                href={update()}
-                data={{ preferences: { notifications: variant } }}
-                selected={variant == user.preferences.notifications}
-            >
-                {#snippet icon()}
-                    <Bell />
-                {/snippet}
-                {m[`current-user.notifications.${variant}`]()}
-            </User.Info.SelectRow>
-        {/each}
+        <User.Info.SelectRow
+            href={update()}
+            data={{ preferences: { notifications: "push" } }}
+            selected={user.preferences.notifications == "push"}
+        >
+            {#snippet icon()}
+                <Bell />
+            {/snippet}
+            {m[`current-user.notifications.push`]()}
+        </User.Info.SelectRow>
+        <User.Info.SelectRow
+            href={update()}
+            data={{ preferences: { notifications: "mail" } }}
+            selected={user.preferences.notifications == "mail"}
+        >
+            {#snippet icon()}
+                <Mail />
+            {/snippet}
+            {m[`current-user.notifications.mail`]()}
+        </User.Info.SelectRow>
     </User.Info.Block>
+
+    {#if showAllowPushButton}
+        <Button
+            class="gap-2"
+            onclick={async () => {
+                try {
+                    await subscribeToPushNotifications();
+                    showAllowPushButton = false;
+                    toaster.success({
+                        title: m["push-notifications.success-subscribe"]()
+                    });
+                } catch (e) {
+                    console.error(e);
+                    toaster.error({
+                        title: m["push-notifications.failed-to-subscribe"]()
+                    });
+                }
+            }}
+        >
+            <BellRing class="text-xl" />
+            {m["current-user.notifications.allow"]()}
+        </Button>
+    {/if}
 </SettingsLayout>

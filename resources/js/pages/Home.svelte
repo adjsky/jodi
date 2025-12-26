@@ -3,6 +3,8 @@
     import { AddTodoOrEvent } from "$/features/add-todo-or-event";
     import { m } from "$/paraglide/messages";
     import CalendarCat from "$/shared/assets/calendar-cat.svg";
+    import { useNotificationsInitBanner } from "$/shared/lib/push-notifications";
+    import ActionBanner from "$/shared/ui/ActionBanner.svelte";
     import { CalendarPreview } from "$/widgets/calendar";
     import EventList from "$/widgets/event-list/ui/EventList.svelte";
     import { TodoList } from "$/widgets/todo-list";
@@ -16,7 +18,11 @@
 
     const isLoadingEvents = $derived(events === undefined);
     const isLoadingTodos = $derived(todos === undefined);
+
+    useNotificationsInitBanner();
 </script>
+
+<ActionBanner />
 
 <main class="pb-20">
     <CalendarPreview user={$page.props.auth.user} />

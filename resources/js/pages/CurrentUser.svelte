@@ -13,7 +13,7 @@
     import { m } from "$/paraglide/messages";
     import { getLocale } from "$/paraglide/runtime";
     import { LANGUAGES } from "$/shared/lib/language";
-    import { destroyPushSubscription } from "$/shared/lib/push-notifications.svelte";
+    import { destroyPushSubscription } from "$/shared/lib/push-notifications";
 
     type Props = {
         nInvitations: number;
@@ -26,12 +26,12 @@
 </script>
 
 <main class="min-h-svh px-4 pt-3 pb-8">
-    <header class="flex items-center justify-between">
+    <header class="relative flex items-center justify-between">
         <Link href={home()} viewTransition class="p-2">
             <ChevronLeft class="text-4xl" />
         </Link>
         <div
-            class="absolute top-4 left-1/2 flex -translate-x-1/2 flex-col items-center gap-1.5"
+            class="absolute top-1 left-1/2 flex -translate-x-1/2 flex-col items-center gap-1.5"
         >
             <User.Avatar name={user.name} class="size-10 text-xl" />
             <h1 class="text-xl font-bold">

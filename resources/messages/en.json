@@ -7,8 +7,17 @@
         "settings": "Settings",
         "no": "No",
         "yes": "Yes",
-        "required-field": "Please fill out this field",
-        "pushesAreNotSupported": "Your browser does not support push notifications. Please try a different browser or switch to email notifications."
+        "required-field": "Please fill out this field"
+    },
+    "push-notifications": {
+        "not-supported": "Browser update required. Update to enable push notifications.",
+        "configure": {
+            "title": "Configure notifications to receive reminders for your upcoming events and tasks.",
+            "action": "Proceed"
+        },
+        "no-permission": "Looks like you denied notification permission. Please enable notification permission in your browser settings.",
+        "failed-to-subscribe": "Unknown error happened while creating a push subscription. Please try again.",
+        "success-subscribe": "Successfully allowed push notifications."
     },
     "pwa-update": {
         "title": "An update is ready to install.",
@@ -119,7 +128,8 @@
         },
         "notifications": {
             "push": "Push",
-            "mail": "Mail"
+            "mail": "Mail",
+            "allow": "Allow push notifications"
         },
         "invitations": {
             "invitation": "Invitation",
