@@ -47,9 +47,9 @@ export class Year {
         const start = this.#startOfWeek(date);
 
         return Array.from({ length: nWeeks }).map((_, idx) =>
-            getWeekDays(start.add({ weeks: idx })).map((date) => ({
-                isWithinMonth: date.month == date.month,
-                date
+            getWeekDays(start.add({ weeks: idx })).map((d) => ({
+                isWithinMonth: d.month == date.month,
+                date: d
             }))
         );
     }

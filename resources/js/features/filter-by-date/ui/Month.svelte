@@ -1,7 +1,7 @@
 <script lang="ts">
+    import { Link } from "@inertiajs/svelte";
     import { Circle } from "@lucide/svelte";
     import { home } from "$/generated/routes";
-    import { link } from "$/shared/inertia/link";
     import { boolAttr, useIntersectionObserver } from "runed";
 
     import { requestSummary, summaryCache } from "../api/day-summary.svelte";
@@ -50,19 +50,15 @@
 
 {#snippet day(date: CalendarDate, isWithinMonth: boolean)}
     {@const summary = summaryCache.get(date.year)?.get(date.toString())}
-    <td class={[!isWithinMonth && "hidden"]}>
-        <button
-            {@attach link(() => ({
-                href: home({
-                    query: { d: date.toString() }
-                }),
-                viewTransition: true,
-                replace: true
-            }))}
+    <td class:invisible={!isWithinMonth}>
+        <Link
+            href={home({ query: { d: date.toString() } })}
             class={[
                 "group flex h-22 w-full flex-col items-center pt-1 text-lg"
             ]}
             data-selected={boolAttr(compareDates(selected, date) == "selected")}
+            viewTransition
+            replace
         >
             <span
                 class={[
@@ -92,7 +88,7 @@
                     +{summary.nMore}
                 </span>
             {/if}
-        </button>
+        </Link>
     </td>
 {/snippet}
 
