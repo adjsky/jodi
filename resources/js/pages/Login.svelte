@@ -39,7 +39,12 @@
                 {m["common.or"]()}
                 <div class="h-px w-full rounded-[1px] bg-current"></div>
             </div>
-            <Button variant="secondary" type="button">
+            <Button
+                variant="secondary"
+                type="button"
+                disabled
+                class="opacity-40"
+            >
                 {m["login.with-passkey"]()}
             </Button>
         </div>
