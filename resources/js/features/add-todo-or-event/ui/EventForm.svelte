@@ -1,9 +1,8 @@
 <script lang="ts">
-    import { Form, page } from "@inertiajs/svelte";
+    import { Form } from "@inertiajs/svelte";
     import { DateFormatter } from "@internationalized/date";
     import { ArrowRight, CalendarClock } from "@lucide/svelte";
     import { Event } from "$/entities/event";
-    import { YearCalendar } from "$/features/filter-by-date";
     import { create } from "$/generated/actions/App/Http/Controllers/EventController";
     import { m } from "$/paraglide/messages";
     import { getLocale } from "$/paraglide/runtime";
@@ -14,8 +13,7 @@
 
     const searchParams = useSearchParams();
 
-    const day = $derived(searchParams["d"]);
-    const user = $derived($page.props.auth.user);
+    const day = $derived(new Date(searchParams["d"] ?? Date.now()));
 
     let isAllDay = $state(false);
 </script>
@@ -69,5 +67,3 @@
     </div>
     <Event.Description name="description" class="mt-6" />
 </Form>
-
-<YearCalendar selected={day} start={user.preferences.weekStartOn} /> />

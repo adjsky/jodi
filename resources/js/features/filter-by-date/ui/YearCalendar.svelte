@@ -9,10 +9,10 @@
     import Month from "./Month.svelte";
 
     import type { WeekStart } from "../cfg/preferences";
-    import type { CalendarDate } from "@internationalized/date";
+    import type { DateValue } from "@internationalized/date";
 
     type Props = {
-        selected: CalendarDate;
+        selected: DateValue;
         start: WeekStart;
     };
 

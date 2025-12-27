@@ -13,14 +13,14 @@ import { DMAP } from "../cfg/preferences";
 import { getWeekDays } from "../helpers/date";
 
 import type { WeekStart } from "../cfg/preferences";
-import type { CalendarDate } from "@internationalized/date";
+import type { DateValue } from "@internationalized/date";
 import type { Getter } from "runed";
 
 export class Year {
-    #cursor: CalendarDate;
+    #cursor: DateValue;
     #start: Getter<WeekStart>;
 
-    constructor(selected: CalendarDate, start: Getter<WeekStart>) {
+    constructor(selected: DateValue, start: Getter<WeekStart>) {
         this.#cursor = $state(selected);
         this.#start = start;
     }
@@ -42,7 +42,7 @@ export class Year {
         });
     }
 
-    weeks(date: CalendarDate) {
+    weeks(date: DateValue) {
         const nWeeks = this.#weeksInMonth(date);
         const start = this.#startOfWeek(date);
 
@@ -71,11 +71,11 @@ export class Year {
         );
     }
 
-    #startOfWeek(date: CalendarDate) {
+    #startOfWeek(date: DateValue) {
         return startOfWeek(date, getLocale(), DMAP[extract(this.#start)]);
     }
 
-    #weeksInMonth(date: CalendarDate) {
+    #weeksInMonth(date: DateValue) {
         return getWeeksInMonth(date, getLocale(), DMAP[extract(this.#start)]);
     }
 }

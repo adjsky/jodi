@@ -2,7 +2,7 @@ import { daySummary } from "$/generated/routes";
 import { useDebounce } from "runed";
 import { SvelteMap } from "svelte/reactivity";
 
-import type { CalendarDate } from "@internationalized/date";
+import type { DateValue } from "@internationalized/date";
 
 export const summaryCache = new SvelteMap<
     number,
@@ -45,7 +45,7 @@ const _requestSummary = useDebounce(async () => {
     pendingRequests = null;
 }, 50);
 
-export async function requestSummary(date: CalendarDate) {
+export async function requestSummary(date: DateValue) {
     if (pendingRequests && pendingRequests.year == date.year) {
         pendingRequests.months.add(date.month);
     } else {

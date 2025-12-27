@@ -9,7 +9,7 @@
     import SaveOrClose from "$/shared/ui/SaveOrClose.svelte";
 
     const searchParams = useSearchParams();
-    const day = $derived(new Date(searchParams["d"]));
+    const day = $derived(new Date(searchParams["d"] ?? Date.now()));
 </script>
 
 <Form

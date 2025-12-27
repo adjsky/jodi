@@ -1,13 +1,13 @@
 import { getDayOfWeek, isEqualDay } from "@internationalized/date";
 import { getLocale } from "$/paraglide/runtime";
 
-import type { CalendarDate } from "@internationalized/date";
+import type { DateValue } from "@internationalized/date";
 
-export function getWeekDays(start: CalendarDate) {
+export function getWeekDays(start: DateValue) {
     return Array.from({ length: 7 }).map((_, i) => start.add({ days: i }));
 }
 
-export function compareDates(a: CalendarDate, b: CalendarDate) {
+export function compareDates(a: DateValue, b: DateValue) {
     if (isEqualDay(a, b)) {
         return "selected";
     }

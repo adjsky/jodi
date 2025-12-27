@@ -8,12 +8,12 @@
     import { compareDates } from "../helpers/date";
 
     import type { Year } from "../model/year.svelte";
-    import type { CalendarDate } from "@internationalized/date";
+    import type { DateValue } from "@internationalized/date";
 
     type Props = {
-        selected: CalendarDate;
+        selected: DateValue;
         year: Year;
-        date: CalendarDate;
+        date: DateValue;
         name: string;
         container: HTMLElement;
     };
@@ -48,7 +48,7 @@
     </tbody>
 </table>
 
-{#snippet day(date: CalendarDate, isWithinMonth: boolean)}
+{#snippet day(date: DateValue, isWithinMonth: boolean)}
     {@const summary = summaryCache.get(date.year)?.get(date.toString())}
     <td class:invisible={!isWithinMonth}>
         <Link
