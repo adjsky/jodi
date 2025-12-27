@@ -1,11 +1,12 @@
 <script lang="ts">
     import { Form } from "@inertiajs/svelte";
-    import { DateFormatter } from "@internationalized/date";
+    import { DateFormatter, parseDate, today } from "@internationalized/date";
     import { ArrowRight, CalendarClock } from "@lucide/svelte";
     import { Event } from "$/entities/event";
     import { create } from "$/generated/actions/App/Http/Controllers/EventController";
     import { m } from "$/paraglide/messages";
     import { getLocale } from "$/paraglide/runtime";
+    import { TIMEZONE } from "$/shared/cfg/constants";
     import { useSearchParams } from "$/shared/inertia/use-search-params.svelte";
     import SaveOrClose from "$/shared/ui/SaveOrClose.svelte";
     import Switch from "$/shared/ui/Switch.svelte";
@@ -13,7 +14,9 @@
 
     const searchParams = useSearchParams();
 
-    const day = $derived(new Date(searchParams["d"] ?? Date.now()));
+    const day = $derived(
+        searchParams["d"] ? parseDate(searchParams["d"]) : today(TIMEZONE)
+    );
 
     let isAllDay = $state(false);
 </script>
@@ -44,7 +47,7 @@
                 year: "numeric",
                 month: "short",
                 weekday: "short"
-            }).format(new Date(day))}
+            }).format(day.toDate(TIMEZONE))}
         </h4>
         <SaveOrClose variant="save" disabled={processing} />
     </div>
