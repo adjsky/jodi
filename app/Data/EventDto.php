@@ -18,7 +18,6 @@ class EventDto extends Data
         public ?string $description,
         public ?string $color,
         public ?string $location,
-        public bool $isAllDay,
         public Carbon $startsAt,
         public ?Carbon $endsAt,
         public ?Carbon $createdAt,
@@ -32,7 +31,6 @@ class EventDto extends Data
             $event->description,
             $event->color,
             $event->location,
-            $event->is_all_day,
             $event->starts_at,
             $event->ends_at,
             $event->created_at

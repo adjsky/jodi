@@ -52,5 +52,9 @@
 />
 
 {#if view.isOpen()}
-    <YearCalendar {selected} start={user.preferences.weekStartOn} />
+    <YearCalendar
+        {selected}
+        start={user.preferences.weekStartOn}
+        onClose={() => view.back()}
+    />
 {/if}

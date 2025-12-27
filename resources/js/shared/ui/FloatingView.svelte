@@ -6,7 +6,7 @@
     import type { Snippet } from "svelte";
 
     type Props = {
-        back: string | UrlMethodPair;
+        back: string | UrlMethodPair | Snippet;
         title?: string;
         viewTransition?: boolean;
         children: Snippet;
@@ -18,9 +18,13 @@
 
 <div class="fixed inset-0 z-100 flex flex-col bg-cream-50 px-4 py-3">
     <div class="relative flex items-center justify-between">
-        <Link href={back} {viewTransition} class="p-2">
-            <ChevronLeft class="text-4xl" />
-        </Link>
+        {#if typeof back == "function"}
+            {@render back()}
+        {:else}
+            <Link href={back} {viewTransition} class="p-2">
+                <ChevronLeft class="text-4xl" />
+            </Link>
+        {/if}
         {#if title}
             <span
                 class="absolute top-1/2 left-1/2 -translate-1/2 text-xl font-bold"

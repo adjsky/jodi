@@ -2,9 +2,9 @@
     import { Dialog, Portal } from "@ark-ui/svelte";
     import { CalendarClock, Check, X } from "@lucide/svelte";
     import { m } from "$/paraglide/messages";
-    import { HistoryView } from "$/shared/inertia/history-view.svelte";
     import Sheet from "$/shared/ui/Sheet.svelte";
 
+    import { view } from "../model/view";
     import ActionButton from "./ActionButton.svelte";
     import ActionRow from "./ActionRow.svelte";
     import EventForm from "./EventForm.svelte";
@@ -15,18 +15,16 @@
     };
 
     const { loading }: Props = $props();
-
-    const view = new HistoryView();
 </script>
 
 <Dialog.Root
     bind:open={
-        () => view.isOpen("add"),
+        () => view.isOpen() && view.meta == null,
         (v) => {
             if (v) {
-                void view.open("add");
+                void view.open();
             } else {
-                view.close();
+                view.back();
             }
         }
     }
@@ -39,7 +37,7 @@
             >
                 <X
                     class={[
-                        !view.isOpen("add") && "rotate-45",
+                        !view.isOpen() && "rotate-45",
                         "transition-transform"
                     ]}
                 />
@@ -64,13 +62,13 @@
             >
                 <ActionRow
                     title={m["events.add"]()}
-                    onclick={() => view.open("add-event")}
+                    onclick={() => view.updateMeta({ entity: "event" })}
                 >
                     <CalendarClock />
                 </ActionRow>
                 <ActionRow
                     title={m["todos.add"]()}
-                    onclick={() => view.open("add-todo")}
+                    onclick={() => view.updateMeta({ entity: "todo" })}
                 >
                     <Check />
                 </ActionRow>
@@ -81,10 +79,10 @@
 
 <Sheet
     bind:open={
-        () => view.isOpen("add-todo") || view.isOpen("add-event"),
+        () => view.isOpen() && view.meta != null,
         (v) => {
             if (!v) {
-                view.close();
+                view.back();
             }
         }
     }
@@ -93,9 +91,9 @@
     background="var(--color-white)"
     grip="var(--color-cream-300)"
 >
-    {#if view.isOpen("add-todo")}
+    {#if view.meta?.entity == "todo"}
         <TodoForm />
-    {:else if view.isOpen("add-event")}
+    {:else if view.meta?.entity == "event"}
         <EventForm />
     {/if}
 </Sheet>

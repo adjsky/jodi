@@ -1,6 +1,5 @@
 <script lang="ts">
     import { ChevronLeft, ChevronRight } from "@lucide/svelte";
-    import { home } from "$/generated/routes";
     import Button from "$/shared/ui/Button.svelte";
     import FloatingView from "$/shared/ui/FloatingView.svelte";
     import { onMount } from "svelte";
@@ -14,14 +13,17 @@
     type Props = {
         selected: DateValue;
         start: WeekStart;
+        onClose?: VoidFunction;
+        onSelect?: (date: DateValue) => void;
     };
 
-    const { selected, start }: Props = $props();
+    const { selected, start, onClose, onSelect }: Props = $props();
 
     let monthsNode = $state<HTMLElement | null>(null);
 
     onMount(() => {
-        monthsNode?.querySelector("button[data-selected]")?.scrollIntoView();
+        const selected = monthsNode?.querySelector("button[data-selected]");
+        selected?.scrollIntoView({ block: "center" });
     });
 
     const year = $derived(new Year(selected, () => start));
@@ -32,7 +34,12 @@
     }
 </script>
 
-<FloatingView back={home()} viewTransition>
+<FloatingView>
+    {#snippet back()}
+        <button class="p-2" onclick={onClose}>
+            <ChevronLeft class="text-4xl" />
+        </button>
+    {/snippet}
     {#snippet action()}
         <div class="flex items-center gap-4 text-xl">
             <span class="text-2xl font-bold">{year.current}</span>
@@ -64,7 +71,13 @@
 
     <div bind:this={monthsNode} class="mt-2 overflow-y-scroll">
         {#each year.months() as month (month.name)}
-            <Month {...month} {year} {selected} container={monthsNode} />
+            <Month
+                {...month}
+                {year}
+                {selected}
+                {onSelect}
+                container={monthsNode}
+            />
         {/each}
     </div>
 </FloatingView>

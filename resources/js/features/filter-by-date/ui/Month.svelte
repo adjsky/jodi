@@ -1,7 +1,8 @@
 <script lang="ts">
-    import { Link } from "@inertiajs/svelte";
     import { Circle } from "@lucide/svelte";
     import { home } from "$/generated/routes";
+    import { link } from "$/shared/inertia/link";
+    import { noop } from "$/shared/lib/function";
     import { boolAttr, useIntersectionObserver } from "runed";
 
     import { requestSummary, summaryCache } from "../api/day-summary.svelte";
@@ -16,9 +17,10 @@
         date: DateValue;
         name: string;
         container: HTMLElement;
+        onSelect?: (date: DateValue) => void;
     };
 
-    const { selected, year, date, name, container }: Props = $props();
+    const { selected, year, date, name, container, onSelect }: Props = $props();
 
     let table = $state<HTMLTableElement | null>(null);
 
@@ -50,15 +52,17 @@
 
 {#snippet day(date: DateValue, isWithinMonth: boolean)}
     {@const summary = summaryCache.get(date.year)?.get(date.toString())}
+    {@const attachment = onSelect ? noop : link}
     <td class:invisible={!isWithinMonth}>
-        <Link
-            href={home({ query: { d: date.toString() } })}
-            class={[
-                "group flex h-22 w-full flex-col items-center pt-1 text-lg"
-            ]}
+        <button
+            {@attach attachment(() => ({
+                href: home({ query: { d: date.toString() } }),
+                viewTransition: true,
+                replace: true
+            }))}
+            class="group flex h-22 w-full flex-col items-center pt-1 text-lg"
             data-selected={boolAttr(compareDates(selected, date) == "selected")}
-            viewTransition
-            replace
+            onclick={() => onSelect?.(date)}
         >
             <span
                 class={[
@@ -88,7 +92,7 @@
                     +{summary.nMore}
                 </span>
             {/if}
-        </Link>
+        </button>
     </td>
 {/snippet}
 

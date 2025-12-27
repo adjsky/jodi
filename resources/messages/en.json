@@ -83,7 +83,7 @@
         "title": "Events",
         "add": "Add event",
         "no-events": "No events scheduled today.",
-        "all-day": "All day",
+        "time": "Time",
         "select-color": "Select color",
         "delete-ahtung": "Are you sure you want to delete this event?",
         "tooltips": {

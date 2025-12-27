@@ -1,9 +1,7 @@
 <script lang="ts">
-    import { DateFormatter } from "@internationalized/date";
     import { CalendarClock } from "@lucide/svelte";
     import { Event } from "$/entities/event";
     import { m } from "$/paraglide/messages";
-    import { getLocale } from "$/paraglide/runtime";
     import { HistoryView } from "$/shared/inertia/history-view.svelte";
     import { formatToHHMM } from "$/shared/lib/date";
     import { tw } from "$/shared/lib/styles";
@@ -46,7 +44,7 @@
             }
 
             if (!isDeepEqual(editView.meta, event)) {
-                void editView.open(event);
+                editView.updateMeta(event);
             }
         }
     );
@@ -110,7 +108,7 @@
             () => editView.isOpen(),
             (v) => {
                 if (!v) {
-                    editView.close();
+                    editView.back();
                 }
             }
         }

@@ -20,7 +20,6 @@
     import { formatToHHMM } from "$/shared/lib/date";
     import SaveOrClose from "$/shared/ui/SaveOrClose.svelte";
     import Sheet from "$/shared/ui/Sheet.svelte";
-    import Switch from "$/shared/ui/Switch.svelte";
     import TimeInput from "$/shared/ui/TimeInput.svelte";
     import ToolbarAction from "$/shared/ui/ToolbarAction.svelte";
 
@@ -32,8 +31,6 @@
     };
 
     let { open = $bindable(), event }: Props = $props();
-
-    let isAllDay = $derived(event.isAllDay);
 </script>
 
 <Sheet
@@ -51,8 +48,7 @@
         transform={(data) => ({
             ...data,
             startsAt: data.startsAt || undefined,
-            endsAt: data.endsAt || undefined,
-            isAllDay: Boolean(data.isAllDay)
+            endsAt: data.endsAt || undefined
         })}
         let:isDirty
     >
@@ -82,11 +78,6 @@
             required
         />
         <div class="mt-3 flex items-center gap-4 text-lg">
-            <Switch
-                bind:checked={isAllDay}
-                label={m["events.all-day"]()}
-                name="isAllDay"
-            />
             <div class="flex items-center gap-2">
                 <TimeInput
                     name="startsAt"
@@ -94,17 +85,13 @@
                     required
                 />
                 <ArrowRight class="text-2xl" />
-                {#if !isAllDay}
-                    <TimeInput
-                        name="endsAt"
-                        defaultValue={event.endsAt
-                            ? formatToHHMM(new Date(event.endsAt))
-                            : null}
-                        required
-                    />
-                {:else}
-                    <TimeInput disabled value="00:00" />
-                {/if}
+                <TimeInput
+                    name="endsAt"
+                    defaultValue={event.endsAt
+                        ? formatToHHMM(new Date(event.endsAt))
+                        : null}
+                    required
+                />
             </div>
         </div>
         <Event.Description

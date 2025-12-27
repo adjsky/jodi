@@ -23,7 +23,6 @@ class UpdateRequest extends FormRequest
             'title' => 'sometimes|string',
             'description' => 'sometimes|nullable|string',
             'color' => 'sometimes|nullable|hex_color',
-            'isAllDay' => 'sometimes|boolean',
             'startsAt' => 'sometimes|date',
             'endsAt' => 'sometimes|date',
         ];

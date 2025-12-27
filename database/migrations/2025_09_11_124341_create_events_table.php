@@ -22,8 +22,7 @@ return new class extends Migration
             $table->foreignId('recurrence_id')->nullable()->constrained();
             $table->string('color')->nullable();
             $table->datetime('starts_at')->index();
-            $table->datetime('ends_at')->nullable();
-            $table->boolean('is_all_day');
+            $table->datetime('ends_at');
             $table->datetime('notify_at')->nullable()->index();
             $table->enum('notify_status', ['waiting', 'processing', 'sent'])->index();
             $table->timestamps();

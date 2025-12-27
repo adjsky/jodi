@@ -1,5 +1,5 @@
 diff --git a/node_modules/@inertiajs/core/dist/index.esm.js b/node_modules/@inertiajs/core/dist/index.esm.js
-index 7744084..cfebdd2 100644
+index 7744084..5157a4d 100644
 --- a/node_modules/@inertiajs/core/dist/index.esm.js
 +++ b/node_modules/@inertiajs/core/dist/index.esm.js
 @@ -566,12 +566,13 @@ var prefetchedRequests = new PrefetchedRequests();
@@ -22,7 +22,15 @@ index 7744084..cfebdd2 100644
    }
    static regions() {
      return document.querySelectorAll("[scroll-region]");
-@@ -809,9 +810,7 @@ var CurrentPage = class {
+@@ -774,6 +775,7 @@ var CurrentPage = class {
+     this.isFirstPageLoad = true;
+     this.cleared = false;
+     this.pendingDeferredProps = null;
++    this.__jodi_historyModals = [];
+   }
+   init({
+     initialPage,
+@@ -809,9 +811,7 @@ var CurrentPage = class {
        }
        page2.rememberedState ?? (page2.rememberedState = {});
        const isServer2 = typeof window === "undefined";
@@ -33,22 +41,39 @@ index 7744084..cfebdd2 100644
        return new Promise((resolve) => {
          replace ? history.replaceState(page2, () => resolve(null)) : history.pushState(page2, () => resolve(null));
        }).then(() => {
-@@ -1198,6 +1197,14 @@ var EventHandler = class {
+@@ -854,13 +854,14 @@ var CurrentPage = class {
+     });
+   }
+   setQuietly(page2, {
+-    preserveState = false
++    preserveState = false,
++    viewTransition = false
+   } = {}) {
+     return this.resolve(page2.component).then((component) => {
+       this.page = page2;
+       this.cleared = false;
+       history.setCurrent(page2);
+-      return this.swap({ component, page: page2, preserveState, viewTransition: false });
++      return this.swap({ component, page: page2, preserveState, viewTransition });
+     });
+   }
+   clear() {
+@@ -1198,6 +1199,14 @@ var EventHandler = class {
      return () => document.removeEventListener(type, listener);
    }
    handlePopstateEvent(event) {
-+    if (page.__jodi_isHistoryModal) {
-+        delete page.__jodi_isHistoryModal;
++    if (page.__jodi_historyModals.length != 0) {
++        const { viewTransition } = page.__jodi_historyModals.pop();
 +        const url = hrefToUrl(page.get().url);
-+        url.hash = "";
-+        const page2 = { ...page.get(), url: url.pathname + url.search };
-+        page.setQuietly(page2, { preserveState: true });
++        url.hash = window.location.hash;
++        const page2 = { ...page.get(), url: url.pathname + url.search + url.hash };
++        page.setQuietly(page2, { preserveState: true, viewTransition });
 +        return;
 +    }
      const state = event.state || null;
      if (state === null) {
        const url = hrefToUrl(page.get().url);
-@@ -1418,6 +1425,7 @@ var RequestParams = class _RequestParams {
+@@ -1418,6 +1427,7 @@ var RequestParams = class _RequestParams {
          onCancel: this.wrapCallback(params, "onCancel"),
          onSuccess: this.wrapCallback(params, "onSuccess"),
          onError: this.wrapCallback(params, "onError"),
@@ -56,7 +81,7 @@ index 7744084..cfebdd2 100644
          onCancelToken: this.wrapCallback(params, "onCancelToken"),
          onPrefetched: this.wrapCallback(params, "onPrefetched"),
          onPrefetching: this.wrapCallback(params, "onPrefetching")
-@@ -1718,7 +1726,7 @@ var Response = class _Response {
+@@ -1718,7 +1728,7 @@ var Response = class _Response {
        ...this.response,
        data: this.getDataFromResponse(this.response.data)
      };
@@ -65,7 +90,7 @@ index 7744084..cfebdd2 100644
        return config.get("future.useDialogForErrorModal") ? dialog_default.show(response.data) : modal_default.show(response.data);
      }
    }
-@@ -2175,13 +2183,13 @@ var Router = class {
+@@ -2175,13 +2185,13 @@ var Router = class {
        keepAlive: options.keepAlive ?? false
      });
    }
@@ -81,7 +106,7 @@ index 7744084..cfebdd2 100644
        return;
      }
      const requestStream = visit.async ? this.asyncRequestStream : this.syncRequestStream;
-@@ -2280,7 +2288,7 @@ var Router = class {
+@@ -2280,7 +2290,7 @@ var Router = class {
      return page.resolve(component);
    }
    replace(params) {
@@ -90,7 +115,7 @@ index 7744084..cfebdd2 100644
    }
    replaceProp(name, value, options) {
      this.replace({
-@@ -2320,10 +2328,10 @@ var Router = class {
+@@ -2320,10 +2330,10 @@ var Router = class {
      );
    }
    push(params) {
@@ -103,15 +128,15 @@ index 7744084..cfebdd2 100644
    }
    performClientVisit(params, { replace = false } = {}) {
      const current = page.get();
-@@ -2336,6 +2344,7 @@ var Router = class {
+@@ -2336,6 +2346,7 @@ var Router = class {
      };
      const preserveScroll = RequestParams.resolvePreserveOption(params.preserveScroll ?? false, page2);
      const preserveState = RequestParams.resolvePreserveOption(params.preserveState ?? false, page2);
-+    page.__jodi_isHistoryModal = pageParams.__jodi_isHistoryModal;
++    page.__jodi_historyModals.push({ viewTransition });
      return page.set(page2, {
        replace,
        preserveScroll,
-@@ -2433,6 +2442,8 @@ var Router = class {
+@@ -2433,6 +2444,8 @@ var Router = class {
        }),
        onSuccess: options.onSuccess || (() => {
        }),
@@ -120,7 +145,7 @@ index 7744084..cfebdd2 100644
        onError: options.onError || (() => {
        }),
        onPrefetched: options.onPrefetched || (() => {
-@@ -2444,7 +2455,7 @@ var Router = class {
+@@ -2444,7 +2457,7 @@ var Router = class {
    loadDeferredProps(deferred) {
      if (deferred) {
        Object.entries(deferred).forEach(([_, group]) => {

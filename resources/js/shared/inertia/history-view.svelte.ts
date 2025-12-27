@@ -10,7 +10,12 @@ export type HistoryViewOptions = {
     viewTransition?: boolean;
 };
 
-export class HistoryView<T extends string | number | Record<string, unknown>> {
+export type UpdateMetaOptions = {
+    push?: boolean;
+    viewTransition?: boolean;
+};
+
+export class HistoryView<T extends Record<string, unknown>> {
     #name?: string;
     #options?: HistoryViewOptions;
 
@@ -50,22 +55,23 @@ export class HistoryView<T extends string | number | Record<string, unknown>> {
         const name = typeof nameOrMeta == "string" ? nameOrMeta : this.#name;
         const meta = typeof nameOrMeta != "string" ? nameOrMeta : metaOrNothing;
 
-        const options: ClientSideVisitOptions = {
-            preserveScroll: true,
-            preserveState: true,
-            url: `${this.#url.pathname}${this.#url.search}#${typeof name == "string" ? name : this.#name}${meta ? `?${this.#compress(meta)}` : ""}`,
-            __jodi_isHistoryModal: true,
-            viewTransition: this.#options?.viewTransition
-        };
+        return router.push(this.#visitOptions(name, meta));
+    }
 
-        if (this.#hash.view) {
-            return router.replace(options);
+    updateMeta(meta: T, options?: UpdateMetaOptions) {
+        const visitOptions = this.#visitOptions(
+            this.#hash.view.slice(1),
+            meta,
+            options?.viewTransition
+        );
+        if (options?.push) {
+            void router.push(visitOptions);
         } else {
-            return router.push(options);
+            void router.replace(visitOptions);
         }
     }
 
-    close() {
+    back() {
         if (!fromStore(page).current.__jodi_isHistoryModal) {
             void router.replace({
                 preserveScroll: true,
@@ -88,5 +94,19 @@ export class HistoryView<T extends string | number | Record<string, unknown>> {
             console.warn(e);
             return null;
         }
+    }
+
+    #visitOptions(
+        name: string | undefined,
+        meta: T | undefined,
+        ViewTransition?: boolean
+    ): ClientSideVisitOptions {
+        return {
+            preserveScroll: true,
+            preserveState: true,
+            url: `${this.#url.pathname}${this.#url.search}#${typeof name == "string" ? name : this.#name}${meta ? `?${this.#compress(meta)}` : ""}`,
+            __jodi_isHistoryModal: true,
+            viewTransition: ViewTransition ?? this.#options?.viewTransition
+        };
     }
 }

@@ -22,9 +22,8 @@ class CreateRequest extends FormRequest
         return [
             'title' => 'required|string',
             'description' => 'nullable|string',
-            'isAllDay' => 'required|boolean',
             'startsAt' => 'required|date',
-            'endsAt' => 'nullable|date',
+            'endsAt' => 'required|date',
         ];
     }
 }

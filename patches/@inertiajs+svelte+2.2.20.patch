@@ -31,7 +31,7 @@ index dcaf4ad..6fa18fd 100644
          disableWhileProcessing?: boolean | undefined;
          invalidateCacheTags?: string | string[] | undefined;
 diff --git a/node_modules/@inertiajs/svelte/dist/components/Link.svelte b/node_modules/@inertiajs/svelte/dist/components/Link.svelte
-index 7b7ed7b..e5b8d7d 100644
+index 7b7ed7b..b031026 100644
 --- a/node_modules/@inertiajs/svelte/dist/components/Link.svelte
 +++ b/node_modules/@inertiajs/svelte/dist/components/Link.svelte
 @@ -1,32 +1,50 @@
@@ -95,7 +95,7 @@ index 7b7ed7b..e5b8d7d 100644
 +    ...rest
 +} = $props()
 +
-+const _method = $derived(isUrlMethodPair(href) ? href.method : method));
++const _method = $derived(isUrlMethodPair(href) ? href.method : method);
 +const _href = $derived(isUrlMethodPair(href) ? href.url : href);
 +const asProp = $derived(_method !== "get" ? "button" : as.toLowerCase());
 +const elProps = $derived({

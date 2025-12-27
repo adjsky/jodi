@@ -17,7 +17,6 @@ class Event extends Model
     protected $fillable = [
         'title',
         'description',
-        'is_all_day',
         'starts_at',
         'ends_at',
         'notify_at',
@@ -28,12 +27,11 @@ class Event extends Model
     protected $hidden = [];
 
     /**
-     * @return array{is_all_day: "boolean", notify_at: "datetime", starts_at: "datetime", ends_at: "datetime"}
+     * @return array{notify_at: "datetime", starts_at: "datetime", ends_at: "datetime"}
      */
     protected function casts(): array
     {
         return [
-            'is_all_day' => 'boolean',
             'notify_at' => 'datetime',
             'starts_at' => 'datetime',
             'ends_at' => 'datetime',

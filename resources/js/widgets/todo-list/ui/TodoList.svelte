@@ -44,7 +44,7 @@
             }
 
             if (!isDeepEqual(editView.meta, todo)) {
-                void editView.open(todo);
+                editView.updateMeta(todo);
             }
         }
     );
@@ -101,7 +101,7 @@
             () => editView.isOpen(),
             (v) => {
                 if (!v) {
-                    editView.close();
+                    editView.back();
                 }
             }
         }
