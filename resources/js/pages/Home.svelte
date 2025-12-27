@@ -1,5 +1,4 @@
 <script lang="ts">
-    import { page } from "@inertiajs/svelte";
     import { AddTodoOrEvent } from "$/features/add-todo-or-event";
     import { m } from "$/paraglide/messages";
     import CalendarCat from "$/shared/assets/calendar-cat.svg";
@@ -25,7 +24,7 @@
 <ActionBanner />
 
 <main class="pb-20">
-    <CalendarPreview user={$page.props.auth.user} />
+    <CalendarPreview />
 
     {#if todos?.length === 0 && events?.length === 0}
         <img
