@@ -2,8 +2,7 @@
     import { Popover } from "@ark-ui/svelte";
     import { Circle } from "@lucide/svelte";
     import { link } from "$/shared/inertia/link";
-
-    import Action from "./Action.svelte";
+    import ToolbarAction from "$/shared/ui/ToolbarAction.svelte";
 
     import type { LinkComponentBaseProps, VisitOptions } from "@inertiajs/core";
 
@@ -31,7 +30,11 @@
 <Popover.Root bind:open>
     <Popover.Trigger>
         {#snippet asChild(props)}
-            <Action {...props()} {tooltip}>
+            <ToolbarAction
+                {...props()}
+                {tooltip}
+                class="p-3.5 text-xl disabled:not-data-loading:text-cream-400"
+            >
                 {#if current}
                     <span
                         class="block size-5 rounded-full outline-1 outline-cream-950"
@@ -40,7 +43,7 @@
                 {:else}
                     <Circle />
                 {/if}
-            </Action>
+            </ToolbarAction>
         {/snippet}
     </Popover.Trigger>
     <Popover.Positioner>

@@ -105,7 +105,7 @@
                 }
             }
         }
-        todo={editView.meta}
+        todo={editView.meta ?? ({} as App.Data.TodoDto)}
     />
 </section>
 

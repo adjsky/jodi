@@ -1,5 +1,4 @@
 <script lang="ts">
-    // import { Tooltip } from "@ark-ui/svelte/tooltip";
     import { tw } from "$/shared/lib/styles";
 
     import type { HTMLButtonAttributes } from "svelte/elements";
@@ -8,7 +7,6 @@
         tooltip: string;
     };
 
-    // const id = $props.id();
     const { tooltip: _tooltip, children, ...props }: Props = $props();
 </script>
 

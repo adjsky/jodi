@@ -1,11 +1,8 @@
 <script lang="ts">
     import { router } from "@inertiajs/svelte";
     import { Trash } from "@lucide/svelte";
-    import { destroy } from "$/generated/actions/App/Http/Controllers/TodoController";
-    import { m } from "$/paraglide/messages";
     import Confirmable from "$/shared/ui/Confirmable.svelte";
-
-    import Action from "./Action.svelte";
+    import ToolbarAction from "$/shared/ui/ToolbarAction.svelte";
 
     import type { UrlMethodPair, VisitOptions } from "@inertiajs/core";
 
@@ -29,8 +26,8 @@
     }}
 >
     {#snippet children(props)}
-        <Action {...props()} {tooltip}>
+        <ToolbarAction {...props()} {tooltip}>
             <Trash />
-        </Action>
+        </ToolbarAction>
     {/snippet}
 </Confirmable>

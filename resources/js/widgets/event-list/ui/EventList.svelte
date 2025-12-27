@@ -112,6 +112,6 @@
                 }
             }
         }
-        event={editView.meta}
+        event={editView.meta ?? ({} as App.Data.EventDto)}
     />
 </section>
