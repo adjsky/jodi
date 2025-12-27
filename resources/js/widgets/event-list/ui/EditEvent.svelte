@@ -1,5 +1,6 @@
 <script lang="ts">
     import { Form } from "@inertiajs/svelte";
+    import { DateFormatter } from "@internationalized/date";
     import {
         ArrowRight,
         CalendarClock,
@@ -16,12 +17,12 @@
     } from "$/generated/actions/App/Http/Controllers/EventController";
     import { m } from "$/paraglide/messages";
     import { getLocale } from "$/paraglide/runtime";
+    import { formatToHHMM } from "$/shared/lib/date";
     import SaveOrClose from "$/shared/ui/SaveOrClose.svelte";
     import Sheet from "$/shared/ui/Sheet.svelte";
     import Switch from "$/shared/ui/Switch.svelte";
     import TimeInput from "$/shared/ui/TimeInput.svelte";
     import ToolbarAction from "$/shared/ui/ToolbarAction.svelte";
-    import dayjs from "dayjs";
 
     import { optimistic, visitOptions } from "../cfg/inertia";
 
@@ -58,7 +59,7 @@
         <div class="flex items-center justify-between">
             <h4 class="flex items-center gap-1.5 text-lg font-bold">
                 <CalendarClock />
-                {new Intl.DateTimeFormat(getLocale(), {
+                {new DateFormatter(getLocale(), {
                     day: "2-digit",
                     year: "numeric",
                     month: "short",
@@ -89,7 +90,7 @@
             <div class="flex items-center gap-2">
                 <TimeInput
                     name="startsAt"
-                    defaultValue={dayjs(event.startsAt).format("HH:mm")}
+                    defaultValue={formatToHHMM(new Date(event.startsAt))}
                     required
                 />
                 <ArrowRight class="text-2xl" />
@@ -97,7 +98,7 @@
                     <TimeInput
                         name="endsAt"
                         defaultValue={event.endsAt
-                            ? dayjs(event.endsAt).format("HH:mm")
+                            ? formatToHHMM(new Date(event.endsAt))
                             : null}
                         required
                     />

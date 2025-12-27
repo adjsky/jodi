@@ -1,5 +1,6 @@
 <script lang="ts">
     import { Form } from "@inertiajs/svelte";
+    import { DateFormatter } from "@internationalized/date";
     import { Bell, Ellipsis, RotateCw } from "@lucide/svelte";
     import { Todo } from "$/entities/todo";
     import { Checkbox } from "$/features/complete-todo";
@@ -43,7 +44,7 @@
         <div class="flex items-center justify-between">
             <div class="flex items-center gap-3">
                 <h4 class="text-lg font-bold">
-                    {new Intl.DateTimeFormat(getLocale(), {
+                    {new DateFormatter(getLocale(), {
                         day: "2-digit",
                         year: "numeric",
                         month: "short",

@@ -1,11 +1,13 @@
 <script lang="ts">
+    import { DateFormatter } from "@internationalized/date";
     import { CalendarClock } from "@lucide/svelte";
     import { Event } from "$/entities/event";
     import { m } from "$/paraglide/messages";
+    import { getLocale } from "$/paraglide/runtime";
     import { HistoryView } from "$/shared/inertia/history-view.svelte";
+    import { formatToHHMM } from "$/shared/lib/date";
     import { tw } from "$/shared/lib/styles";
     import Skeleton from "$/shared/ui/Skeleton.svelte";
-    import dayjs from "dayjs";
     import { isDeepEqual } from "remeda";
     import { watch } from "runed";
 
@@ -76,7 +78,7 @@
                             {#if loading}
                                 <Skeleton inline style="width: 60px" />
                             {:else}
-                                {dayjs(event.startsAt).format("HH:mm")}
+                                {formatToHHMM(new Date(event.startsAt))}
                             {/if}
                         </time>
                     {/snippet}

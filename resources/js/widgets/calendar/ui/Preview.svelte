@@ -1,5 +1,5 @@
 <script lang="ts">
-    import { Link } from "@inertiajs/svelte";
+    import { Link, page } from "@inertiajs/svelte";
     import { DateFormatter, parseDate, today } from "@internationalized/date";
     import { Calendar } from "@lucide/svelte";
     import { User } from "$/entities/user";
@@ -10,14 +10,9 @@
     import { HistoryView } from "$/shared/inertia/history-view.svelte";
     import { useSearchParams } from "$/shared/inertia/use-search-params.svelte";
 
-    import type { AppPageProps } from "$/globals";
-
-    type Props = { user: AppPageProps["auth"]["user"] };
-
-    const { user }: Props = $props();
-
     const searchParams = useSearchParams({ showProgress: true });
 
+    const user = $derived($page.props.auth.user);
     const selected = $derived(
         searchParams["d"] ? parseDate(searchParams["d"]) : today(TIMEZONE)
     );
