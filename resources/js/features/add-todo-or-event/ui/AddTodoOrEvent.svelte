@@ -125,7 +125,7 @@
     <Dialog.Root bind:open={isCalendarOpen}>
         <Dialog.Backdrop
             class={[
-                "fixed inset-0 z-50 bg-cream-950/60 duration-300",
+                "fixed inset-0 z-100 bg-cream-950/60 duration-300",
                 "data-[state=closed]:animate-out data-[state=closed]:fade-out",
                 "data-[state=open]:animate-in data-[state=open]:fade-in"
             ]}
