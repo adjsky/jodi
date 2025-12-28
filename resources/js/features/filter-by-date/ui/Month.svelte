@@ -52,10 +52,10 @@
 
 {#snippet day(date: DateValue, isWithinMonth: boolean)}
     {@const summary = summaryCache.get(date.year)?.get(date.toString())}
-    {@const attachment = onSelect ? noop : link}
+    {@const inertia = onSelect ? (noop as never) : link}
     <td class:invisible={!isWithinMonth}>
         <button
-            {@attach attachment(() => ({
+            {@attach inertia(() => ({
                 href: home({ query: { d: date.toString() } }),
                 viewTransition: true,
                 replace: true

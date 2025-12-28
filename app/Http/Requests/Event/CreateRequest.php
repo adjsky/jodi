@@ -22,6 +22,7 @@ class CreateRequest extends FormRequest
         return [
             'title' => 'required|string',
             'description' => 'nullable|string',
+            'color' => 'nullable|hex_color',
             'startsAt' => 'required|date',
             'endsAt' => 'required|date',
         ];

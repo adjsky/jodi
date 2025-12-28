@@ -1,5 +1,5 @@
 diff --git a/node_modules/@inertiajs/core/dist/index.esm.js b/node_modules/@inertiajs/core/dist/index.esm.js
-index 7744084..5157a4d 100644
+index 7744084..3fb4794 100644
 --- a/node_modules/@inertiajs/core/dist/index.esm.js
 +++ b/node_modules/@inertiajs/core/dist/index.esm.js
 @@ -566,12 +566,13 @@ var prefetchedRequests = new PrefetchedRequests();
@@ -22,15 +22,7 @@ index 7744084..5157a4d 100644
    }
    static regions() {
      return document.querySelectorAll("[scroll-region]");
-@@ -774,6 +775,7 @@ var CurrentPage = class {
-     this.isFirstPageLoad = true;
-     this.cleared = false;
-     this.pendingDeferredProps = null;
-+    this.__jodi_historyModals = [];
-   }
-   init({
-     initialPage,
-@@ -809,9 +811,7 @@ var CurrentPage = class {
+@@ -809,9 +810,7 @@ var CurrentPage = class {
        }
        page2.rememberedState ?? (page2.rememberedState = {});
        const isServer2 = typeof window === "undefined";
@@ -41,7 +33,7 @@ index 7744084..5157a4d 100644
        return new Promise((resolve) => {
          replace ? history.replaceState(page2, () => resolve(null)) : history.pushState(page2, () => resolve(null));
        }).then(() => {
-@@ -854,13 +854,14 @@ var CurrentPage = class {
+@@ -854,13 +853,14 @@ var CurrentPage = class {
      });
    }
    setQuietly(page2, {
@@ -58,12 +50,12 @@ index 7744084..5157a4d 100644
      });
    }
    clear() {
-@@ -1198,6 +1199,14 @@ var EventHandler = class {
+@@ -1198,6 +1198,14 @@ var EventHandler = class {
      return () => document.removeEventListener(type, listener);
    }
    handlePopstateEvent(event) {
-+    if (page.__jodi_historyModals.length != 0) {
-+        const { viewTransition } = page.__jodi_historyModals.pop();
++    if (page.get().__jodi_historyModals?.length) {
++        const { viewTransition } = page.get().__jodi_historyModals.pop();
 +        const url = hrefToUrl(page.get().url);
 +        url.hash = window.location.hash;
 +        const page2 = { ...page.get(), url: url.pathname + url.search + url.hash };
@@ -73,7 +65,7 @@ index 7744084..5157a4d 100644
      const state = event.state || null;
      if (state === null) {
        const url = hrefToUrl(page.get().url);
-@@ -1418,6 +1427,7 @@ var RequestParams = class _RequestParams {
+@@ -1418,6 +1426,7 @@ var RequestParams = class _RequestParams {
          onCancel: this.wrapCallback(params, "onCancel"),
          onSuccess: this.wrapCallback(params, "onSuccess"),
          onError: this.wrapCallback(params, "onError"),
@@ -81,7 +73,7 @@ index 7744084..5157a4d 100644
          onCancelToken: this.wrapCallback(params, "onCancelToken"),
          onPrefetched: this.wrapCallback(params, "onPrefetched"),
          onPrefetching: this.wrapCallback(params, "onPrefetching")
-@@ -1718,7 +1728,7 @@ var Response = class _Response {
+@@ -1718,7 +1727,7 @@ var Response = class _Response {
        ...this.response,
        data: this.getDataFromResponse(this.response.data)
      };
@@ -90,6 +82,14 @@ index 7744084..5157a4d 100644
        return config.get("future.useDialogForErrorModal") ? dialog_default.show(response.data) : modal_default.show(response.data);
      }
    }
+@@ -1768,6 +1777,7 @@ var Response = class _Response {
+     await this.setRememberedState(pageResponse);
+     this.requestParams.setPreserveOptions(pageResponse);
+     pageResponse.url = history.preserveUrl ? page.get().url : this.pageUrl(pageResponse);
++    pageResponse.__jodi_historyModals = page.get().__jodi_historyModals;
+     this.requestParams.all().onBeforeUpdate(pageResponse);
+     fireBeforeUpdateEvent(pageResponse);
+     return page.set(pageResponse, {
 @@ -2175,13 +2185,13 @@ var Router = class {
        keepAlive: options.keepAlive ?? false
      });
@@ -115,7 +115,7 @@ index 7744084..5157a4d 100644
    }
    replaceProp(name, value, options) {
      this.replace({
-@@ -2320,10 +2330,10 @@ var Router = class {
+@@ -2320,15 +2330,15 @@ var Router = class {
      );
    }
    push(params) {
@@ -128,15 +128,23 @@ index 7744084..5157a4d 100644
    }
    performClientVisit(params, { replace = false } = {}) {
      const current = page.get();
-@@ -2336,6 +2346,7 @@ var Router = class {
+     const props = typeof params.props === "function" ? params.props(current.props) : params.props ?? current.props;
+-    const { viewTransition, onError, onFinish, onSuccess, ...pageParams } = params;
++    const { viewTransition, onError, onFinish, onSuccess, __jodi_isHistoryModal, ...pageParams } = params;
+     const page2 = {
+       ...current,
+       ...pageParams,
+@@ -2336,6 +2346,9 @@ var Router = class {
      };
      const preserveScroll = RequestParams.resolvePreserveOption(params.preserveScroll ?? false, page2);
      const preserveState = RequestParams.resolvePreserveOption(params.preserveState ?? false, page2);
-+    page.__jodi_historyModals.push({ viewTransition });
++    if (__jodi_isHistoryModal && !replace) {
++        (page2.__jodi_historyModals ??= []).push({ viewTransition });
++    }
      return page.set(page2, {
        replace,
        preserveScroll,
-@@ -2433,6 +2444,8 @@ var Router = class {
+@@ -2433,6 +2446,8 @@ var Router = class {
        }),
        onSuccess: options.onSuccess || (() => {
        }),
@@ -145,7 +153,7 @@ index 7744084..5157a4d 100644
        onError: options.onError || (() => {
        }),
        onPrefetched: options.onPrefetched || (() => {
-@@ -2444,7 +2457,7 @@ var Router = class {
+@@ -2444,7 +2459,7 @@ var Router = class {
    loadDeferredProps(deferred) {
      if (deferred) {
        Object.entries(deferred).forEach(([_, group]) => {
@@ -173,14 +181,14 @@ index dcf6009..cb3bd96 100644
          replace?: boolean;
      }): void;
 diff --git a/node_modules/@inertiajs/core/types/types.d.ts b/node_modules/@inertiajs/core/types/types.d.ts
-index 3a76ca7..1aa779f 100644
+index 3a76ca7..077d175 100644
 --- a/node_modules/@inertiajs/core/types/types.d.ts
 +++ b/node_modules/@inertiajs/core/types/types.d.ts
 @@ -97,6 +97,7 @@ export interface Page<SharedProps extends PageProps = PageProps> {
          prop: keyof PageProps;
          expiresAt?: number | null;
      }>;
-+    __jodi_isHistoryModal?: boolean;
++    __jodi_historyModals?: { viewTransition?: boolean }[];
      /** @internal */
      rememberedState: Record<string, unknown>;
  }

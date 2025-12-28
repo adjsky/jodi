@@ -1,4 +1,5 @@
 <script lang="ts">
+    import { page } from "@inertiajs/svelte";
     import { AddTodoOrEvent } from "$/features/add-todo-or-event";
     import { m } from "$/paraglide/messages";
     import CalendarCat from "$/shared/assets/calendar-cat.svg";

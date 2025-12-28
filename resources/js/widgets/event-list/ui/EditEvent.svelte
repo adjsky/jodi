@@ -1,22 +1,15 @@
 <script lang="ts">
     import { Form } from "@inertiajs/svelte";
-    import { DateFormatter } from "@internationalized/date";
-    import {
-        ArrowRight,
-        CalendarClock,
-        Ellipsis,
-        RotateCw,
-        UserPlus
-    } from "@lucide/svelte";
+    import { parseAbsoluteToLocal } from "@internationalized/date";
+    import { ArrowRight, Bell, Ellipsis, RotateCw } from "@lucide/svelte";
     import { Event } from "$/entities/event";
     import { DeleteItem } from "$/features/delete-item";
     import { Color } from "$/features/select-color";
     import {
-        destroy,
+        destroy as _destroy,
         update
     } from "$/generated/actions/App/Http/Controllers/EventController";
     import { m } from "$/paraglide/messages";
-    import { getLocale } from "$/paraglide/runtime";
     import { formatToHHMM } from "$/shared/lib/date";
     import SaveOrClose from "$/shared/ui/SaveOrClose.svelte";
     import Sheet from "$/shared/ui/Sheet.svelte";
@@ -52,81 +45,80 @@
         })}
         let:isDirty
     >
-        <div class="flex items-center justify-between">
-            <h4 class="flex items-center gap-1.5 text-lg font-bold">
-                <CalendarClock />
-                {new DateFormatter(getLocale(), {
-                    day: "2-digit",
-                    year: "numeric",
-                    month: "short",
-                    weekday: "short"
-                }).format(new Date(event.startsAt))}
-            </h4>
-            <SaveOrClose
-                variant={isDirty ? "save" : "close"}
-                onclick={() => {
-                    if (!isDirty) {
-                        open = false;
-                    }
-                }}
-            />
-        </div>
-        <Event.Title
-            class="mt-5"
-            name="title"
-            defaultValue={event.title}
-            required
-        />
-        <div class="mt-3 flex items-center gap-4 text-lg">
-            <div class="flex items-center gap-2">
-                <TimeInput
-                    name="startsAt"
-                    defaultValue={formatToHHMM(new Date(event.startsAt))}
-                    required
+        <Event.Fields
+            title={event.title}
+            description={event.description}
+            startsAt={parseAbsoluteToLocal(event.startsAt)}
+            onCalendarOpen={() => {}}
+        >
+            {#snippet close()}
+                <SaveOrClose
+                    variant={isDirty ? "save" : "close"}
+                    onclick={() => {
+                        if (!isDirty) {
+                            open = false;
+                        }
+                    }}
                 />
-                <ArrowRight class="text-2xl" />
-                <TimeInput
-                    name="endsAt"
-                    defaultValue={event.endsAt
-                        ? formatToHHMM(new Date(event.endsAt))
-                        : null}
-                    required
+            {/snippet}
+            {#snippet timePicker()}
+                <div class="flex items-center gap-1.5">
+                    <TimeInput
+                        name="startsAt"
+                        defaultValue={formatToHHMM(
+                            parseAbsoluteToLocal(event.startsAt).toDate()
+                        )}
+                        required
+                    />
+                    <ArrowRight class="text-2xl" />
+                    <TimeInput
+                        name="endsAt"
+                        defaultValue={event.endsAt
+                            ? formatToHHMM(
+                                  parseAbsoluteToLocal(event.endsAt).toDate()
+                              )
+                            : null}
+                        required
+                    />
+                </div>
+            {/snippet}
+            {#snippet destroy()}
+                <DeleteItem
+                    title={m["events.delete-ahtung"]()}
+                    tooltip={m["events.tooltips.delete"]()}
+                    href={_destroy(event.id)}
+                    {...visitOptions}
+                    {...optimistic.delete(event.id)}
                 />
-            </div>
-        </div>
-        <Event.Description
-            name="description"
-            class="mt-6"
-            defaultValue={event.description ?? ""}
-        />
+            {/snippet}
+            {#snippet repeat()}
+                <ToolbarAction disabled tooltip={m["events.tooltips.repeat"]()}>
+                    <RotateCw />
+                </ToolbarAction>
+            {/snippet}
+            {#snippet color()}
+                <Color
+                    {...visitOptions}
+                    {...optimistic.edit(event.id, true)}
+                    href={update(event.id)}
+                    tooltip={m["events.tooltips.color"]()}
+                    current={event.color}
+                    preserveUrl
+                />
+            {/snippet}
+            {#snippet notify()}
+                <ToolbarAction
+                    disabled
+                    tooltip={m["events.tooltips.notification"]()}
+                >
+                    <Bell />
+                </ToolbarAction>
+            {/snippet}
+            {#snippet more()}
+                <ToolbarAction disabled tooltip={m["events.tooltips.more"]()}>
+                    <Ellipsis />
+                </ToolbarAction>
+            {/snippet}
+        </Event.Fields>
     </Form>
-
-    <div
-        class="absolute inset-x-0 bottom-0 z-10 flex items-end justify-between bg-white px-4 pb-6"
-    >
-        <DeleteItem
-            title={m["events.delete-ahtung"]()}
-            tooltip={m["events.tooltips.delete"]()}
-            href={destroy(event.id)}
-            {...visitOptions}
-            {...optimistic.delete(event.id)}
-        />
-        <ToolbarAction disabled tooltip={m["events.tooltips.repeat"]()}>
-            <RotateCw />
-        </ToolbarAction>
-        <Color
-            {...visitOptions}
-            {...optimistic.edit(event.id, true)}
-            href={update(event.id)}
-            tooltip={m["events.tooltips.color"]()}
-            current={event.color}
-            preserveUrl
-        />
-        <ToolbarAction disabled tooltip={m["events.tooltips.notification"]()}>
-            <UserPlus />
-        </ToolbarAction>
-        <ToolbarAction disabled tooltip={m["events.tooltips.more"]()}>
-            <Ellipsis />
-        </ToolbarAction>
-    </div>
 </Sheet>

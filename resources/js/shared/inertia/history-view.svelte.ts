@@ -1,6 +1,6 @@
 import { page, router } from "@inertiajs/svelte";
 import lz from "lz-string";
-import { fromStore } from "svelte/store";
+import { fromStore, get } from "svelte/store";
 
 import type { ClientSideVisitOptions } from "@inertiajs/core";
 
@@ -72,7 +72,7 @@ export class HistoryView<T extends Record<string, unknown>> {
     }
 
     back() {
-        if (!fromStore(page).current.__jodi_isHistoryModal) {
+        if (!get(page).__jodi_historyModals?.length) {
             void router.replace({
                 preserveScroll: true,
                 preserveState: true,

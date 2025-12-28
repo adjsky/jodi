@@ -11,9 +11,10 @@
 </script>
 
 <button
+    type="button"
     {...props}
     class={tw(
-        "p-3.5 text-xl disabled:not-data-loading:text-cream-400",
+        "flex size-12 items-center justify-center text-xl disabled:not-data-loading:text-cream-400",
         props.class
     )}
 >

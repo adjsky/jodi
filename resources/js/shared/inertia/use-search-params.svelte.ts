@@ -11,13 +11,21 @@ export function useSearchParams(options?: Options) {
     const props = $derived(fromStore(page).current.props);
 
     function update(values: Record<string, string>) {
-        router.reload({
-            data: {
-                ...props.search,
-                ...values
-            },
+        const url = new URL(window.location.href);
+
+        for (const [key, value] of Object.entries(values)) {
+            url.searchParams.set(key, value);
+        }
+
+        router.visit(url, {
+            showProgress,
             replace: true,
-            showProgress
+            preserveScroll: true,
+            preserveState: true,
+            async: true,
+            headers: {
+                "Cache-Control": "no-cache"
+            }
         });
     }
 

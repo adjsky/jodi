@@ -2,17 +2,18 @@
     import { Popover } from "@ark-ui/svelte";
     import { Circle } from "@lucide/svelte";
     import { link } from "$/shared/inertia/link";
+    import { noop } from "$/shared/lib/function";
     import ToolbarAction from "$/shared/ui/ToolbarAction.svelte";
 
-    import type { LinkComponentBaseProps, VisitOptions } from "@inertiajs/core";
+    import type { LinkParameters } from "$/shared/inertia/link";
 
-    type Props = VisitOptions &
-        Pick<LinkComponentBaseProps, "href"> & {
-            tooltip: string;
-            current: string | null;
-        };
+    type Props = LinkParameters & {
+        tooltip: string;
+        current: string | null;
+        name?: string;
+    };
 
-    const { tooltip, current, ...options }: Props = $props();
+    let { tooltip, current = $bindable(), name, ...options }: Props = $props();
 
     let open = $state(false);
 
@@ -51,14 +52,18 @@
             class="flex rounded-full bg-white px-1 outline outline-cream-950"
         >
             {#each colors as color (color)}
+                {@const inertia = name ? (noop as never) : link}
                 <!-- svelte-ignore a11y_consider_explicit_label -->
                 <button
-                    {@attach link(() => ({
+                    {@attach inertia(() => ({
                         ...options,
                         data: { color: color == "transparent" ? null : color },
                         showProgress: false
                     }))}
-                    onclick={() => (open = false)}
+                    onclick={() => {
+                        current = color;
+                        open = false;
+                    }}
                     class="flex h-10 w-11.25 items-center justify-center"
                 >
                     <span
@@ -73,3 +78,7 @@
         </Popover.Content>
     </Popover.Positioner>
 </Popover.Root>
+
+{#if name}
+    <input hidden bind:value={current} {name} />
+{/if}

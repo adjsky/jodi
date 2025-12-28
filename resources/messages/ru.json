@@ -111,7 +111,7 @@
             "email": "Почта",
             "name": "Имя",
             "friends": "Друзья",
-            "invitations": "Ваши приглашения"
+            "invitations": "Приглашения"
         },
         "app-settings": {
             "title": "Настройки приложения",

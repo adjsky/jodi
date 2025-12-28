@@ -1,9 +1,7 @@
-import Description from "./ui/Description.svelte";
+import Fields from "./ui/Fields.svelte";
 import Row from "./ui/Row.svelte";
-import Title from "./ui/Title.svelte";
 
 export const Event = {
     Row,
-    Title,
-    Description
+    Fields
 };

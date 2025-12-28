@@ -1,7 +1,7 @@
 import { inertia } from "@inertiajs/svelte";
 import { fromAction } from "svelte/attachments";
 
-type ActionParameters = NonNullable<Parameters<typeof inertia>[1]>;
+export type LinkParameters = NonNullable<Parameters<typeof inertia>[1]>;
 
-export const link = (params: () => ActionParameters) =>
+export const link = (params: () => LinkParameters) =>
     fromAction(inertia, params);

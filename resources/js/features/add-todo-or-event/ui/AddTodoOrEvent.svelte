@@ -1,7 +1,12 @@
 <script lang="ts">
     import { Dialog, Portal } from "@ark-ui/svelte";
+    import { page } from "@inertiajs/svelte";
+    import { parseDate, toCalendarDate, today } from "@internationalized/date";
     import { CalendarClock, Check, X } from "@lucide/svelte";
+    import { YearCalendar } from "$/features/filter-by-date";
     import { m } from "$/paraglide/messages";
+    import { TIMEZONE } from "$/shared/cfg/constants";
+    import { useSearchParams } from "$/shared/inertia/use-search-params.svelte";
     import Sheet from "$/shared/ui/Sheet.svelte";
 
     import { view } from "../model/view";
@@ -15,6 +20,11 @@
     };
 
     const { loading }: Props = $props();
+
+    const searchParams = useSearchParams();
+    let day = $derived(
+        searchParams["d"] ? parseDate(searchParams["d"]) : today(TIMEZONE)
+    );
 </script>
 
 <Dialog.Root
@@ -92,8 +102,20 @@
     grip="var(--color-cream-300)"
 >
     {#if view.meta?.entity == "todo"}
-        <TodoForm />
+        <TodoForm {day} />
     {:else if view.meta?.entity == "event"}
-        <EventForm />
+        <EventForm {day} />
+    {/if}
+
+    {#if view.meta?.overlay == "calendar"}
+        <YearCalendar
+            selected={day}
+            start={$page.props.auth.user.preferences.weekStartOn}
+            onClose={() => view.back()}
+            onSelect={async (date) => {
+                view.back();
+                day = toCalendarDate(date);
+            }}
+        />
     {/if}
 </Sheet>
