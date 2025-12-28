@@ -4,7 +4,7 @@
     "type": "module",
     "scripts": {
         "build": "vite build",
-        "dev": "vite --force",
+        "dev": "vite",
         "lint": "eslint",
         "format": "prettier",
         "check": "svelte-check",
@@ -12,7 +12,7 @@
         "postinstall": "patch-package"
     },
     "devDependencies": {
-        "@ark-ui/svelte": "^5.13.0",
+        "@ark-ui/svelte": "^5.15.0",
         "@dnd-kit/abstract": "^0.1.21",
         "@dnd-kit/dom": "^0.1.21",
         "@dnd-kit/helpers": "^0.1.21",

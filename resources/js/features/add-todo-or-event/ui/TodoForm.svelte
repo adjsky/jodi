@@ -9,15 +9,15 @@
     import SaveOrClose from "$/shared/ui/SaveOrClose.svelte";
     import ToolbarAction from "$/shared/ui/ToolbarAction.svelte";
 
-    import { view } from "../model/view";
-
     import type { CalendarDate } from "@internationalized/date";
 
     type Props = {
         day: CalendarDate;
+        onCalendarOpen: VoidFunction;
+        onClose: VoidFunction;
     };
 
-    const { day }: Props = $props();
+    const { day, onCalendarOpen, onClose }: Props = $props();
 </script>
 
 <Form
@@ -30,15 +30,7 @@
     }}
     let:processing
 >
-    <Todo.Fields
-        date={day}
-        onCalendarOpen={() => {
-            view.updateMeta(
-                { entity: "todo", overlay: "calendar" },
-                { push: true, viewTransition: true }
-            );
-        }}
-    >
+    <Todo.Fields date={day} {onCalendarOpen}>
         {#snippet close()}
             <SaveOrClose variant="save" disabled={processing} />
         {/snippet}
@@ -48,7 +40,7 @@
         {#snippet destroy()}
             <ToolbarAction
                 tooltip={m["todos.tooltips.delete"]()}
-                onclick={() => view.back()}
+                onclick={onClose}
             >
                 <Trash />
             </ToolbarAction>

@@ -65,7 +65,7 @@
             {#each renderableEvents as event (event.id)}
                 <Event.Row
                     disabled={loading}
-                    onclick={() => editView.open(event)}
+                    onclick={() => editView.push(event)}
                     color={event.color}
                 >
                     {#snippet time()}

@@ -11,11 +11,11 @@
     type Props = {
         title: string;
         children: Snippet<[() => HTMLButtonAttributes]>;
-        onconfirm?: () => boolean | void;
-        onabort?: VoidFunction;
+        onConfirm?: () => boolean | void;
+        onAbort?: VoidFunction;
     };
 
-    const { title, children, onconfirm, onabort }: Props = $props();
+    const { title, children, onConfirm, onAbort }: Props = $props();
 
     let open = $state(false);
 </script>
@@ -44,10 +44,10 @@
                     {title}
                 </Dialog.Title>
                 <div class="mt-5 flex gap-2">
-                    <Dialog.CloseTrigger onclick={onabort}>
+                    <Dialog.CloseTrigger onclick={onAbort}>
                         {#snippet asChild(props)}
                             <Button
-                                {...props({ onclick: onabort })}
+                                {...props({ onclick: onAbort })}
                                 variant="secondary"
                             >
                                 {m["common.no"]()}
@@ -56,7 +56,7 @@
                     </Dialog.CloseTrigger>
                     <Button
                         onclick={() => {
-                            if (onconfirm?.()) {
+                            if (onConfirm?.()) {
                                 open = false;
                             }
                         }}

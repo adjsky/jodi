@@ -24,7 +24,7 @@
 <header
     class="sticky top-0 z-10 flex items-center justify-between bg-cream-50 py-2 pr-6 pl-3"
 >
-    <button class="p-2.5" onclick={() => view.open()}>
+    <button class="p-2.5" onclick={() => view.push()}>
         <Calendar class="text-3xl" />
     </button>
     <div class="absolute left-1/2 -translate-x-1/2">

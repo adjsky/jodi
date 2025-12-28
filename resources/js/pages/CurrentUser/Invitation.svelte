@@ -44,8 +44,8 @@
 
         <Confirmable
             title={m["current-user.invitations.delete-ahtung"]()}
-            onconfirm={() => {
-                router.visit(destroy(invitation.id), {
+            onConfirm={() => {
+                void router.visit(destroy(invitation.id), {
                     viewTransition: true
                 });
             }}

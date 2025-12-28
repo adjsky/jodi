@@ -71,7 +71,7 @@
         </div>
         <Button
             onclick={async () => {
-                await view.open();
+                await view.push();
                 inviteInput?.focus();
             }}
         >

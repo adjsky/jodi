@@ -1,5 +1,5 @@
 diff --git a/node_modules/@inertiajs/core/dist/index.esm.js b/node_modules/@inertiajs/core/dist/index.esm.js
-index 7744084..3fb4794 100644
+index 7744084..85ca34a 100644
 --- a/node_modules/@inertiajs/core/dist/index.esm.js
 +++ b/node_modules/@inertiajs/core/dist/index.esm.js
 @@ -566,12 +566,13 @@ var prefetchedRequests = new PrefetchedRequests();
@@ -90,6 +90,15 @@ index 7744084..3fb4794 100644
      this.requestParams.all().onBeforeUpdate(pageResponse);
      fireBeforeUpdateEvent(pageResponse);
      return page.set(pageResponse, {
+@@ -2057,7 +2067,7 @@ var RequestStream = class {
+   }
+   send(request) {
+     this.requests.push(request);
+-    request.send().then(() => {
++    return request.send().then(() => {
+       this.requests = this.requests.filter((r) => r !== request);
+     });
+   }
 @@ -2175,13 +2185,13 @@ var Router = class {
        keepAlive: options.keepAlive ?? false
      });
@@ -106,7 +115,22 @@ index 7744084..3fb4794 100644
        return;
      }
      const requestStream = visit.async ? this.asyncRequestStream : this.syncRequestStream;
-@@ -2280,7 +2290,7 @@ var Router = class {
+@@ -2196,11 +2206,10 @@ var Router = class {
+     const prefetched = prefetchedRequests.get(requestParams);
+     if (prefetched) {
+       progress.reveal(prefetched.inFlight);
+-      prefetchedRequests.use(prefetched, requestParams);
+-    } else {
+-      progress.reveal(true);
+-      requestStream.send(Request.create(requestParams, page.get()));
++      return prefetchedRequests.use(prefetched, requestParams);
+     }
++    progress.reveal(true);
++    return requestStream.send(Request.create(requestParams, page.get()));
+   }
+   getCached(href, options = {}) {
+     return prefetchedRequests.findCached(this.getPrefetchParams(href, options));
+@@ -2280,7 +2289,7 @@ var Router = class {
      return page.resolve(component);
    }
    replace(params) {
@@ -115,7 +139,7 @@ index 7744084..3fb4794 100644
    }
    replaceProp(name, value, options) {
      this.replace({
-@@ -2320,15 +2330,15 @@ var Router = class {
+@@ -2320,15 +2329,15 @@ var Router = class {
      );
    }
    push(params) {
@@ -134,7 +158,7 @@ index 7744084..3fb4794 100644
      const page2 = {
        ...current,
        ...pageParams,
-@@ -2336,6 +2346,9 @@ var Router = class {
+@@ -2336,6 +2345,9 @@ var Router = class {
      };
      const preserveScroll = RequestParams.resolvePreserveOption(params.preserveScroll ?? false, page2);
      const preserveState = RequestParams.resolvePreserveOption(params.preserveState ?? false, page2);
@@ -144,7 +168,7 @@ index 7744084..3fb4794 100644
      return page.set(page2, {
        replace,
        preserveScroll,
-@@ -2433,6 +2446,8 @@ var Router = class {
+@@ -2433,6 +2445,8 @@ var Router = class {
        }),
        onSuccess: options.onSuccess || (() => {
        }),
@@ -153,19 +177,47 @@ index 7744084..3fb4794 100644
        onError: options.onError || (() => {
        }),
        onPrefetched: options.onPrefetched || (() => {
-@@ -2444,7 +2459,7 @@ var Router = class {
+@@ -2444,7 +2458,7 @@ var Router = class {
    loadDeferredProps(deferred) {
      if (deferred) {
        Object.entries(deferred).forEach(([_, group]) => {
 -        this.doReload({ only: group, deferredProps: true });
-+        this.doReload({ only: group, deferredProps: true, replace: true });
++        this.doReload({ only: group, deferredProps: true, replace: true, preserveUrl: true });
        });
      }
    }
 diff --git a/node_modules/@inertiajs/core/types/router.d.ts b/node_modules/@inertiajs/core/types/router.d.ts
-index dcf6009..cb3bd96 100644
+index dcf6009..0248d01 100644
 --- a/node_modules/@inertiajs/core/types/router.d.ts
 +++ b/node_modules/@inertiajs/core/types/router.d.ts
+@@ -6,12 +6,12 @@ export declare class Router {
+     protected asyncRequestStream: RequestStream;
+     protected clientVisitQueue: Queue<Promise<void>>;
+     init<ComponentType = Component>({ initialPage, resolveComponent, swapComponent, }: RouterInitParams<ComponentType>): void;
+-    get<T extends RequestPayload = RequestPayload>(url: URL | string | UrlMethodPair, data?: T, options?: VisitHelperOptions<T>): void;
+-    post<T extends RequestPayload = RequestPayload>(url: URL | string | UrlMethodPair, data?: T, options?: VisitHelperOptions<T>): void;
+-    put<T extends RequestPayload = RequestPayload>(url: URL | string | UrlMethodPair, data?: T, options?: VisitHelperOptions<T>): void;
+-    patch<T extends RequestPayload = RequestPayload>(url: URL | string | UrlMethodPair, data?: T, options?: VisitHelperOptions<T>): void;
+-    delete<T extends RequestPayload = RequestPayload>(url: URL | string | UrlMethodPair, options?: Omit<VisitOptions<T>, 'method'>): void;
+-    reload<T extends RequestPayload = RequestPayload>(options?: ReloadOptions<T>): void;
++    get<T extends RequestPayload = RequestPayload>(url: URL | string | UrlMethodPair, data?: T, options?: VisitHelperOptions<T>): Promise<void>;
++    post<T extends RequestPayload = RequestPayload>(url: URL | string | UrlMethodPair, data?: T, options?: VisitHelperOptions<T>): Promise<void>;
++    put<T extends RequestPayload = RequestPayload>(url: URL | string | UrlMethodPair, data?: T, options?: VisitHelperOptions<T>): Promise<void>;
++    patch<T extends RequestPayload = RequestPayload>(url: URL | string | UrlMethodPair, data?: T, options?: VisitHelperOptions<T>): Promise<void>;
++    delete<T extends RequestPayload = RequestPayload>(url: URL | string | UrlMethodPair, options?: Omit<VisitOptions<T>, 'method'>): Promise<void>;
++    reload<T extends RequestPayload = RequestPayload>(options?: ReloadOptions<T>): Promise<void>;
+     protected doReload<T extends RequestPayload = RequestPayload>(options?: ReloadOptions<T> & {
+         deferredProps?: boolean;
+     }): void;
+@@ -24,7 +24,7 @@ export declare class Router {
+         stop: VoidFunction;
+         start: VoidFunction;
+     };
+-    visit<T extends RequestPayload = RequestPayload>(href: string | URL | UrlMethodPair, options?: VisitOptions<T>): void;
++    visit<T extends RequestPayload = RequestPayload>(href: string | URL | UrlMethodPair, options?: VisitOptions<T>): Promise<void>;
+     getCached(href: string | URL | UrlMethodPair, options?: VisitOptions): InFlightPrefetch | PrefetchedResponse | null;
+     flush(href: string | URL | UrlMethodPair, options?: VisitOptions): void;
+     flushAll(): void;
 @@ -34,11 +34,11 @@ export declare class Router {
      clearHistory(): void;
      decryptHistory(): Promise<Page>;

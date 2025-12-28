@@ -9,15 +9,17 @@
 
     import type { WeekStart } from "../cfg/preferences";
     import type { DateValue } from "@internationalized/date";
+    import type { SvelteHTMLElements } from "svelte/elements";
+    import type { Except } from "type-fest";
 
-    type Props = {
+    type Props = Except<SvelteHTMLElements["div"], "children" | "title"> & {
         selected: DateValue;
         start: WeekStart;
         onClose?: VoidFunction;
         onSelect?: (date: DateValue) => void;
     };
 
-    const { selected, start, onClose, onSelect }: Props = $props();
+    const { selected, start, onClose, onSelect, ...props }: Props = $props();
 
     let monthsNode = $state<HTMLElement | null>(null);
 
@@ -34,7 +36,7 @@
     }
 </script>
 
-<FloatingView>
+<FloatingView {...props}>
     {#snippet back()}
         <button class="p-2" onclick={onClose}>
             <ChevronLeft class="text-4xl" />
@@ -47,14 +49,14 @@
             <div class="flex gap-2">
                 <Button
                     variant="secondary"
-                    class="h-auto rounded-full p-2"
+                    class="h-auto rounded-full bg-transparent p-2"
                     onclick={() => gotoYear("previous")}
                 >
                     <ChevronLeft />
                 </Button>
                 <Button
                     variant="secondary"
-                    class="h-auto rounded-full p-2"
+                    class="h-auto rounded-full bg-transparent p-2"
                     onclick={() => gotoYear("next")}
                 >
                     <ChevronRight />

@@ -2,10 +2,14 @@
     import { Link } from "@inertiajs/svelte";
     import { ChevronLeft } from "@lucide/svelte";
 
+    import { tw } from "../lib/styles";
+
     import type { UrlMethodPair } from "@inertiajs/core";
     import type { Snippet } from "svelte";
+    import type { SvelteHTMLElements } from "svelte/elements";
+    import type { Except } from "type-fest";
 
-    type Props = {
+    type Props = Except<SvelteHTMLElements["div"], "title"> & {
         back: string | UrlMethodPair | Snippet;
         title?: string;
         viewTransition?: boolean;
@@ -13,10 +17,17 @@
         action?: Snippet;
     };
 
-    const { back, title, viewTransition, children, action }: Props = $props();
+    const { back, title, viewTransition, children, action, ...props }: Props =
+        $props();
 </script>
 
-<div class="fixed inset-0 z-100 flex flex-col bg-cream-50 px-4 py-3">
+<div
+    {...props}
+    class={tw(
+        "fixed inset-0 z-100 flex h-full flex-col bg-cream-50 px-4 py-3",
+        props.class
+    )}
+>
     <div class="relative flex items-center justify-between">
         {#if typeof back == "function"}
             {@render back()}

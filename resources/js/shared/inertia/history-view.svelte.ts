@@ -49,13 +49,22 @@ export class HistoryView<T extends Record<string, unknown>> {
         );
     }
 
-    open(meta?: T): Promise<void>;
-    open(name: string, meta?: T): Promise<void>;
-    open(nameOrMeta?: string | T, metaOrNothing?: T): Promise<void> {
+    push(meta?: T): Promise<void>;
+    push(name: string, meta?: T): Promise<void>;
+    push(nameOrMeta?: string | T, metaOrNothing?: T): Promise<void> {
         const name = typeof nameOrMeta == "string" ? nameOrMeta : this.#name;
         const meta = typeof nameOrMeta != "string" ? nameOrMeta : metaOrNothing;
 
         return router.push(this.#visitOptions(name, meta));
+    }
+
+    replace(meta?: T): Promise<void>;
+    replace(name: string, meta?: T): Promise<void>;
+    replace(nameOrMeta?: string | T, metaOrNothing?: T): Promise<void> {
+        const name = typeof nameOrMeta == "string" ? nameOrMeta : this.#name;
+        const meta = typeof nameOrMeta != "string" ? nameOrMeta : metaOrNothing;
+
+        return router.replace(this.#visitOptions(name, meta));
     }
 
     updateMeta(meta: T, options?: UpdateMetaOptions) {
@@ -99,14 +108,14 @@ export class HistoryView<T extends Record<string, unknown>> {
     #visitOptions(
         name: string | undefined,
         meta: T | undefined,
-        ViewTransition?: boolean
+        viewTransition?: boolean
     ): ClientSideVisitOptions {
         return {
             preserveScroll: true,
             preserveState: true,
             url: `${this.#url.pathname}${this.#url.search}#${typeof name == "string" ? name : this.#name}${meta ? `?${this.#compress(meta)}` : ""}`,
             __jodi_isHistoryModal: true,
-            viewTransition: ViewTransition ?? this.#options?.viewTransition
+            viewTransition: viewTransition ?? this.#options?.viewTransition
         };
     }
 }

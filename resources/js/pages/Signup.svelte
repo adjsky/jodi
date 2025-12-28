@@ -64,7 +64,7 @@
         />
         <Button
             class="fixed inset-x-4 bottom-12 w-auto"
-            onclick={() => view.open("start")}
+            onclick={() => view.push("start")}
         >
             {m["signup.intro.start"]()}
         </Button>

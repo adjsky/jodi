@@ -17,8 +17,8 @@
 
 <Confirmable
     {title}
-    onconfirm={() => {
-        router.visit(href, {
+    onConfirm={() => {
+        void router.visit(href, {
             ...options,
             showProgress: false
         });

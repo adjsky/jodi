@@ -123,7 +123,7 @@
                     disabled={loading}
                     class="relative table w-full table-fixed text-start text-lg font-medium"
                     data-part="edit"
-                    onclick={() => editView.open(todo)}
+                    onclick={() => editView.push(todo)}
                 >
                     {#if loading}
                         <Skeleton

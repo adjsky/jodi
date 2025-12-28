@@ -1,0 +1,56 @@
+diff --git a/node_modules/svelte-bottom-sheet/dist/BottomSheet/Overlay/Overlay.svelte b/node_modules/svelte-bottom-sheet/dist/BottomSheet/Overlay/Overlay.svelte
+index c372f2b..5d97def 100644
+--- a/node_modules/svelte-bottom-sheet/dist/BottomSheet/Overlay/Overlay.svelte
++++ b/node_modules/svelte-bottom-sheet/dist/BottomSheet/Overlay/Overlay.svelte
+@@ -14,11 +14,19 @@
+ 		children,
+ 		...rest
+ 	}: { children?: Snippet<[]> | undefined } & HTMLAttributes<HTMLDivElement> = $props();
++
++    function onclick() {
++        if (sheetContext.settings.disableClosing) {
++            return;
++        }
++        sheetContext.closeSheet();
++    }
+ </script>
+ 
+ {#if sheetContext.isSheetOpen}
+ 	<div
+ 		{...rest}
++        {onclick}
+ 		role="presentation"
+ 		aria-hidden="true"
+ 		transition:fade={{ duration: 200 }}
+diff --git a/node_modules/svelte-bottom-sheet/dist/BottomSheet/Sheet/Sheet.svelte b/node_modules/svelte-bottom-sheet/dist/BottomSheet/Sheet/Sheet.svelte
+index c5bdf9e..c3eb1fd 100644
+--- a/node_modules/svelte-bottom-sheet/dist/BottomSheet/Sheet/Sheet.svelte
++++ b/node_modules/svelte-bottom-sheet/dist/BottomSheet/Sheet/Sheet.svelte
+@@ -25,16 +25,6 @@
+ 		throw new Error('BottomSheet.Sheet must be inside a BottomSheet component');
+ 	}
+ 
+-	const handleClickOutside = (event: MouseEvent) => {
+-		if (
+-			sheetContext.sheetElement &&
+-			!sheetContext.sheetElement.contains(event.target as Node) &&
+-			!sheetContext.settings.disableClosing
+-		) {
+-			sheetContext.closeSheet();
+-		}
+-	};
+-
+ 	const getFocusableElements = () => {
+ 		if (!sheetContext.sheetElement) return [];
+ 		return Array.from(
+@@ -138,10 +128,8 @@
+ 				} else {
+ 					sheetContext.sheetElement?.focus();
+ 				}
+-				document.addEventListener('click', handleClickOutside);
+ 			}, 100);
+ 		} else {
+-			document.removeEventListener('click', handleClickOutside);
+ 			previousActiveElement?.focus();
+ 		}
+ 	});

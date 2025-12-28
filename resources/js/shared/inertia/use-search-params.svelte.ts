@@ -1,6 +1,8 @@
 import { page, router } from "@inertiajs/svelte";
 import { fromStore } from "svelte/store";
 
+import type { VisitOptions } from "@inertiajs/core";
+
 type Options = {
     showProgress?: boolean;
 };
@@ -10,20 +12,22 @@ export function useSearchParams(options?: Options) {
 
     const props = $derived(fromStore(page).current.props);
 
-    function update(values: Record<string, string>) {
+    function update(values: Record<string, string>, options?: VisitOptions) {
         const url = new URL(window.location.href);
 
         for (const [key, value] of Object.entries(values)) {
             url.searchParams.set(key, value);
         }
 
-        router.visit(url, {
+        return router.visit(url, {
+            ...options,
             showProgress,
             replace: true,
             preserveScroll: true,
             preserveState: true,
             async: true,
             headers: {
+                ...options?.headers,
                 "Cache-Control": "no-cache"
             }
         });
@@ -38,7 +42,7 @@ export function useSearchParams(options?: Options) {
             return props.search[prop];
         },
         set(_, prop, v: string) {
-            update({ [prop]: v });
+            void update({ [prop]: v });
             return true;
         }
     });
