@@ -12,7 +12,7 @@
     import { create } from "$/generated/actions/App/Http/Controllers/EventController";
     import { m } from "$/paraglide/messages";
     import SaveOrClose from "$/shared/ui/SaveOrClose.svelte";
-    import TimeInput from "$/shared/ui/TimeInput.svelte";
+    import TimeInput from "$/shared/ui/TimeRangePicker.svelte";
     import ToolbarAction from "$/shared/ui/ToolbarAction.svelte";
 
     import type { CalendarDate } from "@internationalized/date";

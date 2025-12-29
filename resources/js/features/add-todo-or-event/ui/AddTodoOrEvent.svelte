@@ -1,9 +1,8 @@
 <script lang="ts">
     import { Dialog, Portal } from "@ark-ui/svelte";
-    import { page } from "@inertiajs/svelte";
     import { parseDate, today } from "@internationalized/date";
     import { CalendarClock, Check, X } from "@lucide/svelte";
-    import { YearCalendar } from "$/features/filter-by-date";
+    import YearCalendarDialog from "$/features/filter-by-date/ui/YearCalendarDialog.svelte";
     import { m } from "$/paraglide/messages";
     import { TIMEZONE } from "$/shared/cfg/constants";
     import { HistoryView } from "$/shared/inertia/history-view.svelte";
@@ -122,36 +121,15 @@
         <EventForm {day} {onCalendarOpen} {onClose} />
     {/if}
 
-    <Dialog.Root lazyMount bind:open={isCalendarOpen}>
-        <Dialog.Backdrop
-            class={[
-                "fixed inset-0 z-100 bg-cream-950/60 duration-300",
-                "data-[state=closed]:animate-out data-[state=closed]:fade-out",
-                "data-[state=open]:animate-in data-[state=open]:fade-in"
-            ]}
-        />
-        <Dialog.Positioner>
-            <Dialog.Content
-                class={[
-                    "fixed inset-x-0 bottom-0 z-100 h-[95%] duration-300",
-                    "data-[state=closed]:animate-out data-[state=closed]:slide-out-to-bottom",
-                    "data-[state=open]:animate-in data-[state=open]:slide-in-from-bottom"
-                ]}
-            >
-                <YearCalendar
-                    class="absolute inset-0 rounded-2xl bg-white"
-                    selected={day}
-                    start={$page.props.auth.user.preferences.weekStartOn}
-                    onClose={() => (isCalendarOpen = false)}
-                    onSelect={async (date) => {
-                        await searchParams.update(
-                            { d: date.toString() },
-                            { only: ["todos", "events", "search"] }
-                        );
-                        isCalendarOpen = false;
-                    }}
-                />
-            </Dialog.Content>
-        </Dialog.Positioner>
-    </Dialog.Root>
+    <YearCalendarDialog
+        bind:open={isCalendarOpen}
+        selected={day}
+        onSelect={async (date) => {
+            await searchParams.update(
+                { d: date.toString() },
+                { only: ["todos", "events", "search"] }
+            );
+            isCalendarOpen = false;
+        }}
+    />
 </Sheet>

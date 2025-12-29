@@ -1,7 +1,6 @@
 <script lang="ts">
     import { Field } from "@ark-ui/svelte";
     import { DateFormatter } from "@internationalized/date";
-    import { Calendar } from "@lucide/svelte";
     import { m } from "$/paraglide/messages";
     import { getLocale } from "$/paraglide/runtime";
     import { TIMEZONE } from "$/shared/cfg/constants";
@@ -48,16 +47,17 @@
 
 <div class="flex items-center justify-between">
     <div class="flex items-center gap-3">
-        <button onclick={onCalendarOpen} type="button">
-            <h4 class="flex items-center gap-1.5 text-lg font-bold">
-                <Calendar />
-                {new DateFormatter(getLocale(), {
-                    day: "2-digit",
-                    year: "numeric",
-                    month: "short",
-                    weekday: "short"
-                }).format(date.toDate(TIMEZONE))}
-            </h4>
+        <button
+            class="text-lg font-bold"
+            onclick={onCalendarOpen}
+            type="button"
+        >
+            {new DateFormatter(getLocale(), {
+                day: "2-digit",
+                year: "numeric",
+                month: "short",
+                weekday: "short"
+            }).format(date.toDate(TIMEZONE))}
         </button>
         {@render category()}
     </div>

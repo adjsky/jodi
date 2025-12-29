@@ -1,20 +1,21 @@
 <script lang="ts">
     import { Form } from "@inertiajs/svelte";
-    import { parseAbsoluteToLocal } from "@internationalized/date";
-    import { ArrowRight, Bell, Ellipsis, RotateCw } from "@lucide/svelte";
+    import { parseDate, toCalendarDate } from "@internationalized/date";
+    import { Bell, Ellipsis, RotateCw } from "@lucide/svelte";
     import { Event } from "$/entities/event";
     import { DeleteItem } from "$/features/delete-item";
+    import { YearCalendarDialog } from "$/features/filter-by-date";
     import { Color } from "$/features/select-color";
     import {
         destroy as _destroy,
         update
     } from "$/generated/actions/App/Http/Controllers/EventController";
     import { m } from "$/paraglide/messages";
-    import { formatToHHMM } from "$/shared/lib/date";
+    import { getLocale } from "$/paraglide/runtime";
     import SaveOrClose from "$/shared/ui/SaveOrClose.svelte";
     import Sheet from "$/shared/ui/Sheet.svelte";
-    import TimeInput from "$/shared/ui/TimeInput.svelte";
     import ToolbarAction from "$/shared/ui/ToolbarAction.svelte";
+    import { TimeRangeField } from "bits-ui";
 
     import { optimistic, visitOptions } from "../cfg/inertia";
 
@@ -24,6 +25,9 @@
     };
 
     let { open = $bindable(), event }: Props = $props();
+
+    let isCalendarOpen = $state(false);
+    let startsAtDateOnly = $derived(parseDate(event.startsAt.split("T")[0]));
 </script>
 
 <Sheet
@@ -48,8 +52,10 @@
         <Event.Fields
             title={event.title}
             description={event.description}
-            startsAt={parseAbsoluteToLocal(event.startsAt)}
-            onCalendarOpen={() => {}}
+            startsAt={startsAtDateOnly}
+            onCalendarOpen={() => {
+                isCalendarOpen = true;
+            }}
         >
             {#snippet close()}
                 <SaveOrClose
@@ -60,27 +66,6 @@
                         }
                     }}
                 />
-            {/snippet}
-            {#snippet timePicker()}
-                <div class="flex items-center gap-1.5">
-                    <TimeInput
-                        name="startsAt"
-                        defaultValue={formatToHHMM(
-                            parseAbsoluteToLocal(event.startsAt).toDate()
-                        )}
-                        required
-                    />
-                    <ArrowRight class="text-2xl" />
-                    <TimeInput
-                        name="endsAt"
-                        defaultValue={event.endsAt
-                            ? formatToHHMM(
-                                  parseAbsoluteToLocal(event.endsAt).toDate()
-                              )
-                            : null}
-                        required
-                    />
-                </div>
             {/snippet}
             {#snippet destroy()}
                 <DeleteItem
@@ -121,4 +106,13 @@
             {/snippet}
         </Event.Fields>
     </Form>
+
+    <YearCalendarDialog
+        bind:open={isCalendarOpen}
+        selected={startsAtDateOnly}
+        onSelect={async (date) => {
+            startsAtDateOnly = toCalendarDate(date);
+            isCalendarOpen = false;
+        }}
+    />
 </Sheet>
