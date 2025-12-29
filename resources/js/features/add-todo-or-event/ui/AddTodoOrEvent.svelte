@@ -122,7 +122,7 @@
         <EventForm {day} {onCalendarOpen} {onClose} />
     {/if}
 
-    <Dialog.Root bind:open={isCalendarOpen}>
+    <Dialog.Root lazyMount bind:open={isCalendarOpen}>
         <Dialog.Backdrop
             class={[
                 "fixed inset-0 z-100 bg-cream-950/60 duration-300",
