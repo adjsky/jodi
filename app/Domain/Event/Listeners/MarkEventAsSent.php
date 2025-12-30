@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace App\Listeners;
+namespace App\Domain\Event\Listeners;
 
-use App\Notifications\EventReminder;
+use App\Domain\Event\Notifications\EventReminder;
 use Illuminate\Notifications\Events\NotificationSent;
 
 class MarkEventAsSent

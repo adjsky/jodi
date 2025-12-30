@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace App\Console\Commands;
 
+use App\Domain\Event\Notifications\EventReminder;
 use App\Models\Event;
-use App\Notifications\EventReminder;
 use Illuminate\Console\Command;
 
 class RemindEventsCommand extends Command

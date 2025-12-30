@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 use App\Domain\Auth\Mail;
 use App\Domain\Auth\Notifications as AuthNotifications;
+use App\Domain\Event\Notifications as EventNotifications;
 use App\Http\Controllers\CurrentUserController;
 use App\Http\Controllers\DaySummaryController;
 use App\Http\Controllers\EventController;
@@ -16,7 +17,6 @@ use App\Http\Controllers\SignupController;
 use App\Http\Controllers\TodoController;
 use App\Http\Controllers\TwoFactorChallengeController;
 use App\Models\Event;
-use App\Notifications;
 use Illuminate\Support\Facades\Route;
 
 Route::middleware('guest')->group(function () {
@@ -114,6 +114,6 @@ if (app()->isLocal()) {
     );
     Route::get(
         '/mail/event-reminder',
-        fn () => new Notifications\EventReminder(new Event([]))->toMail()
+        fn () => new EventNotifications\EventReminder(new Event([]))->toMail()
     );
 }

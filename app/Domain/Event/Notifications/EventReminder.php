@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\Notifications;
+namespace App\Domain\Event\Notifications;
 
 use App\Models\Event;
 use App\Models\User;
