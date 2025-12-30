@@ -15,8 +15,11 @@ class EventController extends Controller
     public function create(CreateRequest $request)
     {
         $data = $request->validatedInSnakeCase();
-        // TODO: should subHours(x) be a preference or configuration?
-        $data['notify_at'] = Carbon::parse($data['starts_at'])->subHours(3);
+
+        if (! isset($data['notify_at'])) {
+            // TODO: should subHours(x) be a preference or configuration?
+            $data['notify_at'] = Carbon::parse($data['starts_at'])->subHours(3);
+        }
         $data['notify_status'] = 'waiting';
 
         $this->user()->events()->create($data);
@@ -28,9 +31,13 @@ class EventController extends Controller
     {
         $data = $request->validatedInSnakeCase();
 
-        if (isset($data['starts_at']) && $event->notify_status != 'waiting') {
+        if (isset($data['starts_at'])) {
             $diff = $event->notify_at->diff($event->starts_at);
             $data['notify_at'] = Carbon::parse($data['starts_at'])->subtract($diff);
+        }
+
+        if (isset($data['starts_at']) || isset($data['notify_at'])) {
+            $data['notify_status'] = 'waiting';
         }
 
         $event->update($data);

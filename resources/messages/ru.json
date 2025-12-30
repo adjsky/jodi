@@ -103,6 +103,28 @@
             "description": "Добавьте сюда несколько дополнительных заметок..."
         }
     },
+    "reminders": {
+        "hour": [
+            {
+                "declarations": ["input h", "local hours = h: plural"],
+                "selectors": ["hours"],
+                "match": {
+                    "hours=one": "{h} час",
+                    "hours=few": "{h} часа"
+                }
+            }
+        ],
+        "day": [
+            {
+                "declarations": ["input d", "local days = d: plural"],
+                "selectors": ["days"],
+                "match": {
+                    "days=one": "{d} день",
+                    "days=few": "{d} дня"
+                }
+            }
+        ]
+    },
     "current-user": {
         "save": "Сохранить",
         "invite": "Пригласить",

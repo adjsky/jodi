@@ -25,6 +25,7 @@ class UpdateRequest extends FormRequest
             'color' => 'sometimes|nullable|hex_color',
             'category' => 'sometimes|nullable|string',
             'todoDate' => 'sometimes|date_format:Y-m-d',
+            'notifyAt' => 'sometimes|date',
         ];
     }
 }

@@ -1,8 +1,9 @@
 <script lang="ts">
     import { Form } from "@inertiajs/svelte";
-    import { Bell, Ellipsis, RotateCw, Trash } from "@lucide/svelte";
+    import { Ellipsis, RotateCw, Trash } from "@lucide/svelte";
     import { Event } from "$/entities/event";
     import { Color } from "$/features/select-color";
+    import { Reminder } from "$/features/select-reminder";
     import { create } from "$/generated/actions/App/Http/Controllers/EventController";
     import { m } from "$/paraglide/messages";
     import { withCurrentTime } from "$/shared/lib/date";
@@ -64,12 +65,12 @@
             />
         {/snippet}
         {#snippet notify()}
-            <ToolbarAction
-                disabled
-                tooltip={m["events.tooltips.notification"]()}
-            >
-                <Bell />
-            </ToolbarAction>
+            <Reminder
+                name="notifyAt"
+                tooltip={m["todos.tooltips.notification"]()}
+                start={startsAt}
+                current={null}
+            />
         {/snippet}
         {#snippet more()}
             <ToolbarAction disabled tooltip={m["events.tooltips.more"]()}>

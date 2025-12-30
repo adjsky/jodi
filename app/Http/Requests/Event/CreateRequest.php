@@ -25,6 +25,7 @@ class CreateRequest extends FormRequest
             'color' => 'nullable|hex_color',
             'startsAt' => 'required|date',
             'endsAt' => 'required|date',
+            'notifyAt' => 'sometimes|date',
         ];
     }
 }

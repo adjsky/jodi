@@ -104,6 +104,28 @@
             "description": "Add a few extra notes here..."
         }
     },
+    "reminders": {
+        "hour": [
+            {
+                "declarations": ["input h", "local hours = h: plural"],
+                "selectors": ["hours"],
+                "match": {
+                    "hours=one": "{h} hour",
+                    "hours=other": "{h} hours"
+                }
+            }
+        ],
+        "day": [
+            {
+                "declarations": ["input d", "local days = d: plural"],
+                "selectors": ["days"],
+                "match": {
+                    "days=one": "{d} day",
+                    "days=other": "{d} days"
+                }
+            }
+        ]
+    },
     "current-user": {
         "save": "Save",
         "invite": "Invite",

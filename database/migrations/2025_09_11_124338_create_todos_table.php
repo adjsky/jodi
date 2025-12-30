@@ -25,6 +25,7 @@ return new class extends Migration
             $table->string('color')->nullable();
             $table->datetime('completed_at')->nullable();
             $table->datetime('notify_at')->nullable();
+            $table->enum('notify_status', ['waiting', 'processing', 'sent'])->nullable()->index();
             $table->timestamps();
         });
     }

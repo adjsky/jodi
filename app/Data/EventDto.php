@@ -20,6 +20,7 @@ class EventDto extends Data
         public ?string $location,
         public Carbon $startsAt,
         public Carbon $endsAt,
+        public Carbon $notifyAt,
         public ?Carbon $createdAt,
     ) {}
 
@@ -33,6 +34,7 @@ class EventDto extends Data
             $event->location,
             $event->starts_at,
             $event->ends_at,
+            $event->notify_at,
             $event->created_at
         );
     }

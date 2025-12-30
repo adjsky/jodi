@@ -80,5 +80,5 @@
 </Popover.Root>
 
 {#if name}
-    <input hidden bind:value={current} {name} />
+    <input hidden value={current} {name} />
 {/if}

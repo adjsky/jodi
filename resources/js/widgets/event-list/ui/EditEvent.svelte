@@ -4,11 +4,12 @@
         parseAbsoluteToLocal,
         toCalendarDate
     } from "@internationalized/date";
-    import { Bell, Ellipsis, RotateCw } from "@lucide/svelte";
+    import { Ellipsis, RotateCw } from "@lucide/svelte";
     import { Event } from "$/entities/event";
     import { DeleteItem } from "$/features/delete-item";
     import { YearCalendarDialog } from "$/features/filter-by-date";
     import { Color } from "$/features/select-color";
+    import { Reminder } from "$/features/select-reminder";
     import {
         destroy as _destroy,
         update
@@ -106,12 +107,15 @@
                 />
             {/snippet}
             {#snippet notify()}
-                <ToolbarAction
-                    disabled
+                <Reminder
+                    {...visitOptions}
+                    {...optimistic.edit(event.id, true)}
+                    href={update(event.id)}
                     tooltip={m["events.tooltips.notification"]()}
-                >
-                    <Bell />
-                </ToolbarAction>
+                    start={startsAt}
+                    current={parseAbsoluteToLocal(event.notifyAt)}
+                    preserveUrl
+                />
             {/snippet}
             {#snippet more()}
                 <ToolbarAction disabled tooltip={m["events.tooltips.more"]()}>
