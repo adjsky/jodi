@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-use App\Console\Commands\RemindEvents;
+use App\Console\Commands\RemindEventsCommand;
 use Illuminate\Support\Facades\Schedule;
 
-Schedule::command(RemindEvents::class)->everyMinute()->withoutOverlapping();
+Schedule::command(RemindEventsCommand::class)->everyMinute()->withoutOverlapping();

@@ -8,7 +8,7 @@ use App\Models\Event;
 use App\Notifications\EventReminder;
 use Illuminate\Console\Command;
 
-class RemindEvents extends Command
+class RemindEventsCommand extends Command
 {
     protected $signature = 'jodi:remind:events';
 
