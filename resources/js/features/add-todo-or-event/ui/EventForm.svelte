@@ -1,18 +1,13 @@
 <script lang="ts">
     import { Form } from "@inertiajs/svelte";
-    import {
-        ArrowRight,
-        Bell,
-        Ellipsis,
-        RotateCw,
-        Trash
-    } from "@lucide/svelte";
+    import { Bell, Ellipsis, RotateCw, Trash } from "@lucide/svelte";
     import { Event } from "$/entities/event";
     import { Color } from "$/features/select-color";
     import { create } from "$/generated/actions/App/Http/Controllers/EventController";
     import { m } from "$/paraglide/messages";
+    import { withCurrentTime } from "$/shared/lib/date";
+    import { cleanFormPayload } from "$/shared/lib/form";
     import SaveOrClose from "$/shared/ui/SaveOrClose.svelte";
-    import TimeInput from "$/shared/ui/TimeRangePicker.svelte";
     import ToolbarAction from "$/shared/ui/ToolbarAction.svelte";
 
     import type { CalendarDate } from "@internationalized/date";
@@ -24,6 +19,9 @@
     };
 
     const { day, onCalendarOpen, onClose }: Props = $props();
+
+    let startsAt = $derived(withCurrentTime(day));
+    let endsAt = $derived(withCurrentTime(day, { hourOffset: 1 }));
 </script>
 
 <Form
@@ -35,24 +33,15 @@
         replace: true
     }}
     transform={(data) => ({
-        ...data,
-        startsAt: new Date(`${day}T${data.startsAt}`).toISOString(),
-        endsAt: data.endsAt
-            ? new Date(`${day}T${data.endsAt}`).toISOString()
-            : null
+        ...cleanFormPayload(data),
+        startsAt: startsAt.toAbsoluteString(),
+        endsAt: endsAt.toAbsoluteString()
     })}
     let:processing
 >
-    <Event.Fields startsAt={day} {onCalendarOpen}>
+    <Event.Fields bind:startsAt bind:endsAt {onCalendarOpen}>
         {#snippet close()}
             <SaveOrClose variant="save" disabled={processing} />
-        {/snippet}
-        {#snippet timePicker()}
-            <div class="flex items-center gap-1.5">
-                <TimeInput name="startsAt" required />
-                <ArrowRight class="text-2xl" />
-                <TimeInput name="endsAt" required />
-            </div>
         {/snippet}
         {#snippet destroy()}
             <ToolbarAction

@@ -1,10 +1,11 @@
 <script lang="ts">
     import { Form } from "@inertiajs/svelte";
-    import { parseDate } from "@internationalized/date";
+    import { parseDate, toCalendarDate } from "@internationalized/date";
     import { Bell, Ellipsis, RotateCw } from "@lucide/svelte";
     import { Todo } from "$/entities/todo";
     import { Checkbox } from "$/features/complete-todo";
     import { DeleteItem } from "$/features/delete-item";
+    import { YearCalendarDialog } from "$/features/filter-by-date";
     import { Category } from "$/features/select-category";
     import { Color } from "$/features/select-color";
     import {
@@ -12,9 +13,11 @@
         update
     } from "$/generated/actions/App/Http/Controllers/TodoController";
     import { m } from "$/paraglide/messages";
+    import { announce, cleanFormPayload } from "$/shared/lib/form";
     import SaveOrClose from "$/shared/ui/SaveOrClose.svelte";
     import Sheet from "$/shared/ui/Sheet.svelte";
     import ToolbarAction from "$/shared/ui/ToolbarAction.svelte";
+    import { tick } from "svelte";
 
     import { optimistic, visitOptions } from "../cfg/inertia";
 
@@ -24,6 +27,11 @@
     };
 
     let { open = $bindable(), todo }: Props = $props();
+
+    let date = $derived(parseDate(todo.date.split("T")[0]));
+
+    let dateAnnouncerInput: HTMLInputElement | null = $state(null);
+    let isCalendarOpen = $state(false);
 </script>
 
 <Sheet
@@ -38,14 +46,24 @@
         action={update(todo.id)}
         options={visitOptions}
         showProgress={false}
+        transform={cleanFormPayload}
         let:isDirty
     >
+        <!-- keep to mark form dirty when selecting date in calendar -->
+        <input
+            bind:this={dateAnnouncerInput}
+            hidden
+            name="_date"
+            value={date.toString()}
+        />
         <Todo.Fields
-            date={parseDate(todo.date.split("T")[0])}
+            {date}
             title={todo.title}
             description={todo.description}
             isCompleted={todo.completedAt != null}
-            onCalendarOpen={() => {}}
+            onCalendarOpen={() => {
+                isCalendarOpen = true;
+            }}
         >
             {#snippet close()}
                 <SaveOrClose
@@ -102,4 +120,17 @@
             {/snippet}
         </Todo.Fields>
     </Form>
+
+    <YearCalendarDialog
+        bind:open={isCalendarOpen}
+        selected={date}
+        onSelect={async (d) => {
+            date = toCalendarDate(d);
+            isCalendarOpen = false;
+
+            await tick();
+
+            announce(dateAnnouncerInput);
+        }}
+    />
 </Sheet>

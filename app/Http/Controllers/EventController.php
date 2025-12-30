@@ -26,7 +26,9 @@ class EventController extends Controller
 
     public function update(UpdateRequest $request, Event $event)
     {
-        $event->update($request->validatedInSnakeCase());
+        $data = $request->validatedInSnakeCase();
+
+        $event->update($data);
 
         return back();
     }

@@ -19,7 +19,7 @@ class EventDto extends Data
         public ?string $color,
         public ?string $location,
         public Carbon $startsAt,
-        public ?Carbon $endsAt,
+        public Carbon $endsAt,
         public ?Carbon $createdAt,
     ) {}
 

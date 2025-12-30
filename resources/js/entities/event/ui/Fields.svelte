@@ -1,18 +1,18 @@
 <script lang="ts">
     import { Field } from "@ark-ui/svelte";
-    import { DateFormatter } from "@internationalized/date";
+    import { DateFormatter, toTime } from "@internationalized/date";
     import { Calendar, Clock } from "@lucide/svelte";
     import { m } from "$/paraglide/messages";
     import { getLocale } from "$/paraglide/runtime";
-    import { TIMEZONE } from "$/shared/cfg/constants";
-    import { TimeRangeField } from "bits-ui";
+    import TimeRangePicker from "$/shared/ui/TimeRangePicker.svelte";
     import { boolAttr } from "runed";
 
-    import type { DateValue } from "@internationalized/date";
+    import type { ZonedDateTime } from "@internationalized/date";
     import type { Snippet } from "svelte";
 
     type Props = {
-        startsAt: DateValue;
+        startsAt: ZonedDateTime;
+        endsAt: ZonedDateTime;
         title?: string;
         description?: string | null;
         close: Snippet;
@@ -24,8 +24,9 @@
         onCalendarOpen: VoidFunction;
     };
 
-    const {
-        startsAt,
+    let {
+        startsAt = $bindable(),
+        endsAt = $bindable(),
         title,
         description,
         close,
@@ -50,7 +51,7 @@
             year: "numeric",
             month: "short",
             weekday: "short"
-        }).format(startsAt.toDate(TIMEZONE))}
+        }).format(startsAt.toDate())}
     </button>
     {@render close()}
 </div>
@@ -64,53 +65,21 @@
     data-autofocus={boolAttr(!title)}
 />
 
-<TimeRangeField.Root
-    class="group mt-3 flex w-full gap-4 text-lg"
+<TimeRangePicker
+    bind:startsAt={
+        () => toTime(startsAt), (time) => (startsAt = startsAt.set(time))
+    }
+    bind:endsAt={() => toTime(endsAt), (time) => (endsAt = endsAt.set(time))}
     locale={getLocale()}
-    hourCycle={24}
-    hideTimeZone
+    class="mt-3"
+    name="_time"
+    required
 >
-    <TimeRangeField.Label class="flex items-center gap-1.5 select-none">
+    {#snippet label()}
         <Clock class="text-2xl" />
         <span class="font-bold">{m["events.time"]()}</span>
-    </TimeRangeField.Label>
-    <div
-        class="flex w-min items-center rounded-lg border border-cream-300 bg-white px-4 py-1.25 select-none"
-    >
-        {#each ["start", "end"] as const as type (type)}
-            <TimeRangeField.Input {type}>
-                {#snippet children({ segments })}
-                    {#each segments as { part, value }, idx (idx)}
-                        {#if part == "literal"}
-                            <TimeRangeField.Segment
-                                {part}
-                                class="px-0.5 text-md font-semibold text-cream-600"
-                                hidden={value == " "}
-                            >
-                                {value}
-                            </TimeRangeField.Segment>
-                        {:else}
-                            <TimeRangeField.Segment
-                                {part}
-                                class="rounded-md px-0.5 font-bold"
-                            >
-                                {value}
-                            </TimeRangeField.Segment>
-                        {/if}
-                    {/each}
-                {/snippet}
-            </TimeRangeField.Input>
-            {#if type === "start"}
-                <div
-                    aria-hidden="true"
-                    class="px-1.5 text-md font-semibold text-cream-600"
-                >
-                    до
-                </div>
-            {/if}
-        {/each}
-    </div>
-</TimeRangeField.Root>
+    {/snippet}
+</TimeRangePicker>
 
 <Field.Textarea
     autoresize

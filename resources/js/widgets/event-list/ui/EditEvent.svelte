@@ -1,6 +1,9 @@
 <script lang="ts">
     import { Form } from "@inertiajs/svelte";
-    import { parseDate, toCalendarDate } from "@internationalized/date";
+    import {
+        parseAbsoluteToLocal,
+        toCalendarDate
+    } from "@internationalized/date";
     import { Bell, Ellipsis, RotateCw } from "@lucide/svelte";
     import { Event } from "$/entities/event";
     import { DeleteItem } from "$/features/delete-item";
@@ -11,11 +14,11 @@
         update
     } from "$/generated/actions/App/Http/Controllers/EventController";
     import { m } from "$/paraglide/messages";
-    import { getLocale } from "$/paraglide/runtime";
+    import { announce, cleanFormPayload } from "$/shared/lib/form";
     import SaveOrClose from "$/shared/ui/SaveOrClose.svelte";
     import Sheet from "$/shared/ui/Sheet.svelte";
     import ToolbarAction from "$/shared/ui/ToolbarAction.svelte";
-    import { TimeRangeField } from "bits-ui";
+    import { tick } from "svelte";
 
     import { optimistic, visitOptions } from "../cfg/inertia";
 
@@ -26,8 +29,11 @@
 
     let { open = $bindable(), event }: Props = $props();
 
+    let startsAt = $derived(parseAbsoluteToLocal(event.startsAt));
+    let endsAt = $derived(parseAbsoluteToLocal(event.endsAt));
+
+    let dateAnnouncerInput: HTMLInputElement | null = $state(null);
     let isCalendarOpen = $state(false);
-    let startsAtDateOnly = $derived(parseDate(event.startsAt.split("T")[0]));
 </script>
 
 <Sheet
@@ -43,16 +49,24 @@
         options={visitOptions}
         showProgress={false}
         transform={(data) => ({
-            ...data,
-            startsAt: data.startsAt || undefined,
-            endsAt: data.endsAt || undefined
+            ...cleanFormPayload(data),
+            startsAt: startsAt.toAbsoluteString(),
+            endsAt: endsAt.toAbsoluteString()
         })}
         let:isDirty
     >
+        <!-- keep to mark form dirty when selecting date in calendar -->
+        <input
+            bind:this={dateAnnouncerInput}
+            hidden
+            name="_date"
+            value={toCalendarDate(startsAt).toString()}
+        />
         <Event.Fields
+            bind:startsAt
+            bind:endsAt
             title={event.title}
             description={event.description}
-            startsAt={startsAtDateOnly}
             onCalendarOpen={() => {
                 isCalendarOpen = true;
             }}
@@ -109,10 +123,14 @@
 
     <YearCalendarDialog
         bind:open={isCalendarOpen}
-        selected={startsAtDateOnly}
+        selected={toCalendarDate(startsAt)}
         onSelect={async (date) => {
-            startsAtDateOnly = toCalendarDate(date);
+            startsAt = startsAt.set(date);
             isCalendarOpen = false;
+
+            await tick();
+
+            announce(dateAnnouncerInput);
         }}
     />
 </Sheet>
