@@ -28,6 +28,11 @@ class EventController extends Controller
     {
         $data = $request->validatedInSnakeCase();
 
+        if (isset($data['starts_at']) && $event->notify_status != 'waiting') {
+            $diff = $event->notify_at->diff($event->starts_at);
+            $data['notify_at'] = Carbon::parse($data['starts_at'])->subtract($diff);
+        }
+
         $event->update($data);
 
         return back();

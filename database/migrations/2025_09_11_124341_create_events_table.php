@@ -23,7 +23,7 @@ return new class extends Migration
             $table->string('color')->nullable();
             $table->datetime('starts_at')->index();
             $table->datetime('ends_at');
-            $table->datetime('notify_at')->nullable()->index();
+            $table->datetime('notify_at')->index();
             $table->enum('notify_status', ['waiting', 'processing', 'sent'])->index();
             $table->timestamps();
         });
