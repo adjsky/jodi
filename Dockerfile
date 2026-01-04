@@ -1,4 +1,5 @@
 ARG PHP_VERSION=8.4
+ARG NODE_VERSION=24
 
 ###################################################################
 # Stage 1: Base                                                   #
@@ -17,9 +18,10 @@ RUN install-php-extensions \
 RUN apk add --no-cache multirun
 
 ###################################################################
-# Stage 2: Install dependencies & build assets                    #
+# Stage 2.1: Install PHP dependencies                             #
 ###################################################################
 
+FROM node:${NODE_VERSION}-alpine AS node_builder
 FROM base AS builder
 
 WORKDIR /var/www/jodi
@@ -29,10 +31,18 @@ COPY composer.json composer.lock ./
 
 RUN composer install --optimize-autoloader --no-dev --no-scripts
 
-RUN apk add --no-cache nodejs npm
+###################################################################
+# Stage 2.2: Install Node.js dependencies & build assets          #
+###################################################################
+
+COPY --from=node_builder /usr/local/lib/node_modules /usr/local/lib/node_modules
+COPY --from=node_builder /usr/local/bin/node /usr/local/bin/node
 
 COPY package*.json ./
 COPY patches/ ./patches
+
+RUN ln -s /usr/local/lib/node_modules/npm/bin/npm-cli.js /usr/local/bin/npm \
+    && ln -s /usr/local/lib/node_modules/npm/bin/npx-cli.js /usr/local/bin/npx
 
 RUN npm ci
 
