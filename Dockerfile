@@ -65,7 +65,7 @@ USER ${USER}
 ENV APP_ENV=production
 ENV APP_DEBUG=false
 
-RUN php artisan jodi:setup
+RUN php artisan jodi:setup --force
 RUN php artisan optimize
 
 CMD ["multirun", "frankenphp run", "php artisan queue:work --tries=3 --timeout=60", "php artisan schedule:work"]
