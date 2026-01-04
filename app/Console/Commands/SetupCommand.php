@@ -36,20 +36,14 @@ class SetupCommand extends Command
 
             if (! $this->runArtisan(
                 'key:generate',
-                label: [
-                    'success' => 'application key generated successfully',
-                    'error' => 'application key generation failed',
-                ]
+                label: 'application key generation'
             )) {
                 return self::FAILURE;
             }
 
             if (! $this->runArtisan(
                 'webpush:vapid',
-                label: [
-                    'success' => 'vapid keys generated successfully',
-                    'error' => 'vapid keys generation failed',
-                ]
+                label: 'vapid keys generation'
             )) {
                 return self::FAILURE;
             }
@@ -93,10 +87,7 @@ class SetupCommand extends Command
 
         return $this->runArtisan(
             'migrate',
-            label: [
-                'success' => 'database setup completed',
-                'error' => 'database setup failed',
-            ],
+            label: 'database setup',
             params: ['--seed' => $this->option('seed')]
         );
     }
@@ -104,10 +95,9 @@ class SetupCommand extends Command
     /**
      * Run a provided artisan command silently and gracefully handle errors.
      *
-     * @param  array{success: string, error: string}  $label
      * @param  ?array<string, mixed>  $params
      */
-    protected function runArtisan(string $command, array $label, ?array $params = []): bool
+    protected function runArtisan(string $command, string $label, ?array $params = []): bool
     {
         $exitCode = Artisan::call($command, [
             ...$params ?? [],
@@ -116,13 +106,13 @@ class SetupCommand extends Command
         ]);
 
         if ($exitCode != 0) {
-            $this->error("✘ {$label['error']}.");
+            $this->error("✘ {$label} failed.");
             $this->line(trim(Artisan::output()));
 
             return false;
         }
 
-        $this->info("✔ {$label['success']}.");
+        $this->info("✔ {$label} completed.");
 
         return true;
     }
