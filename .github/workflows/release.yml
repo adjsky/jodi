@@ -3,6 +3,9 @@ name: Create release
 on:
   workflow_dispatch:
 
+permissions:
+  contents: write
+
 jobs:
   create-release:
     runs-on: ubuntu-latest
@@ -20,5 +23,3 @@ jobs:
           body_path: "body.md"
           tag_name: ${{ env.REVISION }}
           draft: true
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
