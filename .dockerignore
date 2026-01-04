@@ -1,4 +1,5 @@
 .git
+.direnv/
 .github/
 .vscode/
 bootstrap/cache/*.php
@@ -12,13 +13,13 @@ storage/framework/sessions/*
 storage/framework/views/*
 tests/
 vendor/
+.cz.toml
 .env
 .env.*
 !.env.example
 .gitignore
 .gitattributes
 .prettierrc.json
-commitlint.config.js
 crowdin.yml
 eslint.config.js
 justfile

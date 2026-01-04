@@ -10,6 +10,7 @@ pre-commit:
     - run: "npm run format {staged_files} -- --write"
       glob: "*.{json,js,ts,svelte}"
       stage_fixed: true
+
 pre-push:
   parallel: true
   jobs:
@@ -17,12 +18,7 @@ pre-push:
       glob: "*.php"
     - run: "npm run check -- --fail-on-warnings"
       glob: "*.{js,ts,svelte}"
-prepare-commit-msg:
-  jobs:
-    - run: npx cz --hook
-      interactive: true
-      env:
-        LEFTHOOK: "0"
+
 commit-msg:
   jobs:
-    - run: npx commitlint --edit {1}
+    - run: cz check --allow-abort --commit-msg-file {1}

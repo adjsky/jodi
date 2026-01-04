@@ -2,6 +2,8 @@
 
 declare(strict_types=1);
 
+use Composer\InstalledVersions;
+
 return [
     /*
     |--------------------------------------------------------------------------
@@ -10,7 +12,7 @@ return [
     |
     */
 
-    'version' => '0.0.1',
+    'version' => InstalledVersions::getPrettyVersion('adjsky/jodi'),
 
     /*
     |--------------------------------------------------------------------------
