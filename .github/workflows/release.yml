@@ -13,14 +13,10 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - uses: shivammathur/setup-php@v2
-        with:
-          php-version: "8.4"
-
       - name: Read version
         id: version
         run: |
-          VERSION=$(php -r '$c = require "config/jodi.php"; echo $c["version"];')
+          VERSION=$(awk -F"'" '/version/ {print $4}' config/jodi.php)
           echo "VERSION=${VERSION}" >> $GITHUB_OUTPUT
 
       - uses: softprops/action-gh-release@v2

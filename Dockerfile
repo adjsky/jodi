@@ -48,17 +48,22 @@ RUN npm run build
 
 FROM base AS runtime
 
+ARG USER=jodi
+
+RUN adduser -D ${USER}
+
 WORKDIR /var/www/jodi
 
-COPY --from=builder /var/www/jodi/vendor ./vendor
-COPY --from=builder /var/www/jodi/public/build ./public/build
-COPY . .
+RUN chown ${USER}:${USER} /var/www/jodi
+
+COPY --chown=${USER}:${USER} --from=builder /var/www/jodi/vendor ./vendor
+COPY --chown=${USER}:${USER} --from=builder /var/www/jodi/public/build ./public/build
+COPY --chown=${USER}:${USER} . .
+
+USER ${USER}
 
 ENV APP_ENV=production
 ENV APP_DEBUG=false
-
-RUN mkdir -p bootstrap/cache && \
-    chmod -R 775 storage bootstrap/cache
 
 RUN php artisan jodi:setup
 RUN php artisan optimize
