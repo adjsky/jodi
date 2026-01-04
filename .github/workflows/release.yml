@@ -1,13 +1,16 @@
 name: Create release
 
 on:
-  workflow_dispatch:
+  push:
+    branches: [master]
 
 permissions:
   contents: write
 
 jobs:
   create-release:
+    if: "!startsWith(github.event.head_commit.message, 'bump:')"
+
     runs-on: ubuntu-latest
 
     steps:
@@ -26,3 +29,5 @@ jobs:
           body_path: "body.md"
           tag_name: ${{ env.REVISION }}
           draft: true
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
