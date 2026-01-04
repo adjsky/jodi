@@ -27,68 +27,6 @@
               nodejs_24
               php84
               php84Packages.composer
-              php84
-              php84Packages.composer
-              php84
-              php84Packages.composer
-              php84
-              php84Packages.composer
-              php84
-              php84Packages.composer
-              php84
-              php84Packages.composer
-              php84
-              php84Packages.composer
-              php84
-              php84Packages.composer
-              php84
-              php84Packages.composer
-              php84
-              php84Packages.composer
-              php84
-              php84Packages.composer
-              php84
-              php84Packages.composer
-              php84
-              php84Packages.composer
-              php84
-              php84Packages.composer
-              php84
-              php84Packages.composer
-              php84
-              php84Packages.composer
-              php84
-              php84Packages.composer
-              php84
-              php84Packages.composer
-              php84
-              php84Packages.composer
-              php84
-              php84Packages.composer
-              php84
-              php84Packages.composer
-              php84
-              php84Packages.composer
-              php84
-              php84Packages.composer
-              php84
-              php84Packages.composer
-              php84
-              php84Packages.composer
-              php84
-              php84Packages.composer
-              php84
-              php84Packages.composer
-              php84
-              php84Packages.composer
-              php84
-              php84Packages.composer
-              php84
-              php84Packages.composer
-              php84
-              php84Packages.composer
-              php84
-              php84Packages.composer
               just
               frankenphp
               commitizen
