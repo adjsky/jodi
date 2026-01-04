@@ -18,6 +18,7 @@ vendor/
 .gitignore
 .gitattributes
 .prettierrc.json
+commitlint.config.js
 crowdin.yml
 eslint.config.js
 justfile
