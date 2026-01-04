@@ -8,7 +8,6 @@ ARG NODE_VERSION=24
 FROM dunglas/frankenphp:php${PHP_VERSION}-alpine AS base
 
 RUN install-php-extensions \
-    opcache \
     pcntl \
     pdo_mysql \
     bcmath \
