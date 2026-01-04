@@ -17,6 +17,12 @@ pre-push:
       glob: "*.php"
     - run: "npm run check -- --fail-on-warnings"
       glob: "*.{js,ts,svelte}"
+prepare-commit-msg:
+  jobs:
+    - run: npx cz --hook
+      interactive: true
+      env:
+        LEFTHOOK: "0"
 commit-msg:
   jobs:
     - run: npx commitlint --edit {1}
