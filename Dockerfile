@@ -77,4 +77,4 @@ ENV APP_DEBUG=false
 RUN php artisan jodi:setup --force
 RUN php artisan optimize
 
-CMD ["multirun", "frankenphp run", "php artisan queue:work --tries=3 --timeout=60 --backoff=30", "php artisan schedule:work"]
+ENTRYPOINT ["./scripts/entrypoint.sh"]

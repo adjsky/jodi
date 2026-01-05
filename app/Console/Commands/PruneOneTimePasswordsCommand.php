@@ -7,9 +7,9 @@ namespace App\Console\Commands;
 use App\Models\UserOneTimePasswords;
 use Illuminate\Console\Command;
 
-class ClearOneTimePasswords extends Command
+class PruneOneTimePasswordsCommand extends Command
 {
-    protected $signature = 'jodi:clear:otp';
+    protected $signature = 'jodi:prune:otp';
 
     protected $description = 'Delete expired one time passwords.';
 
