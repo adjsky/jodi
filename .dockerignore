@@ -21,6 +21,7 @@ vendor/
 .gitignore
 .gitattributes
 .prettierrc.json
+CHANGELOG.md
 crowdin.yml
 eslint.config.js
 justfile
