@@ -16,7 +16,7 @@ return [
     |
     */
 
-    'default' => env('MAIL_MAILER', 'log'),
+    'default' => env('MAIL_MAILER'),
 
     /*
     |--------------------------------------------------------------------------
@@ -48,7 +48,7 @@ return [
             'username' => env('MAIL_USERNAME'),
             'password' => env('MAIL_PASSWORD'),
             'timeout' => null,
-            'local_domain' => env('MAIL_EHLO_DOMAIN', parse_url((string) env('APP_URL', 'http://localhost'), PHP_URL_HOST)),
+            'local_domain' => env('MAIL_EHLO_DOMAIN', parse_url((string) env('APP_URL'), PHP_URL_HOST)),
         ],
 
         'ses' => [
@@ -74,7 +74,7 @@ return [
 
         'log' => [
             'transport' => 'log',
-            'channel' => env('MAIL_LOG_CHANNEL'),
+            'channel' => env('MAIL_LOG_CHANNEL', 'stack'),
         ],
 
         'array' => [
@@ -113,8 +113,8 @@ return [
     */
 
     'from' => [
-        'address' => env('MAIL_FROM_ADDRESS', 'noreply@jodi.com'),
-        'name' => env('MAIL_FROM_NAME', 'Jodi'),
+        'address' => env('MAIL_FROM_ADDRESS', sprintf('no-reply@%s', parse_url(env('APP_URL'), PHP_URL_HOST))),
+        'name' => env('MAIL_FROM_NAME', env('APP_NAME')),
     ],
 
 ];
