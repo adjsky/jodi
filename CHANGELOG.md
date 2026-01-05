@@ -1,5 +1,11 @@
 # Releases
 
+## 0.2.2 (2026-01-05)
+
+### Fix
+
+- check keys presence before we generate them
+
 ## 0.2.1 (2026-01-06)
 
 ## 0.2.0 (2026-01-05)
