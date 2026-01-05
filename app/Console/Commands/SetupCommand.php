@@ -34,17 +34,11 @@ class SetupCommand extends Command
                 return self::FAILURE;
             }
 
-            if (! $this->runArtisan(
-                'key:generate',
-                label: 'application key generation'
-            )) {
+            if (! $this->generateApplicationKey()) {
                 return self::FAILURE;
             }
 
-            if (! $this->runArtisan(
-                'webpush:vapid',
-                label: 'vapid keys generation'
-            )) {
+            if (! $this->generateVapidKeys()) {
                 return self::FAILURE;
             }
 
@@ -89,6 +83,34 @@ class SetupCommand extends Command
             'migrate',
             label: 'database setup',
             params: ['--seed' => $this->option('seed')]
+        );
+    }
+
+    protected function generateApplicationKey(): bool
+    {
+        if (config('app.key') && ! $this->option('force')) {
+            $this->comment('! application key already exists.');
+
+            return true;
+        }
+
+        return $this->runArtisan(
+            'key:generate',
+            label: 'application key generation'
+        );
+    }
+
+    protected function generateVapidKeys(): bool
+    {
+        if (config('webpush.vapid.public_key') && config('webpush.vapid.private_key') && ! $this->option('force')) {
+            $this->comment('! vapid keys already exist.');
+
+            return true;
+        }
+
+        return $this->runArtisan(
+            'webpush:vapid',
+            label: 'vapid keys generation'
         );
     }
 
