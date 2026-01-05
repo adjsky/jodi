@@ -17,6 +17,7 @@ class SetupCommand extends Command
     const DB_PATH = 'database/database.sqlite';
 
     protected $signature = 'jodi:setup
+                            {--no-keys : Whether to skip application/vapid keys generation.}
                             {--seed : Indicates if the seed task should be re-run.}
                             {--force : Overwrite existing files.}';
 
@@ -34,11 +35,13 @@ class SetupCommand extends Command
                 return self::FAILURE;
             }
 
-            if (! $this->generateApplicationKey()) {
+            $withKeys = ! $this->option('no-keys');
+
+            if ($withKeys && ! $this->generateApplicationKey()) {
                 return self::FAILURE;
             }
 
-            if (! $this->generateVapidKeys()) {
+            if ($withKeys && ! $this->generateVapidKeys()) {
                 return self::FAILURE;
             }
 

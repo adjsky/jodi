@@ -3,7 +3,7 @@
 set -e
 
 if [ ! -f ".env" ]; then
-    php artisan jodi:setup --force
+    php artisan jodi:setup --no-keys --force
 fi
 
 php artisan config:cache --quiet
