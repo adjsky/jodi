@@ -41,8 +41,8 @@ COPY --from=node_builder /usr/local/bin/node /usr/local/bin/node
 COPY package*.json ./
 COPY patches/ ./patches
 
-RUN ln -s /usr/local/lib/node_modules/npm/bin/npm-cli.js /usr/local/bin/npm \
-    && ln -s /usr/local/lib/node_modules/npm/bin/npx-cli.js /usr/local/bin/npx
+RUN ln -s /usr/local/lib/node_modules/npm/bin/npm-cli.js /usr/local/bin/npm && \
+    ln -s /usr/local/lib/node_modules/npm/bin/npx-cli.js /usr/local/bin/npx
 
 RUN npm ci
 
@@ -74,7 +74,14 @@ USER ${USER}
 ENV APP_ENV=production
 ENV APP_DEBUG=false
 
-RUN php artisan jodi:setup --force
-RUN php artisan optimize
+RUN php artisan event:cache && \
+    php artisan route:cache && \
+    php artisan view:cache
 
-ENTRYPOINT ["./scripts/entrypoint.sh"]
+ENTRYPOINT ["scripts/entrypoint.sh"]
+CMD [ \
+    "multirun", \
+    "frankenphp run", \
+    "php artisan queue:work --tries=3 --timeout=60 --backoff=30", \
+    "php artisan schedule:work --quiet" \
+]
