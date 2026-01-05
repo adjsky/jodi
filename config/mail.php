@@ -113,8 +113,8 @@ return [
     */
 
     'from' => [
-        'address' => env('MAIL_FROM_ADDRESS', sprintf('no-reply@%s', parse_url(env('APP_URL'), PHP_URL_HOST))),
-        'name' => env('MAIL_FROM_NAME', env('APP_NAME')),
+        'address' => env('MAIL_FROM_ADDRESS', sprintf('no-reply@%s', parse_url(env('APP_URL', 'http://localhost:8000'), PHP_URL_HOST))),
+        'name' => env('MAIL_FROM_NAME', env('APP_NAME', 'Jodi')),
     ],
 
 ];
