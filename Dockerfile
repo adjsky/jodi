@@ -62,6 +62,7 @@ RUN adduser -D ${USER}
 
 WORKDIR /var/www/jodi
 
+RUN chown -R ${USER}:${USER} /config/caddy /data/caddy
 RUN chown ${USER}:${USER} /var/www/jodi
 
 COPY --chown=${USER}:${USER} --from=builder /var/www/jodi/vendor ./vendor
