@@ -17,6 +17,7 @@ vendor/
 .env
 .env.*
 !.env.example
+.envrc
 .gitignore
 .gitattributes
 .prettierrc.json
