@@ -25,4 +25,13 @@ return [
         'weekStartOn' => env('PREFERENCES_WEEK_START_ON', 'monday'),
         'notifications' => env('PREFERENCES_NOTIFICATIONS', 'push'),
     ],
+
+    /*
+    |--------------------------------------------------------------------------
+    | Proxy configuration
+    |--------------------------------------------------------------------------
+    |
+    */
+
+    'trustedProxies' => env('TRUSTED_PROXIES'),
 ];
