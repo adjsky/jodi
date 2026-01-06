@@ -10,7 +10,7 @@ type Options = {
 export function useSearchParams(options?: Options) {
     const { showProgress } = options ?? {};
 
-    const props = $derived(fromStore(page).current.props);
+    const url = $derived(new URL(fromStore(page).current.url, location.origin));
 
     function update(values: Record<string, string>, options?: VisitOptions) {
         const url = new URL(window.location.href);
@@ -39,7 +39,7 @@ export function useSearchParams(options?: Options) {
                 return update;
             }
 
-            return props.search[prop];
+            return url.searchParams.get(prop);
         },
         set(_, prop, v: string) {
             void update({ [prop]: v });

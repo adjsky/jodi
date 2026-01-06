@@ -40,7 +40,6 @@ class InertiaMiddleware extends Middleware
         return [
             ...parent::share($request),
             'version' => config('jodi.version'),
-            'search' => $request->query(),
             'auth.user' => fn () => $request->user()?->only(
                 ['id', 'name', 'email', 'preferences']
             ),

@@ -57,8 +57,7 @@
         <button
             {@attach inertia(() => ({
                 href: home({ query: { d: date.toString() } }),
-                viewTransition: true,
-                replace: true
+                viewTransition: true
             }))}
             class="group flex h-22 w-full flex-col items-center pt-1 text-lg"
             data-selected={boolAttr(compareDates(selected, date) == "selected")}
