@@ -39,7 +39,10 @@ Route::middleware('guest')->group(function () {
         ->group(function () {
             Route::get('/', 'show')->name('two-factor-challenge');
             Route::post('/consume', 'consume');
-            Route::post('/resend', 'resend');
+            // TODO: a regular string syntax coflicts with resend-laravel
+            // package for some reason. Maybe there is a better solution? idk,
+            // maybe i should create a bug report.
+            Route::post('/resend', [TwoFactorChallengeController::class, 'resend']);
         });
 });
 
