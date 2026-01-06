@@ -3,6 +3,7 @@
     import SettingsLayout from "$/app/ui/layouts/SettingLayout.svelte";
     import { User } from "$/entities/user";
     import { update } from "$/generated/actions/App/Http/Controllers/CurrentUserController";
+    import { me } from "$/generated/routes";
     import { m } from "$/paraglide/messages";
     import { getLocale } from "$/paraglide/runtime";
     import { LANGUAGES } from "$/shared/lib/language";
@@ -15,6 +16,7 @@
                 href={update()}
                 data={{ preferences: { locale } }}
                 selected={locale == getLocale()}
+                onSuccess={() => (location.href = me().url)}
             >
                 {#snippet icon()}
                     <Languages />

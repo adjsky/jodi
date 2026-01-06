@@ -26,6 +26,7 @@
         props.class
     )}
     viewTransition
+    replace
 >
     <span class="flex items-center gap-2">{@render icon?.()} {title}</span>
     <span class="flex items-center gap-2 text-cream-500">

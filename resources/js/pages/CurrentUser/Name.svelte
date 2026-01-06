@@ -1,8 +1,9 @@
 <script lang="ts">
-    import { Form, page } from "@inertiajs/svelte";
+    import { Form, page, router } from "@inertiajs/svelte";
     import { AtSign } from "@lucide/svelte";
     import SettingsLayout from "$/app/ui/layouts/SettingLayout.svelte";
     import { update } from "$/generated/actions/App/Http/Controllers/CurrentUserController";
+    import { me } from "$/generated/routes";
     import { m } from "$/paraglide/messages";
     import Button from "$/shared/ui/Button.svelte";
     import TextField from "$/shared/ui/TextField.svelte";
@@ -13,8 +14,10 @@
 <SettingsLayout title={m["current-user.account.name"]()}>
     <Form
         action={update()}
-        class="flex flex-grow flex-col justify-between py-5"
-        options={{ viewTransition: true }}
+        class="flex grow flex-col justify-between py-5"
+        options={{ replace: true }}
+        onSuccess={() =>
+            router.visit(me(), { viewTransition: true, replace: true })}
         let:processing
         let:errors
     >

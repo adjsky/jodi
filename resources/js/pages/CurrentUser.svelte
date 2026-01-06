@@ -100,6 +100,7 @@
         <User.Info.ActionRow
             href={logout()}
             onBefore={() => destroyPushSubscription()}
+            viewTransition
         >
             {m["current-user.actions.log-out"]()}
         </User.Info.ActionRow>

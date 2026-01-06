@@ -5,11 +5,15 @@
 
     import InfoActionRow from "./InfoActionRow.svelte";
 
-    import type { RequestPayload, UrlMethodPair } from "@inertiajs/core";
+    import type {
+        RequestPayload,
+        UrlMethodPair,
+        VisitCallbacks
+    } from "@inertiajs/core";
     import type { ClassName } from "$/shared/lib/styles";
     import type { Snippet } from "svelte";
 
-    type Props = {
+    type Props = Partial<VisitCallbacks> & {
         href: UrlMethodPair;
         data?: RequestPayload;
         icon?: Snippet;
@@ -32,4 +36,5 @@
     startIcon={icon}
     data-selected={boolAttr(selected)}
     class={tw("group data-selected:font-bold", props.class)}
+    replace
 />

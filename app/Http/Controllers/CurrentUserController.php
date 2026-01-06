@@ -58,6 +58,6 @@ class CurrentUserController extends Controller
 
         $this->user()->update($data);
 
-        return to_route('me');
+        return back();
     }
 }
