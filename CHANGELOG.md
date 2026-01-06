@@ -1,5 +1,11 @@
 # Releases
 
+## 0.3.4 (2026-01-06)
+
+### Fix
+
+- don't overwrite db/env on every launch
+
 ## 0.3.3 (2026-01-06)
 
 ### Fix
