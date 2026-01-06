@@ -19,7 +19,7 @@ class SetupCommand extends Command
     protected $signature = 'jodi:setup
                             {--no-keys : Whether to skip application/vapid keys generation.}
                             {--seed : Indicates if the seed task should be re-run.}
-                            {--force : Overwrite existing files.}';
+                            {--recreate : Whether to overwrite existing files.}';
 
     protected $description = 'Setup application before running it.';
 
@@ -63,7 +63,7 @@ class SetupCommand extends Command
 
     protected function setupEnvironment(): void
     {
-        if (! File::exists(self::DOTENV_PATH) || $this->option('force')) {
+        if (! File::exists(self::DOTENV_PATH) || $this->option('recreate')) {
             File::copy(self::EXAMPLE_DOTENV_PATH, self::DOTENV_PATH);
             $this->info(sprintf('✔ %s file created.', self::DOTENV_PATH));
         } else {
@@ -73,7 +73,7 @@ class SetupCommand extends Command
 
     protected function setupDatabase(): bool
     {
-        if (File::exists(self::DB_PATH) && ! $this->option('force')) {
+        if (File::exists(self::DB_PATH) && ! $this->option('recreate')) {
             $this->comment(sprintf('! %s already exists.', self::DB_PATH));
 
             return true;
@@ -91,7 +91,7 @@ class SetupCommand extends Command
 
     protected function generateApplicationKey(): bool
     {
-        if (config('app.key') && ! $this->option('force')) {
+        if (config('app.key') && ! $this->option('recreate')) {
             $this->comment('! application key already exists.');
 
             return true;
@@ -105,7 +105,7 @@ class SetupCommand extends Command
 
     protected function generateVapidKeys(): bool
     {
-        if (config('webpush.vapid.public_key') && config('webpush.vapid.private_key') && ! $this->option('force')) {
+        if (config('webpush.vapid.public_key') && config('webpush.vapid.private_key') && ! $this->option('recreate')) {
             $this->comment('! vapid keys already exist.');
 
             return true;
@@ -127,7 +127,7 @@ class SetupCommand extends Command
         $exitCode = Artisan::call($command, [
             ...$params ?? [],
             '--ansi' => true,
-            '--force' => $this->option('force'),
+            '--force' => true,
         ]);
 
         if ($exitCode != 0) {
