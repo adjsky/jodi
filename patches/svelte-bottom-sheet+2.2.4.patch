@@ -1,5 +1,51 @@
+diff --git a/node_modules/svelte-bottom-sheet/dist/BottomSheet/BottomSheet.svelte b/node_modules/svelte-bottom-sheet/dist/BottomSheet/BottomSheet.svelte
+index 4777da0..915d5fc 100644
+--- a/node_modules/svelte-bottom-sheet/dist/BottomSheet/BottomSheet.svelte
++++ b/node_modules/svelte-bottom-sheet/dist/BottomSheet/BottomSheet.svelte
+@@ -370,6 +370,20 @@ to has "height" in it's name.
+ 		if (settings.disableDragging) return;
+ 		onsheetdragend?.();
+ 
++        // Determine movement direction (snapping up or down)
++		const isMovingUp = sheetHeight < startHeight;
++		const buffer = measurementToPx(0.95, maxHeightPx);
++
++		// Prevent accidental snapping if the movement is small
++		if (
++			(isMovingUp && sheetHeight > startHeight - buffer) ||
++			(!isMovingUp && sheetHeight < startHeight + buffer)
++		) {
++			sheetHeight = startHeight;
++			resetStatesAfterMove();
++			return;
++		}
++
+ 		// If there is only one snap point (1), apply a larger buffer for closing behavior
+ 		if (settings.snapPoints.length === 1) {
+ 			if (sheetHeight > measurementToPx(settings.closeThreshold, maxHeightPx)) {
+@@ -393,20 +407,6 @@ to has "height" in it's name.
+ 			return;
+ 		}
+ 
+-		// Determine movement direction (snapping up or down)
+-		const isMovingUp = sheetHeight < startHeight;
+-		const buffer = measurementToPx(0.95, maxHeightPx);
+-
+-		// Prevent accidental snapping if the movement is small
+-		if (
+-			(isMovingUp && sheetHeight > startHeight - buffer) ||
+-			(!isMovingUp && sheetHeight < startHeight + buffer)
+-		) {
+-			sheetHeight = startHeight;
+-			resetStatesAfterMove();
+-			return;
+-		}
+-
+ 		// Find valid snap points based on the movement direction
+ 		const validPoints = settings.snapPoints
+ 			.map((point) => ({ original: point, converted: measurementToPx(point, maxHeightPx) }))
 diff --git a/node_modules/svelte-bottom-sheet/dist/BottomSheet/Overlay/Overlay.svelte b/node_modules/svelte-bottom-sheet/dist/BottomSheet/Overlay/Overlay.svelte
-index c372f2b..5d97def 100644
+index c372f2b..72c0586 100644
 --- a/node_modules/svelte-bottom-sheet/dist/BottomSheet/Overlay/Overlay.svelte
 +++ b/node_modules/svelte-bottom-sheet/dist/BottomSheet/Overlay/Overlay.svelte
 @@ -14,11 +14,19 @@
@@ -23,7 +69,7 @@ index c372f2b..5d97def 100644
  		aria-hidden="true"
  		transition:fade={{ duration: 200 }}
 diff --git a/node_modules/svelte-bottom-sheet/dist/BottomSheet/Sheet/Sheet.svelte b/node_modules/svelte-bottom-sheet/dist/BottomSheet/Sheet/Sheet.svelte
-index c5bdf9e..c3eb1fd 100644
+index c5bdf9e..ed330bb 100644
 --- a/node_modules/svelte-bottom-sheet/dist/BottomSheet/Sheet/Sheet.svelte
 +++ b/node_modules/svelte-bottom-sheet/dist/BottomSheet/Sheet/Sheet.svelte
 @@ -25,16 +25,6 @@
