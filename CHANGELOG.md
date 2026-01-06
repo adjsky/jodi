@@ -1,5 +1,11 @@
 # Releases
 
+## 0.3.0 (2026-01-06)
+
+### Feat
+
+- add trustProxies middleware configuration
+
 ## 0.2.7 (2026-01-06)
 
 ## 0.2.6 (2026-01-06)
