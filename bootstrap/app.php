@@ -5,6 +5,7 @@ declare(strict_types=1);
 use App\Http\Middleware\InertiaMiddleware;
 use App\Http\Middleware\LocaleMiddleware;
 use App\Http\Middleware\RequestIdMiddleware;
+use App\Http\Middleware\TrustProxiesMiddleware;
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
@@ -21,12 +22,13 @@ return Application::configure(basePath: dirname(__DIR__))
         __DIR__.'/../app/Domain/*/Listeners',
     ])
     ->withMiddleware(function (Middleware $middleware): void {
-        $middleware->trustProxies(at: config('jodi.trustedProxies'));
-        $middleware->web(append: [
-            LocaleMiddleware::class,
-            RequestIdMiddleware::class,
-            InertiaMiddleware::class,
-        ]);
+        $middleware->web(
+            prepend: [TrustProxiesMiddleware::class],
+            append: [
+                LocaleMiddleware::class,
+                RequestIdMiddleware::class,
+                InertiaMiddleware::class,
+            ]);
         $middleware->validateCsrfTokens(except: ['push-subscriptions']);
     })
     ->withExceptions(function (Exceptions $exceptions): void {
