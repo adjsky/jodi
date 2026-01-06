@@ -1,5 +1,11 @@
 # Releases
 
+## 0.3.1 (2026-01-06)
+
+### Fix
+
+- move trust proxies middleware to a separate web middleware to prevent crashes
+
 ## 0.3.0 (2026-01-06)
 
 ### Feat
