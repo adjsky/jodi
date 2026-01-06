@@ -1,5 +1,14 @@
 # Releases
 
+## 0.3.3 (2026-01-06)
+
+### Fix
+
+- history api struggles in user settings
+- log errors if subscribeToPushNotifications failed
+- check for accidental snaps in the first place
+- hanging deferred props loaders
+
 ## 0.3.2 (2026-01-06)
 
 ### Fix
