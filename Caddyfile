@@ -1,4 +1,6 @@
 {
+	skip_install_trust
+
 	log {
 		format console
 	}
@@ -6,7 +8,7 @@
 	frankenphp
 }
 
-{$APP_URL:":8000"} {
+{$SERVER_NAME:":8000"} {
 	root public/
 
 	header /build/sw.js Service-Worker-Allowed "/"
