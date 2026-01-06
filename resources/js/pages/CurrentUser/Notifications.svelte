@@ -61,6 +61,7 @@
                         title: m["push-notifications.success-subscribe"]()
                     });
                 } catch (e) {
+                    console.error(e);
                     if (e instanceof Error && e.name == "NotAllowedError") {
                         toaster.info({
                             title: m["push-notifications.no-permission"]()
