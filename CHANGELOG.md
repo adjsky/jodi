@@ -1,5 +1,12 @@
 # Releases
 
+## 0.4.1 (2026-01-07)
+
+### Fix
+
+- todos->events typo
+- properly handle push notifications
+
 ## 0.4.0 (2026-01-07)
 
 ### Feat
