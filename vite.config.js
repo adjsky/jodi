@@ -70,6 +70,7 @@ export default defineConfig({
             },
 
             workbox: {
+                importScripts: ["/sw-push.js"],
                 globPatterns: [
                     "**/*.{js,css,html,ico,jpg,png,svg,woff,woff2,ttf,eot}"
                 ],

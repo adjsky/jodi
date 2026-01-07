@@ -239,5 +239,7 @@
     "Whoops!": "Упс!",
     "Yes": "Да",
     "You are receiving this email because we received a password reset request for your account.": "Вы получили это письмо, потому что мы получили запрос на сброс пароля для Вашей учётной записи.",
-    "You were invited to Jodi": "Вы были приглашены в Jodi"
+    "You were invited to Jodi": "Вы были приглашены в Jodi",
+    "Upcoming event: :title.": "Предстоящее событие: :title.",
+    "Starts :time.": "Начинается :time."
 }

@@ -6,6 +6,7 @@ namespace App\Domain\Event\Notifications;
 
 use App\Models\Event;
 use App\Models\User;
+use Carbon\CarbonInterface;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\MailMessage;
@@ -29,10 +30,13 @@ class EventReminder extends Notification implements ShouldQueue
 
     public function toWebPush(): DeclarativeWebPushMessage
     {
+        $navigate = config('app.url').'?d='.$this->event->starts_at->format('Y-m-d');
+
         return (new DeclarativeWebPushMessage)
-            ->title('Event starts soon.')
-            ->body('Event starts soon.')
-            ->navigate('https://localhost:8000');
+            ->title(__('Upcoming event: :title.', ['title' => $this->event->title]))
+            ->body(__('Starts :time.', ['time' => $this->startsIn()]))
+            ->data(['navigate' => $navigate])
+            ->navigate($navigate);
     }
 
     public function toMail(): MailMessage
@@ -40,5 +44,14 @@ class EventReminder extends Notification implements ShouldQueue
         return (new MailMessage)
             ->subject('Event starts soon.')
             ->markdown('mail.event-reminder');
+    }
+
+    protected function startsIn(): string
+    {
+        return $this->event->starts_at->diffForHumans(
+            $this->event->notify_at,
+            syntax: CarbonInterface::DIFF_RELATIVE_TO_NOW,
+            options: CarbonInterface::ONE_DAY_WORDS
+        );
     }
 }
