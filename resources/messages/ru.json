@@ -8,7 +8,8 @@
         "no": "Нет",
         "yes": "Да",
         "required-field": "Пожалуйста, заполните это поле",
-        "to": "до"
+        "to": "до",
+        "invalid-time-range": "Некорректный диапазон времени"
     },
     "push-notifications": {
         "not-supported": "Ваш браузер устарел. Обновите его, чтобы включить push-уведомления.",
@@ -106,8 +107,13 @@
     "reminders": {
         "hour": [
             {
-                "declarations": ["input h", "local hours = h: plural"],
-                "selectors": ["hours"],
+                "declarations": [
+                    "input h",
+                    "local hours = h: plural"
+                ],
+                "selectors": [
+                    "hours"
+                ],
                 "match": {
                     "hours=one": "{h} час",
                     "hours=few": "{h} часа"
@@ -116,8 +122,13 @@
         ],
         "day": [
             {
-                "declarations": ["input d", "local days = d: plural"],
-                "selectors": ["days"],
+                "declarations": [
+                    "input d",
+                    "local days = d: plural"
+                ],
+                "selectors": [
+                    "days"
+                ],
                 "match": {
                     "days=one": "{d} день",
                     "days=few": "{d} дня"
