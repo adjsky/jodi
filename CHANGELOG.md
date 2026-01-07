@@ -1,5 +1,11 @@
 # Releases
 
+## 0.5.1 (2026-01-07)
+
+### Fix
+
+- theme color mismatch
+
 ## 0.5.0 (2026-01-07)
 
 ### Feat
