@@ -40,6 +40,7 @@ class InertiaMiddleware extends Middleware
         return [
             ...parent::share($request),
             'version' => config('jodi.version'),
+            'config' => ['VAPID_PUBLIC_KEY' => config('webpush.vapid.public_key')],
             'auth.user' => fn () => $request->user()?->only(
                 ['id', 'name', 'email', 'preferences']
             ),
@@ -48,6 +49,7 @@ class InertiaMiddleware extends Middleware
                 'error' => fn () => $request->session()->get('error'),
                 'success' => fn () => $request->session()->get('success'),
             ],
+
         ];
     }
 }

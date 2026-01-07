@@ -6,12 +6,11 @@ declare module "@inertiajs/core" {
     interface PageProps extends InertiaPageProps, AppPageProps {}
 }
 
-declare global {
-    export const __VAPID_PUBLIC_KEY__: string;
-}
-
 export interface AppPageProps {
     version: string;
+    config: {
+        VAPID_PUBLIC_KEY: string;
+    };
     auth: {
         user: {
             id: number;

@@ -49,7 +49,9 @@ export async function subscribeToPushNotifications() {
 
     subscription = await pushManager.subscribe({
         userVisibleOnly: true,
-        applicationServerKey: urlBase64ToUint8Array(__VAPID_PUBLIC_KEY__)
+        applicationServerKey: urlBase64ToUint8Array(
+            get(page).props.config.VAPID_PUBLIC_KEY
+        )
     });
 
     const jsonSubscription = subscription.toJSON();
@@ -129,7 +131,9 @@ export function useNotificationsInitBanner() {
             createActionBanner(m["push-notifications.configure.title"](), {
                 action: m["push-notifications.configure.action"](),
                 onAccept() {
-                    router.visit(notifications(), { viewTransition: true });
+                    void router.visit(notifications(), {
+                        viewTransition: true
+                    });
                 }
             });
         }
