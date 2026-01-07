@@ -44,6 +44,9 @@ export default defineConfig({
                 background_color: "#fdf3e2",
                 display: "standalone",
                 orientation: "portrait",
+                dir: "ltr",
+                lang: "en",
+                categories: ["productivity", "lifestyle"],
                 icons: [
                     {
                         src: "/pwa-64x64.png",
