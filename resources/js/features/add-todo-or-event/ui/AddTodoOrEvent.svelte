@@ -14,12 +14,6 @@
     import EventForm from "./EventForm.svelte";
     import TodoForm from "./TodoForm.svelte";
 
-    type Props = {
-        loading: boolean;
-    };
-
-    const { loading }: Props = $props();
-
     let isCalendarOpen = $state(false);
 
     const view = new HistoryView();
@@ -53,7 +47,7 @@
         }
     }
 >
-    <Dialog.Trigger disabled={loading}>
+    <Dialog.Trigger>
         {#snippet asChild(props)}
             <ActionButton
                 {...props()}

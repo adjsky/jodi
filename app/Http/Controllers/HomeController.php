@@ -23,28 +23,23 @@ class HomeController extends Controller
         $endUtc = Carbon::parse($date, $tz)->endOfDay()->setTimezone('UTC');
 
         return inertia('Home', [
-            'todos' => Inertia::defer(
-                fn () => TodoDto::collect(
-                    $this->user()->todos()
-                        ->with('category')
-                        ->whereDate('todos.todo_date', $date)
-                        ->orderBy('todos.position', 'asc')
-                        ->get()
-                        ->sortBy(fn ($todo) => $todo->category?->name)
-                        ->values()
-                )
+            'todos' => TodoDto::collect(
+                $this->user()->todos()
+                    ->with('category')
+                    ->whereDate('todos.todo_date', $date)
+                    ->orderBy('todos.position', 'asc')
+                    ->get()
+                    ->sortBy(fn ($todo) => $todo->category?->name)
+                    ->values()
             ),
-            'events' => Inertia::defer(
-                fn () => EventDto::collect(
-                    $this->user()->events()
-                        ->whereBetween('starts_at', [$startUtc, $endUtc])
-                        ->orderBy('starts_at', 'asc')
-                        ->get()
-                )
+            'events' => EventDto::collect(
+                $this->user()->events()
+                    ->whereBetween('starts_at', [$startUtc, $endUtc])
+                    ->orderBy('starts_at', 'asc')
+                    ->get()
             ),
             'categories' => Inertia::defer(
                 fn () => $this->user()->categories->pluck('name'),
-                'other'
             ),
         ]);
     }

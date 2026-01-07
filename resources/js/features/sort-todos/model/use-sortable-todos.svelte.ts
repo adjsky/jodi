@@ -11,29 +11,15 @@ import { extract } from "runed";
 import type { Getter } from "runed";
 import type { Attachment } from "svelte/attachments";
 
-export function useSortableTodos(
-    todos: Getter<App.Data.TodoDto[]>,
-    loading: Getter<boolean>
-) {
+export function useSortableTodos(todos: Getter<App.Data.TodoDto[]>) {
     const manager = new DragDropManager();
 
-    let groups = $derived.by(() => {
-        if (extract(loading)) {
-            return {
-                [m["todos.ungrouped"]()]: Array.from(
-                    { length: 7 },
-                    (_, index) => ({
-                        id: index
-                    })
-                ) as App.Data.TodoDto[]
-            };
-        }
-
-        return groupBy(
+    let groups = $derived(
+        groupBy(
             extract(todos),
             ({ category }) => category ?? m["todos.ungrouped"]()
-        );
-    });
+        )
+    );
 
     $effect(() =>
         manager.monitor.addEventListener("dragover", async (e) => {
@@ -53,7 +39,7 @@ export function useSortableTodos(
 
                 const { id, index, group } = source.sortable;
 
-                router.visit(reorder(Number(id)), {
+                void router.visit(reorder(Number(id)), {
                     replace: true,
                     preserveScroll: true,
                     preserveState: true,

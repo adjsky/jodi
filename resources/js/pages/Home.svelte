@@ -15,9 +15,6 @@
 
     const { todos, events }: Props = $props();
 
-    const isLoadingEvents = $derived(events === undefined);
-    const isLoadingTodos = $derived(todos === undefined);
-
     useNotificationsInitBanner();
 </script>
 
@@ -40,9 +37,9 @@
             {m["home.empty-day"]()}
         </p>
     {:else}
-        <EventList {events} loading={isLoadingEvents} class="mt-4" />
-        <TodoList {todos} loading={isLoadingTodos} class="mt-4" />
+        <EventList {events} class="mt-4" />
+        <TodoList {todos} class="mt-4" />
     {/if}
 
-    <AddTodoOrEvent loading={isLoadingEvents || isLoadingTodos} />
+    <AddTodoOrEvent />
 </main>

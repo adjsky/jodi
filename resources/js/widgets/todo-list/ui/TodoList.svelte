@@ -8,7 +8,6 @@
     import { HistoryView } from "$/shared/inertia/history-view.svelte";
     import { prefersLightText } from "$/shared/lib/color";
     import { tw } from "$/shared/lib/styles";
-    import Skeleton from "$/shared/ui/Skeleton.svelte";
     import { isDeepEqual } from "remeda";
     import { watch } from "runed";
 
@@ -17,18 +16,14 @@
     import type { SvelteHTMLElements } from "svelte/elements";
 
     type Props = SvelteHTMLElements["section"] & {
-        loading: boolean;
         todos: App.Data.TodoDto[];
     };
 
-    const { todos, loading, ...rest }: Props = $props();
+    const { todos, ...rest }: Props = $props();
 
     const editView = new HistoryView<App.Data.TodoDto>("edit-todo");
 
-    const st = useSortableTodos(
-        () => todos,
-        () => loading
-    );
+    const st = useSortableTodos(() => todos);
 
     watch(
         () => [editView.meta],
@@ -56,7 +51,7 @@
         <h3 class="text-lg font-bold">{m["todos.title"]()}</h3>
     </div>
 
-    {#if todos?.length == 0}
+    {#if todos.length == 0}
         <img
             src={PencilNote}
             width={217}
@@ -116,39 +111,31 @@
             class={todo.completedAt && "opacity-40"}
         >
             {#snippet checkbox()}
-                <Checkbox {loading} {todo} />
+                <Checkbox {todo} />
             {/snippet}
             {#snippet edit()}
                 <button
-                    disabled={loading}
                     class="relative table w-full table-fixed text-start text-lg font-medium"
                     data-part="edit"
                     onclick={() => editView.push(todo)}
                 >
-                    {#if loading}
-                        <Skeleton
-                            inline
-                            style="width: {Math.random() * 100 + 100}px"
-                        />
-                    {:else}
-                        <span
-                            class={[
-                                "table-cell overflow-hidden text-ellipsis whitespace-nowrap",
-                                todo.completedAt && "line-through",
-                                todo.color && [
-                                    "rounded-xl px-1.5",
-                                    prefersLightText(todo.color) && "text-white"
-                                ]
-                            ]}
-                            style="background: {todo.color ?? 'transparent'};"
-                        >
-                            {todo.title}
-                        </span>
-                    {/if}
+                    <span
+                        class={[
+                            "table-cell overflow-hidden text-ellipsis whitespace-nowrap",
+                            todo.completedAt && "line-through",
+                            todo.color && [
+                                "rounded-xl px-1.5",
+                                prefersLightText(todo.color) && "text-white"
+                            ]
+                        ]}
+                        style="background: {todo.color ?? 'transparent'};"
+                    >
+                        {todo.title}
+                    </span>
                 </button>
             {/snippet}
             {#snippet grip()}
-                <button disabled={loading} aria-label="lorem" class="shrink-0">
+                <button aria-label="lorem" class="shrink-0">
                     <GripVertical class="text-2xl text-cream-400" />
                 </button>
             {/snippet}

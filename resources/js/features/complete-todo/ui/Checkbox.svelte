@@ -10,12 +10,11 @@
     import type { ClassName } from "$/shared/lib/styles";
 
     type Props = {
-        loading?: boolean;
         todo: App.Data.TodoDto;
         class?: ClassName;
     };
 
-    const { loading, todo, ...props }: Props = $props();
+    const { todo, ...props }: Props = $props();
 </script>
 
 <button
@@ -44,7 +43,6 @@
         showProgress: false
     }))}
     type="button"
-    disabled={loading}
     class={tw(
         "group flex size-5.5 shrink-0 items-center justify-center rounded-full border border-cream-950 text-ms data-completed:bg-cream-950 data-completed:text-cream-50",
         props.class
