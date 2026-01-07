@@ -36,6 +36,7 @@ class EventReminder extends Notification implements ShouldQueue
             ->title(__('Upcoming event: :title.', ['title' => $this->event->title]))
             ->body(__('Starts :time.', ['time' => $this->startsIn()]))
             ->data(['navigate' => $navigate])
+            ->tag('event-'.$this->event->id.'-reminder')
             ->navigate($navigate);
     }
 
