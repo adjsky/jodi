@@ -1,5 +1,15 @@
 # Releases
 
+## 0.4.0 (2026-01-07)
+
+### Feat
+
+- go to current date/year
+
+### Fix
+
+- pass VAPID_PUBLIC_KEY at runtime
+
 ## 0.3.4 (2026-01-06)
 
 ### Fix
