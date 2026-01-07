@@ -13,8 +13,7 @@ sw.addEventListener("push", (e) => {
 
     const {
         title,
-        // TODO: delete if notification looks good after testing
-        // icon = "/pwa-192x192.png",
+        icon = "/pwa-192x192.png",
         badge = "/pwa-72x72.png",
         vibrate = [200, 100, 200],
         ...options
