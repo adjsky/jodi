@@ -40,7 +40,7 @@ export default defineConfig({
                 short_name: "Jodi",
                 description: "Journal & Diary",
                 start_url: "/",
-                theme_color: "#f67a3c",
+                theme_color: "#fdf3e2",
                 background_color: "#fdf3e2",
                 display: "standalone",
                 orientation: "portrait",
@@ -48,6 +48,11 @@ export default defineConfig({
                     {
                         src: "/pwa-64x64.png",
                         sizes: "64x64",
+                        type: "image/png"
+                    },
+                    {
+                        src: "/pwa-72x72.png",
+                        sizes: "72x72",
                         type: "image/png"
                     },
                     {

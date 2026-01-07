@@ -8,7 +8,6 @@
         "lint": "eslint",
         "format": "prettier",
         "check": "svelte-check",
-        "generate-pwa-assets": "pwa-assets-generator --preset=minimal-2023 public/favicon.svg",
         "postinstall": "patch-package"
     },
     "devDependencies": {
