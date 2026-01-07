@@ -28,10 +28,15 @@
         selected?.scrollIntoView({ block: "center" });
     });
 
-    const year = $derived(new Year(selected, () => start));
+    let year = $derived(new Year(selected, () => start));
 
     function gotoYear(direction: "next" | "previous") {
         year[direction]();
+        monthsNode?.scrollTo({ top: 0, left: 0, behavior: "smooth" });
+    }
+
+    function gotoCurrentYear() {
+        year.current = new Date().getFullYear();
         monthsNode?.scrollTo({ top: 0, left: 0, behavior: "smooth" });
     }
 </script>
@@ -44,7 +49,9 @@
     {/snippet}
     {#snippet action()}
         <div class="flex items-center gap-4 text-xl">
-            <span class="text-2xl font-bold">{year.current}</span>
+            <button class="text-2xl font-bold" onclick={gotoCurrentYear}>
+                {year.current}
+            </button>
 
             <div class="flex gap-2">
                 <Button

@@ -27,19 +27,22 @@
     <button class="p-2.5" onclick={() => view.push()}>
         <Calendar class="text-3xl" />
     </button>
-    <div class="absolute left-1/2 -translate-x-1/2">
-        <h1 class="text-center text-xl font-bold">
+    <button
+        class="absolute left-1/2 flex -translate-x-1/2 flex-col"
+        onclick={() => searchParams.update({ d: today(TIMEZONE).toString() })}
+    >
+        <span class="text-center text-xl font-bold">
             {new DateFormatter(getLocale(), { weekday: "long" }).format(
                 cursor.toDate(TIMEZONE)
             )}
-        </h1>
-        <h2 class="text-center text-sm text-cream-600">
+        </span>
+        <span class="text-center text-sm text-cream-600">
             {new DateFormatter(getLocale(), {
                 year: "numeric",
                 month: "long"
             }).format(cursor.toDate(TIMEZONE))}
-        </h2>
-    </div>
+        </span>
+    </button>
     <Link href={me()} viewTransition>
         <User.Avatar name={user.name} />
     </Link>

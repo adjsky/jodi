@@ -29,6 +29,10 @@ export class Year {
         return this.#cursor.year;
     }
 
+    set current(year: number) {
+        this.#cursor = this.#cursor.set({ year });
+    }
+
     months() {
         const start = startOfYear(extract(this.#cursor));
         const formatter = new DateFormatter(getLocale(), { month: "long" });
