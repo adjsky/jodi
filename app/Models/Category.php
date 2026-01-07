@@ -19,15 +19,9 @@ class Category extends Model
 
     protected $hidden = [];
 
-    /**
-     * @return array{id: "non-negative-int"}
-     */
     protected function casts(): array
     {
-        return [
-            // TODO: https://github.com/larastan/larastan/issues/2402
-            'id' => 'non-negative-int',
-        ];
+        return [];
     }
 
     /** @return HasOne<User,$this> */

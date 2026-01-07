@@ -38,6 +38,8 @@ class TodoController extends Controller
             }
 
             if (isset($data['category'])) {
+                // TODO: https://github.com/larastan/larastan/issues/2402
+                // @phpstan-ignore assign.propertyType
                 $todo->category_id = $this->user()
                     ->categories()
                     ->firstOrCreate(['name' => $data['category']])->id;
@@ -91,6 +93,8 @@ class TodoController extends Controller
                     ->where('position', '>=', $newPosition)
                     ->increment('position');
 
+                // TODO: https://github.com/larastan/larastan/issues/2402
+                // @phpstan-ignore assign.propertyType
                 $todo->category_id = $newCategory;
                 $todo->position = $newPosition;
             } else {
