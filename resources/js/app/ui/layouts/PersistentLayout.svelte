@@ -1,4 +1,5 @@
 <script lang="ts">
+    import { progress } from "@inertiajs/svelte";
     import { m } from "$/paraglide/messages";
     import { useToaster } from "$/shared/inertia/use-flash-toaster.svelte";
     import { toaster } from "$/shared/lib/toast";
@@ -23,6 +24,7 @@
             createActionBanner(m["pwa-update.title"](), {
                 action: m["pwa-update.action"](),
                 onAccept() {
+                    progress.start();
                     void updateServiceWorker();
                 },
                 autoclose: false

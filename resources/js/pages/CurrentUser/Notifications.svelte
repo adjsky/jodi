@@ -1,5 +1,5 @@
 <script lang="ts">
-    import { page } from "@inertiajs/svelte";
+    import { page, progress } from "@inertiajs/svelte";
     import { Bell, BellRing, Mail } from "@lucide/svelte";
     import SettingsLayout from "$/app/ui/layouts/SettingLayout.svelte";
     import { User } from "$/entities/user";
@@ -55,13 +55,16 @@
             class="gap-2"
             onclick={async () => {
                 try {
+                    progress.start();
                     await subscribeToPushNotifications();
                     showAllowPushButton = false;
+                    progress.finish();
                     toaster.success({
                         title: m["push-notifications.success-subscribe"]()
                     });
                 } catch (e) {
                     console.error(e);
+                    progress.remove();
                     if (e instanceof Error && e.name == "NotAllowedError") {
                         toaster.info({
                             title: m["push-notifications.no-permission"]()
