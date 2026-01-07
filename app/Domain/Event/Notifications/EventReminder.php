@@ -33,7 +33,7 @@ class EventReminder extends Notification implements ShouldQueue
         $navigate = config('app.url').'?d='.$this->event->starts_at->format('Y-m-d');
 
         return (new DeclarativeWebPushMessage)
-            ->title(__('Upcoming event: :title.', ['title' => $this->event->title]))
+            ->title(__(':title is upcoming.', ['title' => $this->event->title]))
             ->body(__('Starts :time.', ['time' => $this->startsIn()]))
             ->data(['navigate' => $navigate])
             ->tag('event-'.$this->event->id.'-reminder')

@@ -240,6 +240,6 @@
     "Yes": "Yes",
     "You are receiving this email because we received a password reset request for your account.": "You are receiving this email because we received a password reset request for your account.",
     "You were invited to Jodi": "You were invited to Jodi",
-    "Upcoming event: :title.": "Upcoming event: :title.",
+    ":title is upcoming.": ":title is upcoming.",
     "Starts :time.": "Starts :time."
 }
