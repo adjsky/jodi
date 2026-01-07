@@ -14,7 +14,7 @@ export const optimistic = {
     edit: (id: number, keepHash = false) =>
         _optimistic(
             (prev, data) => ({
-                todos: prev.todos.map((t: App.Data.EventDto) =>
+                events: prev.events.map((t: App.Data.EventDto) =>
                     t.id == id ? { ...t, ...data } : t
                 )
             }),
@@ -27,7 +27,7 @@ export const optimistic = {
     delete: (id: number) =>
         _optimistic(
             (prev) => ({
-                todos: prev.events.filter((t: App.Data.EventDto) => t.id != id)
+                events: prev.events.filter((t: App.Data.EventDto) => t.id != id)
             }),
             {
                 error: m["events.errors.delete"](),
