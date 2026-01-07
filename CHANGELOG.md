@@ -1,5 +1,11 @@
 # Releases
 
+## 0.5.0 (2026-01-07)
+
+### Feat
+
+- show progress indicator in several cases
+
 ## 0.4.3 (2026-01-08)
 
 ## 0.4.2 (2026-01-08)
