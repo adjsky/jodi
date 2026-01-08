@@ -10,7 +10,7 @@
         checkPushNotificationsSupport,
         subscribeToPushNotifications
     } from "$/shared/lib/push-notifications";
-    import { toaster } from "$/shared/lib/toast";
+    import { toaster } from "$/shared/lib/toaster";
     import Button from "$/shared/ui/Button.svelte";
     import { onMount } from "svelte";
 
@@ -59,20 +59,18 @@
                     await subscribeToPushNotifications();
                     showAllowPushButton = false;
                     progress.finish();
-                    toaster.success({
-                        title: m["push-notifications.success-subscribe"]()
-                    });
+                    toaster.success(
+                        m["push-notifications.success-subscribe"]()
+                    );
                 } catch (e) {
                     console.error(e);
                     progress.remove();
                     if (e instanceof Error && e.name == "NotAllowedError") {
-                        toaster.info({
-                            title: m["push-notifications.no-permission"]()
-                        });
+                        toaster.info(m["push-notifications.no-permission"]());
                     } else {
-                        toaster.error({
-                            title: m["push-notifications.failed-to-subscribe"]()
-                        });
+                        toaster.error(
+                            m["push-notifications.failed-to-subscribe"]()
+                        );
                     }
                 }
             }}

@@ -1,11 +1,10 @@
 <script lang="ts">
     import { progress } from "@inertiajs/svelte";
     import { m } from "$/paraglide/messages";
-    import { useToaster } from "$/shared/inertia/use-flash-toaster.svelte";
-    import { toaster } from "$/shared/lib/toast";
+    import { useFlashToaster } from "$/shared/inertia/use-flash-toaster.svelte";
     import { createActionBanner } from "$/shared/ui/ActionBanner.svelte";
-    import Toaster from "$/shared/ui/Toaster.svelte";
     import { watch } from "runed";
+    import { Toaster } from "svelte-sonner";
     import { useRegisterSW } from "virtual:pwa-register/svelte";
 
     import type { Snippet } from "svelte";
@@ -32,9 +31,9 @@
         }
     );
 
-    useToaster();
+    useFlashToaster();
 </script>
 
-<Toaster {toaster} />
+<Toaster />
 
 {@render children()}

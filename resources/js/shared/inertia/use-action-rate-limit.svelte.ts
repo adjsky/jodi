@@ -1,7 +1,7 @@
 import { router } from "@inertiajs/svelte";
 import { m } from "$/paraglide/messages";
 
-import { toaster } from "../lib/toast";
+import { toaster } from "../lib/toaster";
 
 import type { RouteDefinition } from "$/generated/wayfinder";
 
@@ -25,7 +25,7 @@ export function useActionRateLimit(action: RouteDefinition<["post"]>) {
             secondsLeft = Number(response.headers["retry-after"]);
             running = true;
 
-            toaster.error({ title: m["common.too-many-requests"]() });
+            toaster.error(m["common.too-many-requests"]());
         })
     );
 

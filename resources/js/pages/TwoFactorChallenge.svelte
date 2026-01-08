@@ -5,7 +5,7 @@
     import { m } from "$/paraglide/messages";
     import Froggy from "$/shared/assets/froggy.svg";
     import { useActionRateLimit } from "$/shared/inertia/use-action-rate-limit.svelte";
-    import { toaster } from "$/shared/lib/toast";
+    import { toaster } from "$/shared/lib/toaster";
     import Button from "$/shared/ui/Button.svelte";
     import OneTimePasswordInput from "$/shared/ui/OneTimePasswordInput.svelte";
     import { consume, resend } from "$actions/TwoFactorChallengeController";
@@ -30,7 +30,7 @@
         class="mt-13 space-y-3.5"
         onError={(error) => {
             if (error.password) {
-                toaster.error({ title: error.password });
+                toaster.error(error.password);
             }
         }}
         let:processing

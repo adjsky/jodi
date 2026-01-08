@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
 import { router } from "@inertiajs/svelte";
-import { toaster } from "$/shared/lib/toast";
+import { toaster } from "$/shared/lib/toaster";
 
 import type { PageProps, VisitCallbacks } from "@inertiajs/core";
 
@@ -38,7 +38,7 @@ export function optimistic(
                 });
                 savedProps = null;
             }
-            toaster.error({ title: options?.error ?? response.data.message });
+            toaster.error(options?.error ?? response.data.message);
             return false;
         }
     };

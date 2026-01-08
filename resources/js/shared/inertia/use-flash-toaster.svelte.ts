@@ -1,9 +1,9 @@
 import { router } from "@inertiajs/svelte";
 import { m } from "$/paraglide/messages";
 
-import { toaster } from "../lib/toast";
+import { toaster } from "../lib/toaster";
 
-export function useToaster() {
+export function useFlashToaster() {
     $effect(() =>
         router.on(
             "success",
@@ -15,11 +15,11 @@ export function useToaster() {
                 }
             }) => {
                 if (flash.error) {
-                    toaster.error({ title: flash.error });
+                    toaster.error(flash.error);
                 } else if (flash.message) {
-                    toaster.info({ title: flash.message });
+                    toaster.info(flash.message);
                 } else if (flash.success) {
-                    toaster.success({ title: flash.success });
+                    toaster.success(flash.success);
                 }
             }
         )
@@ -28,7 +28,7 @@ export function useToaster() {
     $effect(() => {
         router.on("invalid", ({ detail: { response } }) => {
             console.error(response.data.message);
-            toaster.error({ title: m["common.unexpected-error"]() });
+            toaster.error(m["common.unexpected-error"]());
             return false;
         });
     });
@@ -36,7 +36,7 @@ export function useToaster() {
     $effect(() =>
         router.on("exception", (e) => {
             e.preventDefault();
-            toaster.error({ title: m["common.unexpected-error"]() });
+            toaster.error(m["common.unexpected-error"]());
         })
     );
 }
