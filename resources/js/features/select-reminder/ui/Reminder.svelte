@@ -37,6 +37,15 @@
     function durationToZonedDT(duration: string) {
         return start.subtract(parseDuration(duration));
     }
+
+    function durationToISOString(duration: string) {
+        const [date, tzTime] = durationToZonedDT(duration)
+            .toAbsoluteString()
+            .split("T");
+        const [time, _] = tzTime.split(".");
+
+        return `${date}T${time}+00:00`;
+    }
 </script>
 
 <Menu.Root
@@ -62,20 +71,21 @@
             class="min-w-30 rounded-xl bg-white outline outline-cream-950"
         >
             {#each reminders as { label, value } (value)}
-                {@const notifyAt = durationToZonedDT(value)}
                 {@const inertia = name ? (noop as never) : link}
                 <Menu.Item
                     {@attach inertia(() => ({
                         ...options,
                         data: {
-                            notifyAt: notifyAt.toAbsoluteString()
+                            notifyAt: durationToISOString(value)
                         },
                         showProgress: false
                     }))}
                     {value}
                     class="group cursor-pointer px-3 text-lg font-medium"
                     data-selected={boolAttr(
-                        current ? notifyAt.compare(current) == 0 : false
+                        current
+                            ? durationToZonedDT(value).compare(current) == 0
+                            : false
                     )}
                 >
                     <div
