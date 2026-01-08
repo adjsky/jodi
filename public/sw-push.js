@@ -14,7 +14,6 @@ sw.addEventListener("push", (e) => {
     const {
         title,
         icon = "/pwa-192x192.png",
-        badge = "/pwa-72x72.png",
         vibrate = [200, 100, 200],
         ...options
     } = payload.notification;
