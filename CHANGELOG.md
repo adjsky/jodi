@@ -1,5 +1,13 @@
 # Releases
 
+## 0.5.3 (2026-01-08)
+
+### Fix
+
+- timezone mismatch between client and server
+- category id casting
+- revert notification icon
+
 ## 0.5.2 (2026-01-08)
 
 ## 0.5.1 (2026-01-07)
