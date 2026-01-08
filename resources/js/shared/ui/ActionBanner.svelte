@@ -70,7 +70,7 @@
 
 {#if banner}
     <div
-        class="relative flex items-center justify-between gap-2 rounded-b-xl border border-cream-950 bg-white px-4 py-2"
+        class="relative m-1 flex items-center justify-between gap-2 rounded-2xl border border-cream-400 bg-white px-3 py-3"
     >
         <h3 class={["text-ms font-semibold", banner.closeable && "mr-5 "]}>
             {banner.title}

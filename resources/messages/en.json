@@ -23,7 +23,7 @@
     },
     "pwa-update": {
         "title": "An update is ready to install.",
-        "action": "Refresh page"
+        "action": "Install"
     },
     "signup": {
         "intro": {
