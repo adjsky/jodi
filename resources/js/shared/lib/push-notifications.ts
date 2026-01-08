@@ -96,6 +96,8 @@ export async function destroyPushSubscription() {
         },
         body: JSON.stringify({ endpoint: subscription.endpoint })
     });
+
+    localStorage.removeItem(CONFIGURE_LS_KEY);
 }
 
 async function getPushManager(): Promise<PushManager | null> {
