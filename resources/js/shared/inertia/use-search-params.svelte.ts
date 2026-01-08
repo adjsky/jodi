@@ -10,8 +10,6 @@ type Options = {
 export function useSearchParams(options?: Options) {
     const { showProgress } = options ?? {};
 
-    const url = $derived(new URL(fromStore(page).current.url, location.origin));
-
     function update(values: Record<string, string>, options?: VisitOptions) {
         const url = new URL(window.location.href);
 
@@ -33,13 +31,17 @@ export function useSearchParams(options?: Options) {
         });
     }
 
+    const p = $derived(fromStore(page).current);
+    const search = $derived(p.url.split("?")[1]?.split("#")[0]);
+    const sp = $derived(new URLSearchParams(search));
+
     return new Proxy({} as Record<string, string> & { update: typeof update }, {
         get(_, prop: string) {
             if (prop === "update") {
                 return update;
             }
 
-            return url.searchParams.get(prop);
+            return sp.get(prop);
         },
         set(_, prop, v: string) {
             void update({ [prop]: v });
