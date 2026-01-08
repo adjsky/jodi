@@ -1,5 +1,11 @@
 # Releases
 
+## 0.5.4 (2026-01-08)
+
+### Fix
+
+- use stable search string
+
 ## 0.5.3 (2026-01-08)
 
 ### Fix
