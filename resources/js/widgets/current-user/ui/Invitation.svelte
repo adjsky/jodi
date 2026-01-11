@@ -4,6 +4,7 @@
     import { CheckIcon, ClipboardCopyIcon } from "@lucide/svelte";
     import { destroy } from "$/generated/actions/App/Http/Controllers/RegistrationInvitationController";
     import { m } from "$/paraglide/messages";
+    import { toaster } from "$/shared/lib/toaster";
     import Button from "$/shared/ui/Button.svelte";
     import Confirmable from "$/shared/ui/Confirmable.svelte";
     import FloatingView from "$/shared/ui/FloatingView.svelte";
@@ -27,8 +28,12 @@
     const invitation = resource(() => id, fetchInvitation);
 
     $effect(() => {
-        if (invitation.error instanceof NotFoundResourceError) {
-            void view.replace(buildViewName("invitations"));
+        if (invitation.error) {
+            if (invitation.error instanceof NotFoundResourceError) {
+                void view.replace(buildViewName("invitations"));
+            } else {
+                toaster.error(m["common.unexpected-error"]());
+            }
         }
     });
 </script>

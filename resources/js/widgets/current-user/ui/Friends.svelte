@@ -2,6 +2,7 @@
     import { User } from "$/entities/user";
     import { m } from "$/paraglide/messages";
     import Jelly from "$/shared/assets/jelly.svg";
+    import { toaster } from "$/shared/lib/toaster";
     import Button from "$/shared/ui/Button.svelte";
     import FloatingView from "$/shared/ui/FloatingView.svelte";
     import { resource } from "runed";
@@ -10,6 +11,12 @@
     import { back } from "./Back.svelte";
 
     const friends = resource(() => [], fetchFriends);
+
+    $effect(() => {
+        if (friends.error) {
+            toaster.error(m["common.unexpected-error"]());
+        }
+    });
 </script>
 
 <FloatingView {back} title={m["current-user.account.friends"]()}>

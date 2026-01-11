@@ -18,6 +18,12 @@
     let inviteInput = $state<HTMLInputElement | null>(null);
 
     const invitations = resource(() => [], fetchInvitations);
+
+    $effect(() => {
+        if (invitations.error) {
+            toaster.error(m["common.unexpected-error"]());
+        }
+    });
 </script>
 
 <FloatingView {back} title={m["current-user.account.invitations"]()}>
@@ -74,7 +80,7 @@
                 await view.push(buildViewName("invitations", "add"));
                 inviteInput?.focus();
             }}
-            disabled={invitations.loading}
+            disabled={!invitations.current}
         >
             {m["current-user.invitations.add"]()}
         </Button>
