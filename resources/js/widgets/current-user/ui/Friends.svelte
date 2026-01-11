@@ -1,27 +1,26 @@
 <script lang="ts">
-    import SettingsLayout from "$/app/ui/layouts/SettingLayout.svelte";
     import { User } from "$/entities/user";
     import { m } from "$/paraglide/messages";
     import Jelly from "$/shared/assets/jelly.svg";
     import Button from "$/shared/ui/Button.svelte";
+    import FloatingView from "$/shared/ui/FloatingView.svelte";
+    import { resource } from "runed";
 
-    type Props = {
-        friends: App.Data.FriendDto[];
-    };
+    import { fetchFriends } from "../api/friends";
+    import { back } from "./Back.svelte";
 
-    const { friends }: Props = $props();
+    const friends = resource(() => [], fetchFriends);
 </script>
 
-<SettingsLayout title={m["current-user.account.friends"]()}>
-    <div class="flex flex-grow flex-col justify-between py-5">
+<FloatingView {back} title={m["current-user.account.friends"]()}>
+    <div class="flex grow flex-col justify-between py-5">
         <div
             class={[
-                "flex flex-grow flex-col pb-5",
-                friends.length == 0 && "justify-center",
-                friends.length > 0 && "gap-2"
+                "flex grow flex-col pb-5",
+                friends.current?.length == 0 ? "justify-center" : "gap-2"
             ]}
         >
-            {#if friends.length == 0}
+            {#if friends.current?.length === 0}
                 <img
                     src={Jelly}
                     width={82}
@@ -37,7 +36,7 @@
                     {m["current-user.friends.no-friends"]()}
                 </p>
             {:else}
-                {#each friends as friend (friend.id)}
+                {#each friends.current as friend (friend.id)}
                     <div
                         class="border-gray-950 flex items-center gap-3 rounded-xl border bg-white px-4 py-3"
                     >
@@ -55,7 +54,7 @@
             {/if}
         </div>
         <Button disabled>
-            {m["current-user.add"]()}
+            {m["current-user.friends.add"]()}
         </Button>
     </div>
-</SettingsLayout>
+</FloatingView>

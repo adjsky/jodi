@@ -1,7 +1,6 @@
 <script lang="ts">
     import { page, progress } from "@inertiajs/svelte";
     import { Bell, BellRing, Mail } from "@lucide/svelte";
-    import SettingsLayout from "$/app/ui/layouts/SettingLayout.svelte";
     import { User } from "$/entities/user";
     import { update } from "$/generated/actions/App/Http/Controllers/CurrentUserController";
     import { m } from "$/paraglide/messages";
@@ -12,21 +11,30 @@
     } from "$/shared/lib/push-notifications";
     import { toaster } from "$/shared/lib/toaster";
     import Button from "$/shared/ui/Button.svelte";
-    import { onMount } from "svelte";
+    import FloatingView from "$/shared/ui/FloatingView.svelte";
+
+    import { back } from "./Back.svelte";
 
     const user = $derived($page.props.auth.user);
 
     let showAllowPushButton = $state(false);
 
-    onMount(async () => {
-        const hasNeed = await checkPushNotificationsNeed();
-        const hasSupport = checkPushNotificationsSupport();
+    $effect(() => {
+        if (user.preferences.notifications != "push") {
+            showAllowPushButton = false;
+            return;
+        }
 
-        showAllowPushButton = hasNeed && hasSupport;
+        const hasSupport = checkPushNotificationsSupport();
+        if (!hasSupport) return;
+
+        void checkPushNotificationsNeed().then((hasNeed) => {
+            showAllowPushButton = hasNeed;
+        });
     });
 </script>
 
-<SettingsLayout title={m["current-user.app-settings.notifications"]()}>
+<FloatingView {back} title={m["current-user.app-settings.notifications"]()}>
     <User.Info.Block class="py-5">
         <User.Info.SelectRow
             href={update()}
@@ -79,4 +87,4 @@
             {m["current-user.notifications.allow"]()}
         </Button>
     {/if}
-</SettingsLayout>
+</FloatingView>

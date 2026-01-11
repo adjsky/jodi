@@ -15,29 +15,20 @@ use Illuminate\Support\Str;
 
 class RegistrationInvitationController extends Controller
 {
-    public function index(Request $request)
+    public function getAll(Request $request)
     {
-        return inertia('CurrentUser/Invitations', [
-            'invitations' => RegistrationInvitationDto::collect($this->user()->invitations->all()),
-        ]);
+        return response()->json(RegistrationInvitationDto::collect($this->user()->invitations->all()));
     }
 
-    public function show(Request $request, RegistrationInvitation $invitation)
+    public function get(Request $request, RegistrationInvitation $invitation)
     {
-        return inertia('CurrentUser/Invitation', [
-            'invitation' => RegistrationInvitationDto::fromModel($invitation),
-            'shareUrl' => URL::temporarySignedRoute(
-                'signup',
-                $invitation->expires_at,
-                ['code' => $invitation->code]
-            ),
-        ]);
+        return response()->json(RegistrationInvitationDto::fromModel($invitation));
     }
 
     public function invite(Request $request)
     {
         $data = $request->validate([
-            'email' => 'required|email',
+            'email' => 'required|email|unique:registration_invitations',
         ]);
 
         $code = strtolower((string) Str::ulid());
@@ -53,7 +44,7 @@ class RegistrationInvitationController extends Controller
             URL::temporarySignedRoute('signup', $expires_at, ['code' => $code])
         ));
 
-        return back()->with(['success' => __('Waiting for user registration.')]);
+        return back();
     }
 
     public function destroy(Request $request, RegistrationInvitation $invitation)
@@ -62,6 +53,6 @@ class RegistrationInvitationController extends Controller
 
         $invitation->delete();
 
-        return to_route('invitations')->with(['success' => __('Successfuly deleted invitation.')]);
+        return back();
     }
 }

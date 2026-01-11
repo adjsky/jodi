@@ -16,7 +16,7 @@ export type UpdateMetaOptions = {
 };
 
 export class HistoryView<T extends Record<string, unknown>> {
-    #name?: string;
+    #name?: string | null;
     #options?: HistoryViewOptions;
 
     #url = $derived(new URL(fromStore(page).current.url, location.origin));
@@ -32,13 +32,17 @@ export class HistoryView<T extends Record<string, unknown>> {
         return this.#decompress(this.#hash.meta) as T;
     });
 
-    constructor(name?: string, options?: HistoryViewOptions) {
+    constructor(name?: string | null, options?: HistoryViewOptions) {
         this.#name = name;
         this.#options = options;
     }
 
     get meta() {
         return this.#meta;
+    }
+
+    get name() {
+        return this.#hash.view?.slice(1);
     }
 
     isOpen(): boolean;
@@ -85,7 +89,8 @@ export class HistoryView<T extends Record<string, unknown>> {
             void router.replace({
                 preserveScroll: true,
                 preserveState: true,
-                url: this.#url.pathname + this.#url.search
+                url: this.#url.pathname + this.#url.search,
+                viewTransition: this.#options?.viewTransition
             });
         } else {
             history.back();
@@ -106,7 +111,7 @@ export class HistoryView<T extends Record<string, unknown>> {
     }
 
     #visitOptions(
-        name: string | undefined,
+        name: string | null | undefined,
         meta: T | undefined,
         viewTransition?: boolean
     ): ClientSideVisitOptions {

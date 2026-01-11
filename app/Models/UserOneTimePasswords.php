@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class UserOneTimePasswords extends Model
 {
-    const EXPIRES_IN_X_MINUTES = 2;
+    const EXPIRES_IN_X_MINUTES = 15;
 
     const SIZE = 6;
 

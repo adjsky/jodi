@@ -3,12 +3,12 @@
 
     import type { SvelteHTMLElements } from "svelte/elements";
 
-    type Props = SvelteHTMLElements["div"] & { name: string };
+    type Props = SvelteHTMLElements["button"] & { name: string };
 
     const { name, ...props }: Props = $props();
 </script>
 
-<div
+<button
     {...props}
     class={tw(
         "flex size-9 items-center justify-center rounded-full bg-brand text-lg font-semibold text-white outline outline-cream-950",
@@ -16,4 +16,4 @@
     )}
 >
     {name[0].toLocaleUpperCase()}
-</div>
+</button>

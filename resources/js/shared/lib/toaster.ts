@@ -13,7 +13,7 @@ export const toaster = types.reduce(
             toast(Toast, {
                 position: "top-center",
                 unstyled: true,
-                class: "w-full",
+                class: "w-full [view-transition-name:disabled]",
                 componentProps: { title, type }
             });
         };

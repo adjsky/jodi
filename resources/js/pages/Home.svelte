@@ -5,7 +5,8 @@
     import { useNotificationsInitBanner } from "$/shared/lib/push-notifications";
     import ActionBanner from "$/shared/ui/ActionBanner.svelte";
     import { CalendarPreview } from "$/widgets/calendar";
-    import EventList from "$/widgets/event-list/ui/EventList.svelte";
+    import { CurrentUser } from "$/widgets/current-user";
+    import { EventList } from "$/widgets/event-list/";
     import { TodoList } from "$/widgets/todo-list";
 
     type Props = {
@@ -21,7 +22,9 @@
 <ActionBanner />
 
 <main class="pb-20">
-    <CalendarPreview />
+    <CalendarPreview>
+        <CurrentUser />
+    </CalendarPreview>
 
     {#if todos?.length === 0 && events?.length === 0}
         <img

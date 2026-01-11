@@ -2,7 +2,7 @@
     import { Dialog, Portal } from "@ark-ui/svelte";
     import { parseDate, today } from "@internationalized/date";
     import { CalendarClock, Check, X } from "@lucide/svelte";
-    import YearCalendarDialog from "$/features/filter-by-date/ui/YearCalendarDialog.svelte";
+    import { YearCalendarDialog } from "$/features/filter-by-date";
     import { m } from "$/paraglide/messages";
     import { TIMEZONE } from "$/shared/cfg/constants";
     import { HistoryView } from "$/shared/inertia/history-view.svelte";

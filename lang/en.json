@@ -190,7 +190,6 @@
     "Stop": "Stop",
     "Submit": "Submit",
     "Subscribe": "Subscribe",
-    "Successfuly deleted invitation.": "Successfuly deleted invitation.",
     "Switch": "Switch",
     "Switch To Role": "Switch To Role",
     "Switching Protocols": "Switching Protocols",
@@ -234,12 +233,12 @@
     "Verify Email Address": "Verify Email Address",
     "View": "View",
     "View :name": "View :name",
-    "Waiting for user registration.": "Waiting for user registration.",
     "Web Server is Down": "Web Server is Down",
     "Whoops!": "Whoops!",
     "Yes": "Yes",
     "You are receiving this email because we received a password reset request for your account.": "You are receiving this email because we received a password reset request for your account.",
     "You were invited to Jodi": "You were invited to Jodi",
     ":title is upcoming.": ":title is upcoming.",
-    "Starts :time.": "Starts :time."
+    "Starts :time.": "Starts :time.",
+    "The code has been sent.": "The code has been sent."
 }

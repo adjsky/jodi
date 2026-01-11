@@ -1,25 +1,27 @@
 <script lang="ts">
-    import { Form, page, router } from "@inertiajs/svelte";
+    import { Form, page } from "@inertiajs/svelte";
     import { AtSign } from "@lucide/svelte";
-    import SettingsLayout from "$/app/ui/layouts/SettingLayout.svelte";
     import { update } from "$/generated/actions/App/Http/Controllers/CurrentUserController";
-    import { me } from "$/generated/routes";
     import { m } from "$/paraglide/messages";
     import Button from "$/shared/ui/Button.svelte";
+    import FloatingView from "$/shared/ui/FloatingView.svelte";
     import TextField from "$/shared/ui/TextField.svelte";
+
+    import { view } from "../model/view";
+    import { back } from "./Back.svelte";
 
     const user = $derived($page.props.auth.user);
 </script>
 
-<SettingsLayout title={m["current-user.account.name"]()}>
+<FloatingView {back} title={m["current-user.account.name"]()}>
     <Form
         action={update()}
         class="flex grow flex-col justify-between py-5"
-        options={{ replace: true }}
-        onSuccess={() =>
-            router.visit(me(), { viewTransition: true, replace: true })}
+        options={{ replace: true, preserveUrl: true, only: ["auth.user"] }}
+        onSuccess={() => view.back()}
         let:processing
         let:errors
+        let:isDirty
     >
         <TextField
             type="text"
@@ -32,8 +34,8 @@
             {#snippet indicator()}<AtSign />{/snippet}
         </TextField>
 
-        <Button type="submit" disabled={processing}>
-            {m["current-user.save"]()}
+        <Button type="submit" disabled={processing || !isDirty}>
+            {m["current-user.name.save"]()}
         </Button>
     </Form>
-</SettingsLayout>
+</FloatingView>

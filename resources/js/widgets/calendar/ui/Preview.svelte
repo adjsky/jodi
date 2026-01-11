@@ -1,14 +1,20 @@
 <script lang="ts">
-    import { Link, page } from "@inertiajs/svelte";
+    import { page } from "@inertiajs/svelte";
     import { DateFormatter, parseDate, today } from "@internationalized/date";
     import { Calendar } from "@lucide/svelte";
-    import { User } from "$/entities/user";
     import { WeekCarousel, YearCalendar } from "$/features/filter-by-date";
-    import { me } from "$/generated/routes";
     import { getLocale } from "$/paraglide/runtime";
     import { TIMEZONE } from "$/shared/cfg/constants";
     import { HistoryView } from "$/shared/inertia/history-view.svelte";
     import { useSearchParams } from "$/shared/inertia/use-search-params.svelte";
+
+    import type { Snippet } from "svelte";
+
+    type Props = {
+        children: Snippet;
+    };
+
+    const { children }: Props = $props();
 
     const searchParams = useSearchParams({ showProgress: true });
 
@@ -43,9 +49,7 @@
             }).format(cursor.toDate(TIMEZONE))}
         </span>
     </button>
-    <Link href={me()} viewTransition>
-        <User.Avatar name={user.name} />
-    </Link>
+    {@render children()}
 </header>
 
 <WeekCarousel

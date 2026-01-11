@@ -2,23 +2,11 @@
     import { Link } from "@inertiajs/svelte";
     import { tw } from "$/shared/lib/styles";
 
-    import type {
-        RequestPayload,
-        UrlMethodPair,
-        VisitCallbacks
-    } from "@inertiajs/core";
-    import type { ClassName } from "$/shared/lib/styles";
-    import type { Snippet } from "svelte";
+    import type { ComponentProps, Snippet } from "svelte";
 
-    type Props = Partial<VisitCallbacks> & {
+    type Props = ComponentProps<Link> & {
         startIcon?: Snippet;
         endIcon?: Snippet;
-        href: UrlMethodPair;
-        data?: RequestPayload;
-        class?: ClassName;
-        children?: Snippet;
-        viewTransition?: boolean;
-        [x: string]: unknown;
     };
 
     const { startIcon, endIcon, children, ...props }: Props = $props();

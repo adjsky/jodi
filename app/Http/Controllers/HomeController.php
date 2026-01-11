@@ -38,6 +38,10 @@ class HomeController extends Controller
                     ->orderBy('starts_at', 'asc')
                     ->get()
             ),
+            'me' => [
+                'nInvitations' => $this->user()->invitations->count(),
+                'nFriends' => $this->user()->friends->count(),
+            ],
             'categories' => Inertia::defer(
                 fn () => $this->user()->categories->pluck('name'),
             ),

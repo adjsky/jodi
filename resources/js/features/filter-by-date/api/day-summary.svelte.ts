@@ -1,4 +1,4 @@
-import { daySummary } from "$/generated/routes";
+import { get } from "$/generated/actions/App/Http/Controllers/DaySummaryController";
 import { useDebounce } from "runed";
 import { SvelteMap } from "svelte/reactivity";
 
@@ -18,7 +18,7 @@ const _requestSummary = useDebounce(async () => {
         return;
     }
 
-    const { url, method } = daySummary(
+    const { url, method } = get(
         { year: pendingRequests.year },
         { query: { m: [...pendingRequests.months].join(",") } }
     );

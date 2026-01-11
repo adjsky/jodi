@@ -84,8 +84,8 @@ Route::middleware('auth')->group(function () {
     Route::prefix('/me/invitations')
         ->controller(RegistrationInvitationController::class)
         ->group(function () {
-            Route::get('/', 'index')->name('invitations');
-            Route::get('/{invitation}', 'show');
+            Route::get('/', 'getAll');
+            Route::get('/{invitation}', 'get');
             Route::delete('/{invitation}', 'destroy');
             Route::post('/invite', 'invite');
         });
@@ -93,7 +93,7 @@ Route::middleware('auth')->group(function () {
     Route::prefix('/me/friends')
         ->controller(FriendsController::class)
         ->group(function () {
-            Route::get('/', 'index')->name('friends');
+            Route::get('/', 'getAll');
         });
 
     Route::prefix('/push-subscriptions')
@@ -103,7 +103,7 @@ Route::middleware('auth')->group(function () {
             Route::delete('/', 'destroy');
         });
 
-    Route::get('/day-summary/{year}', [DaySummaryController::class, 'get'])->name('day-summary');
+    Route::get('/day-summary/{year}', [DaySummaryController::class, 'get']);
 });
 
 if (app()->isLocal()) {

@@ -127,9 +127,7 @@
         ]
     },
     "current-user": {
-        "save": "Save",
-        "invite": "Invite",
-        "add": "Add",
+        "log-out": "Log out",
         "account": {
             "title": "Account",
             "email": "Email",
@@ -143,10 +141,27 @@
             "week-start": "Week start on",
             "notifications": "Notifications"
         },
-        "actions": {
-            "log-out": "Log out"
+        "name": {
+            "updated": "Your name was succesfully updated.",
+            "save": "Save"
         },
-        "days": {
+        "invitations": {
+            "invitation": "Invitation",
+            "no-invitations": "Looks like you have nothing here. Let's add someone.",
+            "waiting": "Waiting...",
+            "share": "Share the invitation link",
+            "invite": "Invite",
+            "delete": "Delete",
+            "delete-ahtung": "Are you sure you want to delete this invitation?",
+            "delete-success": "Successfuly deleted invitation.",
+            "waiting-for-registration": "Waiting for user registration.",
+            "add": "Add"
+        },
+        "friends": {
+            "no-friends": "You have no friends. What a shame.",
+            "add": "Add"
+        },
+        "week-start": {
             "monday": "Monday",
             "sunday": "Sunday"
         },
@@ -154,17 +169,6 @@
             "push": "Push",
             "mail": "Mail",
             "allow": "Allow push notifications"
-        },
-        "invitations": {
-            "invitation": "Invitation",
-            "no-invitations": "Looks like you have nothing here. Let's add someone.",
-            "waiting": "Waiting...",
-            "share": "Share the invitation link",
-            "delete": "Delete",
-            "delete-ahtung": "Are you sure you want to delete this invitation?"
-        },
-        "friends": {
-            "no-friends": "You have no friends. What a shame."
         }
     }
 }

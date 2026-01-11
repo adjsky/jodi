@@ -9,10 +9,8 @@ use Illuminate\Http\Request;
 
 class FriendsController extends Controller
 {
-    public function index(Request $request)
+    public function getAll(Request $request)
     {
-        return inertia('CurrentUser/Friends', [
-            'friends' => FriendDto::collect($this->user()->friends->all()),
-        ]);
+        return response()->json(FriendDto::collect($this->user()->friends->all()));
     }
 }

@@ -91,6 +91,6 @@ class TwoFactorChallengeController extends Controller
             $user->notify(new Notifications\OneTimeLoginCode($password));
         }
 
-        return back()->with('success', 'The code has been sent.');
+        return back()->with('success', __('The code has been sent.'));
     }
 }

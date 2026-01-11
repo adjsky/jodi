@@ -1,4 +1,5 @@
 <script lang="ts">
+    import { Portal } from "@ark-ui/svelte";
     import { Link } from "@inertiajs/svelte";
     import { ChevronLeft } from "@lucide/svelte";
 
@@ -11,39 +12,47 @@
 
     type Props = Except<SvelteHTMLElements["div"], "title"> & {
         back: string | UrlMethodPair | Snippet;
-        title?: string;
+        title?: string | Snippet;
         viewTransition?: boolean;
         children: Snippet;
         action?: Snippet;
     };
 
+    const id = $props.id();
     const { back, title, viewTransition, children, action, ...props }: Props =
         $props();
 </script>
 
-<div
-    {...props}
-    class={tw(
-        "fixed inset-0 z-100 flex h-full flex-col bg-cream-50 px-4 py-3",
-        props.class
-    )}
->
-    <div class="relative flex items-center justify-between">
-        {#if typeof back == "function"}
-            {@render back()}
-        {:else}
-            <Link href={back} {viewTransition} class="p-2">
-                <ChevronLeft class="text-4xl" />
-            </Link>
-        {/if}
-        {#if title}
-            <span
-                class="absolute top-1/2 left-1/2 -translate-1/2 text-xl font-bold"
-            >
-                {title}
-            </span>
-        {/if}
-        {@render action?.()}
+<Portal>
+    <div
+        id="floating-view-{id}"
+        {...props}
+        class={tw(
+            "fixed inset-0 z-100 flex h-full flex-col overflow-y-scroll bg-cream-50 px-4 py-3",
+            props.class
+        )}
+    >
+        <div class="relative flex items-center justify-between">
+            {#if typeof back == "function"}
+                {@render back()}
+            {:else}
+                <Link href={back} {viewTransition} class="p-2">
+                    <ChevronLeft class="text-4xl" />
+                </Link>
+            {/if}
+            {#if title}
+                {#if typeof title == "function"}
+                    {@render title()}
+                {:else}
+                    <span
+                        class="absolute top-1/2 left-1/2 -translate-1/2 text-xl font-bold"
+                    >
+                        {title}
+                    </span>
+                {/if}
+            {/if}
+            {@render action?.()}
+        </div>
+        {@render children()}
     </div>
-    {@render children()}
-</div>
+</Portal>

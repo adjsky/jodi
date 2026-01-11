@@ -190,7 +190,6 @@
     "Stop": "Остановить",
     "Submit": "Отправить",
     "Subscribe": "Подписаться",
-    "Successfuly deleted invitation.": "Приглашение успешно удалено.",
     "Switch": "Переключить",
     "Switch To Role": "Переключиться на роль",
     "Switching Protocols": "Переключение протоколов",
@@ -234,12 +233,12 @@
     "Verify Email Address": "Подтвердить адрес электронной почты",
     "View": "Просмотр",
     "View :name": "Посмотреть :name",
-    "Waiting for user registration.": "Ожидание регистрации пользователя.",
     "Web Server is Down": "Веб-сервер не работает",
     "Whoops!": "Упс!",
     "Yes": "Да",
     "You are receiving this email because we received a password reset request for your account.": "Вы получили это письмо, потому что мы получили запрос на сброс пароля для Вашей учётной записи.",
     "You were invited to Jodi": "Вы были приглашены в Jodi",
     ":title is upcoming.": ":title скоро начнется.",
-    "Starts :time.": "Начинается :time."
+    "Starts :time.": "Начинается :time.",
+    "The code has been sent.": "Код был отправлен."
 }

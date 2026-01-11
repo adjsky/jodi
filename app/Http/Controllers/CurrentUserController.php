@@ -8,39 +8,6 @@ use Illuminate\Http\Request;
 
 class CurrentUserController extends Controller
 {
-    public function index(Request $request)
-    {
-        return inertia('CurrentUser', [
-            'nInvitations' => $this->user()->invitations->count(),
-            'nFriends' => $this->user()->friends->count(),
-        ]);
-    }
-
-    public function name(Request $request)
-    {
-        return inertia('CurrentUser/Name');
-    }
-
-    public function email(Request $request)
-    {
-        return inertia('CurrentUser/Email');
-    }
-
-    public function language(Request $request)
-    {
-        return inertia('CurrentUser/Language');
-    }
-
-    public function weekStart(Request $request)
-    {
-        return inertia('CurrentUser/WeekStart');
-    }
-
-    public function notifications(Request $request)
-    {
-        return inertia('CurrentUser/Notifications');
-    }
-
     public function update(Request $request)
     {
         $data = $request->validate([

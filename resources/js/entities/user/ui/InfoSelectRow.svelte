@@ -37,4 +37,5 @@
     data-selected={boolAttr(selected)}
     class={tw("group data-selected:font-bold", props.class)}
     replace
+    preserveUrl
 />
