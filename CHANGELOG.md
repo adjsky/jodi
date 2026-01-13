@@ -1,5 +1,15 @@
 # Releases
 
+## 0.6.0 (2026-01-13)
+
+### Feat
+
+- beautiful emails
+
+### Fix
+
+- svelte bug
+
 ## 0.5.5 (2026-01-12)
 
 ## 0.5.4 (2026-01-08)
