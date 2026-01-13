@@ -68,7 +68,7 @@
                         replace: true,
                         preserveUrl: true,
                         preserveState: true,
-                        only: ["flash"],
+                        only: ["flash", "me"],
                         onSuccess: () => {
                             view.back();
                             onDelete?.(invitation.current!.id);

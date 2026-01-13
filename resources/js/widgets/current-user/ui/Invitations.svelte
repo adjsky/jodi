@@ -95,7 +95,7 @@
             options={{
                 replace: true,
                 preserveUrl: true,
-                only: ["flash"]
+                only: ["flash", "me"]
             }}
             onSuccess={async () => {
                 try {
