@@ -1,5 +1,13 @@
 # Releases
 
+## 0.6.2 (2026-01-13)
+
+### Fix
+
+- correctly redirect to notifications view
+- render User.Avatar as div where needed
+- update number of invitations on invite/delete
+
 ## 0.6.1 (2026-01-13)
 
 ### Fix
