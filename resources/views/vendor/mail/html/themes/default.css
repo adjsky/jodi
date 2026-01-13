@@ -39,7 +39,7 @@ a img {
 /* Typography */
 
 p {
-    font-size: 14px;
+    font-size: 16px;
     line-height: 1.5;
     margin-top: 0;
     margin-bottom: 18px;
@@ -109,41 +109,6 @@ img {
     word-break: break-all;
 }
 
-/* Subcopy */
-
-.subcopy {
-    border-top: 1px solid #d4cabc;
-    margin-top: 25px;
-    padding-top: 25px;
-}
-
-.subcopy p {
-    font-size: 14px;
-}
-
-/* Footer */
-
-.footer {
-    -premailer-cellpadding: 0;
-    -premailer-cellspacing: 0;
-    -premailer-width: 570px;
-    margin: 0 auto;
-    padding: 0;
-    text-align: center;
-    width: 570px;
-}
-
-.footer p {
-    color: #a69f93;
-    font-size: 12px;
-    text-align: center;
-}
-
-.footer a {
-    color: #a69f93;
-    text-decoration: underline;
-}
-
 /* Tables */
 
 .table table {
@@ -193,7 +158,7 @@ img {
     display: inline-block;
     overflow: hidden;
     text-decoration: none;
-    font-size: 14px;
+    font-size: 16px;
     line-height: 1;
     font-weight: 700;
 
