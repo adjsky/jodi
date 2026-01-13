@@ -78,7 +78,11 @@
             <div
                 class="absolute top-1 left-1/2 flex -translate-x-1/2 flex-col items-center gap-1.5"
             >
-                <User.Avatar name={user.name} class="size-10 text-xl" />
+                <User.Avatar
+                    as="div"
+                    name={user.name}
+                    class="size-10 text-xl"
+                />
                 <h1 class="text-xl font-bold">
                     {user.name}
                 </h1>

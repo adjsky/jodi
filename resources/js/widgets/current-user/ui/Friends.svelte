@@ -47,7 +47,7 @@
                     <div
                         class="border-gray-950 flex items-center gap-3 rounded-xl border bg-white px-4 py-3"
                     >
-                        <User.Avatar name={friend.name} />
+                        <User.Avatar as="div" name={friend.name} />
                         <div>
                             <p class="font-semibold">
                                 {friend.name}
