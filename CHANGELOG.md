@@ -1,5 +1,11 @@
 # Releases
 
+## 0.6.1 (2026-01-13)
+
+### Fix
+
+- increase font size in mails
+
 ## 0.6.0 (2026-01-13)
 
 ### Feat
