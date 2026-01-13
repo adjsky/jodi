@@ -40,7 +40,8 @@ class RegistrationInvitationController extends Controller
             'expires_at' => $expires_at,
         ]);
 
-        Mail::to($data['email'])->send(new InviteToJodi($this->user()->email,
+        Mail::to($data['email'])->send(new InviteToJodi(
+            $this->user(),
             URL::temporarySignedRoute('signup', $expires_at, ['code' => $code])
         ));
 

@@ -1,9 +1,11 @@
 <x-mail::message>
-    # {{ __('You were invited to Jodi') }}
+{{ __('mail.invite_to_jodi.paragraphs.who', ['app' => $app, 'email' => $inviter->email]) }}
 
-    {{ __('User :email invited you.', ['email' => $email]) }}
+{{ __('mail.invite_to_jodi.paragraphs.join', ["name" => $inviter->name]) }}
 
-    <x-mail::button :url="$url">
-        {{__("Join")  }}
-    </x-mail::button>
+<x-mail::button :url="$url">
+{{__("mail.invite_to_jodi.actions.create")  }}
+</x-mail::button>
+
+{{ __('mail.invite_to_jodi.paragraphs.ahtung', ["email" => $inviter->email]) }}
 </x-mail::message>

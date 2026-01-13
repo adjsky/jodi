@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Domain\Auth\Mail;
 
+use App\Models\User;
 use Illuminate\Bus\Queueable;
 use Illuminate\Mail\Mailable;
 use Illuminate\Mail\Mailables\Content;
@@ -14,12 +15,15 @@ class InviteToJodi extends Mailable
 {
     use Queueable, SerializesModels;
 
-    public function __construct(public string $inviter, public string $url) {}
+    public function __construct(public User $inviter, public string $url) {}
 
     public function envelope(): Envelope
     {
         return new Envelope(
-            subject: __('You were invited to Jodi'),
+            subject: __('mail.invite_to_jodi.subject', [
+                'app' => config('app.name'),
+                'email' => $this->inviter->email,
+            ]),
         );
     }
 
@@ -28,7 +32,8 @@ class InviteToJodi extends Mailable
         return new Content(
             markdown: 'mail.invite-to-jodi',
             with: [
-                'email' => $this->inviter,
+                'app' => config('app.name'),
+                'inviter' => $this->inviter,
                 'url' => $this->url,
             ]
         );

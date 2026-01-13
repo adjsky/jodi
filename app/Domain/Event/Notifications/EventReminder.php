@@ -43,8 +43,8 @@ class EventReminder extends Notification implements ShouldQueue
     public function toMail(): MailMessage
     {
         return (new MailMessage)
-            ->subject('Event starts soon.')
-            ->markdown('mail.event-reminder');
+            ->subject(__('mail.event_reminder.subject', ['title' => $this->event->title, 'startsIn' => $this->startsIn()]))
+            ->markdown('mail.event-reminder', ['event' => $this->event]);
     }
 
     protected function startsIn(): string

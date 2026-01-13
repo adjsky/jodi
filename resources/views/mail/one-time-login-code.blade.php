@@ -1,7 +1,5 @@
 <x-mail::message>
-    # {{ __('One time login code') }}
+{{ __('mail.otp.paragraphs.code', ['code' => $otp]) }}
 
-    {{ __('This is your one-time login code to use on :url.', ['url' => config('app.url')]) }}
-
-    **{{ $otp }}**
+{{ __('mail.otp.paragraphs.ahtung') }}
 </x-mail::message>

@@ -17,6 +17,8 @@ use App\Http\Controllers\SignupController;
 use App\Http\Controllers\TodoController;
 use App\Http\Controllers\TwoFactorChallengeController;
 use App\Models\Event;
+use App\Models\User;
+use Carbon\Carbon;
 use Illuminate\Support\Facades\Route;
 
 Route::middleware('guest')->group(function () {
@@ -113,10 +115,15 @@ if (app()->isLocal()) {
     );
     Route::get(
         '/mail/invite-to-jodi',
-        fn () => new Mail\InviteToJodi('kirill.t@tuta.io', 'http://example.com')
+        fn () => new Mail\InviteToJodi(
+            new User(['email' => 'kirill.t@tuta.io', 'name' => 'Kirill T.']),
+            'http://example.com'
+        )
     );
     Route::get(
         '/mail/event-reminder',
-        fn () => new EventNotifications\EventReminder(new Event([]))->toMail()
+        fn () => new EventNotifications\EventReminder(
+            new Event(['title' => 'Take pills', 'starts_at' => Carbon::now()->addHours(3)])
+        )->toMail()
     );
 }
