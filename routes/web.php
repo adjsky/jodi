@@ -73,14 +73,7 @@ Route::middleware('auth')->group(function () {
     Route::prefix('/me')
         ->controller(CurrentUserController::class)
         ->group(function () {
-            Route::get('/', 'index')->name('me');
             Route::patch('/', 'update');
-            Route::get('/name', 'name');
-            Route::get('/email', 'email');
-            Route::get('/friends', 'friends');
-            Route::get('/language', 'language');
-            Route::get('/week-start', 'weekStart');
-            Route::get('/notifications', 'notifications');
         });
 
     Route::prefix('/me/invitations')

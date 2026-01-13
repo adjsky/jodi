@@ -2,7 +2,6 @@
     import { AddTodoOrEvent } from "$/features/add-todo-or-event";
     import { m } from "$/paraglide/messages";
     import CalendarCat from "$/shared/assets/calendar-cat.svg";
-    import { useNotificationsInitBanner } from "$/shared/lib/push-notifications";
     import ActionBanner from "$/shared/ui/ActionBanner.svelte";
     import { CalendarPreview } from "$/widgets/calendar";
     import { CurrentUser } from "$/widgets/current-user";
@@ -15,8 +14,6 @@
     };
 
     const { todos, events }: Props = $props();
-
-    useNotificationsInitBanner();
 </script>
 
 <ActionBanner />

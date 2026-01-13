@@ -1,7 +1,7 @@
 <script module lang="ts">
     type Callbacks = {
-        onAccept?: VoidFunction;
-        onDecline?: VoidFunction;
+        onAccept?: () => MaybePromise;
+        onDecline?: () => MaybePromise;
     };
 
     type Banner = Callbacks & {
@@ -38,17 +38,19 @@
             title,
             action,
             closeable,
-            onAccept() {
+            async onAccept() {
+                await onAccept?.();
+
                 if (autoclose) {
                     destroyActionBanner(id);
                 }
-                onAccept?.();
             },
-            onDecline() {
+            async onDecline() {
+                await onDecline?.();
+
                 if (autoclose) {
                     destroyActionBanner(id);
                 }
-                onDecline?.();
             }
         });
 
@@ -64,6 +66,8 @@
     import { X } from "@lucide/svelte";
 
     import Button from "./Button.svelte";
+
+    import type { MaybePromise } from "../lib/types";
 
     const banner = $derived(banners[0]);
 </script>

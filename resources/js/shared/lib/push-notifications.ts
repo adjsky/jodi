@@ -1,5 +1,4 @@
-import { page, router } from "@inertiajs/svelte";
-import { notifications } from "$/generated/actions/App/Http/Controllers/CurrentUserController";
+import { page } from "@inertiajs/svelte";
 import {
     create,
     destroy
@@ -10,6 +9,8 @@ import { get } from "svelte/store";
 
 import { createActionBanner } from "../ui/ActionBanner.svelte";
 import { urlBase64ToUint8Array } from "./buffer";
+
+import type { MaybePromise } from "./types";
 
 const CHECK_SUPPORT_LS_KEY = "jodi:notifications:check-support";
 const CONFIGURE_LS_KEY = "jodi:notifications:banner_last_opened_at";
@@ -110,7 +111,7 @@ async function getPushManager(): Promise<PushManager | null> {
     return registration?.pushManager ?? null;
 }
 
-export function useNotificationsInitBanner() {
+export function useNotificationsInitBanner(redirect: () => MaybePromise) {
     onMount(async () => {
         const hasNeed = await checkPushNotificationsNeed();
         if (!hasNeed) return;
@@ -133,9 +134,7 @@ export function useNotificationsInitBanner() {
             createActionBanner(m["push-notifications.configure.title"](), {
                 action: m["push-notifications.configure.action"](),
                 onAccept() {
-                    void router.visit(notifications(), {
-                        viewTransition: true
-                    });
+                    return redirect();
                 }
             });
         }
