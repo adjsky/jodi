@@ -23,6 +23,7 @@
             createActionBanner(m["pwa-update.title"](), {
                 action: m["pwa-update.action"](),
                 onAccept() {
+                    progress.reveal(true);
                     progress.start();
                     void updateServiceWorker();
                 },

@@ -63,6 +63,7 @@
             class="gap-2"
             onclick={async () => {
                 try {
+                    progress.reveal(true);
                     progress.start();
                     await subscribeToPushNotifications();
                     showAllowPushButton = false;

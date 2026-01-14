@@ -99,6 +99,7 @@
             }}
             onSuccess={async () => {
                 try {
+                    progress.reveal(true);
                     progress.start();
                     await invitations.refetch();
                     progress.finish();

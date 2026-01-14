@@ -4,7 +4,7 @@
     "type": "module",
     "scripts": {
         "build": "vite build",
-        "dev": "vite --force",
+        "dev": "vite",
         "lint": "eslint",
         "format": "prettier",
         "check": "svelte-check",
