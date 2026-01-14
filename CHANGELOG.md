@@ -1,5 +1,11 @@
 # Releases
 
+## 0.6.3 (2026-01-14)
+
+### Fix
+
+- reveal progress before starting
+
 ## 0.6.2 (2026-01-13)
 
 ### Fix
