@@ -70,7 +70,6 @@
         () => toTime(startsAt), (time) => (startsAt = startsAt.set(time))
     }
     bind:endsAt={() => toTime(endsAt), (time) => (endsAt = endsAt.set(time))}
-    locale={getLocale()}
     class="mt-3"
     name="_time"
     required
