@@ -21,7 +21,7 @@
 
     const id = $props.id();
     const {
-        portal,
+        portal = true,
         back,
         title,
         viewTransition,
