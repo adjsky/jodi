@@ -13,6 +13,7 @@
     import type { Except } from "type-fest";
 
     type Props = Except<SvelteHTMLElements["div"], "children" | "title"> & {
+        portal?: boolean;
         selected: DateValue;
         start: WeekStart;
         onClose?: VoidFunction;

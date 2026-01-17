@@ -11,6 +11,7 @@
     import type { Except } from "type-fest";
 
     type Props = Except<SvelteHTMLElements["div"], "title"> & {
+        portal?: boolean;
         back: string | UrlMethodPair | Snippet;
         title?: string | Snippet;
         viewTransition?: boolean;
@@ -19,11 +20,18 @@
     };
 
     const id = $props.id();
-    const { back, title, viewTransition, children, action, ...props }: Props =
-        $props();
+    const {
+        portal,
+        back,
+        title,
+        viewTransition,
+        children,
+        action,
+        ...props
+    }: Props = $props();
 </script>
 
-<Portal>
+<Portal disabled={!portal}>
     <div
         id="floating-view-{id}"
         {...props}
