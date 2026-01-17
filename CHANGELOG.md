@@ -1,5 +1,11 @@
 # Releases
 
+## 0.7.1 (2026-01-17)
+
+### Fix
+
+- render FloatingView in portal by default
+
 ## 0.7.0 (2026-01-17)
 
 ### Feat
