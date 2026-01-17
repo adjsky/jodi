@@ -1,5 +1,15 @@
 # Releases
 
+## 0.7.0 (2026-01-17)
+
+### Feat
+
+- better time picker UX
+
+### Fix
+
+- don't render year calendar (dialog) in portal
+
 ## 0.6.3 (2026-01-14)
 
 ### Fix
