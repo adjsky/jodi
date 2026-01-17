@@ -150,6 +150,7 @@
             "no-invitations": "Looks like you have nothing here. Let's add someone.",
             "waiting": "Waiting...",
             "share": "Share the invitation link",
+            "error": "Failed to load your list of invitations. Try again later.",
             "invite": "Invite",
             "delete": "Delete",
             "delete-ahtung": "Are you sure you want to delete this invitation?",
@@ -159,7 +160,8 @@
         },
         "friends": {
             "no-friends": "You have no friends. What a shame.",
-            "add": "Add"
+            "add": "Add",
+            "error": "Failed to load your list of friends. Try again later."
         },
         "week-start": {
             "monday": "Monday",
