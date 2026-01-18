@@ -4,7 +4,7 @@ import { optimistic as _optimistic } from "$/shared/inertia/visit/optimistic";
 import type { VisitOptions } from "@inertiajs/core";
 
 export const visitOptions: VisitOptions = {
-    only: ["todos"],
+    only: ["todos", "categories"],
     preserveState: true,
     preserveScroll: true,
     replace: true

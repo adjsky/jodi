@@ -23,7 +23,7 @@
 <Form
     action={create()}
     options={{
-        only: ["todos"],
+        only: ["todos", "categories"],
         preserveState: true,
         preserveScroll: true,
         replace: true
