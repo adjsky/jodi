@@ -1,5 +1,12 @@
 # Releases
 
+## 0.7.3 (2026-01-18)
+
+### Fix
+
+- load categories when creating/updating todos
+- normalize iso string when completing todos
+
 ## 0.7.2 (2026-01-18)
 
 ## 0.7.1 (2026-01-17)
