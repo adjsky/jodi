@@ -4,6 +4,7 @@
     import { Bell, BellDot, Check } from "@lucide/svelte";
     import { m } from "$/paraglide/messages";
     import { link } from "$/shared/inertia/link";
+    import { normalizeIsoString } from "$/shared/lib/date";
     import { noop } from "$/shared/lib/function";
     import ToolbarAction from "$/shared/ui/ToolbarAction.svelte";
     import { boolAttr } from "runed";
@@ -37,15 +38,6 @@
     function durationToZonedDT(duration: string) {
         return start.subtract(parseDuration(duration));
     }
-
-    function durationToISOString(duration: string) {
-        const [date, tzTime] = durationToZonedDT(duration)
-            .toAbsoluteString()
-            .split("T");
-        const [time, _] = tzTime.split(".");
-
-        return `${date}T${time}+00:00`;
-    }
 </script>
 
 <Menu.Root
@@ -76,7 +68,9 @@
                     {@attach inertia(() => ({
                         ...options,
                         data: {
-                            notifyAt: durationToISOString(value)
+                            notifyAt: normalizeIsoString(
+                                durationToZonedDT(value).toAbsoluteString()
+                            )
                         },
                         showProgress: false
                     }))}

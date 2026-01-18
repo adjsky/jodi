@@ -4,6 +4,7 @@
     import { m } from "$/paraglide/messages";
     import { link } from "$/shared/inertia/link";
     import { optimistic } from "$/shared/inertia/visit/optimistic";
+    import { normalizeIsoString } from "$/shared/lib/date";
     import { tw } from "$/shared/lib/styles";
     import { boolAttr } from "runed";
 
@@ -27,7 +28,7 @@
                               ...t,
                               completedAt: t.completedAt
                                   ? null
-                                  : new Date().toISOString()
+                                  : normalizeIsoString(new Date().toISOString())
                           }
                         : t
                 )
