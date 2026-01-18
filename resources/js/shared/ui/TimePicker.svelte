@@ -1,13 +1,13 @@
 <script lang="ts">
     import "imask/masked/range";
 
+    import { m } from "$/paraglide/messages";
     import IMask from "imask/holder";
     import { watch } from "runed";
     import { tick } from "svelte";
+    import TimepickerUI from "timepicker-ui";
 
-    import { announce } from "../lib/form";
     import { tw } from "../lib/styles";
-    import { isMobile } from "../lib/user-agent";
 
     import type { ClassName } from "../lib/styles";
     import type { Time } from "@internationalized/date";
@@ -37,39 +37,15 @@
             : ""
     );
 
-    let timeInput = $state<HTMLInputElement | null>(null);
     let mask = $state<InputMask | null>(null);
 
-    async function oncomplete(v: string) {
-        const [hour, minute] = v.split(":").map(Number);
+    async function oncomplete(hour: number, minute: number) {
         value = value?.set({ hour, minute });
         onComplete?.();
-
-        await tick();
-
-        if (timeInput) {
-            timeInput.value = visibleValue;
-            announce(timeInput);
-        }
-    }
-
-    async function onpickerchange(e: { currentTarget: HTMLInputElement }) {
-        void oncomplete(e.currentTarget.value);
-        await tick();
-        mask?.updateValue();
-    }
-
-    function onfocus(e: FocusEvent) {
-        if (isMobile() && navigator.userActivation.isActive) {
-            e.preventDefault();
-            timeInput?.showPicker();
-        }
     }
 
     function onblur() {
-        if (!mask) return;
-
-        if (!mask.masked.isComplete) {
+        if (mask && !mask.masked.isComplete) {
             mask.value = visibleValue;
         }
     }
@@ -104,10 +80,49 @@
 
             mask.on("complete", () => {
                 if (!mask) return;
-                void oncomplete(mask.value);
+                const [hour, minute] = mask.value.split(":").map(Number);
+                void oncomplete(hour, minute);
             });
 
             return () => mask?.destroy();
+        }
+    );
+
+    watch(
+        () => [ref],
+        () => {
+            if (!ref) return;
+
+            const picker = new TimepickerUI(ref, {
+                ui: {
+                    animation: true,
+                    backdrop: true
+                },
+                behavior: {
+                    delayHandler: 10
+                },
+                clock: {
+                    type: "24h"
+                },
+                labels: {
+                    time: m["common.time-picker.title"](),
+                    ok: m["common.time-picker.ok"](),
+                    cancel: m["common.time-picker.cancel"]()
+                },
+                callbacks: {
+                    async onConfirm({ hour, minutes }) {
+                        void oncomplete(Number(hour), Number(minutes));
+                        await tick();
+                        mask?.updateValue();
+                    }
+                }
+            });
+
+            picker.create();
+
+            return () => {
+                picker.destroy();
+            };
         }
     );
 </script>
@@ -120,15 +135,7 @@
         classname
     )}
     type="text"
-    {onfocus}
     {onblur}
     {required}
-/>
-
-<input
-    bind:this={timeInput}
-    type="time"
-    class="sr-only"
-    onchange={onpickerchange}
     {name}
 />

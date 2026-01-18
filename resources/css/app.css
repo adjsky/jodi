@@ -4,6 +4,7 @@
 @import "tw-animate-css";
 
 @import "./view-transition.css";
+@import "./timepicker-ui.css";
 
 @plugin "@tailwindcss/forms" {
     strategy: "class";

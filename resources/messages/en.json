@@ -9,7 +9,12 @@
         "yes": "Yes",
         "required-field": "Please fill out this field",
         "to": "to",
-        "invalid-time-range": "Invalid time range"
+        "invalid-time-range": "Invalid time range",
+        "time-picker": {
+            "title": "Select time",
+            "ok": "OK",
+            "cancel": "Cancel"
+        }
     },
     "push-notifications": {
         "not-supported": "Browser update required. Update to enable push notifications.",

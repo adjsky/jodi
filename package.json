@@ -4,7 +4,7 @@
     "type": "module",
     "scripts": {
         "build": "vite build",
-        "dev": "vite",
+        "dev": "vite --force",
         "lint": "eslint",
         "format": "prettier",
         "check": "svelte-check",
@@ -50,6 +50,7 @@
         "svelte-sonner": "^1.0.7",
         "tailwind-merge": "^3.3.1",
         "tailwindcss": "^4.1.13",
+        "timepicker-ui": "^4.0.2",
         "tw-animate-css": "^1.3.8",
         "type-fest": "^5.1.0",
         "typescript": "^5.9.2",
