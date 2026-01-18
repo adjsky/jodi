@@ -98,9 +98,6 @@
                     animation: true,
                     backdrop: true
                 },
-                behavior: {
-                    delayHandler: 10
-                },
                 clock: {
                     type: "24h"
                 },
