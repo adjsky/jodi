@@ -1,8 +1,10 @@
 <script lang="ts">
     import { Combobox, useFilter, useListCollection } from "@ark-ui/svelte";
-    import { page } from "@inertiajs/svelte";
-    import { CirclePlus, Tag, Trash } from "@lucide/svelte";
+    import { page, router } from "@inertiajs/svelte";
+    import { Delete, Tag, Trash } from "@lucide/svelte";
+    import { destroy } from "$/generated/actions/App/Http/Controllers/CategoryController";
     import { m } from "$/paraglide/messages";
+    import Confirmable from "$/shared/ui/Confirmable.svelte";
     import { tick } from "svelte";
 
     import { useAutoresize } from "../helpers/autoresize.svelte";
@@ -23,15 +25,19 @@
     // svelte-ignore state_referenced_locally
     let categoryInputValue = $state(selected ?? "");
 
-    const filters = useFilter({ sensitivity: "base" });
-
     const autoresize = useAutoresize();
 
+    const filters = useFilter({ sensitivity: "base" });
     const { collection, filter, set } = useListCollection({
-        initialItems: [],
+        initialItems: [] as string[],
         filter(itemString, filterText) {
             return filters().contains(itemString, filterText);
         }
+    });
+
+    $effect(() => {
+        const categories = $page.props["categories"];
+        if (categories) set(categories);
     });
 
     function oninput(value: string) {
@@ -48,6 +54,16 @@
         formInput.dispatchEvent(new Event("input", { bubbles: true }));
     }
 
+    function add() {
+        selected = categoryInputValue;
+        onselect(categoryInputValue);
+    }
+
+    function onkeydown(e: KeyboardEvent) {
+        if (e.key != "Enter") return;
+        add();
+    }
+
     async function ontrigger(e: Event) {
         e.stopPropagation();
         open = true;
@@ -55,38 +71,21 @@
         categoryInput?.focus();
     }
 
-    $effect(() => {
-        const categories = $page.props["categories"];
-        if (categories) set(categories);
-    });
-
     const showReset = $derived(categoryInputValue != "");
-    const showCreate = $derived(
-        categoryInputValue != "" &&
-            categoryInputValue != selected &&
-            !collection().has(categoryInputValue)
-    );
     const showCategories = $derived(collection().size != 0);
-
-    const showContent = $derived(showReset || showCreate || showCategories);
+    const showContent = $derived(showReset || showCategories);
 </script>
-
-<input
-    bind:this={formInput}
-    type="text"
-    defaultValue={selected ?? ""}
-    {name}
-    hidden
-/>
 
 <Combobox.Root
     {collection}
+    {onkeydown}
     allowCustomValue
     bind:open
     bind:inputValue={categoryInputValue}
     bind:value={() => (selected ? [selected] : []), ([v]) => (selected = v)}
     onInputValueChange={(d) => oninput(d.inputValue)}
     onSelect={(d) => onselect(d.itemValue)}
+    onFocusOutside={add}
     positioning={{ sameWidth: false, placement: "bottom-start" }}
 >
     <Combobox.Control>
@@ -94,8 +93,8 @@
             <Combobox.Input
                 bind:ref={categoryInput}
                 {@attach autoresize}
-                class="rounded-full px-2.5 py-0.5 font-bold outline outline-cream-400 outline-dashed placeholder:text-cream-700"
-                placeholder="+ {m['todos.category']()}"
+                class="rounded-full px-2.5 py-0.5 font-bold outline outline-offset-0 outline-cream-400 outline-dashed placeholder:text-cream-700"
+                placeholder="+ {m['todos.category.placeholder']()}"
             />
         {:else}
             <button
@@ -112,7 +111,7 @@
                     <Tag class="text-sm" />
                     {selected}
                 {:else}
-                    + {m["todos.category"]()}
+                    + {m["todos.category.placeholder"]()}
                 {/if}
             </button>
         {/if}
@@ -130,33 +129,57 @@
                     {#each collection().items as item (item)}
                         <Combobox.Item
                             {item}
-                            class="flex cursor-pointer items-center justify-between rounded-lg px-3 py-2 data-[state=checked]:bg-peach"
+                            class="group flex cursor-pointer items-center justify-between rounded-lg px-3 py-2 data-[state=checked]:bg-peach"
                         >
                             <Combobox.ItemText>{item}</Combobox.ItemText>
+                            <Confirmable
+                                title={m["todos.category.confirm-delete"]({
+                                    category: item
+                                })}
+                                onConfirm={async () => {
+                                    await router.visit(destroy(item), {
+                                        only: ["todos", "categories"],
+                                        preserveState: true,
+                                        preserveScroll: true,
+                                        preserveUrl: true,
+                                        replace: true,
+                                        showProgress: true
+                                    });
+                                    return true;
+                                }}
+                                onOpen={(_open) => {
+                                    if (!_open) return;
+                                    open = false;
+                                }}
+                            >
+                                {#snippet children(props)}
+                                    <button
+                                        {...props()}
+                                        onclick={(e) => {
+                                            e.stopPropagation();
+                                            props().onclick?.(e);
+                                        }}
+                                        type="button"
+                                        class="group-data-[state=checked]:hidden"
+                                    >
+                                        <Trash class="text-red" />
+                                    </button>
+                                {/snippet}
+                            </Confirmable>
+
                             <Combobox.ItemIndicator>✓</Combobox.ItemIndicator>
                         </Combobox.Item>
                     {/each}
                 </Combobox.ItemGroup>
             {/if}
             <Combobox.ItemGroup>
-                {#if showCreate}
-                    <Combobox.Item
-                        item={categoryInputValue}
-                        class="cursor-pointer px-1 py-2"
-                    >
-                        <Combobox.ItemText class="flex items-center gap-1">
-                            <CirclePlus />
-                            {m["todos.create-new-category"]()}
-                        </Combobox.ItemText>
-                    </Combobox.Item>
-                {/if}
                 {#if showReset}
                     <Combobox.Item item="" class="cursor-pointer px-1 py-2">
                         <Combobox.ItemText
                             class="flex items-center gap-1 text-red"
                         >
-                            <Trash />
-                            {m["todos.reset-category"]()}
+                            <Delete class="text-xl" />
+                            {m["todos.category.reset"]()}
                         </Combobox.ItemText>
                     </Combobox.Item>
                 {/if}
@@ -164,3 +187,11 @@
         </Combobox.Content>
     </Combobox.Positioner>
 </Combobox.Root>
+
+<input
+    bind:this={formInput}
+    type="text"
+    defaultValue={selected ?? ""}
+    {name}
+    hidden
+/>

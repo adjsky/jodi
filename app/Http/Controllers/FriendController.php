@@ -7,7 +7,7 @@ namespace App\Http\Controllers;
 use App\Data\FriendDto;
 use Illuminate\Http\Request;
 
-class FriendsController extends Controller
+class FriendController extends Controller
 {
     public function getAll(Request $request)
     {

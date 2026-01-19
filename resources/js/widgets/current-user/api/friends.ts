@@ -1,4 +1,4 @@
-import { getAll } from "$/generated/actions/App/Http/Controllers/FriendsController";
+import { getAll } from "$/generated/actions/App/Http/Controllers/FriendController";
 
 import type { ResourceFetcher } from "runed";
 

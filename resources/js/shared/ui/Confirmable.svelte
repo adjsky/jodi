@@ -5,22 +5,30 @@
 
     import Button from "./Button.svelte";
 
+    import type { MaybePromise } from "../lib/types";
     import type { Snippet } from "svelte";
     import type { HTMLButtonAttributes } from "svelte/elements";
 
     type Props = {
         title: string;
+        open?: boolean;
         children: Snippet<[() => HTMLButtonAttributes]>;
-        onConfirm?: () => boolean | void;
+        onConfirm?: () => MaybePromise<boolean | void>;
         onAbort?: VoidFunction;
+        onOpen?: (open: boolean) => void;
     };
 
-    const { title, children, onConfirm, onAbort }: Props = $props();
-
-    let open = $state(false);
+    let {
+        title,
+        open = $bindable(false),
+        children,
+        onConfirm,
+        onAbort,
+        onOpen
+    }: Props = $props();
 </script>
 
-<Dialog.Root bind:open>
+<Dialog.Root bind:open onOpenChange={({ open }) => onOpen?.(open)}>
     <Dialog.Trigger>
         {#snippet asChild(props)}{@render children(props)}{/snippet}
     </Dialog.Trigger>
@@ -55,8 +63,8 @@
                         {/snippet}
                     </Dialog.CloseTrigger>
                     <Button
-                        onclick={() => {
-                            if (onConfirm?.()) {
+                        onclick={async () => {
+                            if (await onConfirm?.()) {
                                 open = false;
                             }
                         }}

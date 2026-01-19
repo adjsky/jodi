@@ -37,12 +37,14 @@ class TodoController extends Controller
                 $todo->position = $todo->getHighestOrderNumber();
             }
 
-            if (isset($data['category'])) {
+            if (array_key_exists('category', $data)) {
+                $name = $data['category'];
+
                 // TODO: https://github.com/larastan/larastan/issues/2402
                 // @phpstan-ignore assign.propertyType
-                $todo->category_id = $this->user()
-                    ->categories()
-                    ->firstOrCreate(['name' => $data['category']])->id;
+                $todo->category_id = $name
+                    ? $this->user()->categories()->firstOrCreate(['name' => $name])->id
+                    : null;
             }
 
             $todo->save();

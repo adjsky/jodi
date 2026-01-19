@@ -66,9 +66,11 @@
         "no-todos": "Похоже, у вас нет задач. Нажмите +, чтобы добавить задачу.",
         "select-color": "Выбрать цвет",
         "delete-ahtung": "Вы уверены, что хотите удалить эту задачу?",
-        "category": "Категория",
-        "create-new-category": "Создать новую",
-        "reset-category": "Сбросить",
+        "category": {
+            "placeholder": "Категория",
+            "reset": "Сбросить",
+            "confirm-delete": "Вы уверены, что хотите удалить \"{category}\"?"
+        },
         "tooltips": {
             "delete": "Удалить",
             "repeat": "Повторить",

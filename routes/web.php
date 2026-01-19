@@ -5,10 +5,11 @@ declare(strict_types=1);
 use App\Domain\Auth\Mail;
 use App\Domain\Auth\Notifications as AuthNotifications;
 use App\Domain\Event\Notifications as EventNotifications;
+use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\CurrentUserController;
 use App\Http\Controllers\DaySummaryController;
 use App\Http\Controllers\EventController;
-use App\Http\Controllers\FriendsController;
+use App\Http\Controllers\FriendController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\LoginController;
 use App\Http\Controllers\PushSubscriptionController;
@@ -52,6 +53,12 @@ Route::middleware('auth')->group(function () {
     Route::get('/', [HomeController::class, 'show'])->name('home');
     Route::post('/logout', [LoginController::class, 'logout'])->name('logout');
 
+    Route::prefix('/categories')
+        ->controller(CategoryController::class)
+        ->group(function () {
+            Route::delete('/{name}', 'destroy');
+        });
+
     Route::prefix('/todos')
         ->controller(TodoController::class)
         ->group(function () {
@@ -86,7 +93,7 @@ Route::middleware('auth')->group(function () {
         });
 
     Route::prefix('/me/friends')
-        ->controller(FriendsController::class)
+        ->controller(FriendController::class)
         ->group(function () {
             Route::get('/', 'getAll');
         });
