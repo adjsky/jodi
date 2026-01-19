@@ -6,7 +6,7 @@ import { toaster } from "$/shared/lib/toaster";
 import type { PageProps, VisitCallbacks } from "@inertiajs/core";
 
 type CommitFn = (prev: any, data: any) => any;
-type Options = { error?: string; omitHash?: boolean; isHistoryView?: boolean };
+type Options = { error?: string; omitHash?: boolean };
 
 export function optimistic(
     commit: CommitFn,
@@ -25,8 +25,7 @@ export function optimistic(
                 },
                 ...(options?.omitHash && {
                     url: location.pathname + location.search
-                }),
-                ...(options?.isHistoryView && { __jodi_isHistoryModal: false })
+                })
             });
         },
         onInvalid(response) {

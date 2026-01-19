@@ -20,7 +20,6 @@ export const optimistic = {
             }),
             {
                 error: m["todos.errors.edit"](),
-                isHistoryView: true,
                 omitHash: !keepHash
             }
         ),
@@ -31,7 +30,6 @@ export const optimistic = {
             }),
             {
                 error: m["todos.errors.delete"](),
-                isHistoryView: true,
                 omitHash: true
             }
         )
