@@ -1,5 +1,12 @@
 # Releases
 
+## 0.7.5 (2026-01-19)
+
+### Fix
+
+- hide instead of unmounting events and todos list
+- handle empty categories as nulls
+
 ## 0.7.4 (2026-01-19)
 
 ## 0.7.3 (2026-01-18)
