@@ -14,6 +14,10 @@
     };
 
     const { todos, events }: Props = $props();
+
+    const hasNoEventsAndTodos = $derived(
+        todos?.length === 0 && events?.length === 0
+    );
 </script>
 
 <ActionBanner />
@@ -23,7 +27,7 @@
         <CurrentUser />
     </CalendarPreview>
 
-    {#if todos?.length === 0 && events?.length === 0}
+    {#if hasNoEventsAndTodos}
         <img
             src={CalendarCat}
             width={300}
@@ -36,10 +40,10 @@
         <p class="mx-auto mt-8 max-w-3/4 text-center text-lg font-medium">
             {m["home.empty-day"]()}
         </p>
-    {:else}
-        <EventList {events} class="mt-4" />
-        <TodoList {todos} class="mt-4" />
     {/if}
+
+    <EventList {events} class="mt-4" hidden={hasNoEventsAndTodos} />
+    <TodoList {todos} class="mt-4" hidden={hasNoEventsAndTodos} />
 
     <AddTodoOrEvent />
 </main>
