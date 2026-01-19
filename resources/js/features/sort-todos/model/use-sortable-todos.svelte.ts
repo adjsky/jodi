@@ -17,7 +17,7 @@ export function useSortableTodos(todos: Getter<App.Data.TodoDto[]>) {
     let groups = $derived(
         groupBy(
             extract(todos),
-            ({ category }) => category ?? m["todos.ungrouped"]()
+            ({ category }) => category || m["todos.ungrouped"]()
         )
     );
 
