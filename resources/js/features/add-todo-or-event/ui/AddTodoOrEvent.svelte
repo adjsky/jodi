@@ -104,7 +104,7 @@
             }
         }
     }
-    defaultSnapPoint={0.6}
+    defaultSnapPoint={0.95}
     snapPoints={[0.6, 0.95]}
     background="var(--color-white)"
     grip="var(--color-cream-300)"
