@@ -1,5 +1,11 @@
 # Releases
 
+## 0.8.2 (2026-01-21)
+
+### Fix
+
+- prevent crashes when closing todo/event sheet
+
 ## 0.8.1 (2026-01-21)
 
 ### Fix
