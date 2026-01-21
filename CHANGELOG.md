@@ -1,5 +1,11 @@
 # Releases
 
+## 0.8.0 (2026-01-21)
+
+### Feat
+
+- custom time picker
+
 ## 0.7.6 (2026-01-21)
 
 ### Fix
