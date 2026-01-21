@@ -1,5 +1,11 @@
 # Releases
 
+## 0.8.1 (2026-01-21)
+
+### Fix
+
+- prevent selection in time picker
+
 ## 0.8.0 (2026-01-21)
 
 ### Feat
