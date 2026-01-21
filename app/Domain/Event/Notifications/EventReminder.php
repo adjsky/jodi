@@ -49,8 +49,8 @@ class EventReminder extends Notification implements ShouldQueue
 
     protected function startsIn(): string
     {
-        return now()->diffForHumans(
-            $this->event->notify_at,
+        return $this->event->notify_at->diffForHumans(
+            now(),
             syntax: CarbonInterface::DIFF_RELATIVE_TO_NOW,
             options: CarbonInterface::ONE_DAY_WORDS
         );
