@@ -162,7 +162,7 @@
                 </div>
                 <div
                     bind:this={clockRef}
-                    class="relative mt-5 aspect-square w-full touch-none rounded-full bg-cream-50"
+                    class="relative mt-5 aspect-square w-full touch-none rounded-full bg-cream-50 select-none"
                     role="group"
                     {onpointerdown}
                 >
@@ -213,7 +213,7 @@
     {#each Array.from({ length: 24 }, (_, i) => i) as hour (hour)}
         {@const { x, y } = hourPosition(hour)}
         {@const isSelected = internalValue.hour == hour}
-        <button
+        <span
             class="absolute flex h-8 w-8 cursor-pointer items-center justify-center font-medium data-selected:font-semibold data-selected:text-white"
             style="left: calc(50% + {x}px - 16px); top: calc(50% + {y}px - 16px);"
             role="option"
@@ -222,7 +222,7 @@
             tabindex="0"
         >
             {hour.toString().padStart(2, "0")}
-        </button>
+        </span>
     {/each}
 {/snippet}
 
@@ -230,7 +230,7 @@
     {#each Array.from({ length: 12 }, (_, i) => i * 5) as minute (minute)}
         {@const { x, y } = minutePosition(minute)}
         {@const isSelected = internalValue.minute == minute}
-        <button
+        <span
             class="absolute flex h-8 w-8 cursor-pointer items-center justify-center font-medium data-selected:font-semibold data-selected:text-white"
             style="left: calc(50% + {x}px - 16px); top: calc(50% + {y}px - 16px);"
             role="option"
@@ -239,6 +239,6 @@
             tabindex="0"
         >
             {minute.toString().padStart(2, "0")}
-        </button>
+        </span>
     {/each}
 {/snippet}

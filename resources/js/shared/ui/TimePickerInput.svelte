@@ -93,7 +93,7 @@
     bind:this={ref}
     value={visibleValue}
     class={tw(
-        "w-12 rounded-md text-center font-bold max-md:outline-none",
+        "w-12 rounded-md text-center font-bold select-none max-md:outline-none",
         classname
     )}
     type="text"
