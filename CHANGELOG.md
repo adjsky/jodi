@@ -1,5 +1,12 @@
 # Releases
 
+## 0.8.3 (2026-01-21)
+
+### Fix
+
+- check time before adding 1 hour
+- use now() instead of starts_at when calculating remaining time
+
 ## 0.8.2 (2026-01-21)
 
 ### Fix
