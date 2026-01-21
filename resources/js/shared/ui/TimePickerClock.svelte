@@ -119,6 +119,7 @@
     onOpenChange={(details) => {
         if (!details.open) {
             internalValue = value;
+            view = "hour";
         }
     }}
 >
@@ -198,6 +199,7 @@
                         class="text-ms font-bold text-brand"
                         onclick={() => {
                             open = false;
+                            view = "hour";
                             onComplete?.(internalValue);
                         }}
                     >

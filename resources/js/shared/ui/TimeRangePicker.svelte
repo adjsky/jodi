@@ -1,4 +1,5 @@
 <script lang="ts">
+    import { TriangleAlert } from "@lucide/svelte";
     import { m } from "$/paraglide/messages";
 
     import { tw } from "../lib/styles";
@@ -28,6 +29,10 @@
 
     let endsAtInput = $state<HTMLInputElement | null>(null);
 
+    let isValid = $derived(
+        endsAt && startsAt ? startsAt.compare(endsAt) < 0 : true
+    );
+
     function onStartsAtComplete() {
         if (!startsAt || !endsAt) return;
 
@@ -37,29 +42,24 @@
         });
     }
 
-    function onEndsAtComplete() {
-        if (!startsAt || !endsAtInput) {
-            return;
+    $effect(() => {
+        if (isValid) {
+            endsAtInput?.setCustomValidity("");
+        } else {
+            endsAtInput?.setCustomValidity(m["common.invalid-time-range"]());
         }
-
-        if (!endsAt) {
-            return endsAtInput.setCustomValidity(m["common.required-field"]());
-        }
-
-        if (startsAt.compare(endsAt) < 0) {
-            return endsAtInput.setCustomValidity("");
-        }
-
-        endsAtInput.setCustomValidity(m["common.invalid-time-range"]());
-    }
+    });
 </script>
 
-<div class={tw("group flex w-full gap-4 text-lg", classname)}>
+<div class={tw("group flex w-full items-center gap-4 text-lg", classname)}>
     <span class="flex items-center gap-1.5 select-none">
         {@render label?.()}
     </span>
     <div
-        class="flex w-min items-center rounded-lg border border-cream-300 bg-white px-4 py-1.25 select-none"
+        class={[
+            "flex w-min items-center rounded-lg border border-cream-300 bg-white px-4 py-1.25 select-none",
+            !isValid && "border-red"
+        ]}
     >
         <TimePickerInput
             bind:value={startsAt}
@@ -78,7 +78,9 @@
             bind:value={endsAt}
             {required}
             name={name ? name + "_end" : ""}
-            onComplete={onEndsAtComplete}
         />
+        {#if !isValid}
+            <TriangleAlert class="ml-2 text-2xl text-red" />
+        {/if}
     </div>
 </div>
