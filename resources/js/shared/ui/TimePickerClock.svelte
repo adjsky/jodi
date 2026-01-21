@@ -116,11 +116,9 @@
 
 <Dialog.Root
     bind:open
-    onOpenChange={(details) => {
-        if (!details.open) {
-            internalValue = value;
-            view = "hour";
-        }
+    onExitComplete={() => {
+        internalValue = value;
+        view = "hour";
     }}
 >
     <Portal>
@@ -199,7 +197,6 @@
                         class="text-ms font-bold text-brand"
                         onclick={() => {
                             open = false;
-                            view = "hour";
                             onComplete?.(internalValue);
                         }}
                     >
