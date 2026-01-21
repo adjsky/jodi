@@ -36,10 +36,14 @@
     function onStartsAtComplete() {
         if (!startsAt || !endsAt) return;
 
-        endsAt = endsAt.set({
-            hour: startsAt.hour + 1,
-            minute: startsAt.minute
-        });
+        if (startsAt.hour == 23) {
+            endsAt = endsAt.set({ hour: 23, minute: 59 });
+        } else {
+            endsAt = endsAt.set({
+                hour: startsAt.hour + 1,
+                minute: startsAt.minute
+            });
+        }
     }
 
     $effect(() => {
