@@ -1,6 +1,4 @@
 <script lang="ts">
-    import "imask/masked/range";
-
     import { tick } from "svelte";
 
     import { announce } from "../lib/form";
