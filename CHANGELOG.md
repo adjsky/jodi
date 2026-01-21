@@ -1,5 +1,12 @@
 # Releases
 
+## 0.8.6 (2026-01-21)
+
+### Fix
+
+- apply changes on animation end
+- ignore notify_at
+
 ## 0.8.5 (2026-01-21)
 
 ### Fix
