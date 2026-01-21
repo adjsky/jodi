@@ -1,13 +1,13 @@
 <script lang="ts">
     import "imask/masked/range";
 
-    import { m } from "$/paraglide/messages";
     import IMask from "imask/holder";
     import { watch } from "runed";
     import { tick } from "svelte";
-    import TimepickerUI from "timepicker-ui";
 
+    import { announce } from "../lib/form";
     import { tw } from "../lib/styles";
+    import TimePickerClock from "./TimePickerClock.svelte";
 
     import type { ClassName } from "../lib/styles";
     import type { Time } from "@internationalized/date";
@@ -31,23 +31,23 @@
         onComplete
     }: Props = $props();
 
-    const visibleValue = $derived(
-        value
-            ? `${value.hour.toString().padStart(2, "0")}:${value.minute.toString().padStart(2, "0")}`
-            : ""
-    );
-
+    let isPickerOpen = $state(false);
     let mask = $state<InputMask | null>(null);
 
-    async function oncomplete(hour: number, minute: number) {
+    const visibleValue = $derived.by(() => {
+        if (!value) {
+            return "";
+        }
+
+        const hours = value.hour.toString().padStart(2, "0");
+        const minutes = value.minute.toString().padStart(2, "0");
+
+        return hours + ":" + minutes;
+    });
+
+    function oncomplete(hour: number, minute: number) {
         value = value?.set({ hour, minute });
         onComplete?.();
-    }
-
-    function onblur() {
-        if (mask && !mask.masked.isComplete) {
-            mask.value = visibleValue;
-        }
     }
 
     watch(
@@ -81,45 +81,10 @@
             mask.on("complete", () => {
                 if (!mask) return;
                 const [hour, minute] = mask.value.split(":").map(Number);
-                void oncomplete(hour, minute);
+                oncomplete(hour, minute);
             });
 
             return () => mask?.destroy();
-        }
-    );
-
-    watch(
-        () => [ref],
-        () => {
-            if (!ref) return;
-
-            const picker = new TimepickerUI(ref, {
-                ui: {
-                    animation: true,
-                    backdrop: true
-                },
-                clock: {
-                    type: "24h"
-                },
-                labels: {
-                    time: m["common.time-picker.title"](),
-                    ok: m["common.time-picker.ok"](),
-                    cancel: m["common.time-picker.cancel"]()
-                },
-                callbacks: {
-                    async onConfirm({ hour, minutes }) {
-                        void oncomplete(Number(hour), Number(minutes));
-                        await tick();
-                        mask?.updateValue();
-                    }
-                }
-            });
-
-            picker.create();
-
-            return () => {
-                picker.destroy();
-            };
         }
     );
 </script>
@@ -132,7 +97,23 @@
         classname
     )}
     type="text"
-    {onblur}
+    onblur={() => {
+        if (mask && !mask.masked.isComplete) {
+            mask.value = visibleValue;
+        }
+    }}
+    onclick={() => (isPickerOpen = true)}
     {required}
     {name}
+/>
+
+<TimePickerClock
+    {value}
+    bind:open={isPickerOpen}
+    onComplete={async (t) => {
+        oncomplete(t.hour, t.minute);
+        await tick();
+        announce(ref);
+        mask?.updateValue();
+    }}
 />

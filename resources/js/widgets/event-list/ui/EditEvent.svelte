@@ -15,6 +15,7 @@
         update
     } from "$/generated/actions/App/Http/Controllers/EventController";
     import { m } from "$/paraglide/messages";
+    import { normalizeIsoString } from "$/shared/lib/date";
     import { announce, cleanFormPayload } from "$/shared/lib/form";
     import SaveOrClose from "$/shared/ui/SaveOrClose.svelte";
     import Sheet from "$/shared/ui/Sheet.svelte";
@@ -51,8 +52,8 @@
         showProgress={false}
         transform={(data) => ({
             ...cleanFormPayload(data),
-            startsAt: startsAt.toAbsoluteString(),
-            endsAt: endsAt.toAbsoluteString()
+            startsAt: normalizeIsoString(startsAt.toAbsoluteString()),
+            endsAt: normalizeIsoString(endsAt.toAbsoluteString())
         })}
         let:isDirty
     >

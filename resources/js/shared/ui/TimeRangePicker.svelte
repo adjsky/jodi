@@ -2,7 +2,7 @@
     import { m } from "$/paraglide/messages";
 
     import { tw } from "../lib/styles";
-    import TimePicker from "./TimePicker.svelte";
+    import TimePickerInput from "./TimePickerInput.svelte";
 
     import type { ClassName } from "../lib/styles";
     import type { Time } from "@internationalized/date";
@@ -61,7 +61,7 @@
     <div
         class="flex w-min items-center rounded-lg border border-cream-300 bg-white px-4 py-1.25 select-none"
     >
-        <TimePicker
+        <TimePickerInput
             bind:value={startsAt}
             {required}
             name={name ? name + "_start" : ""}
@@ -73,7 +73,7 @@
         >
             {m["common.to"]()}
         </div>
-        <TimePicker
+        <TimePickerInput
             bind:ref={endsAtInput}
             bind:value={endsAt}
             {required}
