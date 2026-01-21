@@ -20,22 +20,33 @@
     import SaveOrClose from "$/shared/ui/SaveOrClose.svelte";
     import Sheet from "$/shared/ui/Sheet.svelte";
     import ToolbarAction from "$/shared/ui/ToolbarAction.svelte";
+    import { watch } from "runed";
     import { tick } from "svelte";
 
     import { optimistic, visitOptions } from "../cfg/inertia";
 
     type Props = {
         open: boolean;
-        event: App.Data.EventDto;
+        event: App.Data.EventDto | null;
     };
 
-    let { open = $bindable(), event }: Props = $props();
+    let { open = $bindable(), ...props }: Props = $props();
 
-    let startsAt = $derived(parseAbsoluteToLocal(event.startsAt));
-    let endsAt = $derived(parseAbsoluteToLocal(event.endsAt));
+    let lastKnownEvent = $state(props.event);
+    watch(
+        () => [props.event],
+        () => {
+            if (!props.event) return;
+            lastKnownEvent = props.event;
+        }
+    );
 
     let dateAnnouncerInput: HTMLInputElement | null = $state(null);
     let isCalendarOpen = $state(false);
+
+    let event = $derived(props.event ?? (lastKnownEvent as App.Data.EventDto));
+    let startsAt = $derived(parseAbsoluteToLocal(event.startsAt));
+    let endsAt = $derived(parseAbsoluteToLocal(event.endsAt));
 </script>
 
 <Sheet

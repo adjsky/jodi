@@ -17,21 +17,32 @@
     import SaveOrClose from "$/shared/ui/SaveOrClose.svelte";
     import Sheet from "$/shared/ui/Sheet.svelte";
     import ToolbarAction from "$/shared/ui/ToolbarAction.svelte";
+    import { watch } from "runed";
     import { tick } from "svelte";
 
     import { optimistic, visitOptions } from "../cfg/inertia";
 
     type Props = {
         open: boolean;
-        todo: App.Data.TodoDto;
+        todo: App.Data.TodoDto | null;
     };
 
-    let { open = $bindable(), todo }: Props = $props();
+    let { open = $bindable(), ...props }: Props = $props();
 
-    let date = $derived(parseDate(todo.date.split("T")[0]));
+    let lastKnownTodo = $state(props.todo);
+    watch(
+        () => [props.todo],
+        () => {
+            if (!props.todo) return;
+            lastKnownTodo = props.todo;
+        }
+    );
 
     let dateAnnouncerInput: HTMLInputElement | null = $state(null);
     let isCalendarOpen = $state(false);
+
+    let todo = $derived(props.todo ?? (lastKnownTodo as App.Data.TodoDto));
+    let date = $derived(parseDate(todo.date.split("T")[0]));
 </script>
 
 <Sheet
