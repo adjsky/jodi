@@ -1,5 +1,17 @@
 # Releases
 
+## 0.9.0 (2026-01-25)
+
+### Feat
+
+- show configure push banner again after log out
+- add optimistic updates to categories
+
+### Fix
+
+- use null instead of transparent
+- move confirmable higher in the tree to prevent immediate closes
+
 ## 0.8.6 (2026-01-21)
 
 ### Fix
