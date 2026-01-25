@@ -1,5 +1,12 @@
 # Releases
 
+## 0.9.1 (2026-01-25)
+
+### Fix
+
+- add missing name
+- set fixed width for paragraph to prevent unnecessary wraps
+
 ## 0.9.0 (2026-01-25)
 
 ### Feat
