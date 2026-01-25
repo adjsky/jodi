@@ -35,7 +35,7 @@
                 {selected}
                 {onSelect}
                 portal={false}
-                class="absolute inset-0 rounded-2xl bg-white"
+                class="absolute inset-0 rounded-t-2xl bg-white"
                 start={$page.props.auth.user.preferences.weekStartOn}
                 onClose={() => (open = false)}
             />
