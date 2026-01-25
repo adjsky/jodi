@@ -22,6 +22,7 @@
     let categoryInput = $state<HTMLInputElement | null>(null);
 
     let open = $state(false);
+    let categoryToDelete = $state<string | null>(null);
     // svelte-ignore state_referenced_locally
     let categoryInputValue = $state(selected ?? "");
 
@@ -132,41 +133,16 @@
                             class="group flex cursor-pointer items-center justify-between rounded-lg px-3 py-2 data-[state=checked]:bg-peach"
                         >
                             <Combobox.ItemText>{item}</Combobox.ItemText>
-                            <Confirmable
-                                title={m["todos.category.confirm-delete"]({
-                                    category: item
-                                })}
-                                onConfirm={async () => {
-                                    await router.visit(destroy(item), {
-                                        only: ["todos", "categories"],
-                                        preserveState: true,
-                                        preserveScroll: true,
-                                        preserveUrl: true,
-                                        replace: true,
-                                        showProgress: true
-                                    });
-                                    return true;
+                            <button
+                                onclick={(e) => {
+                                    e.stopPropagation();
+                                    categoryToDelete = item;
                                 }}
-                                onOpen={(_open) => {
-                                    if (!_open) return;
-                                    open = false;
-                                }}
+                                type="button"
+                                class="group-data-[state=checked]:hidden"
                             >
-                                {#snippet children(props)}
-                                    <button
-                                        {...props()}
-                                        onclick={(e) => {
-                                            e.stopPropagation();
-                                            props().onclick?.(e);
-                                        }}
-                                        type="button"
-                                        class="group-data-[state=checked]:hidden"
-                                    >
-                                        <Trash class="text-red" />
-                                    </button>
-                                {/snippet}
-                            </Confirmable>
-
+                                <Trash class="text-red" />
+                            </button>
                             <Combobox.ItemIndicator>✓</Combobox.ItemIndicator>
                         </Combobox.Item>
                     {/each}
@@ -187,6 +163,34 @@
         </Combobox.Content>
     </Combobox.Positioner>
 </Combobox.Root>
+
+<Confirmable
+    open={categoryToDelete != null}
+    title={m["todos.category.confirm-delete"]({
+        category: categoryToDelete ?? "<null>"
+    })}
+    onConfirm={async () => {
+        if (!categoryToDelete) return;
+
+        await router.visit(destroy(categoryToDelete), {
+            only: ["todos", "categories"],
+            preserveState: true,
+            preserveScroll: true,
+            preserveUrl: true,
+            replace: true,
+            showProgress: true
+        });
+
+        categoryToDelete = null;
+
+        return true;
+    }}
+    onOpenChange={(_open) => {
+        if (_open) return;
+        open = false;
+        categoryToDelete = null;
+    }}
+/>
 
 <input
     bind:this={formInput}

@@ -12,10 +12,10 @@
     type Props = {
         title: string;
         open?: boolean;
-        children: Snippet<[() => HTMLButtonAttributes]>;
+        children?: Snippet<[() => HTMLButtonAttributes]>;
         onConfirm?: () => MaybePromise<boolean | void>;
         onAbort?: VoidFunction;
-        onOpen?: (open: boolean) => void;
+        onOpenChange?: (open: boolean) => void;
     };
 
     let {
@@ -24,14 +24,16 @@
         children,
         onConfirm,
         onAbort,
-        onOpen
+        onOpenChange
     }: Props = $props();
 </script>
 
-<Dialog.Root bind:open onOpenChange={({ open }) => onOpen?.(open)}>
-    <Dialog.Trigger>
-        {#snippet asChild(props)}{@render children(props)}{/snippet}
-    </Dialog.Trigger>
+<Dialog.Root bind:open onOpenChange={({ open }) => onOpenChange?.(open)}>
+    {#if children}
+        <Dialog.Trigger>
+            {#snippet asChild(props)}{@render children(props)}{/snippet}
+        </Dialog.Trigger>
+    {/if}
     <Portal>
         <Dialog.Backdrop
             class={[
