@@ -5,6 +5,7 @@
     import { destroy } from "$/generated/actions/App/Http/Controllers/CategoryController";
     import { m } from "$/paraglide/messages";
     import { optimistic } from "$/shared/inertia/visit/optimistic";
+    import { announce } from "$/shared/lib/form";
     import Confirmable from "$/shared/ui/Confirmable.svelte";
     import { tick } from "svelte";
 
@@ -45,20 +46,19 @@
     function oninput(value: string) {
         filter(value);
         autoresize.update(value);
+        categoryInputValue = value;
     }
 
-    function onselect(value: string) {
-        if (!formInput) {
-            return;
-        }
-
-        formInput.value = value;
-        formInput.dispatchEvent(new Event("input", { bubbles: true }));
+    async function onchange(value: string, isNew?: boolean) {
+        selected = value;
+        await tick();
+        announce(formInput);
+        if (isNew) oninput(value);
     }
 
     function add() {
-        selected = categoryInputValue;
-        onselect(categoryInputValue);
+        if (categoryInputValue == selected) return;
+        void onchange(categoryInputValue, true);
     }
 
     function onkeydown(e: KeyboardEvent) {
@@ -79,15 +79,15 @@
 </script>
 
 <Combobox.Root
+    bind:open
     {collection}
     {onkeydown}
     allowCustomValue
-    bind:open
-    bind:inputValue={categoryInputValue}
-    bind:value={() => (selected ? [selected] : []), ([v]) => (selected = v)}
+    inputValue={categoryInputValue}
     onInputValueChange={(d) => oninput(d.inputValue)}
-    onSelect={(d) => onselect(d.itemValue)}
-    onFocusOutside={add}
+    value={selected ? [selected] : []}
+    onValueChange={({ value: [value] }) => onchange(value)}
+    onFocusOutside={() => add()}
     positioning={{ sameWidth: false, placement: "bottom-start" }}
 >
     <Combobox.Control>
@@ -208,10 +208,4 @@
     }}
 />
 
-<input
-    bind:this={formInput}
-    type="text"
-    defaultValue={selected ?? ""}
-    {name}
-    hidden
-/>
+<input bind:this={formInput} type="text" value={selected} {name} hidden />
