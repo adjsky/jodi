@@ -81,7 +81,8 @@
         "errors": {
             "complete": "Failed to complete todo. Try again later.",
             "edit": "Failed to update todo. Try again later.",
-            "delete": "Failed to delete todo. Try again later."
+            "delete": "Failed to delete todo. Try again later.",
+            "category": "Failed to delete category. Try again later."
         },
         "placeholders": {
             "title": "Task",

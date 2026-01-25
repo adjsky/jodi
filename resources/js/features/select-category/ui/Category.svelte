@@ -4,6 +4,7 @@
     import { Delete, Tag, Trash } from "@lucide/svelte";
     import { destroy } from "$/generated/actions/App/Http/Controllers/CategoryController";
     import { m } from "$/paraglide/messages";
+    import { optimistic } from "$/shared/inertia/visit/optimistic";
     import Confirmable from "$/shared/ui/Confirmable.svelte";
     import { tick } from "svelte";
 
@@ -172,13 +173,28 @@
     onConfirm={async () => {
         if (!categoryToDelete) return;
 
-        await router.visit(destroy(categoryToDelete), {
+        void router.visit(destroy(categoryToDelete), {
+            ...optimistic(
+                (prev) => ({
+                    todos: prev.todos.map((t: App.Data.TodoDto) => ({
+                        ...t,
+                        category:
+                            t.category == categoryToDelete ? null : t.category
+                    })),
+                    categories: prev.categories.filter(
+                        (c: string) => c != categoryToDelete
+                    )
+                }),
+                {
+                    error: m["todos.errors.category"]()
+                }
+            ),
             only: ["todos", "categories"],
             preserveState: true,
             preserveScroll: true,
             preserveUrl: true,
             replace: true,
-            showProgress: true
+            showProgress: false
         });
 
         categoryToDelete = null;
