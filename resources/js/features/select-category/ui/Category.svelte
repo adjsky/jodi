@@ -87,7 +87,7 @@
     onInputValueChange={(d) => oninput(d.inputValue)}
     value={selected ? [selected] : []}
     onValueChange={({ value: [value] }) => onchange(value)}
-    onFocusOutside={() => add()}
+    onInteractOutside={() => add()}
     positioning={{ sameWidth: false, placement: "bottom-start" }}
 >
     <Combobox.Control>
