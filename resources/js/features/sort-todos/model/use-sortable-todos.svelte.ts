@@ -1,5 +1,10 @@
 import { CollisionPriority } from "@dnd-kit/abstract";
-import { DragDropManager, Droppable } from "@dnd-kit/dom";
+import {
+    DragDropManager,
+    Droppable,
+    KeyboardSensor,
+    PointerSensor
+} from "@dnd-kit/dom";
 import { isSortable, Sortable } from "@dnd-kit/dom/sortable";
 import { move } from "@dnd-kit/helpers";
 import { router } from "@inertiajs/svelte";
@@ -12,7 +17,14 @@ import type { Getter } from "runed";
 import type { Attachment } from "svelte/attachments";
 
 export function useSortableTodos(todos: Getter<App.Data.TodoDto[]>) {
-    const manager = new DragDropManager();
+    const manager = new DragDropManager({
+        sensors: [
+            PointerSensor.configure({
+                preventActivation: () => false
+            }),
+            KeyboardSensor
+        ]
+    });
 
     let groups = $derived(
         groupBy(
