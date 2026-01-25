@@ -61,7 +61,7 @@
                         showProgress: false
                     }))}
                     onclick={() => {
-                        current = color;
+                        current = color == "transparent" ? null : color;
                         open = false;
                     }}
                     class="flex h-10 w-11.25 items-center justify-center"
