@@ -55,7 +55,7 @@
             >
                 <X
                     class={[
-                        !view.isOpen() && "rotate-45",
+                        !view.isOpen("add") && "rotate-45",
                         "transition-transform"
                     ]}
                 />
