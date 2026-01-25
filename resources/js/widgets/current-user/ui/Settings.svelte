@@ -6,7 +6,10 @@
     import { m } from "$/paraglide/messages";
     import { getLocale } from "$/paraglide/runtime";
     import { LANGUAGES } from "$/shared/lib/language";
-    import { destroyPushSubscription } from "$/shared/lib/push-notifications";
+    import {
+        destroyPushSubscription,
+        showConfigurePushBannerAgain
+    } from "$/shared/lib/push-notifications";
     import FloatingView from "$/shared/ui/FloatingView.svelte";
 
     import { buildViewName, view } from "../model/view";
@@ -125,7 +128,10 @@
         <User.Info.Block class="mt-10">
             <User.Info.ActionRow
                 href={logout()}
-                onBefore={() => destroyPushSubscription()}
+                onBefore={async () => {
+                    await destroyPushSubscription();
+                    showConfigurePushBannerAgain();
+                }}
                 viewTransition
             >
                 {m["current-user.log-out"]()}

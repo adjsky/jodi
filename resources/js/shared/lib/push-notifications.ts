@@ -101,6 +101,10 @@ export async function destroyPushSubscription() {
     localStorage.removeItem(CONFIGURE_LS_KEY);
 }
 
+export function showConfigurePushBannerAgain() {
+    localStorage.removeItem(CONFIGURE_LS_KEY);
+}
+
 async function getPushManager(): Promise<PushManager | null> {
     if ("pushManager" in window) {
         return window.pushManager as PushManager;
