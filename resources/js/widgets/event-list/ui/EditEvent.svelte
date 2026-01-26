@@ -113,11 +113,11 @@
             {/snippet}
             {#snippet destroy()}
                 <DeleteItem
-                    title={m["events.delete-ahtung"]()}
-                    tooltip={m["events.tooltips.delete"]()}
-                    href={_destroy(event.id)}
                     {...visitOptions}
                     {...optimistic.delete(event.id)}
+                    href={_destroy(event.id)}
+                    title={m["events.delete-ahtung"]()}
+                    tooltip={m["events.tooltips.delete"]()}
                 />
             {/snippet}
             {#snippet repeat()}
@@ -132,7 +132,6 @@
                     href={update(event.id)}
                     tooltip={m["events.tooltips.color"]()}
                     current={event.color}
-                    preserveUrl
                 />
             {/snippet}
             {#snippet notify()}
@@ -143,7 +142,6 @@
                     tooltip={m["events.tooltips.notification"]()}
                     start={startsAt}
                     current={parseAbsoluteToLocal(event.notifyAt)}
-                    preserveUrl
                 />
             {/snippet}
             {#snippet more()}

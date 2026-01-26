@@ -1,54 +1,32 @@
 <script lang="ts">
     import { Check } from "@lucide/svelte";
-    import { complete } from "$/generated/actions/App/Http/Controllers/TodoController";
-    import { m } from "$/paraglide/messages";
     import { link } from "$/shared/inertia/link";
-    import { optimistic } from "$/shared/inertia/visit/optimistic";
-    import { normalizeIsoString } from "$/shared/lib/date";
     import { tw } from "$/shared/lib/styles";
     import { boolAttr } from "runed";
 
+    import type { LinkParameters } from "$/shared/inertia/link";
     import type { ClassName } from "$/shared/lib/styles";
 
-    type Props = {
-        todo: App.Data.TodoDto;
+    type Props = LinkParameters & {
         class?: ClassName;
+        completedAt: string | null;
     };
 
-    const { todo, ...props }: Props = $props();
+    const { class: classname, completedAt, ...options }: Props = $props();
 </script>
 
 <button
     {@attach link(() => ({
-        ...optimistic(
-            (prev) => ({
-                todos: prev.todos.map((t: App.Data.TodoDto) =>
-                    t.id == todo.id
-                        ? {
-                              ...t,
-                              completedAt: t.completedAt
-                                  ? null
-                                  : normalizeIsoString(new Date().toISOString())
-                          }
-                        : t
-                )
-            }),
-            { error: m["todos.errors.complete"]() }
-        ),
-        href: complete(todo.id),
+        ...options,
         only: ["todos"],
-        preserveUrl: true,
-        preserveState: true,
-        preserveScroll: true,
-        replace: true,
         showProgress: false
     }))}
     type="button"
     class={tw(
         "group flex size-5.5 shrink-0 items-center justify-center rounded-full border border-cream-950 text-ms data-completed:bg-cream-950 data-completed:text-cream-50",
-        props.class
+        classname
     )}
-    data-completed={boolAttr(todo.completedAt)}
+    data-completed={boolAttr(completedAt)}
     onclick={() => navigator.vibrate?.(100)}
 >
     <Check class="group-not-data-completed:hidden" />

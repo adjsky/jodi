@@ -1,5 +1,6 @@
 import { m } from "$/paraglide/messages";
 import { optimistic as _optimistic } from "$/shared/inertia/visit/optimistic";
+import { normalizeIsoString } from "$/shared/lib/date";
 
 import { editView } from "../model/view";
 
@@ -29,6 +30,32 @@ export const optimistic = {
                     if (close) {
                         return editView.back();
                     }
+
+                    const todo = todos.find((t) => t.id == id);
+                    if (!todo) return;
+
+                    return editView.updateMeta(todo);
+                }
+            }
+        ),
+    complete: (id: number) =>
+        _optimistic(
+            (prev) => ({
+                todos: prev.todos.map((t: App.Data.TodoDto) =>
+                    t.id == id
+                        ? {
+                              ...t,
+                              completedAt: t.completedAt
+                                  ? null
+                                  : normalizeIsoString(new Date().toISOString())
+                          }
+                        : t
+                )
+            }),
+            {
+                error: m["todos.errors.complete"](),
+                onSuccess(props) {
+                    const todos = props.todos as App.Data.TodoDto[];
 
                     const todo = todos.find((t) => t.id == id);
                     if (!todo) return;

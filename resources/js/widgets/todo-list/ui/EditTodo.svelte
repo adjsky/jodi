@@ -10,6 +10,7 @@
     import { Color } from "$/features/select-color";
     import {
         destroy as _destroy,
+        complete,
         update
     } from "$/generated/actions/App/Http/Controllers/TodoController";
     import { m } from "$/paraglide/messages";
@@ -102,15 +103,21 @@
                 <Category name="category" defaultValue={todo.category} />
             {/snippet}
             {#snippet checkbox()}
-                <Checkbox {todo} class="size-6 text-lg" />
+                <Checkbox
+                    {...visitOptions}
+                    {...optimistic.complete(todo.id)}
+                    href={complete(todo.id)}
+                    completedAt={todo.completedAt}
+                    class="size-6 text-lg"
+                />
             {/snippet}
             {#snippet destroy()}
                 <DeleteItem
-                    title={m["todos.delete-ahtung"]()}
-                    tooltip={m["todos.tooltips.delete"]()}
-                    href={_destroy(todo.id)}
                     {...visitOptions}
                     {...optimistic.delete(todo.id)}
+                    href={_destroy(todo.id)}
+                    title={m["todos.delete-ahtung"]()}
+                    tooltip={m["todos.tooltips.delete"]()}
                 />
             {/snippet}
             {#snippet repeat()}
@@ -125,7 +132,6 @@
                     href={update(todo.id)}
                     tooltip={m["todos.tooltips.color"]()}
                     current={todo.color}
-                    preserveUrl
                 />
             {/snippet}
             {#snippet notify()}

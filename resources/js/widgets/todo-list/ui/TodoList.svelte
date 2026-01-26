@@ -3,11 +3,13 @@
     import { Todo } from "$/entities/todo";
     import Checkbox from "$/features/complete-todo/ui/Checkbox.svelte";
     import { useSortableTodos } from "$/features/sort-todos";
+    import { complete } from "$/generated/actions/App/Http/Controllers/TodoController";
     import { m } from "$/paraglide/messages";
     import PencilNote from "$/shared/assets/pencil-note.svg";
     import { prefersLightText } from "$/shared/lib/color";
     import { tw } from "$/shared/lib/styles";
 
+    import { optimistic, visitOptions } from "../cfg/inertia";
     import { editView } from "../model/view";
     import EditTodo from "./EditTodo.svelte";
 
@@ -88,7 +90,12 @@
             class={todo.completedAt && "opacity-40"}
         >
             {#snippet checkbox()}
-                <Checkbox {todo} />
+                <Checkbox
+                    {...visitOptions}
+                    {...optimistic.complete(todo.id)}
+                    href={complete(todo.id)}
+                    completedAt={todo.completedAt}
+                />
             {/snippet}
             {#snippet edit()}
                 <button
