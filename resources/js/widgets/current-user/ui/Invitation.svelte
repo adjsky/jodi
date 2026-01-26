@@ -70,7 +70,7 @@
                         preserveState: true,
                         only: ["flash", "me"],
                         onSuccess: () => {
-                            view.back();
+                            void view.back();
                             onDelete?.(invitation.current!.id);
                         }
                     });

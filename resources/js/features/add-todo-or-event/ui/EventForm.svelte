@@ -34,6 +34,7 @@
         only: ["events"],
         preserveState: true,
         preserveScroll: true,
+        preserveUrl: true,
         replace: true
     }}
     transform={(data) => ({
@@ -41,6 +42,7 @@
         startsAt: startsAt.toAbsoluteString(),
         endsAt: endsAt.toAbsoluteString()
     })}
+    onSuccess={() => onClose()}
     let:processing
 >
     <Event.Fields bind:startsAt bind:endsAt {onCalendarOpen}>

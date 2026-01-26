@@ -5,10 +5,11 @@ import type { VisitOptions } from "@inertiajs/core";
 
 type Options = {
     showProgress?: boolean;
+    push?: boolean;
 };
 
 export function useSearchParams(options?: Options) {
-    const { showProgress } = options ?? {};
+    const { showProgress, push } = options ?? {};
 
     function update(values: Record<string, string>, options?: VisitOptions) {
         const url = new URL(window.location.href);
@@ -20,7 +21,7 @@ export function useSearchParams(options?: Options) {
         return router.visit(url, {
             ...options,
             showProgress,
-            replace: true,
+            replace: options?.replace ?? !push,
             preserveScroll: true,
             preserveState: true,
             async: true,

@@ -5,12 +5,12 @@
     import { useSortableTodos } from "$/features/sort-todos";
     import { m } from "$/paraglide/messages";
     import PencilNote from "$/shared/assets/pencil-note.svg";
-    import { HistoryView } from "$/shared/inertia/history-view.svelte";
     import { prefersLightText } from "$/shared/lib/color";
     import { tw } from "$/shared/lib/styles";
     import { isDeepEqual } from "remeda";
     import { watch } from "runed";
 
+    import { editView } from "../model/view";
     import EditTodo from "./EditTodo.svelte";
 
     import type { SvelteHTMLElements } from "svelte/elements";
@@ -20,8 +20,6 @@
     };
 
     const { todos, ...rest }: Props = $props();
-
-    const editView = new HistoryView<App.Data.TodoDto>("edit-todo");
 
     const st = useSortableTodos(() => todos);
 
@@ -96,7 +94,7 @@
             () => editView.isOpen(),
             (v) => {
                 if (!v) {
-                    editView.back();
+                    void editView.back();
                 }
             }
         }

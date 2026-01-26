@@ -26,8 +26,10 @@
         only: ["todos", "categories"],
         preserveState: true,
         preserveScroll: true,
+        preserveUrl: true,
         replace: true
     }}
+    onSuccess={() => onClose()}
     let:processing
 >
     <Todo.Fields date={day} {onCalendarOpen}>

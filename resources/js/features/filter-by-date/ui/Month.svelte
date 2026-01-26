@@ -1,8 +1,5 @@
 <script lang="ts">
     import { Circle } from "@lucide/svelte";
-    import { home } from "$/generated/routes";
-    import { link } from "$/shared/inertia/link";
-    import { noop } from "$/shared/lib/function";
     import { boolAttr, useIntersectionObserver } from "runed";
 
     import { requestSummary, summaryCache } from "../api/day-summary.svelte";
@@ -52,13 +49,8 @@
 
 {#snippet day(date: DateValue, isWithinMonth: boolean)}
     {@const summary = summaryCache.get(date.year)?.get(date.toString())}
-    {@const inertia = onSelect ? (noop as never) : link}
     <td class:invisible={!isWithinMonth}>
         <button
-            {@attach inertia(() => ({
-                href: home({ query: { d: date.toString() } }),
-                viewTransition: true
-            }))}
             class="group flex h-22 w-full flex-col items-center pt-1 text-lg"
             data-selected={boolAttr(compareDates(selected, date) == "selected")}
             onclick={() => onSelect?.(date)}

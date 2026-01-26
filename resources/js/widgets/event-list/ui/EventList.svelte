@@ -2,12 +2,12 @@
     import { CalendarClock } from "@lucide/svelte";
     import { Event } from "$/entities/event";
     import { m } from "$/paraglide/messages";
-    import { HistoryView } from "$/shared/inertia/history-view.svelte";
     import { formatToHHMM } from "$/shared/lib/date";
     import { tw } from "$/shared/lib/styles";
     import { isDeepEqual } from "remeda";
     import { watch } from "runed";
 
+    import { editView } from "../model/view";
     import EditEvent from "./EditEvent.svelte";
 
     import type { SvelteHTMLElements } from "svelte/elements";
@@ -17,8 +17,6 @@
     };
 
     const { events, ...rest }: Props = $props();
-
-    const editView = new HistoryView<App.Data.EventDto>("edit-event");
 
     watch(
         () => [editView.meta],
@@ -86,7 +84,7 @@
             () => editView.isOpen(),
             (v) => {
                 if (!v) {
-                    editView.back();
+                    void editView.back();
                 }
             }
         }

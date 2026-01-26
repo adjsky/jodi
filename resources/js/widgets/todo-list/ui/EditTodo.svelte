@@ -109,7 +109,7 @@
             {#snippet color()}
                 <Color
                     {...visitOptions}
-                    {...optimistic.edit(todo.id, true)}
+                    {...optimistic.edit(todo.id, false)}
                     href={update(todo.id)}
                     tooltip={m["todos.tooltips.color"]()}
                     current={todo.color}

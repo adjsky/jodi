@@ -16,7 +16,7 @@
 
     const { children }: Props = $props();
 
-    const searchParams = useSearchParams({ showProgress: true });
+    const searchParams = useSearchParams({ showProgress: true, push: true });
 
     const user = $derived($page.props.auth.user);
     const selected = $derived(
@@ -63,5 +63,9 @@
         {selected}
         start={user.preferences.weekStartOn}
         onClose={() => view.back()}
+        onSelect={async (d) => {
+            await view.back();
+            await searchParams.update({ d: d.toString() });
+        }}
     />
 {/if}

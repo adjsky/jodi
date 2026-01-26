@@ -6,7 +6,7 @@ import { toaster } from "$/shared/lib/toaster";
 import type { PageProps, VisitCallbacks } from "@inertiajs/core";
 
 type CommitFn = (prev: any, data: any) => any;
-type Options = { error?: string; omitHash?: boolean };
+type Options = { error?: string; omitHash?: boolean; onSuccess?: VoidFunction };
 
 export function optimistic(
     commit: CommitFn,
@@ -19,6 +19,7 @@ export function optimistic(
             await router.replace({
                 preserveScroll: true,
                 preserveState: true,
+                onSuccess: options?.onSuccess,
                 props: (prev) => {
                     savedProps ??= structuredClone(prev);
                     return { ...prev, ...commit(prev, e.data) };

@@ -111,7 +111,7 @@
             {#snippet color()}
                 <Color
                     {...visitOptions}
-                    {...optimistic.edit(event.id, true)}
+                    {...optimistic.edit(event.id, false)}
                     href={update(event.id)}
                     tooltip={m["events.tooltips.color"]()}
                     current={event.color}
@@ -121,7 +121,7 @@
             {#snippet notify()}
                 <Reminder
                     {...visitOptions}
-                    {...optimistic.edit(event.id, true)}
+                    {...optimistic.edit(event.id, false)}
                     href={update(event.id)}
                     tooltip={m["events.tooltips.notification"]()}
                     start={startsAt}

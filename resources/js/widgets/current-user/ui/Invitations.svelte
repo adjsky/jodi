@@ -104,7 +104,7 @@
                     progress.start();
                     await invitationsResource.refetch();
                     progress.finish();
-                    view.back();
+                    void view.back();
                 } catch (e) {
                     console.error(e);
                     progress.remove();

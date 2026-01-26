@@ -86,14 +86,14 @@ export class HistoryView<T extends Record<string, unknown>> {
 
     back() {
         if (!get(page).__jodi_historyModals?.length) {
-            void router.replace({
+            return router.replace({
                 preserveScroll: true,
                 preserveState: true,
                 url: this.#url.pathname + this.#url.search,
                 viewTransition: this.#options?.viewTransition
             });
         } else {
-            history.back();
+            return router.back();
         }
     }
 

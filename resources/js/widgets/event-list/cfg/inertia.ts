@@ -1,17 +1,20 @@
 import { m } from "$/paraglide/messages";
 import { optimistic as _optimistic } from "$/shared/inertia/visit/optimistic";
 
+import { editView } from "../model/view";
+
 import type { VisitOptions } from "@inertiajs/core";
 
 export const visitOptions: VisitOptions = {
     only: ["events"],
     preserveState: true,
     preserveScroll: true,
+    preserveUrl: true,
     replace: true
 };
 
 export const optimistic = {
-    edit: (id: number, keepHash = false) =>
+    edit: (id: number, close = true) =>
         _optimistic(
             (prev, data) => ({
                 events: prev.events.map((t: App.Data.EventDto) =>
@@ -20,7 +23,7 @@ export const optimistic = {
             }),
             {
                 error: m["events.errors.edit"](),
-                omitHash: !keepHash
+                ...(close && { onSuccess: () => editView.back() })
             }
         ),
     delete: (id: number) =>
@@ -30,7 +33,7 @@ export const optimistic = {
             }),
             {
                 error: m["events.errors.delete"](),
-                omitHash: true
+                onSuccess: () => editView.back()
             }
         )
 };

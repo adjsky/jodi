@@ -28,7 +28,7 @@
     }
 
     function onClose() {
-        view.back();
+        void view.back();
         isCalendarOpen = false;
     }
 </script>
