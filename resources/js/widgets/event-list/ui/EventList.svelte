@@ -4,8 +4,6 @@
     import { m } from "$/paraglide/messages";
     import { formatToHHMM } from "$/shared/lib/date";
     import { tw } from "$/shared/lib/styles";
-    import { isDeepEqual } from "remeda";
-    import { watch } from "runed";
 
     import { editView } from "../model/view";
     import EditEvent from "./EditEvent.svelte";
@@ -17,25 +15,6 @@
     };
 
     const { events, ...rest }: Props = $props();
-
-    watch(
-        () => [editView.meta],
-        () => {
-            if (!editView.isOpen()) {
-                return;
-            }
-
-            const event = events?.find((e) => e.id == editView.meta?.id);
-
-            if (!event) {
-                return;
-            }
-
-            if (!isDeepEqual(editView.meta, event)) {
-                editView.updateMeta(event);
-            }
-        }
-    );
 </script>
 
 <section {...rest} class={tw("px-4", rest.class)}>
@@ -52,7 +31,8 @@
         {:else}
             {#each events as event (event.id)}
                 <Event.Row
-                    onclick={() => editView.push(event)}
+                    onclick={() =>
+                        editView.push({ event, isCalendarOpen: false })}
                     color={event.color}
                 >
                     {#snippet time()}
@@ -88,6 +68,6 @@
                 }
             }
         }
-        event={editView.meta}
+        event={editView.meta?.event ?? null}
     />
 </section>

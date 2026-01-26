@@ -24,6 +24,7 @@
     import { tick } from "svelte";
 
     import { optimistic, visitOptions } from "../cfg/inertia";
+    import { editView } from "../model/view";
 
     type Props = {
         open: boolean;
@@ -42,7 +43,6 @@
     );
 
     let dateAnnouncerInput: HTMLInputElement | null = $state(null);
-    let isCalendarOpen = $state(false);
 
     let event = $derived(props.event ?? (lastKnownEvent as App.Data.EventDto));
     let startsAt = $derived(parseAbsoluteToLocal(event.startsAt));
@@ -81,7 +81,11 @@
             title={event.title}
             description={event.description}
             onCalendarOpen={() => {
-                isCalendarOpen = true;
+                if (!editView.meta) return;
+                void editView.push({
+                    event: editView.meta.event,
+                    isCalendarOpen: true
+                });
             }}
         >
             {#snippet close()}
@@ -138,11 +142,26 @@
     </Form>
 
     <YearCalendarDialog
-        bind:open={isCalendarOpen}
+        bind:open={
+            () => editView.meta?.isCalendarOpen ?? false,
+            (v) => {
+                if (v) return;
+                void editView.back();
+            }
+        }
         selected={toCalendarDate(startsAt)}
-        onSelect={async (date) => {
-            startsAt = startsAt.set(date);
-            isCalendarOpen = false;
+        onSelect={async (d) => {
+            if (!editView.meta) return;
+
+            await editView.back();
+            await editView.updateMeta({
+                event: {
+                    ...editView.meta.event,
+                    startsAt: normalizeIsoString(
+                        startsAt.set(d).toAbsoluteString()
+                    )
+                }
+            });
 
             await tick();
 

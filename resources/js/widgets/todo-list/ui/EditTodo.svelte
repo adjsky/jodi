@@ -1,6 +1,6 @@
 <script lang="ts">
     import { Form } from "@inertiajs/svelte";
-    import { parseDate, toCalendarDate } from "@internationalized/date";
+    import { parseDate, toCalendarDateTime } from "@internationalized/date";
     import { Bell, Ellipsis, RotateCw } from "@lucide/svelte";
     import { Todo } from "$/entities/todo";
     import { Checkbox } from "$/features/complete-todo";
@@ -13,6 +13,7 @@
         update
     } from "$/generated/actions/App/Http/Controllers/TodoController";
     import { m } from "$/paraglide/messages";
+    import { normalizeIsoString } from "$/shared/lib/date";
     import { announce, cleanFormPayload } from "$/shared/lib/form";
     import SaveOrClose from "$/shared/ui/SaveOrClose.svelte";
     import Sheet from "$/shared/ui/Sheet.svelte";
@@ -21,6 +22,7 @@
     import { tick } from "svelte";
 
     import { optimistic, visitOptions } from "../cfg/inertia";
+    import { editView } from "../model/view";
 
     type Props = {
         open: boolean;
@@ -38,8 +40,7 @@
         }
     );
 
-    let dateAnnouncerInput: HTMLInputElement | null = $state(null);
-    let isCalendarOpen = $state(false);
+    let dateInputRef: HTMLInputElement | null = $state(null);
 
     let todo = $derived(props.todo ?? (lastKnownTodo as App.Data.TodoDto));
     let date = $derived(parseDate(todo.date.split("T")[0]));
@@ -60,20 +61,18 @@
         transform={cleanFormPayload}
         let:isDirty
     >
-        <!-- keep to mark form dirty when selecting date in calendar -->
-        <input
-            bind:this={dateAnnouncerInput}
-            hidden
-            name="_date"
-            value={date.toString()}
-        />
         <Todo.Fields
+            bind:dateInputRef
             {date}
             title={todo.title}
             description={todo.description}
             isCompleted={todo.completedAt != null}
             onCalendarOpen={() => {
-                isCalendarOpen = true;
+                if (!editView.meta) return;
+                void editView.push({
+                    todo: editView.meta.todo,
+                    isCalendarOpen: true
+                });
             }}
         >
             {#snippet close()}
@@ -133,15 +132,28 @@
     </Form>
 
     <YearCalendarDialog
-        bind:open={isCalendarOpen}
+        bind:open={
+            () => editView.meta?.isCalendarOpen ?? false,
+            (v) => {
+                if (v) return;
+                void editView.back();
+            }
+        }
         selected={date}
         onSelect={async (d) => {
-            date = toCalendarDate(d);
-            isCalendarOpen = false;
+            if (!editView.meta) return;
+
+            await editView.back();
+            await editView.updateMeta({
+                todo: {
+                    ...editView.meta.todo,
+                    date: normalizeIsoString(toCalendarDateTime(d).toString())
+                }
+            });
 
             await tick();
 
-            announce(dateAnnouncerInput);
+            announce(dateInputRef);
         }}
     />
 </Sheet>

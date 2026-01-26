@@ -17,19 +17,28 @@ export const optimistic = {
     edit: (id: number, close = true) =>
         _optimistic(
             (prev, data) => ({
-                events: prev.events.map((t: App.Data.EventDto) =>
-                    t.id == id ? { ...t, ...data } : t
+                events: prev.events.map((e: App.Data.EventDto) =>
+                    e.id == id ? { ...e, ...data } : e
                 )
             }),
             {
                 error: m["events.errors.edit"](),
-                ...(close && { onSuccess: () => editView.back() })
+                onSuccess(props) {
+                    const events = props.events as App.Data.EventDto[];
+
+                    if (close) {
+                        return editView.back();
+                    }
+
+                    const event = events.find((e) => e.id == id);
+                    return editView.updateMeta({ event });
+                }
             }
         ),
     delete: (id: number) =>
         _optimistic(
             (prev) => ({
-                events: prev.events.filter((t: App.Data.EventDto) => t.id != id)
+                events: prev.events.filter((e: App.Data.EventDto) => e.id != id)
             }),
             {
                 error: m["events.errors.delete"](),

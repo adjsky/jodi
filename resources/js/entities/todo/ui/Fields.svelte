@@ -15,6 +15,7 @@
         title?: string;
         description?: string | null;
         isCompleted?: boolean;
+        dateInputRef?: HTMLInputElement | null;
         close: Snippet;
         category: Snippet;
         checkbox?: Snippet;
@@ -26,11 +27,12 @@
         onCalendarOpen: VoidFunction;
     };
 
-    const {
+    let {
         date,
         title,
         description,
         isCompleted,
+        dateInputRef = $bindable(),
         close,
         category,
         checkbox,
@@ -43,7 +45,12 @@
     }: Props = $props();
 </script>
 
-<input name="todoDate" value={date.toString()} hidden />
+<input
+    bind:this={dateInputRef}
+    name="todoDate"
+    value={date.toString()}
+    hidden
+/>
 
 <div class="flex items-center justify-between">
     <div class="flex items-center gap-3">

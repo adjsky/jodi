@@ -1,3 +1,6 @@
 import { HistoryView } from "$/shared/inertia/history-view.svelte";
 
-export const editView = new HistoryView<App.Data.EventDto>("edit-event");
+export const editView = new HistoryView<{
+    event: App.Data.EventDto;
+    isCalendarOpen: boolean;
+}>("edit-event");

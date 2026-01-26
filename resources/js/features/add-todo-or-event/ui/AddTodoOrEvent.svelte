@@ -1,6 +1,6 @@
 <script lang="ts">
     import { Dialog, Portal } from "@ark-ui/svelte";
-    import { parseDate, today } from "@internationalized/date";
+    import { parseDate, toCalendarDate, today } from "@internationalized/date";
     import { CalendarClock, Check, X } from "@lucide/svelte";
     import { YearCalendarDialog } from "$/features/filter-by-date";
     import { m } from "$/paraglide/messages";
@@ -14,26 +14,26 @@
     import EventForm from "./EventForm.svelte";
     import TodoForm from "./TodoForm.svelte";
 
-    let isCalendarOpen = $state(false);
-
-    const view = new HistoryView();
+    const view = new HistoryView<{ isCalendarOpen: boolean }>();
     const searchParams = useSearchParams({ showProgress: true });
 
-    const day = $derived(
-        searchParams["d"] ? parseDate(searchParams["d"]) : today(TIMEZONE)
-    );
+    let day = $derived(getCurrentDay());
+
+    function getCurrentDay() {
+        return searchParams["d"]
+            ? parseDate(searchParams["d"])
+            : today(TIMEZONE);
+    }
 
     function onCalendarOpen() {
-        isCalendarOpen = true;
+        void view.push(view.name, { isCalendarOpen: true });
     }
 
     function onClose() {
+        day = getCurrentDay();
         void view.back();
-        isCalendarOpen = false;
     }
 </script>
-
-<svelte:window onpopstate={() => (isCalendarOpen = false)} />
 
 <Dialog.Root
     bind:open={
@@ -113,14 +113,17 @@
     {/if}
 
     <YearCalendarDialog
-        bind:open={isCalendarOpen}
+        bind:open={
+            () => view.meta?.isCalendarOpen ?? false,
+            (v) => {
+                if (v) return;
+                void view.back();
+            }
+        }
         selected={day}
-        onSelect={async (date) => {
-            await searchParams.update(
-                { d: date.toString() },
-                { only: ["todos", "events", "search"] }
-            );
-            isCalendarOpen = false;
+        onSelect={async (d) => {
+            day = toCalendarDate(d);
+            await view.back();
         }}
     />
 </Sheet>

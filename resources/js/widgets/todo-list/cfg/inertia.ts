@@ -23,7 +23,16 @@ export const optimistic = {
             }),
             {
                 error: m["todos.errors.edit"](),
-                ...(close && { onSuccess: () => editView.back() })
+                onSuccess(props) {
+                    const todos = props.todos as App.Data.TodoDto[];
+
+                    if (close) {
+                        return editView.back();
+                    }
+
+                    const todo = todos.find((t) => t.id == id);
+                    return editView.updateMeta({ todo });
+                }
             }
         ),
     delete: (id: number) =>

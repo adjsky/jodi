@@ -71,16 +71,16 @@ export class HistoryView<T extends Record<string, unknown>> {
         return router.replace(this.#visitOptions(name, meta));
     }
 
-    updateMeta(meta: T, options?: UpdateMetaOptions) {
+    updateMeta(meta: Partial<T>, options?: UpdateMetaOptions) {
         const visitOptions = this.#visitOptions(
             this.#hash.view.slice(1),
-            meta,
+            { ...this.#meta, ...meta } as T,
             options?.viewTransition
         );
         if (options?.push) {
-            void router.push(visitOptions);
+            return router.push(visitOptions);
         } else {
-            void router.replace(visitOptions);
+            return router.replace(visitOptions);
         }
     }
 

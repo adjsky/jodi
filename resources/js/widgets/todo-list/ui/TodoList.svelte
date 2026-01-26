@@ -7,8 +7,6 @@
     import PencilNote from "$/shared/assets/pencil-note.svg";
     import { prefersLightText } from "$/shared/lib/color";
     import { tw } from "$/shared/lib/styles";
-    import { isDeepEqual } from "remeda";
-    import { watch } from "runed";
 
     import { editView } from "../model/view";
     import EditTodo from "./EditTodo.svelte";
@@ -22,25 +20,6 @@
     const { todos, ...rest }: Props = $props();
 
     const st = useSortableTodos(() => todos);
-
-    watch(
-        () => [editView.meta],
-        () => {
-            if (!editView.isOpen()) {
-                return;
-            }
-
-            const todo = todos?.find((t) => t.id == editView.meta?.id);
-
-            if (!todo) {
-                return;
-            }
-
-            if (!isDeepEqual(editView.meta, todo)) {
-                editView.updateMeta(todo);
-            }
-        }
-    );
 </script>
 
 <section {...rest} class={tw("px-4", rest.class)}>
@@ -98,7 +77,7 @@
                 }
             }
         }
-        todo={editView.meta}
+        todo={editView.meta?.todo ?? null}
     />
 </section>
 
@@ -115,7 +94,8 @@
                 <button
                     class="relative table w-full table-fixed text-start text-lg font-medium"
                     data-part="edit"
-                    onclick={() => editView.push(todo)}
+                    onclick={() =>
+                        editView.push({ todo, isCalendarOpen: false })}
                 >
                     <span
                         class={[
