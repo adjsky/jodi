@@ -96,18 +96,25 @@
             const isInnerCircle = distance < RADIUS * 0.85;
 
             const baseHour = Math.round(angle / 30) % 12;
+            const newHour = isInnerCircle
+                ? baseHour === 0
+                    ? 12
+                    : baseHour + 12
+                : baseHour;
 
-            internalValue = internalValue.set({
-                hour: isInnerCircle
-                    ? baseHour === 0
-                        ? 12
-                        : baseHour + 12
-                    : baseHour
-            });
+            if (newHour != internalValue.hour) {
+                navigator.vibrate?.(1);
+            }
+
+            internalValue = internalValue.set({ hour: newHour });
         } else {
-            internalValue = internalValue.set({
-                minute: Math.round(angle / 6) % 60
-            });
+            const newMinute = Math.round(angle / 6) % 60;
+
+            if (newMinute != internalValue.minute) {
+                navigator.vibrate?.(1);
+            }
+
+            internalValue = internalValue.set({ minute: newMinute });
         }
     }
 </script>
