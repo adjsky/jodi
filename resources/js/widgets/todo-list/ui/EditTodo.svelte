@@ -67,14 +67,27 @@
             title={todo.title}
             description={todo.description}
             isCompleted={todo.completedAt != null}
-            onCalendarOpen={() => {
-                if (!editView.meta) return;
-                void editView.push({
-                    todo: editView.meta.todo,
-                    isCalendarOpen: true
-                });
-            }}
         >
+            {#snippet calendar(trigger)}
+                <YearCalendarDialog
+                    selected={date}
+                    onSelect={async (d) => {
+                        if (!editView.meta) return;
+                        await editView.updateMeta({
+                            ...editView.meta,
+                            date: normalizeIsoString(
+                                toCalendarDateTime(d).toString()
+                            )
+                        });
+                        await tick();
+                        announce(dateInputRef);
+                    }}
+                >
+                    {#snippet children(props)}
+                        {@render trigger(props())}
+                    {/snippet}
+                </YearCalendarDialog>
+            {/snippet}
             {#snippet close()}
                 <SaveOrClose
                     variant={isDirty ? "save" : "close"}
@@ -130,30 +143,4 @@
             {/snippet}
         </Todo.Fields>
     </Form>
-
-    <YearCalendarDialog
-        bind:open={
-            () => editView.meta?.isCalendarOpen ?? false,
-            (v) => {
-                if (v) return;
-                void editView.back();
-            }
-        }
-        selected={date}
-        onSelect={async (d) => {
-            if (!editView.meta) return;
-
-            await editView.back();
-            await editView.updateMeta({
-                todo: {
-                    ...editView.meta.todo,
-                    date: normalizeIsoString(toCalendarDateTime(d).toString())
-                }
-            });
-
-            await tick();
-
-            announce(dateInputRef);
-        }}
-    />
 </Sheet>

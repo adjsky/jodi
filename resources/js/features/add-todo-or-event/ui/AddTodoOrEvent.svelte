@@ -14,6 +14,9 @@
     import EventForm from "./EventForm.svelte";
     import TodoForm from "./TodoForm.svelte";
 
+    import type { Snippet } from "svelte";
+    import type { HTMLButtonAttributes } from "svelte/elements";
+
     const view = new HistoryView<{ isCalendarOpen: boolean }>();
     const searchParams = useSearchParams({ showProgress: true });
 
@@ -23,10 +26,6 @@
         return searchParams["d"]
             ? parseDate(searchParams["d"])
             : today(TIMEZONE);
-    }
-
-    function onCalendarOpen() {
-        void view.push(view.name, { isCalendarOpen: true });
     }
 
     function onClose() {
@@ -107,23 +106,21 @@
     grip="var(--color-cream-300)"
 >
     {#if view.isOpen("add-todo")}
-        <TodoForm {day} {onCalendarOpen} {onClose} />
+        <TodoForm {day} {calendar} {onClose} />
     {:else if view.isOpen("add-event")}
-        <EventForm {day} {onCalendarOpen} {onClose} />
+        <EventForm {day} {calendar} {onClose} />
     {/if}
-
-    <YearCalendarDialog
-        bind:open={
-            () => view.meta?.isCalendarOpen ?? false,
-            (v) => {
-                if (v) return;
-                void view.back();
-            }
-        }
-        selected={day}
-        onSelect={async (d) => {
-            day = toCalendarDate(d);
-            await view.back();
-        }}
-    />
 </Sheet>
+
+{#snippet calendar(trigger: Snippet<[HTMLButtonAttributes]>)}
+    <YearCalendarDialog
+        selected={day}
+        onSelect={(d) => {
+            day = toCalendarDate(d);
+        }}
+    >
+        {#snippet children(props)}
+            {@render trigger(props())}
+        {/snippet}
+    </YearCalendarDialog>
+{/snippet}

@@ -77,7 +77,7 @@
                 }
             }
         }
-        todo={editView.meta?.todo ?? null}
+        todo={editView.meta}
     />
 </section>
 
@@ -94,8 +94,7 @@
                 <button
                     class="relative table w-full table-fixed text-start text-lg font-medium"
                     data-part="edit"
-                    onclick={() =>
-                        editView.push({ todo, isCalendarOpen: false })}
+                    onclick={() => editView.push(todo)}
                 >
                     <span
                         class={[

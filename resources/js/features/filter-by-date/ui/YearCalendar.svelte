@@ -44,18 +44,23 @@
 
 <FloatingView {...props}>
     {#snippet back()}
-        <button class="p-2" onclick={onClose}>
+        <button class="p-2" type="button" onclick={onClose}>
             <ChevronLeft class="text-4xl" />
         </button>
     {/snippet}
     {#snippet action()}
         <div class="flex items-center gap-4 text-xl">
-            <button class="text-2xl font-bold" onclick={gotoCurrentYear}>
+            <button
+                type="button"
+                class="text-2xl font-bold"
+                onclick={gotoCurrentYear}
+            >
                 {year.current}
             </button>
 
             <div class="flex gap-2">
                 <Button
+                    type="button"
                     variant="secondary"
                     class="h-auto rounded-full bg-transparent p-2"
                     onclick={() => gotoYear("previous")}
@@ -63,6 +68,7 @@
                     <ChevronLeft />
                 </Button>
                 <Button
+                    type="button"
                     variant="secondary"
                     class="h-auto rounded-full bg-transparent p-2"
                     onclick={() => gotoYear("next")}

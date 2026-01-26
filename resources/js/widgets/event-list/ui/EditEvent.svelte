@@ -80,14 +80,27 @@
             bind:endsAt
             title={event.title}
             description={event.description}
-            onCalendarOpen={() => {
-                if (!editView.meta) return;
-                void editView.push({
-                    event: editView.meta.event,
-                    isCalendarOpen: true
-                });
-            }}
         >
+            {#snippet calendar(trigger)}
+                <YearCalendarDialog
+                    selected={toCalendarDate(startsAt)}
+                    onSelect={async (d) => {
+                        if (!editView.meta) return;
+                        await editView.updateMeta({
+                            ...editView.meta,
+                            startsAt: normalizeIsoString(
+                                startsAt.set(d).toAbsoluteString()
+                            )
+                        });
+                        await tick();
+                        announce(dateAnnouncerInput);
+                    }}
+                >
+                    {#snippet children(props)}
+                        {@render trigger(props())}
+                    {/snippet}
+                </YearCalendarDialog>
+            {/snippet}
             {#snippet close()}
                 <SaveOrClose
                     variant={isDirty ? "save" : "close"}
@@ -140,32 +153,4 @@
             {/snippet}
         </Event.Fields>
     </Form>
-
-    <YearCalendarDialog
-        bind:open={
-            () => editView.meta?.isCalendarOpen ?? false,
-            (v) => {
-                if (v) return;
-                void editView.back();
-            }
-        }
-        selected={toCalendarDate(startsAt)}
-        onSelect={async (d) => {
-            if (!editView.meta) return;
-
-            await editView.back();
-            await editView.updateMeta({
-                event: {
-                    ...editView.meta.event,
-                    startsAt: normalizeIsoString(
-                        startsAt.set(d).toAbsoluteString()
-                    )
-                }
-            });
-
-            await tick();
-
-            announce(dateAnnouncerInput);
-        }}
-    />
 </Sheet>

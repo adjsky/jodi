@@ -9,6 +9,7 @@
 
     import type { CalendarDate } from "@internationalized/date";
     import type { Snippet } from "svelte";
+    import type { HTMLButtonAttributes } from "svelte/elements";
 
     type Props = {
         date: CalendarDate;
@@ -16,6 +17,7 @@
         description?: string | null;
         isCompleted?: boolean;
         dateInputRef?: HTMLInputElement | null;
+        calendar: Snippet<[Snippet<[HTMLButtonAttributes]>]>;
         close: Snippet;
         category: Snippet;
         checkbox?: Snippet;
@@ -24,7 +26,6 @@
         color: Snippet;
         notify: Snippet;
         more: Snippet;
-        onCalendarOpen: VoidFunction;
     };
 
     let {
@@ -33,6 +34,7 @@
         description,
         isCompleted,
         dateInputRef = $bindable(),
+        calendar,
         close,
         category,
         checkbox,
@@ -40,8 +42,7 @@
         repeat,
         color,
         notify,
-        more,
-        onCalendarOpen
+        more
     }: Props = $props();
 </script>
 
@@ -54,18 +55,18 @@
 
 <div class="flex items-center justify-between">
     <div class="flex items-center gap-3">
-        <button
-            class="text-lg font-bold"
-            onclick={onCalendarOpen}
-            type="button"
-        >
-            {new DateFormatter(getLocale(), {
-                day: "2-digit",
-                year: "numeric",
-                month: "short",
-                weekday: "short"
-            }).format(date.toDate(TIMEZONE))}
-        </button>
+        {#snippet trigger(props: HTMLButtonAttributes)}
+            <button {...props} class="text-lg font-bold" type="button">
+                {new DateFormatter(getLocale(), {
+                    day: "2-digit",
+                    year: "numeric",
+                    month: "short",
+                    weekday: "short"
+                }).format(date.toDate(TIMEZONE))}
+            </button>
+        {/snippet}
+        {@render calendar(trigger)}
+
         {@render category()}
     </div>
     {@render close()}

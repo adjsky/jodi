@@ -13,14 +13,16 @@
     import ToolbarAction from "$/shared/ui/ToolbarAction.svelte";
 
     import type { CalendarDate } from "@internationalized/date";
+    import type { Snippet } from "svelte";
+    import type { HTMLButtonAttributes } from "svelte/elements";
 
     type Props = {
         day: CalendarDate;
-        onCalendarOpen: VoidFunction;
+        calendar: Snippet<[Snippet<[HTMLButtonAttributes]>]>;
         onClose: VoidFunction;
     };
 
-    const { day, onCalendarOpen, onClose }: Props = $props();
+    const { day, calendar: _calendar, onClose }: Props = $props();
 
     let startsAt = $derived(
         toZoned(day, TIMEZONE).set({ hour: 12, minute: 0 })
@@ -45,7 +47,8 @@
     onSuccess={() => onClose()}
     let:processing
 >
-    <Event.Fields bind:startsAt bind:endsAt {onCalendarOpen}>
+    <Event.Fields bind:startsAt bind:endsAt>
+        {#snippet calendar(trigger)}{@render _calendar(trigger)}{/snippet}
         {#snippet close()}
             <SaveOrClose variant="save" disabled={processing} />
         {/snippet}

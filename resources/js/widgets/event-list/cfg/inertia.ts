@@ -31,7 +31,9 @@ export const optimistic = {
                     }
 
                     const event = events.find((e) => e.id == id);
-                    return editView.updateMeta({ event });
+                    if (!event) return;
+
+                    return editView.updateMeta(event);
                 }
             }
         ),

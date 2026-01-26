@@ -9,19 +9,20 @@
 
     import type { ZonedDateTime } from "@internationalized/date";
     import type { Snippet } from "svelte";
+    import type { HTMLButtonAttributes } from "svelte/elements";
 
     type Props = {
         startsAt: ZonedDateTime;
         endsAt: ZonedDateTime;
         title?: string;
         description?: string | null;
+        calendar: Snippet<[Snippet<[HTMLButtonAttributes]>]>;
         close: Snippet;
         destroy: Snippet;
         repeat: Snippet;
         color: Snippet;
         notify: Snippet;
         more: Snippet;
-        onCalendarOpen: VoidFunction;
     };
 
     let {
@@ -29,30 +30,33 @@
         endsAt = $bindable(),
         title,
         description,
+        calendar,
         close,
         destroy,
         repeat,
         color,
         notify,
-        more,
-        onCalendarOpen
+        more
     }: Props = $props();
 </script>
 
 <div class="flex items-center justify-between">
-    <button
-        class="flex items-center gap-1.5 text-lg font-bold"
-        onclick={onCalendarOpen}
-        type="button"
-    >
-        <Calendar />
-        {new DateFormatter(getLocale(), {
-            day: "2-digit",
-            year: "numeric",
-            month: "short",
-            weekday: "short"
-        }).format(startsAt.toDate())}
-    </button>
+    {#snippet trigger(props: HTMLButtonAttributes)}
+        <button
+            {...props}
+            class="flex items-center gap-1.5 text-lg font-bold"
+            type="button"
+        >
+            <Calendar />
+            {new DateFormatter(getLocale(), {
+                day: "2-digit",
+                year: "numeric",
+                month: "short",
+                weekday: "short"
+            }).format(startsAt.toDate())}
+        </button>
+    {/snippet}
+    {@render calendar(trigger)}
     {@render close()}
 </div>
 

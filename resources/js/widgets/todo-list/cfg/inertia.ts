@@ -31,7 +31,9 @@ export const optimistic = {
                     }
 
                     const todo = todos.find((t) => t.id == id);
-                    return editView.updateMeta({ todo });
+                    if (!todo) return;
+
+                    return editView.updateMeta(todo);
                 }
             }
         ),

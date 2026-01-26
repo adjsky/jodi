@@ -1,21 +1,46 @@
 <script lang="ts">
     import { Dialog } from "@ark-ui/svelte";
     import { page } from "@inertiajs/svelte";
+    import { HistoryView } from "$/shared/inertia/history-view.svelte";
 
     import YearCalendar from "./YearCalendar.svelte";
 
     import type { CalendarDate, DateValue } from "@internationalized/date";
+    import type { Snippet } from "svelte";
+    import type { HTMLButtonAttributes } from "svelte/elements";
 
     type Props = {
-        open: boolean;
         selected: CalendarDate;
+        children?: Snippet<[() => HTMLButtonAttributes]>;
         onSelect?: (date: DateValue) => void;
     };
 
-    let { open = $bindable(), selected, onSelect }: Props = $props();
+    let { selected, children, onSelect }: Props = $props();
+
+    const view = new HistoryView<{ yearcalendardialog: { isOpen: boolean } }>();
 </script>
 
-<Dialog.Root lazyMount bind:open>
+<Dialog.Root
+    lazyMount
+    bind:open={
+        () => view.meta?.yearcalendardialog?.isOpen ?? false,
+        (v) => {
+            if (v) {
+                void view.push(view.name, {
+                    ...view.meta,
+                    yearcalendardialog: { isOpen: true }
+                });
+            } else {
+                void view.back();
+            }
+        }
+    }
+>
+    {#if children}
+        <Dialog.Trigger>
+            {#snippet asChild(props)}{@render children(props)}{/snippet}
+        </Dialog.Trigger>
+    {/if}
     <Dialog.Backdrop
         class={[
             "fixed inset-0 z-100 bg-cream-950/60 duration-300",
@@ -33,11 +58,14 @@
         >
             <YearCalendar
                 {selected}
-                {onSelect}
                 portal={false}
                 class="absolute inset-0 rounded-t-2xl bg-white"
                 start={$page.props.auth.user.preferences.weekStartOn}
-                onClose={() => (open = false)}
+                onSelect={async (date) => {
+                    await view.back();
+                    onSelect?.(date);
+                }}
+                onClose={() => view.back()}
             />
         </Dialog.Content>
     </Dialog.Positioner>

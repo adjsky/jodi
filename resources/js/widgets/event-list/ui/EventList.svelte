@@ -31,8 +31,7 @@
         {:else}
             {#each events as event (event.id)}
                 <Event.Row
-                    onclick={() =>
-                        editView.push({ event, isCalendarOpen: false })}
+                    onclick={() => editView.push(event)}
                     color={event.color}
                 >
                     {#snippet time()}
@@ -68,6 +67,6 @@
                 }
             }
         }
-        event={editView.meta?.event ?? null}
+        event={editView.meta}
     />
 </section>

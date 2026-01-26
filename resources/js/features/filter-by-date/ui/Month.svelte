@@ -51,6 +51,7 @@
     {@const summary = summaryCache.get(date.year)?.get(date.toString())}
     <td class:invisible={!isWithinMonth}>
         <button
+            type="button"
             class="group flex h-22 w-full flex-col items-center pt-1 text-lg"
             data-selected={boolAttr(compareDates(selected, date) == "selected")}
             onclick={() => onSelect?.(date)}

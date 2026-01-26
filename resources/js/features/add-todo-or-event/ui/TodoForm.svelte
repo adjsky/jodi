@@ -10,14 +10,16 @@
     import ToolbarAction from "$/shared/ui/ToolbarAction.svelte";
 
     import type { CalendarDate } from "@internationalized/date";
+    import type { Snippet } from "svelte";
+    import type { HTMLButtonAttributes } from "svelte/elements";
 
     type Props = {
         day: CalendarDate;
-        onCalendarOpen: VoidFunction;
+        calendar: Snippet<[Snippet<[HTMLButtonAttributes]>]>;
         onClose: VoidFunction;
     };
 
-    const { day, onCalendarOpen, onClose }: Props = $props();
+    const { day, calendar: _calendar, onClose }: Props = $props();
 </script>
 
 <Form
@@ -32,7 +34,8 @@
     onSuccess={() => onClose()}
     let:processing
 >
-    <Todo.Fields date={day} {onCalendarOpen}>
+    <Todo.Fields date={day}>
+        {#snippet calendar(trigger)}{@render _calendar(trigger)}{/snippet}
         {#snippet close()}
             <SaveOrClose variant="save" disabled={processing} />
         {/snippet}
