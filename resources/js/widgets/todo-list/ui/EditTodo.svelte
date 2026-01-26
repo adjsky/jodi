@@ -1,6 +1,6 @@
 <script lang="ts">
     import { Form } from "@inertiajs/svelte";
-    import { parseDate, toCalendarDateTime } from "@internationalized/date";
+    import { parseDate, toCalendarDate } from "@internationalized/date";
     import { Bell, Ellipsis, RotateCw } from "@lucide/svelte";
     import { Todo } from "$/entities/todo";
     import { Checkbox } from "$/features/complete-todo";
@@ -14,7 +14,6 @@
         update
     } from "$/generated/actions/App/Http/Controllers/TodoController";
     import { m } from "$/paraglide/messages";
-    import { normalizeIsoString } from "$/shared/lib/date";
     import { announce, cleanFormPayload } from "$/shared/lib/form";
     import SaveOrClose from "$/shared/ui/SaveOrClose.svelte";
     import Sheet from "$/shared/ui/Sheet.svelte";
@@ -23,7 +22,8 @@
     import { tick } from "svelte";
 
     import { optimistic, visitOptions } from "../cfg/inertia";
-    import { editView } from "../model/view";
+
+    import type { CalendarDate } from "@internationalized/date";
 
     type Props = {
         open: boolean;
@@ -33,18 +33,23 @@
     let { open = $bindable(), ...props }: Props = $props();
 
     let lastKnownTodo = $state(props.todo);
+    let dateOverride = $state<CalendarDate | null>(null);
+    let dateInputRef: HTMLInputElement | null = $state(null);
+
+    let todo = $derived(props.todo ?? (lastKnownTodo as App.Data.TodoDto));
+    let date = $derived(dateOverride ?? parseDate(todo.date.split("T")[0]));
+
     watch(
         () => [props.todo],
         () => {
+            if (props.todo?.id != lastKnownTodo?.id) {
+                dateOverride = null;
+            }
+
             if (!props.todo) return;
             lastKnownTodo = props.todo;
         }
     );
-
-    let dateInputRef: HTMLInputElement | null = $state(null);
-
-    let todo = $derived(props.todo ?? (lastKnownTodo as App.Data.TodoDto));
-    let date = $derived(parseDate(todo.date.split("T")[0]));
 </script>
 
 <Sheet
@@ -73,13 +78,7 @@
                 <YearCalendarDialog
                     selected={date}
                     onSelect={async (d) => {
-                        if (!editView.meta) return;
-                        await editView.updateMeta({
-                            ...editView.meta,
-                            date: normalizeIsoString(
-                                toCalendarDateTime(d).toString()
-                            )
-                        });
+                        dateOverride = toCalendarDate(d);
                         await tick();
                         announce(dateInputRef);
                     }}

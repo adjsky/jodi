@@ -24,7 +24,8 @@
     import { tick } from "svelte";
 
     import { optimistic, visitOptions } from "../cfg/inertia";
-    import { editView } from "../model/view";
+
+    import type { ZonedDateTime } from "@internationalized/date";
 
     type Props = {
         open: boolean;
@@ -34,19 +35,26 @@
     let { open = $bindable(), ...props }: Props = $props();
 
     let lastKnownEvent = $state(props.event);
+    let startsAtOverride = $state<ZonedDateTime | null>(null);
+    let dateAnnouncerInput: HTMLInputElement | null = $state(null);
+
+    let event = $derived(props.event ?? (lastKnownEvent as App.Data.EventDto));
+    let startsAt = $derived(
+        startsAtOverride ?? parseAbsoluteToLocal(event.startsAt)
+    );
+    let endsAt = $derived(parseAbsoluteToLocal(event.endsAt));
+
     watch(
         () => [props.event],
         () => {
+            if (props.event?.id != lastKnownEvent?.id) {
+                startsAtOverride = null;
+            }
+
             if (!props.event) return;
             lastKnownEvent = props.event;
         }
     );
-
-    let dateAnnouncerInput: HTMLInputElement | null = $state(null);
-
-    let event = $derived(props.event ?? (lastKnownEvent as App.Data.EventDto));
-    let startsAt = $derived(parseAbsoluteToLocal(event.startsAt));
-    let endsAt = $derived(parseAbsoluteToLocal(event.endsAt));
 </script>
 
 <Sheet
@@ -85,13 +93,7 @@
                 <YearCalendarDialog
                     selected={toCalendarDate(startsAt)}
                     onSelect={async (d) => {
-                        if (!editView.meta) return;
-                        await editView.updateMeta({
-                            ...editView.meta,
-                            startsAt: normalizeIsoString(
-                                startsAt.set(d).toAbsoluteString()
-                            )
-                        });
+                        startsAtOverride = startsAt.set(d);
                         await tick();
                         announce(dateAnnouncerInput);
                     }}
