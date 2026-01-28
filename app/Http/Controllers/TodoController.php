@@ -26,25 +26,49 @@ class TodoController extends Controller
         return back();
     }
 
+    public function reorder(ReorderRequest $request)
+    {
+        $data = $request->validated();
+
+        $user = $this->user();
+        $categories = $user->categories()->pluck('id', 'name');
+
+        DB::transaction(function () use ($user, $categories, $data) {
+            // TODO: use a CASE/WHEN query if this will seriously slow down the request.
+            foreach ($data['todos'] as $todo) {
+                $category = $todo['category'] ?? null;
+
+                $user->todos()
+                    ->where('id', $todo['id'])
+                    ->update([
+                        'position' => $todo['position'],
+                        'category_id' => $category && isset($categories[$category])
+                            ? $categories[$category]
+                            : null,
+                    ]);
+            }
+        });
+
+        return back();
+    }
+
     public function update(UpdateRequest $request, Todo $todo)
     {
         $data = $request->validatedInSnakeCase();
 
         DB::transaction(function () use ($data, $todo) {
-            $todo->fill($data);
-
-            if ($todo->isDirty('position')) {
-                $todo->position = $todo->getHighestOrderNumber();
-            }
-
             if (array_key_exists('category', $data)) {
                 $name = $data['category'];
-
-                // TODO: https://github.com/larastan/larastan/issues/2402
-                // @phpstan-ignore assign.propertyType
-                $todo->category_id = $name
+                $data['category_id'] = $name
                     ? $this->user()->categories()->firstOrCreate(['name' => $name])->id
                     : null;
+                unset($data['category']);
+            }
+
+            $todo->fill($data);
+
+            if ($todo->isDirty(['category_id', 'todo_date'])) {
+                $todo->position = $todo->getHighestOrderNumber() + 1;
             }
 
             $todo->save();
@@ -64,59 +88,6 @@ class TodoController extends Controller
     {
         $todo->completed_at = $todo->completed_at ? null : now();
         $todo->save();
-
-        return back();
-    }
-
-    public function reorder(ReorderRequest $request, Todo $todo)
-    {
-        $data = $request->validated();
-
-        // TODO: vibe coded, check later
-        DB::transaction(function () use ($todo, $data) {
-            $oldCategory = $todo->category_id;
-            $oldPosition = $todo->position;
-
-            $newCategory = $data['category']
-                ? $this->user()->categories()->where('name', $data['category'])->firstOrFail()->id
-                : null;
-            $newPosition = $data['position'];
-
-            if ($oldCategory === $newCategory && $oldPosition === $newPosition) {
-                return;
-            }
-
-            if ($oldCategory !== $newCategory) {
-                Todo::where('category_id', $oldCategory)
-                    ->where('position', '>', $oldPosition)
-                    ->decrement('position');
-
-                Todo::where('category_id', $newCategory)
-                    ->where('position', '>=', $newPosition)
-                    ->increment('position');
-
-                // TODO: https://github.com/larastan/larastan/issues/2402
-                // @phpstan-ignore assign.propertyType
-                $todo->category_id = $newCategory;
-                $todo->position = $newPosition;
-            } else {
-                if ($newPosition > $oldPosition) {
-                    Todo::where('category_id', $oldCategory)
-                        ->where('position', '>', $oldPosition)
-                        ->where('position', '<=', $newPosition)
-                        ->decrement('position');
-                } else {
-                    Todo::where('category_id', $oldCategory)
-                        ->where('position', '>=', $newPosition)
-                        ->where('position', '<', $oldPosition)
-                        ->increment('position');
-                }
-
-                $todo->position = $newPosition;
-            }
-
-            $todo->save();
-        });
 
         return back();
     }

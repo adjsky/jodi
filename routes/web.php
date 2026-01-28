@@ -63,10 +63,10 @@ Route::middleware('auth')->group(function () {
         ->controller(TodoController::class)
         ->group(function () {
             Route::post('/', 'create');
+            Route::post('/reorder', 'reorder');
             Route::patch('/{todo}', 'update');
             Route::delete('/{todo}', 'destroy');
             Route::post('/{todo}/complete', 'complete');
-            Route::post('/{todo}/reorder', 'reorder');
         });
 
     Route::prefix('/events')

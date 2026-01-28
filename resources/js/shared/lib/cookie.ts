@@ -7,6 +7,10 @@ export function get(key: string) {
     );
 }
 
+export function csrf() {
+    return decodeURIComponent(get("XSRF-TOKEN")!);
+}
+
 type SetCookieOptions = {
     path?: string;
     maxAge?: number;

@@ -1,8 +1,18 @@
+<script module>
+    const daySummary = useDaySummary({
+        onError() {
+            toaster.error(m["day-summary.request-error"]());
+        }
+    });
+</script>
+
 <script lang="ts">
     import { Circle } from "@lucide/svelte";
+    import { m } from "$/paraglide/messages";
+    import { toaster } from "$/shared/lib/toaster";
     import { boolAttr, useIntersectionObserver } from "runed";
 
-    import { requestSummary, summaryCache } from "../api/day-summary.svelte";
+    import { useDaySummary } from "../api/day-summary.svelte";
     import { compareDates } from "../helpers/date";
 
     import type { Year } from "../model/year.svelte";
@@ -25,7 +35,7 @@
         () => table,
         (entries) => {
             if (entries[0]?.isIntersecting) {
-                void requestSummary(date);
+                void daySummary.request(date);
             }
         },
         { root: () => container, threshold: 0, rootMargin: "100px 0px" }
@@ -48,7 +58,7 @@
 </table>
 
 {#snippet day(date: DateValue, isWithinMonth: boolean)}
-    {@const summary = summaryCache.get(date.year)?.get(date.toString())}
+    {@const summary = daySummary.cache.get(date.year)?.get(date.toString())}
     <td class:invisible={!isWithinMonth}>
         <button
             type="button"

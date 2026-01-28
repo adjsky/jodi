@@ -121,7 +121,7 @@
     <Combobox.Positioner>
         <Combobox.Content
             class={[
-                "min-w-40 rounded-xl bg-white px-3 py-2 font-bold outline outline-cream-950",
+                "z-10 min-w-40 rounded-xl bg-white px-3 py-2 font-bold outline outline-cream-950",
                 !showContent && "invisible"
             ]}
             onclick={(e) => e.stopPropagation()}

@@ -24,8 +24,15 @@ class TodoPolicy
         return $user->id == $todo->user_id;
     }
 
-    public function reorder(User $user, Todo $todo): bool
+    /** @param array{id: int} $todos */
+    public function reorder(User $user, array $todos): bool
     {
-        return $user->id == $todo->user_id;
+        $ids = collect($todos)->pluck('id')->toArray();
+
+        $count = Todo::whereIn('id', $ids)
+            ->where('user_id', $user->id)
+            ->count();
+
+        return $count == count($todos);
     }
 }

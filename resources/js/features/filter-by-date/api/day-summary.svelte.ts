@@ -4,55 +4,76 @@ import { SvelteMap } from "svelte/reactivity";
 
 import type { DateValue } from "@internationalized/date";
 
-export const summaryCache = new SvelteMap<
-    number,
-    SvelteMap<string, App.Data.DaySummaryDto>
->();
+type Options = {
+    onError?: VoidFunction;
+    onSuccess?: VoidFunction;
+};
 
-let pendingRequests = $state<{ year: number; months: Set<number> } | null>(
-    null
-);
+type PendingRequests = {
+    year: number;
+    months: Set<number>;
+};
 
-const _requestSummary = useDebounce(async () => {
-    if (!pendingRequests) {
-        return;
-    }
+export function useDaySummary(options?: Options) {
+    const { onError, onSuccess } = options ?? {};
 
-    const { url, method } = get(
-        { year: pendingRequests.year },
-        { query: { m: [...pendingRequests.months].join(",") } }
-    );
+    let pendingRequests: PendingRequests | null = null;
+    let abortController: AbortController | null = null;
 
-    const response = await fetch(url, { method });
-    const json = (await response.json()) as Record<
-        string,
-        App.Data.DaySummaryDto
-    >;
+    const cache = new SvelteMap<
+        number,
+        SvelteMap<string, App.Data.DaySummaryDto>
+    >();
 
-    const monthsSummaryCache = summaryCache.get(pendingRequests.year);
-
-    if (monthsSummaryCache) {
-        for (const [day, s] of Object.entries(json)) {
-            monthsSummaryCache.set(day, s);
+    function request(date: DateValue) {
+        if (pendingRequests && pendingRequests.year == date.year) {
+            pendingRequests.months.add(date.month);
+        } else {
+            pendingRequests = {
+                year: date.year,
+                months: new Set([date.month])
+            };
         }
-    } else {
-        summaryCache.set(
-            pendingRequests.year,
-            new SvelteMap(Object.entries(json))
-        );
+        void _request(structuredClone(pendingRequests));
     }
 
-    pendingRequests = null;
-}, 50);
+    const _request = useDebounce(async (requests: PendingRequests) => {
+        abortController?.abort();
+        abortController = new AbortController();
 
-export async function requestSummary(date: DateValue) {
-    if (pendingRequests && pendingRequests.year == date.year) {
-        pendingRequests.months.add(date.month);
-    } else {
-        pendingRequests = {
-            year: date.year,
-            months: new Set([date.month])
-        };
-    }
-    void _requestSummary();
+        try {
+            const { url, method } = get(
+                { year: requests.year },
+                { query: { m: [...requests.months].join(",") } }
+            );
+
+            const response = await fetch(url, {
+                method,
+                signal: abortController.signal
+            });
+            const json = (await response.json()) as Record<
+                string,
+                App.Data.DaySummaryDto
+            >;
+
+            const yearCache = cache.get(requests.year);
+
+            if (yearCache) {
+                for (const [day, s] of Object.entries(json)) {
+                    yearCache.set(day, s);
+                }
+            } else {
+                cache.set(requests.year, new SvelteMap(Object.entries(json)));
+            }
+
+            pendingRequests = null;
+            onSuccess?.();
+        } catch (e) {
+            if (e instanceof DOMException && e.name === "AbortError") return;
+            console.error(e);
+            onError?.();
+        }
+    }, 50);
+
+    return { cache, request };
 }

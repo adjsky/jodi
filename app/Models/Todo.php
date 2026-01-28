@@ -48,7 +48,7 @@ class Todo extends Model implements Sortable
     public function buildSortQuery(): Builder
     {
         return static::query()
-            ->where('category_id', $this->category)
+            ->where('category_id', $this->category_id)
             ->whereDate('todo_date', $this->todo_date);
     }
 }

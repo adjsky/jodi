@@ -50,19 +50,6 @@ export function useSortableTodos(todos: Getter<App.Data.TodoDto[]>) {
                 }
 
                 const { id, index, group } = source.sortable;
-
-                void router.visit(reorder(Number(id)), {
-                    replace: true,
-                    preserveScroll: true,
-                    preserveState: true,
-                    preserveUrl: true,
-                    showProgress: false,
-                    only: ["todos"],
-                    data: {
-                        position: index + 1,
-                        category: group == m["todos.ungrouped"]() ? null : group
-                    }
-                });
             }
         )
     );

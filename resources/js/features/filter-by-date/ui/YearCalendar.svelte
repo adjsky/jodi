@@ -86,7 +86,7 @@
     </div>
 
     <div bind:this={monthsNode} class="mt-2 overflow-y-scroll">
-        {#each year.months() as month (month.name)}
+        {#each year.months() as month (`${month.name}-${year.current}`)}
             <Month
                 {...month}
                 {year}

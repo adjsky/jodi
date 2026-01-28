@@ -59,6 +59,9 @@
     "home": {
         "empty-day": "Woohoo! Your day is completely free. Enjoy the downtime or click + to plan something."
     },
+    "day-summary": {
+        "request-error": "Failed to load calendar details. Try again later."
+    },
     "todos": {
         "add": "Add todo",
         "title": "Todos",
@@ -82,7 +85,8 @@
             "complete": "Failed to complete todo. Try again later.",
             "edit": "Failed to update todo. Try again later.",
             "delete": "Failed to delete todo. Try again later.",
-            "category": "Failed to delete category. Try again later."
+            "category": "Failed to delete category. Try again later.",
+            "reorder": "Failed to reorder todos. Try again later."
         },
         "placeholders": {
             "title": "Task",
