@@ -1,5 +1,22 @@
 # Releases
 
+## 0.10.0 (2026-01-28)
+
+### Feat
+
+- add vibration when selecting hours/minutes
+
+### Fix
+
+- todos reordering
+- restore history modals
+- don't create extra history entries on reload
+- selected date resets
+- render year calendar dialog in a portal
+- broken checkbox
+- apply border radius only for top
+- use onInteractOutside instead of the focus one
+
 ## 0.9.2 (2026-01-25)
 
 ### Fix
