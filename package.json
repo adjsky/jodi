@@ -12,9 +12,6 @@
     },
     "devDependencies": {
         "@ark-ui/svelte": "^5.15.0",
-        "@dnd-kit/abstract": "^0.2.3",
-        "@dnd-kit/dom": "^0.2.3",
-        "@dnd-kit/helpers": "^0.2.3",
         "@eslint/compat": "^1.2.5",
         "@eslint/js": "^9.22.0",
         "@fontsource-variable/nunito": "^5.2.7",
