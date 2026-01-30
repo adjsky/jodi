@@ -1,5 +1,15 @@
 # Releases
 
+## 0.11.0 (2026-01-30)
+
+### Feat
+
+- move confirmable open state to url (history)
+
+### Fix
+
+- don't portal anything that renders inside a bottom sheet (i hope i won't make this mistake again)
+
 ## 0.10.0 (2026-01-28)
 
 ### Feat
