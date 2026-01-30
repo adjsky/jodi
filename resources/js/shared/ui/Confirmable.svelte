@@ -15,7 +15,6 @@
         children?: Snippet<[() => HTMLButtonAttributes]>;
         onConfirm?: () => MaybePromise<boolean | void>;
         onAbort?: VoidFunction;
-        onOpenChange?: (open: boolean) => void;
     };
 
     let {
@@ -23,12 +22,11 @@
         open = $bindable(false),
         children,
         onConfirm,
-        onAbort,
-        onOpenChange
+        onAbort
     }: Props = $props();
 </script>
 
-<Dialog.Root bind:open onOpenChange={({ open }) => onOpenChange?.(open)}>
+<Dialog.Root bind:open>
     {#if children}
         <Dialog.Trigger>
             {#snippet asChild(props)}{@render children(props)}{/snippet}

@@ -1,15 +1,14 @@
 <script lang="ts">
     import { Combobox, useFilter, useListCollection } from "@ark-ui/svelte";
-    import { page, router } from "@inertiajs/svelte";
+    import { page } from "@inertiajs/svelte";
     import { Delete, Tag, Trash } from "@lucide/svelte";
-    import { destroy } from "$/generated/actions/App/Http/Controllers/CategoryController";
     import { m } from "$/paraglide/messages";
-    import { optimistic } from "$/shared/inertia/visit/optimistic";
     import { announce } from "$/shared/lib/form";
-    import Confirmable from "$/shared/ui/Confirmable.svelte";
     import { tick } from "svelte";
 
     import { useAutoresize } from "../helpers/autoresize.svelte";
+    import { view } from "../model/view";
+    import DeleteCategory from "./DeleteCategory.svelte";
 
     type Props = {
         name: string;
@@ -24,7 +23,6 @@
     let categoryInput = $state<HTMLInputElement | null>(null);
 
     let open = $state(false);
-    let categoryToDelete = $state<string | null>(null);
     // svelte-ignore state_referenced_locally
     let categoryInputValue = $state(selected ?? "");
 
@@ -77,6 +75,10 @@
     const showCategories = $derived(collection().size != 0);
     const showContent = $derived(showReset || showCategories);
 </script>
+
+<DeleteCategory />
+
+<input bind:this={formInput} type="text" value={selected} {name} hidden />
 
 <Combobox.Root
     bind:open
@@ -135,9 +137,14 @@
                         >
                             <Combobox.ItemText>{item}</Combobox.ItemText>
                             <button
-                                onclick={(e) => {
+                                onclick={async (e) => {
                                     e.stopPropagation();
-                                    categoryToDelete = item;
+                                    open = false;
+                                    await tick();
+                                    void view.push(view.name, {
+                                        ...view.meta,
+                                        __categorytodelete: item
+                                    });
                                 }}
                                 type="button"
                                 class="group-data-[state=checked]:hidden"
@@ -164,48 +171,3 @@
         </Combobox.Content>
     </Combobox.Positioner>
 </Combobox.Root>
-
-<Confirmable
-    open={categoryToDelete != null}
-    title={m["todos.category.confirm-delete"]({
-        category: categoryToDelete ?? "<null>"
-    })}
-    onConfirm={async () => {
-        if (!categoryToDelete) return;
-
-        void router.visit(destroy(categoryToDelete), {
-            ...optimistic(
-                (prev) => ({
-                    todos: prev.todos.map((t: App.Data.TodoDto) => ({
-                        ...t,
-                        category:
-                            t.category == categoryToDelete ? null : t.category
-                    })),
-                    categories: prev.categories.filter(
-                        (c: string) => c != categoryToDelete
-                    )
-                }),
-                {
-                    error: m["todos.errors.category"]()
-                }
-            ),
-            only: ["todos", "categories"],
-            preserveState: true,
-            preserveScroll: true,
-            preserveUrl: true,
-            replace: true,
-            showProgress: false
-        });
-
-        categoryToDelete = null;
-
-        return true;
-    }}
-    onOpenChange={(_open) => {
-        if (_open) return;
-        open = false;
-        categoryToDelete = null;
-    }}
-/>
-
-<input bind:this={formInput} type="text" value={selected} {name} hidden />

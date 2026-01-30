@@ -17,18 +17,20 @@
 
     let { selected, children, onSelect }: Props = $props();
 
-    const view = new HistoryView<{ yearcalendardialog: { isOpen: boolean } }>();
+    const view = new HistoryView<{
+        __yearcalendardialog: { isOpen: boolean };
+    }>();
 </script>
 
 <Dialog.Root
     lazyMount
     bind:open={
-        () => view.meta?.yearcalendardialog?.isOpen ?? false,
+        () => view.meta?.__yearcalendardialog?.isOpen ?? false,
         (v) => {
             if (v) {
                 void view.push(view.name, {
                     ...view.meta,
-                    yearcalendardialog: { isOpen: true }
+                    __yearcalendardialog: { isOpen: true }
                 });
             } else {
                 void view.back();

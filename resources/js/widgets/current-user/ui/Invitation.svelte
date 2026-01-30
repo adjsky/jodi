@@ -4,6 +4,7 @@
     import { CheckIcon, ClipboardCopyIcon } from "@lucide/svelte";
     import { destroy } from "$/generated/actions/App/Http/Controllers/RegistrationInvitationController";
     import { m } from "$/paraglide/messages";
+    import { HistoryView } from "$/shared/inertia/history-view.svelte";
     import { toaster } from "$/shared/lib/toaster";
     import Button from "$/shared/ui/Button.svelte";
     import Confirmable from "$/shared/ui/Confirmable.svelte";
@@ -19,6 +20,10 @@
     };
 
     const { onDelete }: Props = $props();
+
+    const deleteView = new HistoryView<{
+        __deleteinvitation: { isOpen: boolean };
+    }>();
 
     const id = $derived.by(() => {
         const [_, __, id] = view.name.split("/");
@@ -62,9 +67,22 @@
             </Clipboard.Root>
 
             <Confirmable
+                bind:open={
+                    () => deleteView.meta?.__deleteinvitation.isOpen ?? false,
+                    (v) => {
+                        if (v) {
+                            void deleteView.push(view.name, {
+                                ...view.meta,
+                                __deleteinvitation: { isOpen: true }
+                            });
+                        } else {
+                            void deleteView.back();
+                        }
+                    }
+                }
                 title={m["current-user.invitations.delete-ahtung"]()}
-                onConfirm={() => {
-                    void router.visit(destroy(invitation.current!.id), {
+                onConfirm={async () => {
+                    await router.visit(destroy(invitation.current!.id), {
                         replace: true,
                         preserveUrl: true,
                         preserveState: true,
@@ -74,6 +92,7 @@
                             onDelete?.(invitation.current!.id);
                         }
                     });
+                    return true;
                 }}
             >
                 {#snippet children(props)}
