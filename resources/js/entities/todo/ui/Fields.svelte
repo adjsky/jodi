@@ -55,17 +55,20 @@
 
 <div class="flex items-center justify-between">
     <div class="flex items-center gap-3">
-        {#snippet trigger(props: HTMLButtonAttributes)}
-            <button {...props} class="text-lg font-bold" type="button">
-                {new DateFormatter(getLocale(), {
-                    day: "2-digit",
-                    year: "numeric",
-                    month: "short",
-                    weekday: "short"
-                }).format(date.toDate(TIMEZONE))}
-            </button>
-        {/snippet}
-        {@render calendar(trigger)}
+        <!-- DO NOT REMOVE DIV -->
+        <div>
+            {#snippet trigger(props: HTMLButtonAttributes)}
+                <button {...props} class="text-lg font-bold" type="button">
+                    {new DateFormatter(getLocale(), {
+                        day: "2-digit",
+                        year: "numeric",
+                        month: "short",
+                        weekday: "short"
+                    }).format(date.toDate(TIMEZONE))}
+                </button>
+            {/snippet}
+            {@render calendar(trigger)}
+        </div>
 
         {@render category()}
     </div>
