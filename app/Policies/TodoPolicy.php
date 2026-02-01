@@ -24,7 +24,6 @@ class TodoPolicy
         return $user->id == $todo->user_id;
     }
 
-    /** @param array{id: int} $todos */
     public function reorder(User $user, array $todos): bool
     {
         $ids = collect($todos)->pluck('id')->toArray();

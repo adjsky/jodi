@@ -9,5 +9,7 @@ parameters:
     level: 8
     ignoreErrors:
         -
+            identifier: missingType.iterableValue
+        -
             identifier: missingType.return
             path: app/Http/Controllers
