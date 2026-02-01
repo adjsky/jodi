@@ -74,6 +74,7 @@
             startsAt: normalizeIsoString(startsAt.toAbsoluteString()),
             endsAt: normalizeIsoString(endsAt.toAbsoluteString())
         })}
+        class="flex grow flex-col pb-18"
         let:isDirty
     >
         <!-- keep to mark form dirty when selecting date in calendar -->

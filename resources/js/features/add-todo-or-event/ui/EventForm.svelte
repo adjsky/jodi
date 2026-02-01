@@ -45,6 +45,7 @@
         endsAt: endsAt.toAbsoluteString()
     })}
     onSuccess={() => onClose()}
+    class="flex grow flex-col pb-18"
     let:processing
 >
     <Event.Fields bind:startsAt bind:endsAt>

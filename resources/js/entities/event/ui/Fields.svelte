@@ -87,13 +87,12 @@
     {/snippet}
 </TimeRangePicker>
 
-<Field.Textarea
-    autoresize
+<textarea
     name="description"
     placeholder={m["events.placeholders.description"]()}
-    class="mt-6 form-input field-sizing-content w-full border-none bg-transparent p-0 text-lg font-semibold text-cream-950 placeholder:text-cream-600 focus:ring-0"
+    class="mt-6 form-input field-sizing-content w-full grow overflow-y-scroll border-none bg-transparent p-0 text-lg font-semibold text-cream-950 placeholder:text-cream-600 focus:ring-0"
     defaultValue={description ?? ""}
-/>
+></textarea>
 
 <div
     class="absolute inset-x-0 bottom-0 z-10 flex items-end justify-between bg-white px-4 pb-6"

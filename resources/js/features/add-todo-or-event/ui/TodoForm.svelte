@@ -32,6 +32,7 @@
         replace: true
     }}
     onSuccess={() => onClose()}
+    class="flex grow flex-col pb-18"
     let:processing
 >
     <Todo.Fields date={day}>

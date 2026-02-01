@@ -1,5 +1,4 @@
 <script lang="ts">
-    import { Field } from "@ark-ui/svelte";
     import { DateFormatter } from "@internationalized/date";
     import { m } from "$/paraglide/messages";
     import { getLocale } from "$/paraglide/runtime";
@@ -83,13 +82,12 @@
     {@render titleInput("mt-5")}
 {/if}
 
-<Field.Textarea
-    autoresize
+<textarea
     name="description"
     placeholder={m["todos.placeholders.description"]()}
-    class="mt-6 form-input field-sizing-content w-full border-none bg-transparent p-0 text-lg font-semibold text-cream-950 placeholder:text-cream-600 focus:ring-0"
+    class="mt-6 form-input field-sizing-content w-full grow overflow-y-scroll border-none bg-transparent p-0 text-lg font-semibold text-cream-950 placeholder:text-cream-600 focus:ring-0"
     defaultValue={description ?? ""}
-/>
+></textarea>
 
 <div
     class="absolute inset-x-0 bottom-0 z-10 flex items-end justify-between bg-white px-4 pb-6"

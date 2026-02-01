@@ -67,6 +67,7 @@
         options={visitOptions}
         showProgress={false}
         transform={cleanFormPayload}
+        class="flex grow flex-col pb-18"
         let:isDirty
     >
         <Todo.Fields
