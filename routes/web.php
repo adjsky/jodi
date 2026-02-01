@@ -56,6 +56,7 @@ Route::middleware('auth')->group(function () {
     Route::prefix('/categories')
         ->controller(CategoryController::class)
         ->group(function () {
+            Route::post('/', 'create');
             Route::delete('/{name}', 'destroy');
         });
 

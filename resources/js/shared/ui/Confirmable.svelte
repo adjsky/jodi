@@ -12,6 +12,7 @@
     type Props = {
         title: string;
         open?: boolean;
+        portal?: boolean;
         children?: Snippet<[() => HTMLButtonAttributes]>;
         onConfirm?: () => MaybePromise<boolean | void>;
         onAbort?: VoidFunction;
@@ -20,6 +21,7 @@
     let {
         title,
         open = $bindable(false),
+        portal = true,
         children,
         onConfirm,
         onAbort
@@ -32,7 +34,7 @@
             {#snippet asChild(props)}{@render children(props)}{/snippet}
         </Dialog.Trigger>
     {/if}
-    <Portal>
+    <Portal disabled={!portal}>
         <Dialog.Backdrop
             class={[
                 "fixed inset-0 z-150 bg-cream-950/60 duration-300",

@@ -40,7 +40,7 @@
             <SaveOrClose variant="save" disabled={processing} />
         {/snippet}
         {#snippet category()}
-            <Category name="category" />
+            <Category name="category" current={null} />
         {/snippet}
         {#snippet destroy()}
             <ToolbarAction

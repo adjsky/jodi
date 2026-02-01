@@ -17,11 +17,14 @@ class TodoController extends Controller
     public function create(CreateRequest $request)
     {
         $data = $request->validatedInSnakeCase();
-        $category = isset($data['category'])
-            ? $this->user()->categories()->firstOrCreate(['name' => $data['category']])
+        $categoryId = isset($data['category'])
+            ? $this->user()->categories()
+                ->where('name', $data['category'])
+                ->firstOrFail(['id'])
+                ->id
             : null;
 
-        $this->user()->todos()->create([...$data, 'category_id' => $category?->id]);
+        $this->user()->todos()->create([...$data, 'category_id' => $categoryId]);
 
         return back();
     }
@@ -60,7 +63,10 @@ class TodoController extends Controller
             if (array_key_exists('category', $data)) {
                 $name = $data['category'];
                 $data['category_id'] = $name
-                    ? $this->user()->categories()->firstOrCreate(['name' => $name])->id
+                    ? $this->user()->categories()
+                        ->where('name', $data['category'])
+                        ->firstOrFail(['id'])
+                        ->id
                     : null;
                 unset($data['category']);
             }

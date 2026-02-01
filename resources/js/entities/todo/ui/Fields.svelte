@@ -69,7 +69,6 @@
             {/snippet}
             {@render calendar(trigger)}
         </div>
-
         {@render category()}
     </div>
     {@render close()}

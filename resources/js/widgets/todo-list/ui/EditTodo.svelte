@@ -99,7 +99,7 @@
                 />
             {/snippet}
             {#snippet category()}
-                <Category name="category" defaultValue={todo.category} />
+                <Category name="category" current={todo.category} />
             {/snippet}
             {#snippet checkbox()}
                 <Checkbox

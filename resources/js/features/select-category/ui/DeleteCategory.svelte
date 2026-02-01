@@ -3,9 +3,16 @@
     import { destroy } from "$/generated/actions/App/Http/Controllers/CategoryController";
     import { m } from "$/paraglide/messages";
     import { optimistic } from "$/shared/inertia/visit/optimistic";
+    import { raise } from "$/shared/lib/exceptions";
     import Confirmable from "$/shared/ui/Confirmable.svelte";
 
     import { view } from "../model/view";
+
+    type Props = {
+        onDelete?: (name: string) => void;
+    };
+
+    const { onDelete }: Props = $props();
 
     let bufferedCategory = $state<string | null>(null);
 
@@ -27,10 +34,14 @@
         }
     }
     title={m["todos.category.confirm-delete"]({
-        category: bufferedCategory ?? "<>"
+        category: bufferedCategory ?? ""
     })}
     onConfirm={async () => {
-        const category = view.meta!.__categorytodelete;
+        const category = view.meta?.__categorytodelete ?? bufferedCategory;
+
+        if (!category) {
+            raise("Can't delete when no category is marked for deletion.");
+        }
 
         void router.visit(destroy(category), {
             ...optimistic(
@@ -44,7 +55,10 @@
                     )
                 }),
                 {
-                    error: m["todos.errors.category"]()
+                    error: m["todos.errors.category"](),
+                    onSuccess() {
+                        onDelete?.(category);
+                    }
                 }
             ),
             only: ["todos", "categories"],

@@ -1,1 +1,1 @@
-export { default as Category } from "./ui/Category.svelte";
+export { default as Category } from "./ui/Dialog.svelte";

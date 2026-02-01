@@ -23,7 +23,7 @@ class UpdateRequest extends FormRequest
             'title' => 'sometimes|string',
             'description' => 'sometimes|nullable|string',
             'color' => 'sometimes|nullable|hex_color',
-            'category' => 'sometimes|nullable|string',
+            'category' => 'sometimes|nullable|string|exists:categories,name',
             'todoDate' => 'sometimes|date_format:Y-m-d',
             'notifyAt' => 'sometimes|date',
         ];

@@ -22,7 +22,7 @@ class CreateRequest extends FormRequest
         return [
             'title' => 'required|string',
             'description' => 'nullable|string',
-            'category' => 'nullable|string',
+            'category' => 'nullable|string|exists:categories,name',
             'color' => 'nullable|hex_color',
             'todoDate' => 'required|date_format:Y-m-d',
             'notifyAt' => 'sometimes|date',
