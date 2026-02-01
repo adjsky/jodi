@@ -37,7 +37,9 @@
     let dateInputRef: HTMLInputElement | null = $state(null);
 
     let todo = $derived(props.todo ?? (lastKnownTodo as App.Data.TodoDto));
-    let date = $derived(dateOverride ?? parseDate(todo.date.split("T")[0]));
+    let date = $derived(
+        dateOverride ?? parseDate(todo.scheduledAt.split("T")[0])
+    );
 
     watch(
         () => [props.todo],

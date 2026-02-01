@@ -20,21 +20,23 @@ class Todo extends Model implements Sortable
         'title',
         'description',
         'category_id',
-        'todo_date',
+        'scheduled_at',
+        'has_time',
         'color',
     ];
 
     protected $hidden = [];
 
     /**
-     * @return array{notify_at: "datetime", completed_at: "datetime", todo_date: "date:Y-m-d"}
+     * @return array{notify_at: "datetime", completed_at: "datetime", scheduled_at: "datetime", has_time: "boolean"}
      */
     protected function casts(): array
     {
         return [
             'notify_at' => 'datetime',
             'completed_at' => 'datetime',
-            'todo_date' => 'date:Y-m-d',
+            'scheduled_at' => 'datetime',
+            'has_time' => 'boolean',
         ];
     }
 
@@ -49,6 +51,6 @@ class Todo extends Model implements Sortable
     {
         return static::query()
             ->where('category_id', $this->category_id)
-            ->whereDate('todo_date', $this->todo_date);
+            ->whereDate('scheduled_at', $this->scheduled_at);
     }
 }

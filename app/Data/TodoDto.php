@@ -18,7 +18,8 @@ class TodoDto extends Data
         public ?string $description,
         public ?string $category,
         public ?string $color,
-        public Carbon $date,
+        public Carbon $scheduledAt,
+        public bool $hasTime,
         public ?Carbon $completedAt,
         public ?Carbon $createdAt,
     ) {}
@@ -31,7 +32,8 @@ class TodoDto extends Data
             $todo->description,
             $todo->category?->name,
             $todo->color,
-            $todo->todo_date,
+            $todo->scheduled_at,
+            $todo->has_time,
             $todo->completed_at,
             $todo->created_at
         );

@@ -24,7 +24,8 @@ class CreateRequest extends FormRequest
             'description' => 'nullable|string',
             'category' => 'nullable|string|exists:categories,name',
             'color' => 'nullable|hex_color',
-            'todoDate' => 'required|date_format:Y-m-d',
+            'scheduledAt' => 'required|date',
+            'hasTime' => 'sometimes|boolean',
             'notifyAt' => 'sometimes|date',
         ];
     }

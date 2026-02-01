@@ -73,7 +73,8 @@ class TodoController extends Controller
 
             $todo->fill($data);
 
-            if ($todo->isDirty(['category_id', 'todo_date'])) {
+            // TODO: don't change position if only time is changed.
+            if ($todo->isDirty(['category_id', 'scheduled_at'])) {
                 $todo->position = $todo->getHighestOrderNumber() + 1;
             }
 

@@ -48,7 +48,7 @@
 
 <input
     bind:this={dateInputRef}
-    name="todoDate"
+    name="scheduledAt"
     value={date.toString()}
     hidden
 />

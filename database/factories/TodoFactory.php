@@ -21,7 +21,7 @@ class TodoFactory extends Factory
         return [
             'title' => fake()->sentence(rand(3, 8)),
             'description' => fake()->optional(0.7)->paragraph(rand(1, 3)),
-            'todo_date' => now()->format('Y-m-d'),
+            'scheduled_at' => now()->format('Y-m-d'),
         ];
     }
 }
