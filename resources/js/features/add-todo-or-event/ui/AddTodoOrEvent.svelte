@@ -1,6 +1,11 @@
 <script lang="ts">
     import { Dialog, Portal } from "@ark-ui/svelte";
-    import { parseDate, toCalendarDate, today } from "@internationalized/date";
+    import {
+        now,
+        parseDate,
+        toCalendarDate,
+        toZoned
+    } from "@internationalized/date";
     import { CalendarClock, Check, X } from "@lucide/svelte";
     import { YearCalendarDialog } from "$/features/filter-by-date";
     import { m } from "$/paraglide/messages";
@@ -23,14 +28,10 @@
     let day = $derived(getCurrentDay());
 
     function getCurrentDay() {
-        return searchParams["d"]
-            ? parseDate(searchParams["d"])
-            : today(TIMEZONE);
-    }
-
-    function onClose() {
-        day = getCurrentDay();
-        void view.back();
+        const day = searchParams["d"]
+            ? toZoned(parseDate(searchParams["d"]), TIMEZONE)
+            : now(TIMEZONE);
+        return day.set({ hour: 12, minute: 0 });
     }
 </script>
 
@@ -41,10 +42,13 @@
             if (v) {
                 void view.push("add");
             } else {
-                onClose();
+                void view.back();
             }
         }
     }
+    onExitComplete={() => {
+        day = getCurrentDay();
+    }}
 >
     <Dialog.Trigger>
         {#snippet asChild(props)}
@@ -96,7 +100,7 @@
         () => view.isOpen("add-todo") || view.isOpen("add-event"),
         (v) => {
             if (!v) {
-                onClose();
+                void view.back();
             }
         }
     }
@@ -106,17 +110,17 @@
     grip="var(--color-cream-300)"
 >
     {#if view.isOpen("add-todo")}
-        <TodoForm {day} {calendar} {onClose} />
+        <TodoForm bind:day {calendar} onClose={() => void view.back()} />
     {:else if view.isOpen("add-event")}
-        <EventForm {day} {calendar} {onClose} />
+        <EventForm bind:day {calendar} onClose={() => void view.back()} />
     {/if}
 </Sheet>
 
 {#snippet calendar(trigger: Snippet<[HTMLButtonAttributes]>)}
     <YearCalendarDialog
-        selected={day}
+        selected={toCalendarDate(day)}
         onSelect={(d) => {
-            day = toCalendarDate(d);
+            day = day.set(d);
         }}
     >
         {#snippet children(props)}

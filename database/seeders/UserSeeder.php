@@ -27,7 +27,7 @@ class UserSeeder extends Seeder
                 ['title' => 'Marketing sync'],
                 ['title' => 'Sprint tasks to Sarah'],
                 ['title' => 'Follow up'],
-                ['title' => '16:00 Language session'],
+                ['title' => 'Language session'],
             ))
             ->afterCreating(function (User $user) {
                 $user->todos->each(function ($todo) use ($user) {

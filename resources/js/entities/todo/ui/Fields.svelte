@@ -1,25 +1,25 @@
 <script lang="ts">
     import { DateFormatter } from "@internationalized/date";
+    import { Clock } from "@lucide/svelte";
     import { m } from "$/paraglide/messages";
     import { getLocale } from "$/paraglide/runtime";
-    import { TIMEZONE } from "$/shared/cfg/constants";
     import { tw } from "$/shared/lib/styles";
     import { boolAttr } from "runed";
 
-    import type { CalendarDate } from "@internationalized/date";
+    import type { ZonedDateTime } from "@internationalized/date";
     import type { Snippet } from "svelte";
     import type { HTMLButtonAttributes } from "svelte/elements";
 
     type Props = {
-        date: CalendarDate;
+        scheduledAt: ZonedDateTime;
         title?: string;
         description?: string | null;
         isCompleted?: boolean;
-        dateInputRef?: HTMLInputElement | null;
         calendar: Snippet<[Snippet<[HTMLButtonAttributes]>]>;
         close: Snippet;
         category: Snippet;
         checkbox?: Snippet;
+        time: Snippet;
         destroy: Snippet;
         repeat: Snippet;
         color: Snippet;
@@ -28,15 +28,15 @@
     };
 
     let {
-        date,
+        scheduledAt,
         title,
         description,
         isCompleted,
-        dateInputRef = $bindable(),
         calendar,
         close,
         category,
         checkbox,
+        time,
         destroy,
         repeat,
         color,
@@ -44,13 +44,6 @@
         more
     }: Props = $props();
 </script>
-
-<input
-    bind:this={dateInputRef}
-    name="scheduledAt"
-    value={date.toString()}
-    hidden
-/>
 
 <div class="flex items-center justify-between">
     <div class="flex items-center gap-3">
@@ -63,7 +56,7 @@
                         year: "numeric",
                         month: "short",
                         weekday: "short"
-                    }).format(date.toDate(TIMEZONE))}
+                    }).format(scheduledAt.toDate())}
                 </button>
             {/snippet}
             {@render calendar(trigger)}
@@ -74,7 +67,7 @@
 </div>
 
 {#if checkbox}
-    <div class={["mt-4 flex items-center gap-2", isCompleted && "opacity-40"]}>
+    <div class={["mt-5 flex items-center gap-2", isCompleted && "opacity-40"]}>
         {@render checkbox()}
         {@render titleInput()}
     </div>
@@ -82,10 +75,15 @@
     {@render titleInput("mt-5")}
 {/if}
 
+<div class="mt-4 flex items-center gap-2">
+    <Clock class="text-2xl" />
+    {@render time()}
+</div>
+
 <textarea
     name="description"
     placeholder={m["todos.placeholders.description"]()}
-    class="mt-6 form-input field-sizing-content w-full grow overflow-y-scroll border-none bg-transparent p-0 text-lg font-semibold text-cream-950 placeholder:text-cream-600 focus:ring-0"
+    class="mt-3 form-input field-sizing-content w-full grow overflow-y-scroll border-none bg-transparent p-0 text-lg font-semibold text-cream-950 placeholder:text-cream-600 focus:ring-0"
     defaultValue={description ?? ""}
 ></textarea>
 

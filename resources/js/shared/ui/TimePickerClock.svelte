@@ -13,12 +13,14 @@
     type Props = {
         value?: Time;
         open: boolean;
+        onAbort?: VoidFunction;
         onComplete?: (time: Time) => void;
     };
 
     let {
         value = toTime(now(TIMEZONE)),
         open = $bindable(),
+        onAbort,
         onComplete
     }: Props = $props();
 
@@ -197,7 +199,10 @@
                     </div>
                 </div>
                 <div class="mt-5 flex justify-end gap-8">
-                    <Dialog.CloseTrigger class="text-ms font-bold text-brand">
+                    <Dialog.CloseTrigger
+                        class="text-ms font-bold text-brand"
+                        onclick={() => onAbort?.()}
+                    >
                         {m["common.time-picker.cancel"]()}
                     </Dialog.CloseTrigger>
                     <button

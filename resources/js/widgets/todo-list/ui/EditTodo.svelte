@@ -1,11 +1,15 @@
 <script lang="ts">
     import { Form } from "@inertiajs/svelte";
-    import { parseDate, toCalendarDate } from "@internationalized/date";
+    import {
+        parseAbsoluteToLocal,
+        toCalendarDate
+    } from "@internationalized/date";
     import { Bell, Ellipsis, RotateCw } from "@lucide/svelte";
     import { Todo } from "$/entities/todo";
     import { Checkbox } from "$/features/complete-todo";
     import { DeleteItem } from "$/features/delete-item";
     import { YearCalendarDialog } from "$/features/filter-by-date";
+    import { TodoTime } from "$/features/schedule-todo-time";
     import { Category } from "$/features/select-category";
     import { Color } from "$/features/select-color";
     import {
@@ -14,6 +18,7 @@
         update
     } from "$/generated/actions/App/Http/Controllers/TodoController";
     import { m } from "$/paraglide/messages";
+    import { normalizeIsoString } from "$/shared/lib/date";
     import { announce, cleanFormPayload } from "$/shared/lib/form";
     import SaveOrClose from "$/shared/ui/SaveOrClose.svelte";
     import Sheet from "$/shared/ui/Sheet.svelte";
@@ -23,7 +28,7 @@
 
     import { optimistic, visitOptions } from "../cfg/inertia";
 
-    import type { CalendarDate } from "@internationalized/date";
+    import type { ZonedDateTime } from "@internationalized/date";
 
     type Props = {
         open: boolean;
@@ -33,19 +38,19 @@
     let { open = $bindable(), ...props }: Props = $props();
 
     let lastKnownTodo = $state(props.todo);
-    let dateOverride = $state<CalendarDate | null>(null);
-    let dateInputRef: HTMLInputElement | null = $state(null);
+    let scheduledAtOverride = $state<ZonedDateTime | null>(null);
+    let dateAnnouncerInput: HTMLInputElement | null = $state(null);
 
     let todo = $derived(props.todo ?? (lastKnownTodo as App.Data.TodoDto));
-    let date = $derived(
-        dateOverride ?? parseDate(todo.scheduledAt.split("T")[0])
+    let scheduledAt = $derived(
+        scheduledAtOverride ?? parseAbsoluteToLocal(todo.scheduledAt)
     );
 
     watch(
         () => [props.todo],
         () => {
             if (props.todo?.id != lastKnownTodo?.id) {
-                dateOverride = null;
+                scheduledAtOverride = null;
             }
 
             if (!props.todo) return;
@@ -66,24 +71,33 @@
         action={update(todo.id)}
         options={visitOptions}
         showProgress={false}
-        transform={cleanFormPayload}
+        transform={(data) => ({
+            ...cleanFormPayload(data),
+            scheduledAt: normalizeIsoString(scheduledAt.toAbsoluteString())
+        })}
         class="flex grow flex-col pb-18"
         let:isDirty
     >
+        <!-- keep to mark form dirty when selecting date in calendar -->
+        <input
+            bind:this={dateAnnouncerInput}
+            hidden
+            name="_date"
+            value={toCalendarDate(scheduledAt).toString()}
+        />
         <Todo.Fields
-            bind:dateInputRef
-            {date}
+            {scheduledAt}
             title={todo.title}
             description={todo.description}
             isCompleted={todo.completedAt != null}
         >
             {#snippet calendar(trigger)}
                 <YearCalendarDialog
-                    selected={date}
+                    selected={toCalendarDate(scheduledAt)}
                     onSelect={async (d) => {
-                        dateOverride = toCalendarDate(d);
+                        scheduledAtOverride = scheduledAt.set(d);
                         await tick();
-                        announce(dateInputRef);
+                        announce(dateAnnouncerInput);
                     }}
                 >
                     {#snippet children(props)}
@@ -111,6 +125,15 @@
                     href={complete(todo.id)}
                     completedAt={todo.completedAt}
                     class="size-6 text-lg"
+                />
+            {/snippet}
+            {#snippet time()}
+                <TodoTime
+                    bind:scheduledAt={
+                        () => scheduledAt,
+                        (t) => (scheduledAtOverride = scheduledAt.set(t))
+                    }
+                    hasTime={todo.hasTime}
                 />
             {/snippet}
             {#snippet destroy()}

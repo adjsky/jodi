@@ -77,6 +77,9 @@
             "confirm-delete": "Are you sure you want to delete \"{category}\"?",
             "no-categories": "No categories yet. Type in the search bar above to create your first category."
         },
+        "time": {
+            "add": "Add time"
+        },
         "tooltips": {
             "delete": "Delete",
             "repeat": "Repeat",

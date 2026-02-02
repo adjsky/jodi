@@ -1,9 +1,11 @@
 <script lang="ts">
+    import { DateFormatter } from "@internationalized/date";
     import { Check, GripVertical } from "@lucide/svelte";
     import { Todo } from "$/entities/todo";
     import Checkbox from "$/features/complete-todo/ui/Checkbox.svelte";
     import { complete } from "$/generated/actions/App/Http/Controllers/TodoController";
     import { m } from "$/paraglide/messages";
+    import { getLocale } from "$/paraglide/runtime";
     import PencilNote from "$/shared/assets/pencil-note.svg";
     import { prefersLightText } from "$/shared/lib/color";
     import { tw } from "$/shared/lib/styles";
@@ -134,6 +136,12 @@
                     />
                 {/snippet}
                 {#snippet edit()}
+                    {@const time = todo.hasTime
+                        ? new DateFormatter(getLocale(), {
+                              hour: "2-digit",
+                              minute: "2-digit"
+                          }).format(new Date(todo.scheduledAt))
+                        : null}
                     <button
                         class="relative table w-full table-fixed text-start text-lg font-medium"
                         data-part="edit"
@@ -150,7 +158,7 @@
                             ]}
                             style="background: {todo.color ?? 'transparent'};"
                         >
-                            {todo.title}
+                            {time ? `${time} ${todo.title}` : todo.title}
                         </span>
                     </button>
                 {/snippet}

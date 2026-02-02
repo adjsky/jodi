@@ -1,5 +1,4 @@
 <script lang="ts">
-    import { Field } from "@ark-ui/svelte";
     import { DateFormatter, toTime } from "@internationalized/date";
     import { Calendar, Clock } from "@lucide/svelte";
     import { m } from "$/paraglide/messages";
@@ -77,7 +76,7 @@
         () => toTime(startsAt), (time) => (startsAt = startsAt.set(time))
     }
     bind:endsAt={() => toTime(endsAt), (time) => (endsAt = endsAt.set(time))}
-    class="mt-3"
+    class="mt-4"
     name="_time"
     required
 >
@@ -90,7 +89,7 @@
 <textarea
     name="description"
     placeholder={m["events.placeholders.description"]()}
-    class="mt-6 form-input field-sizing-content w-full grow overflow-y-scroll border-none bg-transparent p-0 text-lg font-semibold text-cream-950 placeholder:text-cream-600 focus:ring-0"
+    class="mt-3 form-input field-sizing-content w-full grow overflow-y-scroll border-none bg-transparent p-0 text-lg font-semibold text-cream-950 placeholder:text-cream-600 focus:ring-0"
     defaultValue={description ?? ""}
 ></textarea>
 

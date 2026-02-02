@@ -36,13 +36,14 @@
 
     let lastKnownEvent = $state(props.event);
     let startsAtOverride = $state<ZonedDateTime | null>(null);
+    let endsAtOverride = $state<ZonedDateTime | null>(null);
     let dateAnnouncerInput: HTMLInputElement | null = $state(null);
 
     let event = $derived(props.event ?? (lastKnownEvent as App.Data.EventDto));
     let startsAt = $derived(
         startsAtOverride ?? parseAbsoluteToLocal(event.startsAt)
     );
-    let endsAt = $derived(parseAbsoluteToLocal(event.endsAt));
+    let endsAt = $derived(endsAtOverride ?? parseAbsoluteToLocal(event.endsAt));
 
     watch(
         () => [props.event],
@@ -85,8 +86,10 @@
             value={toCalendarDate(startsAt).toString()}
         />
         <Event.Fields
-            bind:startsAt
-            bind:endsAt
+            bind:startsAt={
+                () => startsAt, (t) => (startsAtOverride = startsAt.set(t))
+            }
+            bind:endsAt={() => endsAt, (t) => (endsAtOverride = endsAt.set(t))}
             title={event.title}
             description={event.description}
         >

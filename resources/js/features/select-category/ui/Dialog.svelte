@@ -17,7 +17,7 @@
         current: string | null;
     };
 
-    let { name, current }: Props = $props();
+    let { name, ...props }: Props = $props();
 
     const filters = useFilter({ sensitivity: "base" });
     const { collection, filter, set } = useListCollection({
@@ -28,8 +28,7 @@
     });
 
     let formInput = $state<HTMLInputElement | null>(null);
-    // svelte-ignore state_referenced_locally
-    let selected = $state(current);
+    let selected = $state(props.current);
     let search = $state("");
 
     let showAddButton = $derived(search != "" && !collection().has(search));
