@@ -36,7 +36,7 @@ class TodoReminder extends Notification implements ShouldQueue
             ->title(__(':title is upcoming.', ['title' => $this->todo->title]))
             ->body(__('Starts :time.', ['time' => $this->startsIn()]))
             ->data(['navigate' => $navigate])
-            ->tag('event-'.$this->todo->id.'-reminder')
+            ->tag('todo-'.$this->todo->id.'-reminder')
             ->navigate($navigate);
     }
 

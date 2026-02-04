@@ -18,7 +18,7 @@ class RemindTodosCommand extends Command
     {
         Todo::with('user')
             ->where('notify_at', '<=', now())
-            ->where('scheduled_at', '<=', now())
+            ->where('scheduled_at', '>', now())
             ->where('notify_status', '!=', 'sent')
             ->chunk(100, function ($todos) {
                 $sent = [];

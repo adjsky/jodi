@@ -18,7 +18,7 @@ class RemindEventsCommand extends Command
     {
         Event::with('user')
             ->where('notify_at', '<=', now())
-            ->where('starts_at', '<=', now())
+            ->where('starts_at', '>', now())
             ->where('notify_status', '!=', 'sent')
             ->chunk(100, function ($events) {
                 $sent = [];
