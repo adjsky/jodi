@@ -20,6 +20,7 @@ class TodoDto extends Data
         public ?string $color,
         public Carbon $scheduledAt,
         public bool $hasTime,
+        public ?Carbon $notifyAt,
         public ?Carbon $completedAt,
         public ?Carbon $createdAt,
     ) {}
@@ -34,6 +35,7 @@ class TodoDto extends Data
             $todo->color,
             $todo->scheduled_at,
             $todo->has_time,
+            $todo->notify_at,
             $todo->completed_at,
             $todo->created_at
         );

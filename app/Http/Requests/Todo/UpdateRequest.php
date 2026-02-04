@@ -6,6 +6,7 @@ namespace App\Http\Requests\Todo;
 
 use App\Support\FormRequest\ConvertsToSnakeCase;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 
 class UpdateRequest extends FormRequest
 {
@@ -20,13 +21,17 @@ class UpdateRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'title' => 'sometimes|string',
-            'description' => 'sometimes|nullable|string',
-            'color' => 'sometimes|nullable|hex_color',
-            'category' => 'sometimes|nullable|string|exists:categories,name',
-            'scheduledAt' => 'sometimes|date',
-            'hasTime' => 'sometimes|boolean',
-            'notifyAt' => 'sometimes|date',
+            'title' => 'required|string',
+            'description' => 'nullable|string',
+            'color' => 'nullable|hex_color',
+            'category' => [
+                'nullable',
+                'string',
+                Rule::exists('categories', 'name')->where('user_id', $this->user()?->id),
+            ],
+            'scheduledAt' => 'required|date',
+            'hasTime' => 'required|boolean',
+            'notifyAt' => 'nullable|date',
         ];
     }
 }

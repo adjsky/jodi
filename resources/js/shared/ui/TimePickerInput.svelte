@@ -19,7 +19,7 @@
         required?: boolean;
         trigger?: Snippet<[HTMLButtonAttributes]>;
         onAbort?: VoidFunction;
-        onComplete?: VoidFunction;
+        onComplete?: (time: Time) => void;
     };
 
     let {
@@ -48,9 +48,9 @@
         return hours + ":" + minutes;
     });
 
-    function oncomplete(hour: number, minute: number) {
-        value = value?.set({ hour, minute });
-        onComplete?.();
+    function oncomplete(time: Time) {
+        value = value?.set(time);
+        onComplete?.(time);
     }
 
     function showPicker() {
@@ -94,7 +94,7 @@
         }
     }
     onComplete={async (t) => {
-        oncomplete(t.hour, t.minute);
+        oncomplete(t);
         await tick();
         announce(ref);
     }}

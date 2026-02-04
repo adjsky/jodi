@@ -15,7 +15,7 @@
         update
     } from "$/generated/actions/App/Http/Controllers/EventController";
     import { m } from "$/paraglide/messages";
-    import { normalizeIsoString } from "$/shared/lib/date";
+    import { diff, normalizeIsoString } from "$/shared/lib/date";
     import { announce, cleanFormPayload } from "$/shared/lib/form";
     import SaveOrClose from "$/shared/ui/SaveOrClose.svelte";
     import Sheet from "$/shared/ui/Sheet.svelte";
@@ -34,16 +34,26 @@
 
     let { open = $bindable(), ...props }: Props = $props();
 
-    let lastKnownEvent = $state(props.event);
-    let startsAtOverride = $state<ZonedDateTime | null>(null);
-    let endsAtOverride = $state<ZonedDateTime | null>(null);
     let dateAnnouncerInput: HTMLInputElement | null = $state(null);
 
+    // --------------------------- OVERRIDES -----------------------------------
+
+    let startsAtOverride = $state<ZonedDateTime | null>(null);
+    let endsAtOverride = $state<ZonedDateTime | null>(null);
+    let notifyAtOverride = $state<ZonedDateTime | null>(null);
+
+    // --------------------------- EVENT DATA ----------------------------------
+
+    let lastKnownEvent = $state(props.event);
     let event = $derived(props.event ?? (lastKnownEvent as App.Data.EventDto));
+
     let startsAt = $derived(
         startsAtOverride ?? parseAbsoluteToLocal(event.startsAt)
     );
     let endsAt = $derived(endsAtOverride ?? parseAbsoluteToLocal(event.endsAt));
+    let notifyAt = $derived(
+        notifyAtOverride ?? parseAbsoluteToLocal(event.notifyAt)
+    );
 
     watch(
         () => [props.event],
@@ -86,17 +96,20 @@
             value={toCalendarDate(startsAt).toString()}
         />
         <Event.Fields
-            bind:startsAt={
-                () => startsAt, (t) => (startsAtOverride = startsAt.set(t))
-            }
+            {startsAt}
             bind:endsAt={() => endsAt, (t) => (endsAtOverride = endsAt.set(t))}
             title={event.title}
             description={event.description}
+            onStartsAtChange={(time) => {
+                notifyAtOverride = notifyAt.add(diff(startsAt, time));
+                startsAtOverride = startsAt.set(time);
+            }}
         >
             {#snippet calendar(trigger)}
                 <YearCalendarDialog
                     selected={toCalendarDate(startsAt)}
                     onSelect={async (d) => {
+                        notifyAtOverride = notifyAt.set(d);
                         startsAtOverride = startsAt.set(d);
                         await tick();
                         announce(dateAnnouncerInput);
@@ -133,21 +146,17 @@
             {/snippet}
             {#snippet color()}
                 <Color
-                    {...visitOptions}
-                    {...optimistic.edit(event.id, false)}
-                    href={update(event.id)}
+                    name="color"
                     tooltip={m["events.tooltips.color"]()}
                     current={event.color}
                 />
             {/snippet}
             {#snippet notify()}
                 <Reminder
-                    {...visitOptions}
-                    {...optimistic.edit(event.id, false)}
-                    href={update(event.id)}
+                    bind:current={notifyAt}
+                    name="notifyAt"
                     tooltip={m["events.tooltips.notification"]()}
                     start={startsAt}
-                    current={parseAbsoluteToLocal(event.notifyAt)}
                 />
             {/snippet}
             {#snippet more()}

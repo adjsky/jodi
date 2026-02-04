@@ -17,7 +17,12 @@ class TodoController extends Controller
     public function create(CreateRequest $request)
     {
         $data = $request->validatedInSnakeCase();
-        $categoryId = isset($data['category'])
+
+        if ($data['notify_at']) {
+            $data['notify_status'] = 'waiting';
+        }
+
+        $categoryId = $data['category']
             ? $this->user()->categories()
                 ->where('name', $data['category'])
                 ->firstOrFail(['id'])
@@ -59,28 +64,28 @@ class TodoController extends Controller
     {
         $data = $request->validatedInSnakeCase();
 
-        DB::transaction(function () use ($data, $todo) {
-            if (array_key_exists('category', $data)) {
-                $name = $data['category'];
-                $data['category_id'] = $name
-                    ? $this->user()->categories()
-                        ->where('name', $data['category'])
-                        ->firstOrFail(['id'])
-                        ->id
-                    : null;
-                unset($data['category']);
+        if ($data['notify_at']) {
+            if (! $todo->notify_at || $todo->notify_at->ne($data['notify_at'])) {
+                $data['notify_status'] = 'waiting';
             }
+        } else {
+            $data['notify_status'] = null;
+        }
+
+        DB::transaction(function () use ($data, $todo) {
+            $data['category_id'] = $data['category']
+                ? $this->user()->categories()
+                    ->where('name', $data['category'])
+                    ->firstOrFail(['id'])
+                    ->id
+                : null;
 
             $todo->fill($data);
 
             $isCategoryChanged = $todo->isDirty('category_id');
-            $isScheduledAtChanged = $todo->isDirty('scheduled_at');
             $isScheduledAtSameDay = $todo->scheduled_at->isSameDay($todo->getOriginal('scheduled_at'));
 
-            if (
-                $isCategoryChanged ||
-                ($isScheduledAtChanged && ! $isScheduledAtSameDay)
-            ) {
+            if ($isCategoryChanged || ! $isScheduledAtSameDay) {
                 $todo->position = $todo->getHighestOrderNumber() + 1;
             }
 

@@ -9,11 +9,11 @@
     import { Week } from "../model/week.svelte";
 
     import type { WeekStart } from "../cfg/preferences";
-    import type { DateValue } from "@internationalized/date";
+    import type { CalendarDate } from "@internationalized/date";
 
     type Props = {
-        selected: DateValue;
-        cursor: DateValue;
+        selected: CalendarDate;
+        cursor: CalendarDate;
         start: WeekStart;
     };
 

@@ -4,7 +4,7 @@
         parseAbsoluteToLocal,
         toCalendarDate
     } from "@internationalized/date";
-    import { Bell, Ellipsis, RotateCw } from "@lucide/svelte";
+    import { Ellipsis, RotateCw } from "@lucide/svelte";
     import { Todo } from "$/entities/todo";
     import { Checkbox } from "$/features/complete-todo";
     import { DeleteItem } from "$/features/delete-item";
@@ -12,14 +12,17 @@
     import { TodoTime } from "$/features/schedule-todo-time";
     import { Category } from "$/features/select-category";
     import { Color } from "$/features/select-color";
+    import { Reminder } from "$/features/select-reminder";
     import {
         destroy as _destroy,
         complete,
         update
     } from "$/generated/actions/App/Http/Controllers/TodoController";
     import { m } from "$/paraglide/messages";
-    import { normalizeIsoString } from "$/shared/lib/date";
+    import { NOTIFICATION_DEFAULT_SUBHOURS } from "$/shared/cfg/constants";
+    import { diff, normalizeIsoString } from "$/shared/lib/date";
     import { announce, cleanFormPayload } from "$/shared/lib/form";
+    import { toaster } from "$/shared/lib/toaster";
     import SaveOrClose from "$/shared/ui/SaveOrClose.svelte";
     import Sheet from "$/shared/ui/Sheet.svelte";
     import ToolbarAction from "$/shared/ui/ToolbarAction.svelte";
@@ -37,20 +40,42 @@
 
     let { open = $bindable(), ...props }: Props = $props();
 
-    let lastKnownTodo = $state(props.todo);
-    let scheduledAtOverride = $state<ZonedDateTime | null>(null);
     let dateAnnouncerInput: HTMLInputElement | null = $state(null);
 
+    // --------------------------- OVERRIDES -----------------------------------
+
+    let scheduledAtOverride = $state<ZonedDateTime | null>(null);
+    let hasTimeOverride = $state<boolean | null>(null);
+    let notifyAtOverride = $state<ZonedDateTime | null | undefined>(undefined);
+
+    // --------------------------- TODO DATA -----------------------------------
+
+    let lastKnownTodo = $state(props.todo);
     let todo = $derived(props.todo ?? (lastKnownTodo as App.Data.TodoDto));
+
     let scheduledAt = $derived(
         scheduledAtOverride ?? parseAbsoluteToLocal(todo.scheduledAt)
     );
+    let hasTime = $derived(hasTimeOverride ?? todo.hasTime);
+    let notifyAt = $derived.by(() => {
+        if (notifyAtOverride !== undefined) {
+            return notifyAtOverride;
+        }
+
+        if (!todo.notifyAt) {
+            return null;
+        }
+
+        return parseAbsoluteToLocal(todo.notifyAt);
+    });
 
     watch(
         () => [props.todo],
         () => {
             if (props.todo?.id != lastKnownTodo?.id) {
                 scheduledAtOverride = null;
+                hasTimeOverride = null;
+                notifyAtOverride = undefined;
             }
 
             if (!props.todo) return;
@@ -73,7 +98,9 @@
         showProgress={false}
         transform={(data) => ({
             ...cleanFormPayload(data),
-            scheduledAt: normalizeIsoString(scheduledAt.toAbsoluteString())
+            scheduledAt: hasTime
+                ? normalizeIsoString(scheduledAt.toAbsoluteString())
+                : toCalendarDate(scheduledAt).toString()
         })}
         class="flex grow flex-col pb-18"
         let:isDirty
@@ -95,6 +122,9 @@
                 <YearCalendarDialog
                     selected={toCalendarDate(scheduledAt)}
                     onSelect={async (d) => {
+                        if (notifyAt) {
+                            notifyAtOverride = notifyAt.set(d);
+                        }
                         scheduledAtOverride = scheduledAt.set(d);
                         await tick();
                         announce(dateAnnouncerInput);
@@ -129,11 +159,25 @@
             {/snippet}
             {#snippet time()}
                 <TodoTime
-                    bind:scheduledAt={
-                        () => scheduledAt,
-                        (t) => (scheduledAtOverride = scheduledAt.set(t))
-                    }
-                    hasTime={todo.hasTime}
+                    {scheduledAt}
+                    bind:hasTime={() => hasTime, (v) => (hasTimeOverride = v)}
+                    onChange={(time, hasTime) => {
+                        if (!hasTime) {
+                            notifyAtOverride = null;
+                        } else {
+                            if (notifyAt) {
+                                notifyAtOverride = notifyAt.add(
+                                    diff(scheduledAt, time)
+                                );
+                            } else {
+                                notifyAtOverride = scheduledAt.subtract({
+                                    hours: NOTIFICATION_DEFAULT_SUBHOURS
+                                });
+                            }
+                        }
+
+                        scheduledAtOverride = scheduledAt.set(time);
+                    }}
                 />
             {/snippet}
             {#snippet destroy()}
@@ -152,20 +196,24 @@
             {/snippet}
             {#snippet color()}
                 <Color
-                    {...visitOptions}
-                    {...optimistic.edit(todo.id, false)}
-                    href={update(todo.id)}
+                    name="color"
                     tooltip={m["todos.tooltips.color"]()}
                     current={todo.color}
                 />
             {/snippet}
             {#snippet notify()}
-                <ToolbarAction
-                    disabled
+                <Reminder
+                    bind:current={notifyAt}
+                    name="notifyAt"
                     tooltip={m["todos.tooltips.notification"]()}
-                >
-                    <Bell />
-                </ToolbarAction>
+                    start={scheduledAt}
+                    beforeOpen={() => {
+                        if (!hasTime) {
+                            toaster.info(m["todos.reminder.select-time"]());
+                            return false;
+                        }
+                    }}
+                />
             {/snippet}
             {#snippet more()}
                 <ToolbarAction disabled tooltip={m["todos.tooltips.more"]()}>

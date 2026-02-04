@@ -80,6 +80,9 @@
         "time": {
             "add": "Добавить время"
         },
+        "reminder": {
+            "select-time": "Сначала установите время задачи."
+        },
         "tooltips": {
             "delete": "Удалить",
             "repeat": "Повторить",
@@ -129,7 +132,8 @@
                 "selectors": ["hours"],
                 "match": {
                     "hours=one": "{h} час",
-                    "hours=few": "{h} часа"
+                    "hours=few": "{h} часа",
+                    "hours=other": "{h} часа"
                 }
             }
         ],
@@ -139,7 +143,8 @@
                 "selectors": ["days"],
                 "match": {
                     "days=one": "{d} день",
-                    "days=few": "{d} дня"
+                    "days=few": "{d} дня",
+                    "days=other": "{d} дня"
                 }
             }
         ]

@@ -8,18 +8,12 @@ use App\Http\Requests\Event\CreateRequest;
 use App\Http\Requests\Event\DestroyRequest;
 use App\Http\Requests\Event\UpdateRequest;
 use App\Models\Event;
-use Carbon\Carbon;
 
 class EventController extends Controller
 {
     public function create(CreateRequest $request)
     {
         $data = $request->validatedInSnakeCase();
-
-        if (! isset($data['notify_at'])) {
-            // TODO: should subHours(x) be a preference or configuration?
-            $data['notify_at'] = Carbon::parse($data['starts_at'])->subHours(3);
-        }
         $data['notify_status'] = 'waiting';
 
         $this->user()->events()->create($data);
@@ -31,12 +25,7 @@ class EventController extends Controller
     {
         $data = $request->validatedInSnakeCase();
 
-        if (isset($data['starts_at'])) {
-            $diff = $event->notify_at->diff($event->starts_at);
-            $data['notify_at'] = Carbon::parse($data['starts_at'])->subtract($diff);
-        }
-
-        if (isset($data['starts_at']) || isset($data['notify_at'])) {
+        if ($event->notify_at->ne($data['notify_at'])) {
             $data['notify_status'] = 'waiting';
         }
 

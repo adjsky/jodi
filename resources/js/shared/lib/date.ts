@@ -8,7 +8,7 @@ import { getLocale } from "$/paraglide/runtime";
 
 import { TIMEZONE } from "../cfg/constants";
 
-import type { CalendarDate } from "@internationalized/date";
+import type { CalendarDate, TimeDuration } from "@internationalized/date";
 
 export function formatToHHMM(date: Date) {
     return new DateFormatter(getLocale(), {
@@ -45,4 +45,20 @@ export function normalizeIsoString(iso8601: string) {
     const [time, _] = tzTime.split(".");
 
     return `${date}T${time}+00:00`;
+}
+
+type TimeLike = {
+    hour: number;
+    minute: number;
+    second: number;
+    millisecond: number;
+};
+
+export function diff(a: TimeLike, b: TimeLike): TimeDuration {
+    return {
+        hours: b.hour - a.hour,
+        minutes: b.minute - a.minute,
+        seconds: b.second - a.second,
+        milliseconds: b.millisecond - a.millisecond
+    };
 }

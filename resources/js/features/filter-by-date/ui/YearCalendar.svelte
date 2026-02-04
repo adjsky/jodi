@@ -8,16 +8,16 @@
     import Month from "./Month.svelte";
 
     import type { WeekStart } from "../cfg/preferences";
-    import type { DateValue } from "@internationalized/date";
+    import type { CalendarDate } from "@internationalized/date";
     import type { SvelteHTMLElements } from "svelte/elements";
     import type { Except } from "type-fest";
 
     type Props = Except<SvelteHTMLElements["div"], "children" | "title"> & {
         portal?: boolean;
-        selected: DateValue;
+        selected: CalendarDate;
         start: WeekStart;
         onClose?: VoidFunction;
-        onSelect?: (date: DateValue) => void;
+        onSelect?: (date: CalendarDate) => void;
     };
 
     const { selected, start, onClose, onSelect, ...props }: Props = $props();

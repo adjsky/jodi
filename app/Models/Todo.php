@@ -22,6 +22,8 @@ class Todo extends Model implements Sortable
         'category_id',
         'scheduled_at',
         'has_time',
+        'notify_at',
+        'notify_status',
         'color',
     ];
 
@@ -38,6 +40,12 @@ class Todo extends Model implements Sortable
             'scheduled_at' => 'datetime',
             'has_time' => 'boolean',
         ];
+    }
+
+    /** @return BelongsTo<User,$this> */
+    public function user(): BelongsTo
+    {
+        return $this->belongsTo(User::class);
     }
 
     /** @return BelongsTo<Category,$this> */

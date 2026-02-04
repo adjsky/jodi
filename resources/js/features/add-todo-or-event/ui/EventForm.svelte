@@ -1,32 +1,34 @@
 <script lang="ts">
     import { Form } from "@inertiajs/svelte";
+    import { toCalendarDate } from "@internationalized/date";
     import { Ellipsis, RotateCw, Trash } from "@lucide/svelte";
     import { Event } from "$/entities/event";
+    import { YearCalendarDialog } from "$/features/filter-by-date";
     import { Color } from "$/features/select-color";
     import { Reminder } from "$/features/select-reminder";
     import { create } from "$/generated/actions/App/Http/Controllers/EventController";
     import { m } from "$/paraglide/messages";
+    import { NOTIFICATION_DEFAULT_SUBHOURS } from "$/shared/cfg/constants";
+    import { diff } from "$/shared/lib/date";
     import { cleanFormPayload } from "$/shared/lib/form";
     import SaveOrClose from "$/shared/ui/SaveOrClose.svelte";
     import ToolbarAction from "$/shared/ui/ToolbarAction.svelte";
 
     import type { ZonedDateTime } from "@internationalized/date";
-    import type { Snippet } from "svelte";
-    import type { HTMLButtonAttributes } from "svelte/elements";
 
     type Props = {
         day: ZonedDateTime;
-        calendar: Snippet<[Snippet<[HTMLButtonAttributes]>]>;
         onClose: VoidFunction;
     };
 
-    let {
-        day: startsAt = $bindable(),
-        calendar: _calendar,
-        onClose
-    }: Props = $props();
+    let { day: startsAt = $bindable(), onClose }: Props = $props();
 
-    let endsAt = $derived(startsAt.add({ hours: 1 }));
+    let endsAt = $state(startsAt.add({ hours: 1 }));
+    let notifyAt = $state(
+        startsAt.subtract({
+            hours: NOTIFICATION_DEFAULT_SUBHOURS
+        })
+    );
 </script>
 
 <Form
@@ -47,8 +49,33 @@
     class="flex grow flex-col pb-18"
     let:processing
 >
-    <Event.Fields bind:startsAt bind:endsAt>
-        {#snippet calendar(trigger)}{@render _calendar(trigger)}{/snippet}
+    <Event.Fields
+        {startsAt}
+        bind:endsAt
+        onStartsAtChange={(time) => {
+            if (notifyAt) {
+                notifyAt = notifyAt.add(diff(startsAt, time));
+            } else {
+                notifyAt = startsAt.subtract({
+                    hours: NOTIFICATION_DEFAULT_SUBHOURS
+                });
+            }
+            startsAt = startsAt.set(time);
+        }}
+    >
+        {#snippet calendar(trigger)}
+            <YearCalendarDialog
+                selected={toCalendarDate(startsAt)}
+                onSelect={(d) => {
+                    notifyAt = notifyAt.set(d);
+                    startsAt = startsAt.set(d);
+                }}
+            >
+                {#snippet children(props)}
+                    {@render trigger(props())}
+                {/snippet}
+            </YearCalendarDialog>
+        {/snippet}
         {#snippet close()}
             <SaveOrClose variant="save" disabled={processing} />
         {/snippet}
@@ -74,10 +101,10 @@
         {/snippet}
         {#snippet notify()}
             <Reminder
+                bind:current={notifyAt}
                 name="notifyAt"
                 tooltip={m["todos.tooltips.notification"]()}
                 start={startsAt}
-                current={null}
             />
         {/snippet}
         {#snippet more()}

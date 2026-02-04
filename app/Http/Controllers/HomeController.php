@@ -26,7 +26,7 @@ class HomeController extends Controller
             'todos' => TodoDto::collect(
                 $this->user()->todos()
                     ->with('category')
-                    ->whereDate('todos.scheduled_at', $date)
+                    ->whereBetween('todos.scheduled_at', [$startUtc, $endUtc])
                     ->orderBy('todos.position', 'asc')
                     ->get()
                     ->sortBy(fn ($todo) => $todo->category?->name)

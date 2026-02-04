@@ -1,31 +1,33 @@
 <script lang="ts">
     import { Form } from "@inertiajs/svelte";
-    import { Bell, Ellipsis, RotateCw, Trash } from "@lucide/svelte";
+    import { toCalendarDate } from "@internationalized/date";
+    import { Ellipsis, RotateCw, Trash } from "@lucide/svelte";
     import { Todo } from "$/entities/todo";
+    import { YearCalendarDialog } from "$/features/filter-by-date";
     import { TodoTime } from "$/features/schedule-todo-time";
     import { Category } from "$/features/select-category";
     import { Color } from "$/features/select-color";
+    import Reminder from "$/features/select-reminder/ui/Reminder.svelte";
     import { create } from "$/generated/actions/App/Http/Controllers/TodoController";
     import { m } from "$/paraglide/messages";
+    import { NOTIFICATION_DEFAULT_SUBHOURS } from "$/shared/cfg/constants";
+    import { diff, normalizeIsoString } from "$/shared/lib/date";
     import { cleanFormPayload } from "$/shared/lib/form";
+    import { toaster } from "$/shared/lib/toaster";
     import SaveOrClose from "$/shared/ui/SaveOrClose.svelte";
     import ToolbarAction from "$/shared/ui/ToolbarAction.svelte";
 
     import type { ZonedDateTime } from "@internationalized/date";
-    import type { Snippet } from "svelte";
-    import type { HTMLButtonAttributes } from "svelte/elements";
 
     type Props = {
         day: ZonedDateTime;
-        calendar: Snippet<[Snippet<[HTMLButtonAttributes]>]>;
         onClose: VoidFunction;
     };
 
-    let {
-        day: scheduledAt = $bindable(),
-        calendar: _calendar,
-        onClose
-    }: Props = $props();
+    let { day: scheduledAt = $bindable(), onClose }: Props = $props();
+
+    let hasTime = $state(false);
+    let notifyAt = $state<ZonedDateTime | null>(null);
 </script>
 
 <Form
@@ -39,14 +41,30 @@
     }}
     transform={(data) => ({
         ...cleanFormPayload(data),
-        scheduledAt: scheduledAt.toAbsoluteString()
+        scheduledAt: hasTime
+            ? normalizeIsoString(scheduledAt.toAbsoluteString())
+            : toCalendarDate(scheduledAt).toString()
     })}
     onSuccess={() => onClose()}
     class="flex grow flex-col pb-18"
     let:processing
 >
     <Todo.Fields {scheduledAt}>
-        {#snippet calendar(trigger)}{@render _calendar(trigger)}{/snippet}
+        {#snippet calendar(trigger)}
+            <YearCalendarDialog
+                selected={toCalendarDate(scheduledAt)}
+                onSelect={(d) => {
+                    if (notifyAt) {
+                        notifyAt = notifyAt.set(d);
+                    }
+                    scheduledAt = scheduledAt.set(d);
+                }}
+            >
+                {#snippet children(props)}
+                    {@render trigger(props())}
+                {/snippet}
+            </YearCalendarDialog>
+        {/snippet}
         {#snippet close()}
             <SaveOrClose variant="save" disabled={processing} />
         {/snippet}
@@ -54,7 +72,25 @@
             <Category name="category" current={null} />
         {/snippet}
         {#snippet time()}
-            <TodoTime bind:scheduledAt hasTime={false} />
+            <TodoTime
+                {scheduledAt}
+                bind:hasTime
+                onChange={(time, hasTime) => {
+                    if (!hasTime) {
+                        notifyAt = null;
+                    } else {
+                        if (notifyAt) {
+                            notifyAt = notifyAt.add(diff(scheduledAt, time));
+                        } else {
+                            notifyAt = scheduledAt.subtract({
+                                hours: NOTIFICATION_DEFAULT_SUBHOURS
+                            });
+                        }
+                    }
+
+                    scheduledAt = scheduledAt.set(time);
+                }}
+            />
         {/snippet}
         {#snippet destroy()}
             <ToolbarAction
@@ -77,12 +113,18 @@
             />
         {/snippet}
         {#snippet notify()}
-            <ToolbarAction
-                disabled
+            <Reminder
+                bind:current={notifyAt}
+                name="notifyAt"
                 tooltip={m["todos.tooltips.notification"]()}
-            >
-                <Bell />
-            </ToolbarAction>
+                start={scheduledAt}
+                beforeOpen={() => {
+                    if (!hasTime) {
+                        toaster.info(m["todos.reminder.select-time"]());
+                        return false;
+                    }
+                }}
+            />
         {/snippet}
         {#snippet more()}
             <ToolbarAction disabled tooltip={m["todos.tooltips.more"]()}>
