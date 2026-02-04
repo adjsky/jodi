@@ -1,5 +1,11 @@
 # Releases
 
+## 0.12.1 (2026-02-04)
+
+### Fix
+
+- try to build image without cache
+
 ## 0.12.0 (2026-02-04)
 
 ### Feat
