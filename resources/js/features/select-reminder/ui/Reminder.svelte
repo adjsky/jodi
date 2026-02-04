@@ -3,20 +3,20 @@
     import { parseDuration } from "@internationalized/date";
     import { Bell, BellDot, Check } from "@lucide/svelte";
     import { m } from "$/paraglide/messages";
-    import { link } from "$/shared/inertia/link";
     import { normalizeIsoString } from "$/shared/lib/date";
-    import { noop } from "$/shared/lib/function";
+    import { announce } from "$/shared/lib/form";
     import ToolbarAction from "$/shared/ui/ToolbarAction.svelte";
     import { boolAttr } from "runed";
+    import { tick } from "svelte";
 
     import type { ZonedDateTime } from "@internationalized/date";
-    import type { LinkParameters } from "$/shared/inertia/link";
 
-    type Props = LinkParameters & {
+    type Props = {
         tooltip: string;
         current: ZonedDateTime | null;
         start: ZonedDateTime;
-        name?: string;
+        name: string;
+        beforeOpen?: () => void | boolean;
     };
 
     let {
@@ -24,9 +24,10 @@
         current = $bindable(),
         start,
         name,
-        ...options
+        beforeOpen
     }: Props = $props();
 
+    let announcerInput = $state<HTMLInputElement | null>(null);
     let open = $state(false);
 
     const reminders = [
@@ -41,10 +42,18 @@
 </script>
 
 <Menu.Root
-    bind:open
+    bind:open={
+        () => open,
+        (v) => {
+            if (beforeOpen && beforeOpen() === false) return;
+            open = v;
+        }
+    }
     positioning={{ placement: "top" }}
-    onSelect={({ value }) => {
+    onSelect={async ({ value }) => {
         current = durationToZonedDT(value);
+        await tick();
+        announce(announcerInput);
     }}
 >
     <Menu.Trigger>
@@ -60,20 +69,10 @@
     </Menu.Trigger>
     <Menu.Positioner>
         <Menu.Content
-            class="min-w-30 rounded-xl bg-white outline outline-cream-950"
+            class="z-10 min-w-30 rounded-xl bg-white outline outline-cream-950"
         >
             {#each reminders as { label, value } (value)}
-                {@const inertia = name ? (noop as never) : link}
                 <Menu.Item
-                    {@attach inertia(() => ({
-                        ...options,
-                        data: {
-                            notifyAt: normalizeIsoString(
-                                durationToZonedDT(value).toAbsoluteString()
-                            )
-                        },
-                        showProgress: false
-                    }))}
                     {value}
                     class="group cursor-pointer px-3 text-lg font-medium"
                     data-selected={boolAttr(
@@ -94,6 +93,9 @@
     </Menu.Positioner>
 </Menu.Root>
 
-{#if name}
-    <input hidden value={current?.toAbsoluteString()} {name} />
-{/if}
+<input
+    bind:this={announcerInput}
+    hidden
+    value={current ? normalizeIsoString(current.toAbsoluteString()) : null}
+    {name}
+/>

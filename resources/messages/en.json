@@ -80,6 +80,9 @@
         "time": {
             "add": "Add time"
         },
+        "reminder": {
+            "select-time": "Select a todo time first."
+        },
         "tooltips": {
             "delete": "Delete",
             "repeat": "Repeat",
@@ -129,7 +132,8 @@
                 "selectors": ["hours"],
                 "match": {
                     "hours=one": "{h} hour",
-                    "hours=few": "{h} hours"
+                    "hours=few": "{h} hours",
+                    "hours=other": "{h} hours"
                 }
             }
         ],
@@ -139,7 +143,8 @@
                 "selectors": ["days"],
                 "match": {
                     "days=one": "{d} day",
-                    "days=few": "{d} days"
+                    "days=few": "{d} days",
+                    "days=other": "{d} days"
                 }
             }
         ]

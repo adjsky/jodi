@@ -16,6 +16,8 @@
         endsAt?: Time;
         name?: string;
         required?: boolean;
+        onStartsAtChange?: (time: Time) => void;
+        onEndsAtChange?: (time: Time) => void;
     };
 
     let {
@@ -24,7 +26,9 @@
         name,
         startsAt = $bindable(),
         endsAt = $bindable(),
-        required
+        required,
+        onStartsAtChange,
+        onEndsAtChange
     }: Props = $props();
 
     let endsAtInput = $state<HTMLInputElement | null>(null);
@@ -33,7 +37,7 @@
         endsAt && startsAt ? startsAt.compare(endsAt) < 0 : true
     );
 
-    function onStartsAtComplete() {
+    function validate() {
         if (!startsAt || !endsAt) return;
 
         if (startsAt.hour == 23) {
@@ -69,7 +73,10 @@
             bind:value={startsAt}
             {required}
             name={name ? name + "_start" : ""}
-            onComplete={onStartsAtComplete}
+            onComplete={(time) => {
+                validate();
+                onStartsAtChange?.(time);
+            }}
         />
         <div
             aria-hidden="true"
@@ -82,6 +89,7 @@
             bind:value={endsAt}
             {required}
             name={name ? name + "_end" : ""}
+            onComplete={onEndsAtChange}
         />
         {#if !isValid}
             <TriangleAlert class="ml-2 text-2xl text-red" />

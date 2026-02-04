@@ -20,12 +20,12 @@ class UpdateRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'title' => 'sometimes|string',
-            'description' => 'sometimes|nullable|string',
-            'color' => 'sometimes|nullable|hex_color',
-            'startsAt' => 'sometimes|date',
-            'endsAt' => 'sometimes|date',
-            'notifyAt' => 'sometimes|date',
+            'title' => 'required|string',
+            'description' => 'nullable|string',
+            'color' => 'nullable|hex_color',
+            'startsAt' => 'required|date',
+            'endsAt' => 'required|date',
+            'notifyAt' => 'required|date',
         ];
     }
 }

@@ -1,20 +1,21 @@
 <script lang="ts">
     import { Popover } from "@ark-ui/svelte";
     import { Circle } from "@lucide/svelte";
-    import { link } from "$/shared/inertia/link";
-    import { noop } from "$/shared/lib/function";
+    import { announce } from "$/shared/lib/form";
     import ToolbarAction from "$/shared/ui/ToolbarAction.svelte";
+    import { tick } from "svelte";
 
     import type { LinkParameters } from "$/shared/inertia/link";
 
     type Props = LinkParameters & {
         tooltip: string;
         current: string | null;
-        name?: string;
+        name: string;
     };
 
-    let { tooltip, current = $bindable(), name, ...options }: Props = $props();
+    let { tooltip, current = $bindable(), name }: Props = $props();
 
+    let announcerInput = $state<HTMLInputElement | null>(null);
     let open = $state(false);
 
     const colors = [
@@ -52,17 +53,14 @@
             class="flex rounded-full bg-white px-1 outline outline-cream-950"
         >
             {#each colors as color (color)}
-                {@const inertia = name ? (noop as never) : link}
-                <!-- svelte-ignore a11y_consider_explicit_label -->
                 <button
-                    {@attach inertia(() => ({
-                        ...options,
-                        data: { color: color == "transparent" ? null : color },
-                        showProgress: false
-                    }))}
-                    onclick={() => {
+                    type="button"
+                    aria-label="Update color"
+                    onclick={async () => {
                         current = color == "transparent" ? null : color;
                         open = false;
+                        await tick();
+                        announce(announcerInput);
                     }}
                     class="flex h-10 w-11.25 items-center justify-center"
                 >
@@ -79,6 +77,4 @@
     </Popover.Positioner>
 </Popover.Root>
 
-{#if name}
-    <input hidden value={current} {name} />
-{/if}
+<input bind:this={announcerInput} hidden value={current} {name} />

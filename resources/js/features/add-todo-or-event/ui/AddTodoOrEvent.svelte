@@ -1,13 +1,7 @@
 <script lang="ts">
     import { Dialog, Portal } from "@ark-ui/svelte";
-    import {
-        now,
-        parseDate,
-        toCalendarDate,
-        toZoned
-    } from "@internationalized/date";
+    import { now, parseDate, toZoned } from "@internationalized/date";
     import { CalendarClock, Check, X } from "@lucide/svelte";
-    import { YearCalendarDialog } from "$/features/filter-by-date";
     import { m } from "$/paraglide/messages";
     import { TIMEZONE } from "$/shared/cfg/constants";
     import { HistoryView } from "$/shared/inertia/history-view.svelte";
@@ -18,9 +12,6 @@
     import ActionRow from "./ActionRow.svelte";
     import EventForm from "./EventForm.svelte";
     import TodoForm from "./TodoForm.svelte";
-
-    import type { Snippet } from "svelte";
-    import type { HTMLButtonAttributes } from "svelte/elements";
 
     const view = new HistoryView<{ isCalendarOpen: boolean }>();
     const searchParams = useSearchParams({ showProgress: true });
@@ -110,21 +101,8 @@
     grip="var(--color-cream-300)"
 >
     {#if view.isOpen("add-todo")}
-        <TodoForm bind:day {calendar} onClose={() => void view.back()} />
+        <TodoForm bind:day onClose={() => void view.back()} />
     {:else if view.isOpen("add-event")}
-        <EventForm bind:day {calendar} onClose={() => void view.back()} />
+        <EventForm bind:day onClose={() => void view.back()} />
     {/if}
 </Sheet>
-
-{#snippet calendar(trigger: Snippet<[HTMLButtonAttributes]>)}
-    <YearCalendarDialog
-        selected={toCalendarDate(day)}
-        onSelect={(d) => {
-            day = day.set(d);
-        }}
-    >
-        {#snippet children(props)}
-            {@render trigger(props())}
-        {/snippet}
-    </YearCalendarDialog>
-{/snippet}

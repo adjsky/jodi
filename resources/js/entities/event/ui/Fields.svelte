@@ -6,7 +6,7 @@
     import TimeRangePicker from "$/shared/ui/TimeRangePicker.svelte";
     import { boolAttr } from "runed";
 
-    import type { ZonedDateTime } from "@internationalized/date";
+    import type { Time, ZonedDateTime } from "@internationalized/date";
     import type { Snippet } from "svelte";
     import type { HTMLButtonAttributes } from "svelte/elements";
 
@@ -22,6 +22,7 @@
         color: Snippet;
         notify: Snippet;
         more: Snippet;
+        onStartsAtChange?: (time: Time) => void;
     };
 
     let {
@@ -35,7 +36,8 @@
         repeat,
         color,
         notify,
-        more
+        more,
+        onStartsAtChange
     }: Props = $props();
 </script>
 
@@ -76,6 +78,7 @@
         () => toTime(startsAt), (time) => (startsAt = startsAt.set(time))
     }
     bind:endsAt={() => toTime(endsAt), (time) => (endsAt = endsAt.set(time))}
+    {onStartsAtChange}
     class="mt-4"
     name="_time"
     required

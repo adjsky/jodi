@@ -65,7 +65,7 @@ Route::middleware('auth')->group(function () {
         ->group(function () {
             Route::post('/', 'create');
             Route::post('/reorder', 'reorder');
-            Route::patch('/{todo}', 'update');
+            Route::put('/{todo}', 'update');
             Route::delete('/{todo}', 'destroy');
             Route::post('/{todo}/complete', 'complete');
         });
@@ -74,7 +74,7 @@ Route::middleware('auth')->group(function () {
         ->controller(EventController::class)
         ->group(function () {
             Route::post('/', 'create');
-            Route::patch('/{event}', 'update');
+            Route::put('/{event}', 'update');
             Route::delete('/{event}', 'destroy');
         });
 

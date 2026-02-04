@@ -31,4 +31,10 @@ return [
             'reminder' => 'This is a reminder that **:title** is scheduled for **:date**.',
         ],
     ],
+    'todo_reminder' => [
+        'subject' => ':title starts :startsIn',
+        'paragraphs' => [
+            'reminder' => 'This is a reminder that **:title** is scheduled for **:date**.',
+        ],
+    ],
 ];

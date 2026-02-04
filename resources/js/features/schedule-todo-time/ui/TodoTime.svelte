@@ -12,11 +12,15 @@
     type Props = {
         scheduledAt: ZonedDateTime;
         hasTime: boolean;
+        onChange?: (time: Time, hasTime: boolean) => void;
     };
 
-    let { scheduledAt = $bindable(), ...props }: Props = $props();
+    let {
+        scheduledAt = $bindable(),
+        hasTime = $bindable(),
+        onChange
+    }: Props = $props();
 
-    let hasTime = $state(props.hasTime);
     let hasTimeAnnouncerInput = $state<HTMLInputElement | null>(null);
 </script>
 
@@ -47,12 +51,13 @@
         class="h-full w-max pr-10 pl-3"
         name="_time"
         trigger={hasTime ? undefined : trigger}
-        onComplete={async () => {
+        onComplete={async (time) => {
             if (!hasTime) {
                 hasTime = true;
                 await tick();
                 announce(hasTimeAnnouncerInput);
             }
+            onChange?.(time, true);
         }}
     />
 
@@ -61,8 +66,12 @@
             class="absolute right-1.5 p-1 font-bold"
             onclick={async (e) => {
                 e.stopPropagation();
+
                 hasTime = false;
-                scheduledAt.set({ hour: 0, minute: 0 });
+                const time = new Time(0, 0, 0, 0);
+                scheduledAt.set(time);
+                onChange?.(time, false);
+
                 await tick();
                 announce(hasTimeAnnouncerInput);
             }}

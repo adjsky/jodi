@@ -5,14 +5,14 @@
 
     import YearCalendar from "./YearCalendar.svelte";
 
-    import type { CalendarDate, DateValue } from "@internationalized/date";
+    import type { CalendarDate } from "@internationalized/date";
     import type { Snippet } from "svelte";
     import type { HTMLButtonAttributes } from "svelte/elements";
 
     type Props = {
         selected: CalendarDate;
         children?: Snippet<[() => HTMLButtonAttributes]>;
-        onSelect?: (date: DateValue) => void;
+        onSelect?: (date: CalendarDate) => void;
     };
 
     let { selected, children, onSelect }: Props = $props();
