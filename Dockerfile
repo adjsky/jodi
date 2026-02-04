@@ -9,7 +9,6 @@ FROM dunglas/frankenphp:php${PHP_VERSION}-alpine AS base
 
 RUN install-php-extensions \
     pcntl \
-    pdo_mysql \
     bcmath \
     intl \
     zip \
