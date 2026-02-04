@@ -65,7 +65,7 @@ class TodoController extends Controller
         $data = $request->validatedInSnakeCase();
 
         if ($data['notify_at']) {
-            if ($todo->notify_at?->ne($data['notify_at'])) {
+            if (! $todo->notify_at || $todo->notify_at->ne($data['notify_at'])) {
                 $data['notify_status'] = 'waiting';
             }
         } else {

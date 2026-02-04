@@ -17,19 +17,22 @@ class RemindTodosCommand extends Command
     public function handle(): void
     {
         Todo::with('user')
-            ->whereDate('notify_at', '<=', now())
-            ->whereDate('scheduled_at', '<=', now())
+            ->where('notify_at', '<=', now())
+            ->where('scheduled_at', '<=', now())
             ->where('notify_status', '!=', 'sent')
             ->chunk(100, function ($todos) {
+                $sent = [];
+
                 foreach ($todos as $todo) {
                     if (! $todo->user) {
                         continue;
                     }
 
                     $todo->user->notify(new TodoReminder($todo));
-                    $todo->notify_status = 'processing';
-                    $todo->save();
+                    $sent[] = $todo->id;
                 }
+
+                Todo::whereIn('id', $sent)->update(['notify_status' => 'processing']);
             });
     }
 }

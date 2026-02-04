@@ -56,9 +56,9 @@ type TimeLike = {
 
 export function diff(a: TimeLike, b: TimeLike): TimeDuration {
     return {
-        hours: (b.hour ?? 0) - (a.hour ?? 0),
-        minutes: (b.minute ?? 0) - (a.minute ?? 0),
-        seconds: (b.second ?? 0) - (a.second ?? 0),
-        milliseconds: (b.millisecond ?? 0) - (a.millisecond ?? 0)
+        hours: b.hour - a.hour,
+        minutes: b.minute - a.minute,
+        seconds: b.second - a.second,
+        milliseconds: b.millisecond - a.millisecond
     };
 }
