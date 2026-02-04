@@ -6,14 +6,14 @@ import { DMAP } from "../cfg/preferences";
 import { getWeekDays } from "../helpers/date";
 
 import type { WeekStart } from "../cfg/preferences";
-import type { DateValue } from "@internationalized/date";
+import type { CalendarDate } from "@internationalized/date";
 import type { Getter } from "runed";
 
 export class Week {
-    #cursor: Getter<DateValue>;
+    #cursor: Getter<CalendarDate>;
     #start: Getter<WeekStart>;
 
-    constructor(cursor: Getter<DateValue>, start: Getter<WeekStart>) {
+    constructor(cursor: Getter<CalendarDate>, start: Getter<WeekStart>) {
         this.#cursor = cursor;
         this.#start = start;
     }
@@ -30,7 +30,7 @@ export class Week {
         return this.#startOfWeek(extract(this.#cursor).subtract({ weeks: 1 }));
     }
 
-    #startOfWeek(date: DateValue) {
+    #startOfWeek(date: CalendarDate) {
         return startOfWeek(date, getLocale(), DMAP[extract(this.#start)]);
     }
 }
