@@ -1,5 +1,12 @@
 # Releases
 
+## 0.12.2 (2026-02-04)
+
+### Fix
+
+- use database path from config
+- remove unnecessary pdo_mysql extension
+
 ## 0.12.1 (2026-02-04)
 
 ### Fix
