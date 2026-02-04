@@ -1,5 +1,18 @@
 # Releases
 
+## 0.12.0 (2026-02-04)
+
+### Feat
+
+- support notifications in todos (#60)
+- support time in todos
+- refactor category selection
+
+### Fix
+
+- make description scrollable
+- create a new migration to update index
+
 ## 0.11.0 (2026-01-30)
 
 ### Feat
