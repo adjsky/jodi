@@ -98,7 +98,9 @@
         showProgress={false}
         transform={(data) => ({
             ...cleanFormPayload(data),
-            scheduledAt: normalizeIsoString(scheduledAt.toAbsoluteString())
+            scheduledAt: hasTime
+                ? normalizeIsoString(scheduledAt.toAbsoluteString())
+                : toCalendarDate(scheduledAt).toString()
         })}
         class="flex grow flex-col pb-18"
         let:isDirty

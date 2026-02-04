@@ -11,7 +11,7 @@
     import { create } from "$/generated/actions/App/Http/Controllers/TodoController";
     import { m } from "$/paraglide/messages";
     import { NOTIFICATION_DEFAULT_SUBHOURS } from "$/shared/cfg/constants";
-    import { diff } from "$/shared/lib/date";
+    import { diff, normalizeIsoString } from "$/shared/lib/date";
     import { cleanFormPayload } from "$/shared/lib/form";
     import { toaster } from "$/shared/lib/toaster";
     import SaveOrClose from "$/shared/ui/SaveOrClose.svelte";
@@ -41,7 +41,9 @@
     }}
     transform={(data) => ({
         ...cleanFormPayload(data),
-        scheduledAt: scheduledAt.toAbsoluteString()
+        scheduledAt: hasTime
+            ? normalizeIsoString(scheduledAt.toAbsoluteString())
+            : toCalendarDate(scheduledAt).toString()
     })}
     onSuccess={() => onClose()}
     class="flex grow flex-col pb-18"
