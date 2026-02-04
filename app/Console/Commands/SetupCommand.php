@@ -14,8 +14,6 @@ class SetupCommand extends Command
 
     const EXAMPLE_DOTENV_PATH = '.env.example';
 
-    const DB_PATH = 'database/database.sqlite';
-
     protected $signature = 'jodi:setup
                             {--no-keys : Whether to skip application/vapid keys generation.}
                             {--seed : Indicates if the seed task should be re-run.}
@@ -73,14 +71,16 @@ class SetupCommand extends Command
 
     protected function setupDatabase(): bool
     {
-        if (File::exists(self::DB_PATH) && ! $this->option('recreate')) {
-            $this->comment(sprintf('! %s already exists.', self::DB_PATH));
+        $dbpath = config('database.connections.sqlite.database');
+
+        if (File::exists($dbpath) && ! $this->option('recreate')) {
+            $this->comment(sprintf('! %s already exists.', $dbpath));
 
             return true;
         }
 
-        File::put(self::DB_PATH, '');
-        $this->info(sprintf('✔ %s created.', self::DB_PATH));
+        File::put($dbpath, '');
+        $this->info(sprintf('✔ %s created.', $dbpath));
 
         return $this->runArtisan(
             'migrate',
