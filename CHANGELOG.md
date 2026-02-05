@@ -1,5 +1,11 @@
 # Releases
 
+## 0.13.1 (2026-02-05)
+
+### Fix
+
+- add assetlinks.json
+
 ## 0.13.0 (2026-02-05)
 
 ### Feat
