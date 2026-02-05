@@ -1,13 +1,14 @@
 <script lang="ts">
+    import { inertia } from "@inertiajs/svelte";
     import { Check } from "@lucide/svelte";
-    import { link } from "$/shared/inertia/link";
     import { tw } from "$/shared/lib/styles";
     import { boolAttr } from "runed";
 
-    import type { LinkParameters } from "$/shared/inertia/link";
+    import type { UrlMethodPair, VisitOptions } from "@inertiajs/core";
     import type { ClassName } from "$/shared/lib/styles";
 
-    type Props = LinkParameters & {
+    type Props = VisitOptions & {
+        href: string | UrlMethodPair;
         class?: ClassName;
         completedAt: string | null;
     };
@@ -16,11 +17,7 @@
 </script>
 
 <button
-    {@attach link(() => ({
-        ...options,
-        only: ["todos"],
-        showProgress: false
-    }))}
+    use:inertia={{ ...options, only: ["todos"], showProgress: false }}
     type="button"
     class={tw(
         "group flex size-5.5 shrink-0 items-center justify-center rounded-full border border-cream-950 text-ms data-completed:bg-cream-950 data-completed:text-cream-50",
