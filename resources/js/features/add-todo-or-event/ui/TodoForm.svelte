@@ -41,6 +41,7 @@
     }}
     transform={(data) => ({
         ...cleanFormPayload(data),
+        hasTime,
         scheduledAt: hasTime
             ? normalizeIsoString(scheduledAt.toAbsoluteString())
             : toCalendarDate(scheduledAt).toString()
@@ -82,7 +83,7 @@
                         if (notifyAt) {
                             notifyAt = notifyAt.add(diff(scheduledAt, time));
                         } else {
-                            notifyAt = scheduledAt.subtract({
+                            notifyAt = scheduledAt.set(time).subtract({
                                 hours: NOTIFICATION_DEFAULT_SUBHOURS
                             });
                         }

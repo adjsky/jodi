@@ -1,8 +1,24 @@
 diff --git a/node_modules/svelte-bottom-sheet/dist/BottomSheet/BottomSheet.svelte b/node_modules/svelte-bottom-sheet/dist/BottomSheet/BottomSheet.svelte
-index 4777da0..915d5fc 100644
+index 4777da0..cd09d11 100644
 --- a/node_modules/svelte-bottom-sheet/dist/BottomSheet/BottomSheet.svelte
 +++ b/node_modules/svelte-bottom-sheet/dist/BottomSheet/BottomSheet.svelte
-@@ -370,6 +370,20 @@ to has "height" in it's name.
+@@ -18,6 +18,7 @@ to has "height" in it's name.
+ 		isSheetOpen = $bindable(false),
+ 		onopen,
+ 		onclose,
++		onclosecomplete,
+ 		onsheetdrag,
+ 		onsheetdragstart,
+ 		onsheetdragend,
+@@ -40,6 +41,7 @@ to has "height" in it's name.
+ 		children: Snippet<[]>;
+ 		onopen?: () => void;
+ 		onclose?: () => void;
++		onclosecomplete?: () => void;
+ 		onsheetdrag?: () => void;
+ 		onsheetdragstart?: () => void;
+ 		onsheetdragend?: () => void;
+@@ -370,6 +372,20 @@ to has "height" in it's name.
  		if (settings.disableDragging) return;
  		onsheetdragend?.();
  
@@ -23,7 +39,7 @@ index 4777da0..915d5fc 100644
  		// If there is only one snap point (1), apply a larger buffer for closing behavior
  		if (settings.snapPoints.length === 1) {
  			if (sheetHeight > measurementToPx(settings.closeThreshold, maxHeightPx)) {
-@@ -393,20 +407,6 @@ to has "height" in it's name.
+@@ -393,20 +409,6 @@ to has "height" in it's name.
  			return;
  		}
  
@@ -44,8 +60,30 @@ index 4777da0..915d5fc 100644
  		// Find valid snap points based on the movement direction
  		const validPoints = settings.snapPoints
  			.map((point) => ({ original: point, converted: measurementToPx(point, maxHeightPx) }))
+@@ -502,7 +504,8 @@ to has "height" in it's name.
+ 		},
+ 		toggleSheet: () => {
+ 			isSheetOpen = !isSheetOpen;
+-		}
++		},
++		closeComplete: onclosecomplete
+ 	};
+ 
+ 	let sheetIdentifcationContext: SheetIdentificationContext = {
+diff --git a/node_modules/svelte-bottom-sheet/dist/BottomSheet/BottomSheet.svelte.d.ts b/node_modules/svelte-bottom-sheet/dist/BottomSheet/BottomSheet.svelte.d.ts
+index 35600ce..bb3f5af 100644
+--- a/node_modules/svelte-bottom-sheet/dist/BottomSheet/BottomSheet.svelte.d.ts
++++ b/node_modules/svelte-bottom-sheet/dist/BottomSheet/BottomSheet.svelte.d.ts
+@@ -6,6 +6,7 @@ type $$ComponentProps = {
+     children: Snippet<[]>;
+     onopen?: () => void;
+     onclose?: () => void;
++    onclosecomplete?: () => void;
+     onsheetdrag?: () => void;
+     onsheetdragstart?: () => void;
+     onsheetdragend?: () => void;
 diff --git a/node_modules/svelte-bottom-sheet/dist/BottomSheet/Overlay/Overlay.svelte b/node_modules/svelte-bottom-sheet/dist/BottomSheet/Overlay/Overlay.svelte
-index c372f2b..72c0586 100644
+index c372f2b..8e60529 100644
 --- a/node_modules/svelte-bottom-sheet/dist/BottomSheet/Overlay/Overlay.svelte
 +++ b/node_modules/svelte-bottom-sheet/dist/BottomSheet/Overlay/Overlay.svelte
 @@ -14,11 +14,19 @@
@@ -53,23 +91,23 @@ index c372f2b..72c0586 100644
  		...rest
  	}: { children?: Snippet<[]> | undefined } & HTMLAttributes<HTMLDivElement> = $props();
 +
-+    function onclick() {
-+        if (sheetContext.settings.disableClosing) {
-+            return;
-+        }
-+        sheetContext.closeSheet();
-+    }
++	function onclick() {
++		if (sheetContext.settings.disableClosing) {
++			return;
++    	}
++		sheetContext.closeSheet();
++	}
  </script>
  
  {#if sheetContext.isSheetOpen}
  	<div
  		{...rest}
-+        {onclick}
++		{onclick}
  		role="presentation"
  		aria-hidden="true"
  		transition:fade={{ duration: 200 }}
 diff --git a/node_modules/svelte-bottom-sheet/dist/BottomSheet/Sheet/Sheet.svelte b/node_modules/svelte-bottom-sheet/dist/BottomSheet/Sheet/Sheet.svelte
-index c5bdf9e..ed330bb 100644
+index c5bdf9e..fc2c387 100644
 --- a/node_modules/svelte-bottom-sheet/dist/BottomSheet/Sheet/Sheet.svelte
 +++ b/node_modules/svelte-bottom-sheet/dist/BottomSheet/Sheet/Sheet.svelte
 @@ -25,16 +25,6 @@
@@ -100,3 +138,21 @@ index c5bdf9e..ed330bb 100644
  			previousActiveElement?.focus();
  		}
  	});
+@@ -169,6 +157,7 @@
+ 		onmousedown={sheetContext.mouseDownEvent}
+ 		onmouseup={sheetContext.moveEnd}
+ 		onwheel={stopScrollPropagationWheel}
++		onoutroend={sheetContext.closeComplete}
+ 		transition:slideTransition={{
+ 			duration: 500,
+ 			easing: cubicOut,
+diff --git a/node_modules/svelte-bottom-sheet/dist/types.d.ts b/node_modules/svelte-bottom-sheet/dist/types.d.ts
+index c0c9334..1efd46b 100644
+--- a/node_modules/svelte-bottom-sheet/dist/types.d.ts
++++ b/node_modules/svelte-bottom-sheet/dist/types.d.ts
+@@ -65,4 +65,5 @@ export type SheetContext = {
+     openSheet: () => void;
+     closeSheet: () => void;
+     toggleSheet: () => void;
++    closeComplete: () => void;
+ };
