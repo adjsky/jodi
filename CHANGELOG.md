@@ -1,5 +1,15 @@
 # Releases
 
+## 0.13.0 (2026-02-05)
+
+### Feat
+
+- prefetch week days (#62)
+
+### Fix
+
+- todos time/notification bugs (#63)
+
 ## 0.12.2 (2026-02-04)
 
 ### Fix
