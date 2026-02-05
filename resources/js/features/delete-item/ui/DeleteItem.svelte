@@ -8,7 +8,7 @@
     import type { UrlMethodPair, VisitOptions } from "@inertiajs/core";
 
     type Props = VisitOptions & {
-        href: UrlMethodPair;
+        href: string | UrlMethodPair;
         title: string;
         tooltip: string;
     };

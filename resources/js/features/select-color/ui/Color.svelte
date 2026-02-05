@@ -5,9 +5,7 @@
     import ToolbarAction from "$/shared/ui/ToolbarAction.svelte";
     import { tick } from "svelte";
 
-    import type { LinkParameters } from "$/shared/inertia/link";
-
-    type Props = LinkParameters & {
+    type Props = {
         tooltip: string;
         current: string | null;
         name: string;
