@@ -1,4 +1,5 @@
 <script lang="ts">
+    import { inertia } from "@inertiajs/svelte";
     import { DateFormatter } from "@internationalized/date";
     import { ChevronLeft, ChevronRight } from "@lucide/svelte";
     import { getLocale } from "$/paraglide/runtime";
@@ -41,7 +42,11 @@
             {#each week.days as date (date.day)}
                 {@const compare = compareDates(selected, date)}
                 <button
-                    onclick={() => (selected = date)}
+                    use:inertia={{
+                        prefetch: "mount",
+                        cacheFor: ["30s", "5m"],
+                        href: `?d=${date.toString()}`
+                    }}
                     class="group flex flex-col items-center justify-between"
                     data-selected={boolAttr(compare == "selected")}
                     data-selected-ghost={boolAttr(compare == "ghost")}
