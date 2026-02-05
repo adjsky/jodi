@@ -48,6 +48,12 @@
     let hasTimeOverride = $state<boolean | null>(null);
     let notifyAtOverride = $state<ZonedDateTime | null | undefined>(undefined);
 
+    function resetOverrides() {
+        scheduledAtOverride = null;
+        hasTimeOverride = null;
+        notifyAtOverride = undefined;
+    }
+
     // --------------------------- TODO DATA -----------------------------------
 
     let lastKnownTodo = $state(props.todo);
@@ -72,12 +78,6 @@
     watch(
         () => [props.todo],
         () => {
-            if (props.todo?.id != lastKnownTodo?.id) {
-                scheduledAtOverride = null;
-                hasTimeOverride = null;
-                notifyAtOverride = undefined;
-            }
-
             if (!props.todo) return;
             lastKnownTodo = props.todo;
         }
@@ -90,6 +90,9 @@
     snapPoints={[0.6, 0.95]}
     background="var(--color-white)"
     grip="var(--color-cream-300)"
+    onCloseComplete={() => {
+        resetOverrides();
+    }}
 >
     <Form
         {...optimistic.edit(todo.id)}
@@ -98,6 +101,7 @@
         showProgress={false}
         transform={(data) => ({
             ...cleanFormPayload(data),
+            hasTime,
             scheduledAt: hasTime
                 ? normalizeIsoString(scheduledAt.toAbsoluteString())
                 : toCalendarDate(scheduledAt).toString()
@@ -170,9 +174,11 @@
                                     diff(scheduledAt, time)
                                 );
                             } else {
-                                notifyAtOverride = scheduledAt.subtract({
-                                    hours: NOTIFICATION_DEFAULT_SUBHOURS
-                                });
+                                notifyAtOverride = scheduledAt
+                                    .set(time)
+                                    .subtract({
+                                        hours: NOTIFICATION_DEFAULT_SUBHOURS
+                                    });
                             }
                         }
 

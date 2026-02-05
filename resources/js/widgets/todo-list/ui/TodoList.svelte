@@ -109,7 +109,7 @@
                 }
             }
         }
-        todo={editView.meta}
+        todo={editView.isOpen() ? editView.meta : null}
     />
 </section>
 

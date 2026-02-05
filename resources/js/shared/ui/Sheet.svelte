@@ -15,6 +15,7 @@
         class?: ClassName;
         children: Snippet;
         trigger?: Snippet;
+        onCloseComplete?: VoidFunction;
     };
 
     let {
@@ -25,7 +26,8 @@
         defaultSnapPoint,
         class: classname,
         children,
-        trigger
+        trigger,
+        onCloseComplete
     }: Props = $props();
 </script>
 
@@ -36,6 +38,7 @@
         snapPoints,
         startingSnapPoint: defaultSnapPoint
     }}
+    onclosecomplete={onCloseComplete}
 >
     {#if trigger}
         <BottomSheet.Trigger>

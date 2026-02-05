@@ -26,8 +26,8 @@
 
 <input
     bind:this={hasTimeAnnouncerInput}
-    name="hasTime"
-    value={+hasTime}
+    name="_hasTime"
+    value={hasTime}
     hidden
 />
 

@@ -42,6 +42,12 @@
     let endsAtOverride = $state<ZonedDateTime | null>(null);
     let notifyAtOverride = $state<ZonedDateTime | null>(null);
 
+    function resetOverrides() {
+        startsAtOverride = null;
+        endsAtOverride = null;
+        notifyAtOverride = null;
+    }
+
     // --------------------------- EVENT DATA ----------------------------------
 
     let lastKnownEvent = $state(props.event);
@@ -58,10 +64,6 @@
     watch(
         () => [props.event],
         () => {
-            if (props.event?.id != lastKnownEvent?.id) {
-                startsAtOverride = null;
-            }
-
             if (!props.event) return;
             lastKnownEvent = props.event;
         }
@@ -74,6 +76,9 @@
     snapPoints={[0.6, 0.95]}
     background="var(--color-white)"
     grip="var(--color-cream-300)"
+    onCloseComplete={() => {
+        resetOverrides();
+    }}
 >
     <Form
         {...optimistic.edit(event.id)}

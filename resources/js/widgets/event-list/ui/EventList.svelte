@@ -67,6 +67,6 @@
                 }
             }
         }
-        event={editView.meta}
+        event={editView.isOpen() ? editView.meta : null}
     />
 </section>
