@@ -6,7 +6,6 @@ namespace App\Domain\Event\Notifications;
 
 use App\Models\Event;
 use App\Models\User;
-use Carbon\CarbonInterface;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\MailMessage;
@@ -49,10 +48,6 @@ class EventReminder extends Notification implements ShouldQueue
 
     protected function startsIn(): string
     {
-        return $this->event->starts_at->diffForHumans(
-            now(),
-            syntax: CarbonInterface::DIFF_RELATIVE_TO_NOW,
-            options: CarbonInterface::ONE_DAY_WORDS
-        );
+        return $this->event->starts_at->fromNow(parts: 2);
     }
 }

@@ -6,7 +6,6 @@ namespace App\Domain\Todo\Notifications;
 
 use App\Models\Todo;
 use App\Models\User;
-use Carbon\CarbonInterface;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\MailMessage;
@@ -49,10 +48,6 @@ class TodoReminder extends Notification implements ShouldQueue
 
     protected function startsIn(): string
     {
-        return $this->todo->scheduled_at->diffForHumans(
-            now(),
-            syntax: CarbonInterface::DIFF_RELATIVE_TO_NOW,
-            options: CarbonInterface::ONE_DAY_WORDS
-        );
+        return $this->todo->scheduled_at->fromNow(parts: 2);
     }
 }
