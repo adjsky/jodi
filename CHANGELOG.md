@@ -1,5 +1,11 @@
 # Releases
 
+## 0.13.5 (2026-02-06)
+
+### Fix
+
+- add safe area insets to todo/event action bar & add button
+
 ## 0.13.4 (2026-02-06)
 
 ### Fix
