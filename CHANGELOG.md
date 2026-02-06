@@ -1,5 +1,11 @@
 # Releases
 
+## 0.13.13 (2026-02-06)
+
+### Fix
+
+- tweak safe area insets
+
 ## 0.13.12 (2026-02-06)
 
 ### Fix
