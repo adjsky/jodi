@@ -12,6 +12,8 @@
     },
     "devDependencies": {
         "@ark-ui/svelte": "^5.15.0",
+        "@capacitor/app": "^8.0.0",
+        "@capacitor/core": "^8.0.2",
         "@eslint/compat": "^1.2.5",
         "@eslint/js": "^9.22.0",
         "@fontsource-variable/nunito": "^5.2.7",

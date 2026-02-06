@@ -1,6 +1,7 @@
 import "../../css/app.css";
 import "./config/i18n";
 import "./config/date";
+import "./config/capacitor";
 
 import { createInertiaApp } from "@inertiajs/svelte";
 import { hydrate, mount } from "svelte";
