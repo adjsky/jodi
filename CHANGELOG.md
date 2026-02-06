@@ -1,5 +1,12 @@
 # Releases
 
+## 0.13.18 (2026-02-06)
+
+### Fix
+
+- tweak auth pages
+- use p-safe instead
+
 ## 0.13.17 (2026-02-06)
 
 ### Fix
