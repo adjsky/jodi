@@ -108,12 +108,7 @@
             />
 
             <div class="relative flex items-center justify-between">
-                <button
-                    data-autofocus
-                    class="p-2"
-                    type="button"
-                    onclick={() => view.back()}
-                >
+                <button class="p-2" type="button" onclick={() => view.back()}>
                     <ChevronLeft class="text-4xl" />
                 </button>
                 <span
