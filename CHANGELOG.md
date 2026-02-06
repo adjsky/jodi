@@ -1,5 +1,11 @@
 # Releases
 
+## 0.13.4 (2026-02-06)
+
+### Fix
+
+- stabilize use-search-params
+
 ## 0.13.3 (2026-02-06)
 
 ### Fix
