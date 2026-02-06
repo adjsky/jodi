@@ -1,5 +1,11 @@
 # Releases
 
+## 0.14.0 (2026-02-06)
+
+### Feat
+
+- support capacitor and handle go back properly
+
 ## 0.13.18 (2026-02-06)
 
 ### Fix
