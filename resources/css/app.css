@@ -133,9 +133,6 @@
         /* TODO: remove when tablet/desktop design is ready */
         max-width: var(--breakpoint-sm);
         margin: 0 auto;
-
-        padding: env(safe-area-inset-top) env(safe-area-inset-right)
-            env(safe-area-inset-bottom) env(safe-area-inset-left);
     }
 
     /** Remove yellow/blue autofill indicator */

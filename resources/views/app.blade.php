@@ -21,7 +21,7 @@
     @inertiaHead
 </head>
 
-<body class="antialiased">
+<body class="antialiased p-safe">
     @inertia
 </body>
 
