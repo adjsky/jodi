@@ -1,5 +1,11 @@
 # Releases
 
+## 0.13.15 (2026-02-06)
+
+### Fix
+
+- todo notifications rewording
+
 ## 0.13.14 (2026-02-06)
 
 ### Fix
