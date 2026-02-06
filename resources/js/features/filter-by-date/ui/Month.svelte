@@ -17,6 +17,7 @@
 
     import type { Year } from "../model/year.svelte";
     import type { CalendarDate } from "@internationalized/date";
+    import type { Attachment } from "svelte/attachments";
 
     type Props = {
         selected: CalendarDate;
@@ -24,10 +25,19 @@
         date: CalendarDate;
         name: string;
         container: HTMLElement;
+        attachment?: (date: CalendarDate) => Attachment<HTMLButtonElement>;
         onSelect?: (date: CalendarDate) => void;
     };
 
-    const { selected, year, date, name, container, onSelect }: Props = $props();
+    const {
+        selected,
+        year,
+        date,
+        name,
+        container,
+        attachment,
+        onSelect
+    }: Props = $props();
 
     let table = $state<HTMLTableElement | null>(null);
 
@@ -61,6 +71,7 @@
     {@const summary = daySummary.cache.get(date.year)?.get(date.toString())}
     <td class:invisible={!isWithinMonth}>
         <button
+            {@attach attachment?.(date)}
             type="button"
             class="group flex h-22 w-full flex-col items-center pt-1 text-lg"
             data-selected={boolAttr(compareDates(selected, date) == "selected")}
