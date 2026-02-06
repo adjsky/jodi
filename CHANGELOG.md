@@ -1,5 +1,11 @@
 # Releases
 
+## 0.13.17 (2026-02-06)
+
+### Fix
+
+- add safe area to body
+
 ## 0.13.16 (2026-02-06)
 
 ### Fix
