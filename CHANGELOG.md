@@ -1,5 +1,11 @@
 # Releases
 
+## 0.13.2 (2026-02-06)
+
+### Fix
+
+- use visits in year calendar preview & prevent data race when selecting todo/event date (#64)
+
 ## 0.13.1 (2026-02-05)
 
 ### Fix
