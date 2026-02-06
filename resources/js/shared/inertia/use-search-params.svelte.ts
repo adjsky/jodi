@@ -32,8 +32,11 @@ export function useSearchParams(options?: Options) {
         });
     }
 
+    // Keep this deriveds hell to stabilize reactivity (so that `sp` variable
+    // reruns on actual query changes).
     const p = $derived(fromStore(page).current);
-    const search = $derived(p.url.split("?")[1]?.split("#")[0]);
+    const url = $derived(new URL(p.url, window.location.href));
+    const search = $derived(url.search);
     const sp = $derived(new URLSearchParams(search));
 
     return new Proxy({} as Record<string, string> & { update: typeof update }, {
