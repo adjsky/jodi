@@ -8,12 +8,5 @@
                 "91:26:D3:10:7F:FE:4F:F4:10:0F:F7:DB:62:E9:0A:B6:5A:34:5B:B6:74:03:0C:9D:94:39:B6:DF:9B:4E:06:94"
             ]
         }
-    },
-    {
-        "relation": ["check_validation"],
-        "target": {
-            "namespace": "android_app",
-            "package_name": "dev.adjika.jodi.twa"
-        }
     }
 ]
