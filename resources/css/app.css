@@ -1,6 +1,7 @@
 @import "@fontsource-variable/nunito";
 
 @import "tailwindcss";
+@import "tailwindcss-safe-area";
 @import "tw-animate-css";
 
 @import "./view-transition.css";

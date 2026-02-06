@@ -97,7 +97,7 @@
 ></textarea>
 
 <div
-    class="absolute inset-x-0 bottom-0 z-10 flex items-end justify-between bg-white px-4 pb-6"
+    class="absolute inset-x-0 bottom-safe z-10 flex items-end justify-between bg-white px-4 pb-6"
 >
     {@render destroy()}
     {@render repeat()}

@@ -45,7 +45,7 @@
         {#snippet asChild(props)}
             <ActionButton
                 {...props()}
-                class="group pointer-events-auto fixed right-4 bottom-4 z-20 rounded-2xl transition-[border-radius] data-[state=open]:rounded-[50%]"
+                class="group pointer-events-auto fixed right-4 bottom-safe-offset-4 z-20 rounded-2xl transition-[border-radius] data-[state=open]:rounded-[50%]"
             >
                 <X
                     class="transition-transform group-data-[state=closed]:rotate-45"
