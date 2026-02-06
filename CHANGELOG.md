@@ -1,5 +1,11 @@
 # Releases
 
+## 0.13.3 (2026-02-06)
+
+### Fix
+
+- add viewport-fit=cover
+
 ## 0.13.2 (2026-02-06)
 
 ### Fix
