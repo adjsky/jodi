@@ -1,5 +1,11 @@
 # Releases
 
+## 0.13.9 (2026-02-06)
+
+### Fix
+
+- try to check if maskable icon is used in the splash screen
+
 ## 0.13.8 (2026-02-06)
 
 ### Fix
