@@ -1,5 +1,12 @@
 # Releases
 
+## 0.13.10 (2026-02-06)
+
+### Fix
+
+- add any to maskable icon
+- revert maskable icon
+
 ## 0.13.9 (2026-02-06)
 
 ### Fix
