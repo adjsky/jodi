@@ -37,7 +37,6 @@
         },
         "step.start": {
             "title": "Let's begin!",
-            "description": "Set up your account credentials.",
             "name-placeholder": "Enter your name",
             "submit": "Continue"
         }

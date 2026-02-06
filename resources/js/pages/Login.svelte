@@ -11,7 +11,7 @@
 </script>
 
 <AuthLayout>
-    <Intro class="mt-24" title={m["login.title"]()}>
+    <Intro class="mt-35" title={m["login.title"]()}>
         {#snippet icon()}
             <img src={Cat} width={94} height={85} alt="" />
         {/snippet}

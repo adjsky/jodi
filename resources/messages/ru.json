@@ -37,7 +37,6 @@
         },
         "step.start": {
             "title": "Начнём!",
-            "description": "Настройте ваши данные.",
             "name-placeholder": "Введите ваше имя",
             "submit": "Продолжить"
         }
