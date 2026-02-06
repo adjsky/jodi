@@ -1,5 +1,11 @@
 # Releases
 
+## 0.13.12 (2026-02-06)
+
+### Fix
+
+- remove data-autofocus from categories back button
+
 ## 0.13.11 (2026-02-06)
 
 ### Fix
