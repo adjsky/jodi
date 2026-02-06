@@ -1,5 +1,11 @@
 # Releases
 
+## 0.13.8 (2026-02-06)
+
+### Fix
+
+- add safe area inset to add todo/event buttons
+
 ## 0.13.7 (2026-02-06)
 
 ### Fix
