@@ -1,5 +1,6 @@
 <script lang="ts">
     import { ChevronLeft, ChevronRight } from "@lucide/svelte";
+    import { tw } from "$/shared/lib/styles";
     import Button from "$/shared/ui/Button.svelte";
     import FloatingView from "$/shared/ui/FloatingView.svelte";
     import { onMount } from "svelte";
@@ -53,7 +54,7 @@
     }
 </script>
 
-<FloatingView {...props}>
+<FloatingView {...props} class={tw(props.class, "pb-safe")}>
     {#snippet back()}
         <button class="p-2" type="button" onclick={onClose}>
             <ChevronLeft class="text-4xl" />

@@ -62,7 +62,7 @@
             <YearCalendar
                 {selected}
                 portal={false}
-                class="absolute inset-0 rounded-t-2xl bg-white"
+                class="absolute h-full rounded-t-2xl bg-white"
                 start={$page.props.auth.user.preferences.weekStartOn}
                 onSelect={async (date) => {
                     await view.back();

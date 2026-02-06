@@ -57,7 +57,7 @@
             {/if}
             <BottomSheet.Content
                 class={tw(
-                    "relative flex! h-full w-full flex-col px-4! py-2!",
+                    "relative flex! h-full w-full flex-col pt-2! px-safe-offset-4! pb-safe-offset-2!",
                     classname
                 )}
             >

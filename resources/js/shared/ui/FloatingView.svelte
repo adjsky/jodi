@@ -36,7 +36,7 @@
         id="floating-view-{id}"
         {...props}
         class={tw(
-            "fixed inset-0 z-100 flex h-full flex-col overflow-y-scroll bg-cream-50 px-4 py-3",
+            "fixed inset-0 z-100 flex h-dvh flex-col overflow-y-scroll bg-cream-50 py-safe-offset-3 px-safe-offset-4",
             props.class
         )}
     >
