@@ -32,8 +32,8 @@ class TodoReminder extends Notification implements ShouldQueue
         $navigate = config('app.url').'?d='.$this->todo->scheduled_at->format('Y-m-d');
 
         return (new DeclarativeWebPushMessage)
-            ->title(__(':title is upcoming.', ['title' => $this->todo->title]))
-            ->body(__('Starts :time.', ['time' => $this->startsIn()]))
+            ->title(__(':title - time to start.', ['title' => $this->todo->title]))
+            ->body(__('Scheduled for :time.', ['time' => $this->startsIn()]))
             ->data(['navigate' => $navigate])
             ->tag('todo-'.$this->todo->id.'-reminder')
             ->navigate($navigate);
@@ -43,7 +43,7 @@ class TodoReminder extends Notification implements ShouldQueue
     {
         return (new MailMessage)
             ->subject(__('mail.todo_reminder.subject', ['title' => $this->todo->title, 'startsIn' => $this->startsIn()]))
-            ->markdown('mail.todo-reminder', ['todo' => $this->todo]);
+            ->markdown('mail.todo-reminder', ['todo' => $this->todo, 'startsIn' => $this->startsIn()]);
     }
 
     protected function startsIn(): string

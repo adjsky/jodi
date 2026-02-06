@@ -32,9 +32,9 @@ return [
         ],
     ],
     'todo_reminder' => [
-        'subject' => ':title starts :startsIn',
+        'subject' => ':title - time to start',
         'paragraphs' => [
-            'reminder' => 'This is a reminder that **:title** is scheduled for **:date**.',
+            'reminder' => 'This is a reminder that it is time to start the task **:date**.',
         ],
     ],
 ];
