@@ -9,6 +9,7 @@
 
     import type { WeekStart } from "../cfg/preferences";
     import type { CalendarDate } from "@internationalized/date";
+    import type { Attachment } from "svelte/attachments";
     import type { SvelteHTMLElements } from "svelte/elements";
     import type { Except } from "type-fest";
 
@@ -16,11 +17,21 @@
         portal?: boolean;
         selected: CalendarDate;
         start: WeekStart;
+        getDateAttachment?: (
+            date: CalendarDate
+        ) => Attachment<HTMLButtonElement>;
         onClose?: VoidFunction;
         onSelect?: (date: CalendarDate) => void;
     };
 
-    const { selected, start, onClose, onSelect, ...props }: Props = $props();
+    const {
+        selected,
+        start,
+        getDateAttachment,
+        onClose,
+        onSelect,
+        ...props
+    }: Props = $props();
 
     let monthsNode = $state<HTMLElement | null>(null);
 
@@ -93,6 +104,7 @@
                 {selected}
                 {onSelect}
                 container={monthsNode}
+                attachment={getDateAttachment}
             />
         {/each}
     </div>

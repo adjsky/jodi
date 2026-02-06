@@ -1,5 +1,5 @@
 diff --git a/node_modules/@inertiajs/core/dist/index.esm.js b/node_modules/@inertiajs/core/dist/index.esm.js
-index 7744084..9935be2 100644
+index 7744084..c25f024 100644
 --- a/node_modules/@inertiajs/core/dist/index.esm.js
 +++ b/node_modules/@inertiajs/core/dist/index.esm.js
 @@ -529,6 +529,7 @@ var PrefetchedRequests = class {
@@ -162,15 +162,19 @@ index 7744084..9935be2 100644
        return config.get("future.useDialogForErrorModal") ? dialog_default.show(response.data) : modal_default.show(response.data);
      }
    }
-@@ -1768,6 +1791,7 @@ var Response = class _Response {
+@@ -1768,6 +1791,11 @@ var Response = class _Response {
      await this.setRememberedState(pageResponse);
      this.requestParams.setPreserveOptions(pageResponse);
      pageResponse.url = history.preserveUrl ? page.get().url : this.pageUrl(pageResponse);
-+    pageResponse.__jodi_historyModals = page.get().__jodi_historyModals;
++    if (pageResponse.url.includes("#")) {
++      pageResponse.__jodi_historyModals = page.get().__jodi_historyModals;
++    } else {
++      pageResponse.__jodi_historyModals = [];
++    }
      this.requestParams.all().onBeforeUpdate(pageResponse);
      fireBeforeUpdateEvent(pageResponse);
      return page.set(pageResponse, {
-@@ -2057,7 +2081,7 @@ var RequestStream = class {
+@@ -2057,7 +2085,7 @@ var RequestStream = class {
    }
    send(request) {
      this.requests.push(request);
@@ -179,7 +183,7 @@ index 7744084..9935be2 100644
        this.requests = this.requests.filter((r) => r !== request);
      });
    }
-@@ -2175,13 +2199,13 @@ var Router = class {
+@@ -2175,13 +2203,13 @@ var Router = class {
        keepAlive: options.keepAlive ?? false
      });
    }
@@ -195,7 +199,7 @@ index 7744084..9935be2 100644
        return;
      }
      const requestStream = visit.async ? this.asyncRequestStream : this.syncRequestStream;
-@@ -2196,11 +2220,10 @@ var Router = class {
+@@ -2196,11 +2224,10 @@ var Router = class {
      const prefetched = prefetchedRequests.get(requestParams);
      if (prefetched) {
        progress.reveal(prefetched.inFlight);
@@ -210,7 +214,7 @@ index 7744084..9935be2 100644
    }
    getCached(href, options = {}) {
      return prefetchedRequests.findCached(this.getPrefetchParams(href, options));
-@@ -2279,8 +2302,24 @@ var Router = class {
+@@ -2279,8 +2306,24 @@ var Router = class {
    resolveComponent(component) {
      return page.resolve(component);
    }
@@ -236,7 +240,7 @@ index 7744084..9935be2 100644
    }
    replaceProp(name, value, options) {
      this.replace({
-@@ -2320,15 +2359,15 @@ var Router = class {
+@@ -2320,15 +2363,15 @@ var Router = class {
      );
    }
    push(params) {
@@ -255,7 +259,7 @@ index 7744084..9935be2 100644
      const page2 = {
        ...current,
        ...pageParams,
-@@ -2336,6 +2375,9 @@ var Router = class {
+@@ -2336,6 +2379,9 @@ var Router = class {
      };
      const preserveScroll = RequestParams.resolvePreserveOption(params.preserveScroll ?? false, page2);
      const preserveState = RequestParams.resolvePreserveOption(params.preserveState ?? false, page2);
@@ -265,7 +269,7 @@ index 7744084..9935be2 100644
      return page.set(page2, {
        replace,
        preserveScroll,
-@@ -2433,6 +2475,8 @@ var Router = class {
+@@ -2433,6 +2479,8 @@ var Router = class {
        }),
        onSuccess: options.onSuccess || (() => {
        }),
@@ -274,7 +278,7 @@ index 7744084..9935be2 100644
        onError: options.onError || (() => {
        }),
        onPrefetched: options.onPrefetched || (() => {
-@@ -2444,7 +2488,7 @@ var Router = class {
+@@ -2444,7 +2492,7 @@ var Router = class {
    loadDeferredProps(deferred) {
      if (deferred) {
        Object.entries(deferred).forEach(([_, group]) => {

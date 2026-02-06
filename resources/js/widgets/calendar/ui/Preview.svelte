@@ -1,5 +1,5 @@
 <script lang="ts">
-    import { page } from "@inertiajs/svelte";
+    import { inertia, page } from "@inertiajs/svelte";
     import { DateFormatter, parseDate, today } from "@internationalized/date";
     import { Calendar } from "@lucide/svelte";
     import { WeekCarousel, YearCalendar } from "$/features/filter-by-date";
@@ -7,6 +7,7 @@
     import { TIMEZONE } from "$/shared/cfg/constants";
     import { HistoryView } from "$/shared/inertia/history-view.svelte";
     import { useSearchParams } from "$/shared/inertia/use-search-params.svelte";
+    import { fromAction } from "svelte/attachments";
 
     import type { Snippet } from "svelte";
 
@@ -62,10 +63,15 @@
     <YearCalendar
         {selected}
         start={user.preferences.weekStartOn}
+        getDateAttachment={(date) =>
+            fromAction(inertia, () => ({
+                href: `?d=${date.toString()}`,
+                prefetch: true,
+                replace: true,
+                preserveScroll: true,
+                preserveState: true,
+                viewTransition: true
+            }))}
         onClose={() => view.back()}
-        onSelect={async (d) => {
-            await view.back();
-            await searchParams.update({ d: d.toString() });
-        }}
     />
 {/if}
