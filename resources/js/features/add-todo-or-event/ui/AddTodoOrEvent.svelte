@@ -64,7 +64,7 @@
         <Dialog.Positioner>
             <Dialog.Content
                 class={[
-                    "fixed right-4 bottom-23 z-20 flex flex-col items-end gap-5",
+                    "fixed right-4 bottom-safe-offset-23 z-20 flex flex-col items-end gap-5",
                     "data-[state=closed]:animate-out data-[state=closed]:fade-out data-[state=closed]:slide-out-to-right",
                     "data-[state=open]:animate-in data-[state=open]:fade-in data-[state=open]:slide-in-from-right"
                 ]}
