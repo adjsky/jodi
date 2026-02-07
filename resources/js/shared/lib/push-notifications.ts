@@ -24,7 +24,7 @@ export function checkPushNotificationsSupport() {
 }
 
 export function checkPushNotificationPreference() {
-    return get(page).props.auth.user.preferences.notifications != "push";
+    return get(page).props.auth.user.preferences.notifications == "push";
 }
 
 export async function checkHasPushNotificationsSubscription() {
@@ -34,11 +34,8 @@ export async function checkHasPushNotificationsSubscription() {
     }
 
     const subscription = await pushManager.getSubscription();
-    if (subscription) {
-        return false;
-    }
 
-    return true;
+    return subscription != null;
 }
 
 export async function subscribeToPushNotifications() {
