@@ -23,11 +23,11 @@ export function checkPushNotificationsSupport() {
     return true;
 }
 
-export async function checkPushNotificationsNeed() {
-    if (get(page).props.auth.user.preferences.notifications != "push") {
-        return false;
-    }
+export function checkPushNotificationPreference() {
+    return get(page).props.auth.user.preferences.notifications != "push";
+}
 
+export async function checkHasPushNotificationsSubscription() {
     const pushManager = await getPushManager();
     if (!pushManager) {
         return false;
@@ -117,8 +117,8 @@ async function getPushManager(): Promise<PushManager | null> {
 
 export function useNotificationsInitBanner(redirect: () => MaybePromise) {
     onMount(async () => {
-        const hasNeed = await checkPushNotificationsNeed();
-        if (!hasNeed) return;
+        const hasPreference = await checkPushNotificationPreference();
+        if (!hasPreference) return;
 
         if (
             localStorage.getItem(CHECK_SUPPORT_LS_KEY) != "never" &&
