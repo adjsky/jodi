@@ -26,6 +26,7 @@
         "isolatedModules": true
     },
     "include": [
+        "capacitor.config.ts",
         "resources/**/*.svelte",
         "resources/**/*.svelte.js",
         "resources/**/*.svelte.ts",

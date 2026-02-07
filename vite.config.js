@@ -3,119 +3,132 @@ import { wayfinder } from "@laravel/vite-plugin-wayfinder";
 import { svelte } from "@sveltejs/vite-plugin-svelte";
 import tailwindcss from "@tailwindcss/vite";
 import laravel from "laravel-vite-plugin";
-import { defineConfig } from "vite";
+import { defineConfig, loadEnv } from "vite";
 import { VitePWA } from "vite-plugin-pwa";
 import tsconfigPaths from "vite-tsconfig-paths";
 
 import { dto } from "./resources/vite/dto/plugin";
 
-export default defineConfig({
-    plugins: [
-        dto(),
-        wayfinder({
-            path: "resources/js/generated"
-        }),
-        paraglideVitePlugin({
-            project: "./project.inlang",
-            outdir: "./resources/js/paraglide",
-            strategy: ["custom-preference", "custom-cookie"]
-        }),
-        tsconfigPaths(),
-        laravel({
-            input: ["resources/js/app/entrypoint.ts"],
-            refresh: true
-        }),
-        svelte(),
-        tailwindcss(),
-        VitePWA({
-            registerType: "prompt",
-            injectRegister: false,
+export default defineConfig(({ mode }) => {
+    const env = loadEnv(mode, process.cwd(), "");
+    const hasHostArg = process.argv.includes("--host");
 
-            buildBase: "/build/",
-            scope: "/",
-            base: "/",
+    return {
+        plugins: [
+            dto(),
+            wayfinder({
+                path: "resources/js/generated"
+            }),
+            paraglideVitePlugin({
+                project: "./project.inlang",
+                outdir: "./resources/js/paraglide",
+                strategy: ["custom-preference", "custom-cookie"]
+            }),
+            tsconfigPaths(),
+            laravel({
+                input: ["resources/js/app/entrypoint.ts"],
+                refresh: true
+            }),
+            svelte(),
+            tailwindcss(),
+            VitePWA({
+                registerType: "prompt",
+                injectRegister: false,
 
-            manifest: {
-                name: "Jodi",
-                short_name: "Jodi",
-                description: "Journal & Diary",
-                start_url: "/",
-                theme_color: "#fdf3e2",
-                background_color: "#fdf3e2",
-                display: "standalone",
-                orientation: "portrait",
-                dir: "ltr",
-                lang: "en",
-                categories: ["productivity", "lifestyle"],
-                icons: [
-                    {
-                        src: "/pwa-64x64.png",
-                        sizes: "64x64",
-                        type: "image/png"
-                    },
-                    {
-                        src: "/pwa-72x72.png",
-                        sizes: "72x72",
-                        type: "image/png"
-                    },
-                    {
-                        src: "/pwa-96x96.png",
-                        sizes: "96x96",
-                        type: "image/png"
-                    },
-                    {
-                        src: "/pwa-192x192.png",
-                        sizes: "192x192",
-                        type: "image/png"
-                    },
-                    {
-                        src: "/pwa-512x512.png",
-                        sizes: "512x512",
-                        type: "image/png"
-                    },
-                    {
-                        src: "/maskable-icon-512x512.png",
-                        sizes: "512x512",
-                        type: "image/png",
-                        purpose: "any maskable"
-                    },
-                    {
-                        src: "/monochrome-icon-96x96.png",
-                        sizes: "96x96",
-                        type: "image/png",
-                        purpose: "monochrome"
-                    },
-                    {
-                        src: "/monochrome-icon-192x192.png",
-                        sizes: "192x192",
-                        type: "image/png",
-                        purpose: "monochrome"
-                    },
-                    {
-                        src: "/monochrome-icon-512x512.png",
-                        sizes: "512x512",
-                        type: "image/png",
-                        purpose: "monochrome"
-                    }
-                ]
-            },
+                buildBase: "/build/",
+                scope: "/",
+                base: "/",
 
-            workbox: {
-                importScripts: ["/sw-push.js"],
-                globPatterns: [
-                    "**/*.{js,css,html,ico,jpg,png,svg,woff,woff2,ttf,eot}"
-                ],
-                additionalManifestEntries: [
-                    ...[
-                        "/favicon.ico",
-                        "/favicon.svg",
-                        "/apple-touch-icon-180x180.png"
+                manifest: {
+                    name: "Jodi",
+                    short_name: "Jodi",
+                    description: "Journal & Diary",
+                    start_url: "/",
+                    theme_color: "#fdf3e2",
+                    background_color: "#fdf3e2",
+                    display: "standalone",
+                    orientation: "portrait",
+                    dir: "ltr",
+                    lang: "en",
+                    categories: ["productivity", "lifestyle"],
+                    icons: [
+                        {
+                            src: "/pwa-64x64.png",
+                            sizes: "64x64",
+                            type: "image/png"
+                        },
+                        {
+                            src: "/pwa-72x72.png",
+                            sizes: "72x72",
+                            type: "image/png"
+                        },
+                        {
+                            src: "/pwa-96x96.png",
+                            sizes: "96x96",
+                            type: "image/png"
+                        },
+                        {
+                            src: "/pwa-192x192.png",
+                            sizes: "192x192",
+                            type: "image/png"
+                        },
+                        {
+                            src: "/pwa-512x512.png",
+                            sizes: "512x512",
+                            type: "image/png"
+                        },
+                        {
+                            src: "/maskable-icon-512x512.png",
+                            sizes: "512x512",
+                            type: "image/png",
+                            purpose: "any maskable"
+                        },
+                        {
+                            src: "/monochrome-icon-96x96.png",
+                            sizes: "96x96",
+                            type: "image/png",
+                            purpose: "monochrome"
+                        },
+                        {
+                            src: "/monochrome-icon-192x192.png",
+                            sizes: "192x192",
+                            type: "image/png",
+                            purpose: "monochrome"
+                        },
+                        {
+                            src: "/monochrome-icon-512x512.png",
+                            sizes: "512x512",
+                            type: "image/png",
+                            purpose: "monochrome"
+                        }
                     ]
-                ].map((url) => ({ url, revision: "v1" })),
-                navigateFallback: null,
-                maximumFileSizeToCacheInBytes: 3_000_000,
-                cleanupOutdatedCaches: true
+                },
+
+                workbox: {
+                    importScripts: ["/sw-push.js"],
+                    globPatterns: [
+                        "**/*.{js,css,html,ico,jpg,png,svg,woff,woff2,ttf,eot}"
+                    ],
+                    additionalManifestEntries: [
+                        ...[
+                            "/favicon.ico",
+                            "/favicon.svg",
+                            "/apple-touch-icon-180x180.png"
+                        ]
+                    ].map((url) => ({ url, revision: "v1" })),
+                    navigateFallback: null,
+                    maximumFileSizeToCacheInBytes: 3_000_000,
+                    cleanupOutdatedCaches: true
+                }
+            })
+        ],
+        ...(hasHostArg && {
+            server: {
+                cors: true,
+                hmr: {
+                    host: new URL(env.CAPACITOR_SERVER_URL).hostname
+                }
             }
         })
-    ]
+    };
 });
