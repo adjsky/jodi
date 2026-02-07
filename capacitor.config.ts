@@ -1,5 +1,3 @@
-/// <reference types="@capacitor/status-bar" />
-
 import dotenv from "dotenv";
 
 import type { CapacitorConfig } from "@capacitor/cli";
@@ -12,11 +10,6 @@ const config: CapacitorConfig = {
     server: {
         url: process.env.CAPACITOR_SERVER_URL,
         cleartext: !process.env.CAPACITOR_SERVER_URL?.startsWith("https://")
-    },
-    plugins: {
-        StatusBar: {
-            style: "DARK"
-        }
     }
 };
 
