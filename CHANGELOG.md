@@ -1,5 +1,12 @@
 # Releases
 
+## 0.14.1 (2026-02-07)
+
+### Fix
+
+- tweak auth pages again
+- push notifications checks & await listener (#74)
+
 ## 0.14.0 (2026-02-06)
 
 ### Feat
