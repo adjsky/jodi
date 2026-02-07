@@ -1,5 +1,11 @@
 # Releases
 
+## 0.14.3 (2026-02-07)
+
+### Fix
+
+- take safe area into account
+
 ## 0.14.2 (2026-02-07)
 
 ### Fix
