@@ -2,7 +2,7 @@ import dotenv from "dotenv";
 
 import type { CapacitorConfig } from "@capacitor/cli";
 
-dotenv.config();
+dotenv.config({ quiet: true });
 
 const config: CapacitorConfig = {
     appId: process.env.CAPACITOR_APP_ID,
