@@ -114,7 +114,7 @@ async function getPushManager(): Promise<PushManager | null> {
 
 export function useNotificationsInitBanner(redirect: () => MaybePromise) {
     onMount(async () => {
-        const hasPreference = await checkPushNotificationPreference();
+        const hasPreference = checkPushNotificationPreference();
         if (!hasPreference) return;
 
         if (
@@ -129,6 +129,9 @@ export function useNotificationsInitBanner(redirect: () => MaybePromise) {
             });
             return;
         }
+
+        const hasSubscription = await checkHasPushNotificationsSubscription();
+        if (hasSubscription) return;
 
         if (localStorage.getItem(CONFIGURE_LS_KEY) == null) {
             localStorage.setItem(CONFIGURE_LS_KEY, new Date().toISOString());
