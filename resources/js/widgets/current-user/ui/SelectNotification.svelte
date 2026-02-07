@@ -6,7 +6,6 @@
     import { m } from "$/paraglide/messages";
     import {
         checkHasPushNotificationsSubscription,
-        checkPushNotificationPreference,
         checkPushNotificationsSupport,
         subscribeToPushNotifications
     } from "$/shared/lib/push-notifications";
@@ -28,9 +27,6 @@
 
         const hasSupport = checkPushNotificationsSupport();
         if (!hasSupport) return;
-
-        const hasPreference = checkPushNotificationPreference();
-        if (!hasPreference) return;
 
         void checkHasPushNotificationsSubscription().then((hasSubscription) => {
             showAllowPushButton = !hasSubscription;
