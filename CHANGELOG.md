@@ -1,5 +1,11 @@
 # Releases
 
+## 0.14.2 (2026-02-07)
+
+### Fix
+
+- increase padding a little bit
+
 ## 0.14.1 (2026-02-07)
 
 ### Fix
