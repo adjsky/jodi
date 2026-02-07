@@ -9,7 +9,7 @@ const config: CapacitorConfig = {
     appName: "Jodi",
     server: {
         url: process.env.CAPACITOR_SERVER_URL,
-        cleartext: true
+        cleartext: !process.env.CAPACITOR_SERVER_URL?.startsWith("https://")
     },
     plugins: {
         StatusBar: {
