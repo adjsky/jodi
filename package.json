@@ -4,7 +4,7 @@
     "type": "module",
     "scripts": {
         "build": "vite build",
-        "appflow:build": "mkdir www && echo '' > www/index.html",
+        "appflow:build": ":",
         "dev": "vite",
         "lint": "eslint",
         "format": "prettier",
