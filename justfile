@@ -1,25 +1,38 @@
-# https://just.systems
+set quiet := true
 
-setup:
+default:
+    just --list --unsorted
+
+init:
     php artisan jodi:setup --seed
 
-reset-db:
-    php artisan migrate:fresh --seed
+# -------------------------------- DEVELOPMENT ---------------------------------
 
 [parallel]
-dev: dev-server dev-queue dev-logs dev-vite
+dev: php-serve vite worker logs
 
-dev-server:
-    php artisan serve
+dev-preview:
+    npm run build && frankenphp run
 
-dev-queue:
+[parallel]
+dev-android: (php-serve "--host=0.0.0.0") (vite "--host") worker logs
+
+# ---------------------------------- SERVICES ----------------------------------
+
+php-serve args="":
+    php artisan serve {{args}}
+
+vite args="":
+    npm run dev -- {{args}}
+
+worker:
     php artisan queue:listen --tries=1
 
-dev-logs:
+logs:
     php artisan pail --timeout=0
 
-dev-vite:
-    npm run dev
+android-studio:
+    npx cap open android
 
-preview:
-    npm run build && frankenphp run
+android-emulator:
+    npx cap run android
