@@ -5,7 +5,7 @@
     import { update } from "$/generated/actions/App/Http/Controllers/CurrentUserController";
     import { m } from "$/paraglide/messages";
     import {
-        checkPushNotificationsNeed,
+        checkHasPushNotificationsSubscription,
         checkPushNotificationsSupport,
         subscribeToPushNotifications
     } from "$/shared/lib/push-notifications";
@@ -28,8 +28,8 @@
         const hasSupport = checkPushNotificationsSupport();
         if (!hasSupport) return;
 
-        void checkPushNotificationsNeed().then((hasNeed) => {
-            showAllowPushButton = hasNeed;
+        void checkHasPushNotificationsSubscription().then((hasSubscription) => {
+            showAllowPushButton = !hasSubscription;
         });
     });
 </script>

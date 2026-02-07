@@ -23,22 +23,19 @@ export function checkPushNotificationsSupport() {
     return true;
 }
 
-export async function checkPushNotificationsNeed() {
-    if (get(page).props.auth.user.preferences.notifications != "push") {
-        return false;
-    }
+export function checkPushNotificationPreference() {
+    return get(page).props.auth.user.preferences.notifications == "push";
+}
 
+export async function checkHasPushNotificationsSubscription() {
     const pushManager = await getPushManager();
     if (!pushManager) {
         return false;
     }
 
     const subscription = await pushManager.getSubscription();
-    if (subscription) {
-        return false;
-    }
 
-    return true;
+    return subscription != null;
 }
 
 export async function subscribeToPushNotifications() {
@@ -117,8 +114,8 @@ async function getPushManager(): Promise<PushManager | null> {
 
 export function useNotificationsInitBanner(redirect: () => MaybePromise) {
     onMount(async () => {
-        const hasNeed = await checkPushNotificationsNeed();
-        if (!hasNeed) return;
+        const hasPreference = checkPushNotificationPreference();
+        if (!hasPreference) return;
 
         if (
             localStorage.getItem(CHECK_SUPPORT_LS_KEY) != "never" &&
@@ -132,6 +129,9 @@ export function useNotificationsInitBanner(redirect: () => MaybePromise) {
             });
             return;
         }
+
+        const hasSubscription = await checkHasPushNotificationsSubscription();
+        if (hasSubscription) return;
 
         if (localStorage.getItem(CONFIGURE_LS_KEY) == null) {
             localStorage.setItem(CONFIGURE_LS_KEY, new Date().toISOString());
