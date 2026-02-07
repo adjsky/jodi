@@ -8,7 +8,7 @@
     const { children }: Props = $props();
 </script>
 
-<main class="px-4" id="auth-layout">
+<main class="flex h-svh flex-col justify-center px-4 pb-20" id="auth-layout">
     {@render children()}
 </main>
 

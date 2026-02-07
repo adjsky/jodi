@@ -19,7 +19,7 @@
 
 <AuthLayout>
     {#if view.isOpen("start")}
-        <Intro class="mt-35" title={m["signup.step.start.title"]()}>
+        <Intro title={m["signup.step.start.title"]()}>
             {#snippet icon()}
                 <img src={Bee} width={92} height={85} alt="" />
             {/snippet}

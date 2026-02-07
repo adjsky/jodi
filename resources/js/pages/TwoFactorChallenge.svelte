@@ -17,7 +17,7 @@
 </script>
 
 <AuthLayout>
-    <Intro class="mt-35" title={m["2fa.title"]()}>
+    <Intro title={m["2fa.title"]()}>
         {#snippet icon()}
             <img src={Froggy} width={90} height={85} alt="" />
         {/snippet}
