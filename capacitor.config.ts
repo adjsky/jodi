@@ -1,3 +1,5 @@
+/// <reference types="@capacitor/status-bar" />
+
 import dotenv from "dotenv";
 
 import type { CapacitorConfig } from "@capacitor/cli";
