@@ -20,7 +20,8 @@ return new class extends Migration
             $table->text('description')->nullable();
             $table->foreignId('category_id')->nullable()->index()->constrained()->nullOnDelete();
             $table->integer('position');
-            $table->date('todo_date')->index();
+            $table->dateTime('scheduled_at')->index();
+            $table->boolean('has_time')->default(false);
             $table->foreignId('recurrence_id')->nullable()->constrained();
             $table->string('color')->nullable();
             $table->datetime('completed_at')->nullable();

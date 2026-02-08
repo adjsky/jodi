@@ -12,10 +12,12 @@ import { urlBase64ToUint8Array } from "./buffer";
 
 import type { MaybePromise } from "./types";
 
-const CHECK_SUPPORT_LS_KEY = "jodi:notifications:check-support";
-const CONFIGURE_LS_KEY = "jodi:notifications:banner_last_opened_at";
+enum LocalStorage {
+    CHECK_SUPPORT = "jodi:notifications:check-support",
+    LAST_OPENED_AT = "jodi:notifications:banner_last_opened_at"
+}
 
-export function checkPushNotificationsSupport() {
+export function checkSupport() {
     if (!("serviceWorker" in navigator) || !("PushManager" in window)) {
         return false;
     }
@@ -23,11 +25,11 @@ export function checkPushNotificationsSupport() {
     return true;
 }
 
-export function checkPushNotificationPreference() {
+export function checkPreference() {
     return get(page).props.auth.user.preferences.notifications == "push";
 }
 
-export async function checkHasPushNotificationsSubscription() {
+export async function checkSubscription() {
     const pushManager = await getPushManager();
     if (!pushManager) {
         return false;
@@ -38,7 +40,7 @@ export async function checkHasPushNotificationsSubscription() {
     return subscription != null;
 }
 
-export async function subscribeToPushNotifications() {
+export async function subscribe() {
     const pushManager = await getPushManager();
     if (!pushManager) return;
 
@@ -70,7 +72,7 @@ export async function subscribeToPushNotifications() {
     });
 }
 
-export async function destroyPushSubscription() {
+export async function destroySubscription() {
     const pushManager = await getPushManager();
 
     if (!pushManager) {
@@ -95,11 +97,11 @@ export async function destroyPushSubscription() {
         body: JSON.stringify({ endpoint: subscription.endpoint })
     });
 
-    localStorage.removeItem(CONFIGURE_LS_KEY);
+    localStorage.removeItem(LocalStorage.LAST_OPENED_AT);
 }
 
-export function showConfigurePushBannerAgain() {
-    localStorage.removeItem(CONFIGURE_LS_KEY);
+export function showConfigureBannerAgain() {
+    localStorage.removeItem(LocalStorage.LAST_OPENED_AT);
 }
 
 async function getPushManager(): Promise<PushManager | null> {
@@ -112,29 +114,34 @@ async function getPushManager(): Promise<PushManager | null> {
     return registration?.pushManager ?? null;
 }
 
-export function useNotificationsInitBanner(redirect: () => MaybePromise) {
+export function useInitBanner(redirect: () => MaybePromise) {
     onMount(async () => {
-        const hasPreference = checkPushNotificationPreference();
+        const hasPreference = checkPreference();
         if (!hasPreference) return;
 
-        if (
-            localStorage.getItem(CHECK_SUPPORT_LS_KEY) != "never" &&
-            !checkPushNotificationsSupport()
-        ) {
-            createActionBanner(m["push-notifications.not-supported"](), {
-                closeable: true,
-                onDecline() {
-                    localStorage.setItem(CHECK_SUPPORT_LS_KEY, "never");
-                }
-            });
+        if (!checkSupport()) {
+            if (localStorage.getItem(LocalStorage.CHECK_SUPPORT) != "never") {
+                createActionBanner(m["push-notifications.not-supported"](), {
+                    closeable: true,
+                    onDecline() {
+                        localStorage.setItem(
+                            LocalStorage.CHECK_SUPPORT,
+                            "never"
+                        );
+                    }
+                });
+            }
             return;
         }
 
-        const hasSubscription = await checkHasPushNotificationsSubscription();
+        const hasSubscription = await checkSubscription();
         if (hasSubscription) return;
 
-        if (localStorage.getItem(CONFIGURE_LS_KEY) == null) {
-            localStorage.setItem(CONFIGURE_LS_KEY, new Date().toISOString());
+        if (localStorage.getItem(LocalStorage.LAST_OPENED_AT) == null) {
+            localStorage.setItem(
+                LocalStorage.LAST_OPENED_AT,
+                new Date().toISOString()
+            );
             createActionBanner(m["push-notifications.configure.title"](), {
                 action: m["push-notifications.configure.action"](),
                 onAccept() {

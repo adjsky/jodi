@@ -4,11 +4,7 @@
     import { User } from "$/entities/user";
     import { update } from "$/generated/actions/App/Http/Controllers/CurrentUserController";
     import { m } from "$/paraglide/messages";
-    import {
-        checkHasPushNotificationsSubscription,
-        checkPushNotificationsSupport,
-        subscribeToPushNotifications
-    } from "$/shared/lib/push-notifications";
+    import * as PushNotifications from "$/shared/lib/push-notifications";
     import { toaster } from "$/shared/lib/toaster";
     import Button from "$/shared/ui/Button.svelte";
     import FloatingView from "$/shared/ui/FloatingView.svelte";
@@ -25,10 +21,10 @@
             return;
         }
 
-        const hasSupport = checkPushNotificationsSupport();
+        const hasSupport = PushNotifications.checkSupport();
         if (!hasSupport) return;
 
-        void checkHasPushNotificationsSubscription().then((hasSubscription) => {
+        void PushNotifications.checkSubscription().then((hasSubscription) => {
             showAllowPushButton = !hasSubscription;
         });
     });
@@ -65,7 +61,7 @@
                 try {
                     progress.reveal(true);
                     progress.start();
-                    await subscribeToPushNotifications();
+                    await PushNotifications.subscribe();
                     showAllowPushButton = false;
                     progress.finish();
                     toaster.success(

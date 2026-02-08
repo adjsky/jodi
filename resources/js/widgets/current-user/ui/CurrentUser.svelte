@@ -1,14 +1,14 @@
 <script lang="ts">
     import { page } from "@inertiajs/svelte";
     import { User } from "$/entities/user";
-    import { useNotificationsInitBanner } from "$/shared/lib/push-notifications";
+    import * as PushNotifications from "$/shared/lib/push-notifications";
 
     import { buildViewName, view } from "../model/view";
     import Settings from "./Settings.svelte";
 
     const user = $derived($page.props.auth.user);
 
-    useNotificationsInitBanner(() => {
+    PushNotifications.useInitBanner(() => {
         return view.push(buildViewName("notifications"));
     });
 </script>

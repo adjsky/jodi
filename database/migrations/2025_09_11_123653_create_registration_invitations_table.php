@@ -16,7 +16,7 @@ return new class extends Migration
         Schema::create('registration_invitations', function (Blueprint $table) {
             $table->id();
             $table->foreignId('inviter_user_id')->constrained('users');
-            $table->string('email');
+            $table->string('email')->unique();
             $table->string('code')->unique();
             $table->datetime('expires_at');
             $table->foreignId('registered_user_id')->nullable()->constrained('users');
