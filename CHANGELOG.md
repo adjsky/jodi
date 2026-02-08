@@ -1,5 +1,12 @@
 # Releases
 
+## 0.14.4 (2026-02-08)
+
+### Fix
+
+- android assets (#76)
+- auth layout jumps
+
 ## 0.14.3 (2026-02-07)
 
 ### Fix
