@@ -15,5 +15,5 @@ export default defineConfig({
             resizeOptions: { background: "#fdf3e2" }
         }
     },
-    images: ["public/favicon.svg"]
+    images: ["public/logo.svg"]
 });

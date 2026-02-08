@@ -112,7 +112,7 @@ export default defineConfig(({ mode }) => {
                     additionalManifestEntries: [
                         ...[
                             "/favicon.ico",
-                            "/favicon.svg",
+                            "/logo.svg",
                             "/apple-touch-icon-180x180.png"
                         ]
                     ].map((url) => ({ url, revision: "v1" })),

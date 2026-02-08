@@ -12,10 +12,15 @@ init:
 dev: php-serve vite worker logs
 
 dev-preview:
-    npm run build && frankenphp run
+    npm run build
+    frankenphp run
 
 [parallel]
-dev-android: (php-serve "--host=0.0.0.0") (vite "--host") worker logs
+dev-android: (php-serve "--host=0.0.0.0") (vite "--host") worker logs (cap "open android")
+
+gen-assets:
+    npx pwa-assets-generator
+    npx capacitor-assets generate --android --assetPath=public --iconBackgroundColor="#fdf3e2" --splashBackgroundColor="#fdf3e2" --splashBackgroundColorDark="#fdf3e2"
 
 # ---------------------------------- SERVICES ----------------------------------
 
@@ -31,8 +36,5 @@ worker:
 logs:
     php artisan pail --timeout=0
 
-android-studio:
-    npx cap open android
-
-android-emulator:
-    npx cap run android
+cap *args:
+    npx cap {{args}}

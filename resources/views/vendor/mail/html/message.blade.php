@@ -1,5 +1,5 @@
 <x-mail::layout>
-<img src="{{ asset('logo.png') }}" alt="{{ config('app.name') }}" width="140" height="61" class="logo">
+<img src="{{ asset('jodi.png') }}" alt="{{ config('app.name') }}" width="140" height="61" class="logo">
 
 {{ __('mail.hello') }}
 
