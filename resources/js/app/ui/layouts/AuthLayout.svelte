@@ -8,17 +8,14 @@
     const { children }: Props = $props();
 </script>
 
-<main
-    class="flex h-svh-safe flex-col justify-center px-4 pb-30"
-    id="auth-layout"
->
+<main class="mt-[18.5vh] px-4" id="auth-layout">
     {@render children()}
 </main>
 
 <style>
     #auth-layout::after {
         content: "";
-        position: absolute;
+        position: fixed;
 
         bottom: 0;
         left: 0;
