@@ -14,7 +14,7 @@ import type { MaybePromise } from "./types";
 
 enum LocalStorage {
     CHECK_SUPPORT = "jodi:notifications:check-support",
-    LAST_OPENED_AT = "jodi:notifications:banner_last_opened_at"
+    BANNER_LAST_SHOWN_AT = "jodi:notifications:banner_last_shown_at"
 }
 
 export function checkSupport() {
@@ -97,11 +97,11 @@ export async function destroySubscription() {
         body: JSON.stringify({ endpoint: subscription.endpoint })
     });
 
-    localStorage.removeItem(LocalStorage.LAST_OPENED_AT);
+    localStorage.removeItem(LocalStorage.BANNER_LAST_SHOWN_AT);
 }
 
 export function showConfigureBannerAgain() {
-    localStorage.removeItem(LocalStorage.LAST_OPENED_AT);
+    localStorage.removeItem(LocalStorage.BANNER_LAST_SHOWN_AT);
 }
 
 async function getPushManager(): Promise<PushManager | null> {
@@ -137,9 +137,9 @@ export function useInitBanner(redirect: () => MaybePromise) {
         const hasSubscription = await checkSubscription();
         if (hasSubscription) return;
 
-        if (localStorage.getItem(LocalStorage.LAST_OPENED_AT) == null) {
+        if (localStorage.getItem(LocalStorage.BANNER_LAST_SHOWN_AT) == null) {
             localStorage.setItem(
-                LocalStorage.LAST_OPENED_AT,
+                LocalStorage.BANNER_LAST_SHOWN_AT,
                 new Date().toISOString()
             );
             createActionBanner(m["push-notifications.configure.title"](), {
