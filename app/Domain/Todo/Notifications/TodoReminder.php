@@ -10,8 +10,9 @@ use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
-use NotificationChannels\WebPush\DeclarativeWebPushMessage;
-use NotificationChannels\WebPush\WebPushChannel;
+use NotificationChannels\Fcm\FcmChannel;
+use NotificationChannels\Fcm\FcmMessage;
+use NotificationChannels\Fcm\Resources\Notification as FcmNotification;
 
 class TodoReminder extends Notification implements ShouldQueue
 {
@@ -23,20 +24,16 @@ class TodoReminder extends Notification implements ShouldQueue
     public function via(User $user): array
     {
         return $user->preferences['notifications'] == 'push'
-            ? [WebPushChannel::class]
+            ? [FcmChannel::class]
             : ['mail'];
     }
 
-    public function toWebPush(): DeclarativeWebPushMessage
+    public function toFcm(): FcmMessage
     {
-        $navigate = config('app.url').'?d='.$this->todo->scheduled_at->format('Y-m-d');
-
-        return (new DeclarativeWebPushMessage)
-            ->title(__(':title - time to start.', ['title' => $this->todo->title]))
-            ->body(__('Scheduled for :time.', ['time' => $this->startsIn()]))
-            ->data(['navigate' => $navigate])
-            ->tag('todo-'.$this->todo->id.'-reminder')
-            ->navigate($navigate);
+        return new FcmMessage(notification: new FcmNotification(
+            title: __(':title - time to start.', ['title' => $this->todo->title]),
+            body: __('Scheduled for :time.', ['time' => $this->startsIn()]),
+        ));
     }
 
     public function toMail(): MailMessage

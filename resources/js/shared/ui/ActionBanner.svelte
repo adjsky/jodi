@@ -14,6 +14,7 @@
     let banners: Banner[] = $state([]);
 
     type CreateActionBannerOptions = Callbacks & {
+        id?: string;
         action?: string;
         closeable?: boolean;
         autoclose?: boolean;
@@ -24,14 +25,13 @@
         options?: CreateActionBannerOptions
     ) {
         const {
+            id = nanoid(),
             action,
             closeable = false,
             autoclose = true,
             onAccept,
             onDecline
         } = options ?? {};
-
-        const id = crypto.randomUUID();
 
         banners.push({
             id,
@@ -64,6 +64,7 @@
 
 <script lang="ts">
     import { X } from "@lucide/svelte";
+    import { nanoid } from "nanoid";
 
     import Button from "./Button.svelte";
 

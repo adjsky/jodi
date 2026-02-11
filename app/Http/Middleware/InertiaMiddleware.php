@@ -37,19 +37,24 @@ class InertiaMiddleware extends Middleware
      */
     public function share(Request $request): array
     {
+        $deviceId = $request->cookies->get('jodi-device-id');
+
         return [
             ...parent::share($request),
             'version' => config('jodi.version'),
-            'config' => ['VAPID_PUBLIC_KEY' => config('webpush.vapid.public_key')],
-            'auth.user' => fn () => $request->user()?->only(
-                ['id', 'name', 'email', 'preferences']
-            ),
+            'auth' => fn () => [
+                'user' => $request->user()
+                    ?->only(['id', 'name', 'email', 'preferences']),
+                'fcm' => $request->user()
+                    ?->pushSubscriptions()
+                    ->where('device_id', $deviceId)
+                    ->first(['fcm_token as token']),
+            ],
             'flash' => [
                 'message' => fn () => $request->session()->get('message'),
                 'error' => fn () => $request->session()->get('error'),
                 'success' => fn () => $request->session()->get('success'),
             ],
-
         ];
     }
 }

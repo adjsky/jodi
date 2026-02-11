@@ -11,12 +11,11 @@ use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
-use NotificationChannels\WebPush\HasPushSubscriptions;
 
 class User extends Authenticatable implements HasLocalePreference
 {
     /** @use HasFactory<\Database\Factories\UserFactory> */
-    use HasFactory, HasPushSubscriptions, HasSqid, Notifiable;
+    use HasFactory, HasSqid, Notifiable;
 
     protected $fillable = [
         'name',
@@ -41,6 +40,14 @@ class User extends Authenticatable implements HasLocalePreference
     public function preferredLocale(): string
     {
         return $this->preferences['locale'];
+    }
+
+    /**
+     * @return string[]
+     */
+    public function routeNotificationForFcm(): array
+    {
+        return $this->pushSubscriptions->pluck('fcm_token')->toArray();
     }
 
     /** @return BelongsToMany<User,$this> */
@@ -89,5 +96,11 @@ class User extends Authenticatable implements HasLocalePreference
     public function moodTrackerEntries(): HasMany
     {
         return $this->hasMany(MoodTrackerEntry::class);
+    }
+
+    /** @return HasMany<PushSubscription,$this> */
+    public function pushSubscriptions(): HasMany
+    {
+        return $this->hasMany(PushSubscription::class);
     }
 }

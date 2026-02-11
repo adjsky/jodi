@@ -1,0 +1,29 @@
+{
+    "project_info": {
+        "project_number": "468056162157",
+        "project_id": "jodi-f28ac",
+        "storage_bucket": "jodi-f28ac.firebasestorage.app"
+    },
+    "client": [
+        {
+            "client_info": {
+                "mobilesdk_app_id": "1:468056162157:android:e54317d2ae91ef14dc2464",
+                "android_client_info": {
+                    "package_name": "dev.adjika.jodi"
+                }
+            },
+            "oauth_client": [],
+            "api_key": [
+                {
+                    "current_key": "AIzaSyCh88jcHVlh0mZEdfYaFT0C2BCuyKr_6lE"
+                }
+            ],
+            "services": {
+                "appinvite_service": {
+                    "other_platform_oauth_client": []
+                }
+            }
+        }
+    ],
+    "configuration_version": "1"
+}

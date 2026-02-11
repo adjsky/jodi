@@ -17,7 +17,7 @@
     <Form
         action={update()}
         class="flex grow flex-col justify-between py-5"
-        options={{ replace: true, preserveUrl: true, only: ["auth.user"] }}
+        options={{ replace: true, preserveUrl: true, only: ["auth"] }}
         onSuccess={() => view.back()}
         let:processing
         let:errors

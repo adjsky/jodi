@@ -17,7 +17,6 @@
         }
     },
     "push-notifications": {
-        "not-supported": "Browser update required. Update to enable push notifications.",
         "configure": {
             "title": "Configure notifications to receive reminders for your upcoming events and tasks.",
             "action": "Proceed"

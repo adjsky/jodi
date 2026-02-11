@@ -1,17 +1,17 @@
 <script lang="ts">
     import { page } from "@inertiajs/svelte";
     import { User } from "$/entities/user";
-    import * as PushNotifications from "$/shared/lib/push-notifications";
+    import * as PushSubscription from "$/shared/lib/push-subscription.svelte";
 
-    import { buildViewName, view } from "../model/view";
+    import { view } from "../model/view";
     import Settings from "./Settings.svelte";
 
     const user = $derived($page.props.auth.user);
-
-    PushNotifications.useInitBanner(() => {
-        return view.push(buildViewName("notifications"));
-    });
 </script>
 
-<User.Avatar name={user.name} onclick={() => view.push("me")} />
+<User.Avatar
+    name={user.name}
+    onclick={() => view.push("me")}
+    warn={PushSubscription.needsConfiguration()}
+/>
 <Settings />

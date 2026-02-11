@@ -22,6 +22,6 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        EncryptCookies::except(['jodi-locale', 'jodi-timezone']);
+        EncryptCookies::except(['jodi-locale', 'jodi-timezone', 'jodi-device-id']);
     }
 }

@@ -102,7 +102,7 @@ Route::middleware('auth')->group(function () {
     Route::prefix('/push-subscriptions')
         ->controller(PushSubscriptionController::class)
         ->group(function () {
-            Route::post('/', 'create');
+            Route::post('/', 'store');
             Route::delete('/', 'destroy');
         });
 

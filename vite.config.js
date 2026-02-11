@@ -32,6 +32,10 @@ export default defineConfig(({ mode }) => {
             svelte(),
             tailwindcss(),
             VitePWA({
+                strategies: "injectManifest",
+                srcDir: "resources/js/app",
+                filename: "service-worker.ts",
+
                 registerType: "prompt",
                 injectRegister: false,
 
@@ -104,8 +108,7 @@ export default defineConfig(({ mode }) => {
                     ]
                 },
 
-                workbox: {
-                    importScripts: ["/sw-push.js"],
+                injectManifest: {
                     globPatterns: [
                         "**/*.{js,css,html,ico,jpg,png,svg,woff,woff2,ttf,eot}"
                     ],
@@ -116,9 +119,7 @@ export default defineConfig(({ mode }) => {
                             "/apple-touch-icon-180x180.png"
                         ]
                     ].map((url) => ({ url, revision: "v1" })),
-                    navigateFallback: null,
-                    maximumFileSizeToCacheInBytes: 3_000_000,
-                    cleanupOutdatedCaches: true
+                    maximumFileSizeToCacheInBytes: 3_000_000
                 }
             })
         ],
