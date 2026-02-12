@@ -1,5 +1,3 @@
-/// <reference lib="webworker" />
-
 import { getMessaging } from "firebase/messaging/sw";
 import { cleanupOutdatedCaches, precacheAndRoute } from "workbox-precaching";
 
