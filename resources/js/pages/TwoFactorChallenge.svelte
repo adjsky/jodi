@@ -9,6 +9,7 @@
     import { HistoryView } from "$/shared/inertia/history-view.svelte";
     import { useActionRateLimit } from "$/shared/inertia/use-action-rate-limit.svelte";
     import * as Cookie from "$/shared/lib/cookie";
+    import * as PushSubscription from "$/shared/lib/push-subscription.svelte";
     import { toaster } from "$/shared/lib/toaster";
     import { createActionBanner } from "$/shared/ui/ActionBanner.svelte";
     import Button from "$/shared/ui/Button.svelte";
@@ -46,13 +47,16 @@
                 maxAge: 34560000,
                 sameSite: "lax"
             });
-            createActionBanner(m["push-notifications.configure.title"](), {
-                id: "configure-push-notifications",
-                action: m["push-notifications.configure.action"](),
-                onAccept() {
-                    return view.push("me/notifications");
-                }
-            });
+            await PushSubscription.synchronize();
+            if (PushSubscription.synchronization.needsConfiguration) {
+                createActionBanner(m["push-notifications.configure.title"](), {
+                    id: "configure-push-notifications",
+                    action: m["push-notifications.configure.action"](),
+                    onAccept() {
+                        return view.push("me/notifications");
+                    }
+                });
+            }
         }}
         let:processing
         let:errors

@@ -2,8 +2,10 @@
     import { progress } from "@inertiajs/svelte";
     import { m } from "$/paraglide/messages";
     import { useFlashToaster } from "$/shared/inertia/use-flash-toaster.svelte";
+    import * as PushSubscription from "$/shared/lib/push-subscription.svelte";
     import { createActionBanner } from "$/shared/ui/ActionBanner.svelte";
     import { watch } from "runed";
+    import { onMount } from "svelte";
     import { Toaster } from "svelte-sonner";
     import { useRegisterSW } from "virtual:pwa-register/svelte";
 
@@ -12,6 +14,10 @@
     const { children }: { children: Snippet } = $props();
 
     const { needRefresh, updateServiceWorker } = useRegisterSW();
+
+    onMount(() => {
+        void PushSubscription.synchronize();
+    });
 
     watch(
         () => [$needRefresh],

@@ -23,6 +23,7 @@
         },
         "no-permission": "Looks like you denied notification permission. Please enable it in your browser settings.",
         "failed-to-subscribe": "Unknown error happened while creating a push subscription. Please try again.",
+        "no-service-worker": "Service Worker not found. Please reload page.",
         "success-subscribe": "Successfully allowed push notifications."
     },
     "pwa-update": {

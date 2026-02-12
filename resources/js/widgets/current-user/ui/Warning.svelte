@@ -2,4 +2,4 @@
     import Warning from "$/shared/ui/Warning.svelte";
 </script>
 
-<Warning class="text-2xl" />
+<Warning class="text-xl" />

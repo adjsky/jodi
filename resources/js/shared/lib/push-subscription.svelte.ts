@@ -6,11 +6,37 @@ import {
     store as _store
 } from "$/generated/actions/App/Http/Controllers/PushSubscriptionController";
 import { m } from "$/paraglide/messages";
-import { fromStore, get } from "svelte/store";
+import { fromStore } from "svelte/store";
 
 import { PLATFORM } from "../cfg/constants";
 import { destroyActionBanner } from "../ui/ActionBanner.svelte";
 import { toaster } from "./toaster";
+
+// ------------------------------- SYNC & STATE --------------------------------
+
+export const synchronization = $state({
+    needsConfiguration: false
+});
+
+export async function synchronize() {
+    const { fcm, user } = fromStore(page).current.props.auth;
+    if (user?.preferences.notifications !== "push") return;
+
+    const hasPermission = await checkPermission();
+    if (!hasPermission) {
+        synchronization.needsConfiguration = true;
+        return;
+    }
+
+    const deviceContext = await getDeviceContext();
+    if (!deviceContext) return;
+
+    const { token, deviceId } = deviceContext;
+
+    if (token !== fcm?.token) {
+        await store(token, deviceId, { async: true });
+    }
+}
 
 // ---------------------------------- ACTIONS ----------------------------------
 
@@ -26,13 +52,22 @@ export async function subscribe() {
         progress.reveal(true);
         progress.start();
 
-        const { token, deviceId } = await getDeviceContext();
+        const deviceContext = await getDeviceContext();
+
+        if (!deviceContext) {
+            progress.remove();
+            toaster.error(m["push-notifications.no-service-worker"]());
+            return;
+        }
+
+        const { token, deviceId } = deviceContext;
 
         await store(token, deviceId, {
             onSuccess() {
                 progress.finish();
                 toaster.success(m["push-notifications.success-subscribe"]());
                 destroyActionBanner("configure-push-notifications");
+                synchronization.needsConfiguration = false;
             },
             onInvalid() {
                 progress.remove();
@@ -47,52 +82,30 @@ export async function subscribe() {
 }
 
 export async function unsubscribe() {
-    const permission = await FirebaseMessaging.checkPermissions();
+    const hasPermission = await checkPermission();
+    if (!hasPermission) return;
 
-    if (permission.receive != "granted") {
-        return;
+    if (PLATFORM == "web") {
+        const reg = await navigator.serviceWorker.getRegistration();
+        if (!reg) return;
     }
 
     await FirebaseMessaging.deleteToken();
 }
 
-// ------------------------------- SYNC & STATE --------------------------------
-
-let hasSynchronized = $state(false);
-
-export async function synchronize() {
-    try {
-        const permission = await FirebaseMessaging.checkPermissions();
-        if (permission.receive !== "granted") return;
-
-        const { fcm, user } = get(page).props.auth;
-        if (!user) return;
-
-        const { token, deviceId } = await getDeviceContext();
-
-        if (token !== fcm?.token) {
-            await store(token, deviceId, { async: true });
-        }
-    } finally {
-        hasSynchronized = true;
-    }
-}
-
-export function needsConfiguration() {
-    if (!hasSynchronized) return false;
-
-    const { user, fcm } = fromStore(page).current.props.auth;
-
-    return user.preferences.notifications == "push" && fcm === null;
-}
-
 // ---------------------------------- HELPERS ----------------------------------
+
+async function checkPermission() {
+    const permission = await FirebaseMessaging.checkPermissions();
+    return permission.receive == "granted";
+}
 
 async function getDeviceContext() {
     let swr: ServiceWorkerRegistration | undefined;
 
     if (PLATFORM == "web") {
         const reg = await navigator.serviceWorker.getRegistration();
+        if (!reg) return null;
         swr = reg;
     }
 
@@ -112,11 +125,7 @@ type StoreOptions = {
     onInvalid?: VoidFunction;
 };
 
-export async function store(
-    token: string,
-    deviceId: string,
-    options?: StoreOptions
-) {
+async function store(token: string, deviceId: string, options?: StoreOptions) {
     await router.visit(_store(), {
         data: {
             fcm_token: token,
