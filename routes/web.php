@@ -103,7 +103,6 @@ Route::middleware('auth')->group(function () {
         ->controller(PushSubscriptionController::class)
         ->group(function () {
             Route::post('/', 'store');
-            Route::delete('/', 'destroy');
         });
 
     Route::get('/day-summary/{year}', [DaySummaryController::class, 'get']);
