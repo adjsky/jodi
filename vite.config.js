@@ -8,6 +8,7 @@ import { VitePWA } from "vite-plugin-pwa";
 import tsconfigPaths from "vite-tsconfig-paths";
 
 import { dto } from "./resources/vite/dto/plugin";
+import { firebaseMessagingSw } from "./resources/vite/firebase-messaging-sw/plugin";
 
 export default defineConfig(({ mode }) => {
     const env = loadEnv(mode, process.cwd(), "");
@@ -31,11 +32,8 @@ export default defineConfig(({ mode }) => {
             }),
             svelte(),
             tailwindcss(),
+            firebaseMessagingSw(),
             VitePWA({
-                strategies: "injectManifest",
-                srcDir: "resources/js/app",
-                filename: "service-worker.ts",
-
                 registerType: "prompt",
                 injectRegister: false,
 
@@ -108,7 +106,7 @@ export default defineConfig(({ mode }) => {
                     ]
                 },
 
-                injectManifest: {
+                workbox: {
                     globPatterns: [
                         "**/*.{js,css,html,ico,jpg,png,svg,woff,woff2,ttf,eot}"
                     ],
@@ -119,7 +117,9 @@ export default defineConfig(({ mode }) => {
                             "/apple-touch-icon-180x180.png"
                         ]
                     ].map((url) => ({ url, revision: "v1" })),
-                    maximumFileSizeToCacheInBytes: 3_000_000
+                    navigateFallback: null,
+                    maximumFileSizeToCacheInBytes: 3_000_000,
+                    cleanupOutdatedCaches: true
                 }
             })
         ],

@@ -22,6 +22,27 @@
     const consumeTimer = useActionRateLimit(consume.definition);
 
     const view = new HistoryView(null, { viewTransition: true });
+
+    async function handleSuccessfulLogin() {
+        const { identifier } = await Device.getId();
+
+        Cookie.set(DEVICE_ID_COOKIE, identifier, {
+            maxAge: 34560000,
+            sameSite: "lax"
+        });
+
+        await PushSubscription.synchronize();
+
+        if (PushSubscription.warnings.needsConfiguration) {
+            createActionBanner(m["push-notifications.configure.title"](), {
+                id: "configure-push-notifications",
+                action: m["push-notifications.configure.action"](),
+                onAccept() {
+                    return view.push("me/notifications");
+                }
+            });
+        }
+    }
 </script>
 
 <AuthLayout>
@@ -41,23 +62,7 @@
                 toaster.error(error.password);
             }
         }}
-        onSuccess={async () => {
-            const { identifier } = await Device.getId();
-            Cookie.set(DEVICE_ID_COOKIE, identifier, {
-                maxAge: 34560000,
-                sameSite: "lax"
-            });
-            await PushSubscription.synchronize();
-            if (PushSubscription.synchronization.needsConfiguration) {
-                createActionBanner(m["push-notifications.configure.title"](), {
-                    id: "configure-push-notifications",
-                    action: m["push-notifications.configure.action"](),
-                    onAccept() {
-                        return view.push("me/notifications");
-                    }
-                });
-            }
-        }}
+        onSuccess={handleSuccessfulLogin}
         let:processing
         let:errors
     >

@@ -67,7 +67,7 @@
                 `current-user.notifications.${user.preferences.notifications}`
             ](),
             component: SelectNotification,
-            warning: PushSubscription.synchronization.needsConfiguration
+            warning: PushSubscription.warnings.needsConfiguration
         }
     ] as const);
 

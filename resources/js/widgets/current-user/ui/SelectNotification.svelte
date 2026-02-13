@@ -37,7 +37,7 @@
         </User.Info.SelectRow>
     </User.Info.Block>
 
-    {#if PushSubscription.synchronization.needsConfiguration}
+    {#if PushSubscription.warnings.needsConfiguration}
         <Button
             class="gap-2"
             onclick={() => {

@@ -6,36 +6,55 @@ import {
     store as _store
 } from "$/generated/actions/App/Http/Controllers/PushSubscriptionController";
 import { m } from "$/paraglide/messages";
-import { fromStore } from "svelte/store";
+import { get } from "svelte/store";
 
 import { PLATFORM } from "../cfg/constants";
 import { destroyActionBanner } from "../ui/ActionBanner.svelte";
 import { toaster } from "./toaster";
 
-// ------------------------------- SYNC & STATE --------------------------------
+// ------------------------------ SYNCHRONIZATION ------------------------------
 
-export const synchronization = $state({
+export const warnings = $state({
     needsConfiguration: false
 });
 
 export async function synchronize() {
-    const { fcm, user } = fromStore(page).current.props.auth;
-    if (user?.preferences.notifications !== "push") return;
+    const { fcm, user } = get(page).props.auth;
+    if (!user) return;
 
     const hasPermission = await checkPermission();
     if (!hasPermission) {
-        synchronization.needsConfiguration = true;
+        warnings.needsConfiguration = true;
         return;
     }
 
-    const deviceContext = await getDeviceContext();
-    if (!deviceContext) return;
-
-    const { token, deviceId } = deviceContext;
+    const { token, deviceId } = await getDeviceContext();
 
     if (token !== fcm?.token) {
         await store(token, deviceId, { async: true });
     }
+}
+
+export async function setupListeners() {
+    const [tokenHandle, notificationHandle] = await Promise.all([
+        FirebaseMessaging.addListener("tokenReceived", async ({ token }) => {
+            const { identifier } = await Device.getId();
+            await store(token, identifier, { async: true });
+        }),
+        FirebaseMessaging.addListener(
+            "notificationReceived",
+            ({ notification }) => {
+                const { title } = notification;
+                if (!title) return;
+
+                toaster.info(title);
+            }
+        )
+    ]);
+
+    return async () => {
+        await Promise.all([tokenHandle.remove(), notificationHandle.remove()]);
+    };
 }
 
 // ---------------------------------- ACTIONS ----------------------------------
@@ -52,22 +71,14 @@ export async function subscribe() {
         progress.reveal(true);
         progress.start();
 
-        const deviceContext = await getDeviceContext();
-
-        if (!deviceContext) {
-            progress.remove();
-            toaster.error(m["push-notifications.no-service-worker"]());
-            return;
-        }
-
-        const { token, deviceId } = deviceContext;
+        const { token, deviceId } = await getDeviceContext();
 
         await store(token, deviceId, {
             onSuccess() {
                 progress.finish();
                 toaster.success(m["push-notifications.success-subscribe"]());
                 destroyActionBanner("configure-push-notifications");
-                synchronization.needsConfiguration = false;
+                warnings.needsConfiguration = false;
             },
             onInvalid() {
                 progress.remove();
@@ -82,14 +93,6 @@ export async function subscribe() {
 }
 
 export async function unsubscribe() {
-    const hasPermission = await checkPermission();
-    if (!hasPermission) return;
-
-    if (PLATFORM == "web") {
-        const reg = await navigator.serviceWorker.getRegistration();
-        if (!reg) return;
-    }
-
     await FirebaseMessaging.deleteToken();
 }
 
@@ -101,17 +104,8 @@ async function checkPermission() {
 }
 
 async function getDeviceContext() {
-    let swr: ServiceWorkerRegistration | undefined;
-
-    if (PLATFORM == "web") {
-        const reg = await navigator.serviceWorker.getRegistration();
-        if (!reg) return null;
-        swr = reg;
-    }
-
     const { token } = await FirebaseMessaging.getToken({
-        vapidKey: import.meta.env.VITE_FIREBASE_VAPID_KEY,
-        serviceWorkerRegistration: swr
+        vapidKey: import.meta.env.VITE_FIREBASE_VAPID_KEY
     });
 
     const { identifier } = await Device.getId();
@@ -125,7 +119,16 @@ type StoreOptions = {
     onInvalid?: VoidFunction;
 };
 
+let lastStoredToken: string | null = null;
+
 async function store(token: string, deviceId: string, options?: StoreOptions) {
+    // This is the easiest approach to prevent multiple calls to backend when
+    // we receive two identical tokens because the `tokenReceived` event fires
+    // even when we manually call `getToken`.
+    if (lastStoredToken === token) return;
+    const previousLastStoredToken = lastStoredToken;
+    lastStoredToken = token;
+
     await router.visit(_store(), {
         data: {
             fcm_token: token,
@@ -143,6 +146,7 @@ async function store(token: string, deviceId: string, options?: StoreOptions) {
             options?.onSuccess?.();
         },
         onInvalid() {
+            lastStoredToken = previousLastStoredToken;
             options?.onInvalid?.();
             return false;
         }

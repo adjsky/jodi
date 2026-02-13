@@ -12,6 +12,6 @@
 <User.Avatar
     name={user.name}
     onclick={() => view.push("me")}
-    warn={PushSubscription.synchronization.needsConfiguration}
+    warn={PushSubscription.warnings.needsConfiguration}
 />
 <Settings />
