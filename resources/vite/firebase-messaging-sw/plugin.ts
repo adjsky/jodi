@@ -1,6 +1,8 @@
 import fs from "node:fs/promises";
 import path from "node:path";
 
+import packageJson from "../../../package.json" with { type: "json" };
+
 import type { MinimalPluginContextWithoutEnvironment, Plugin } from "vite";
 
 type Context = { env: Record<string, unknown> };
@@ -27,9 +29,11 @@ async function generate(
     this: MinimalPluginContextWithoutEnvironment,
     ctx: Context
 ) {
+    const firebaseVersion = packageJson.devDependencies.firebase.slice(1);
+
     const js = `
-importScripts("https://www.gstatic.com/firebasejs/12.9.0/firebase-app-compat.js");
-importScripts("https://www.gstatic.com/firebasejs/12.9.0/firebase-messaging-compat.js");
+importScripts("https://www.gstatic.com/firebasejs/${firebaseVersion}/firebase-app-compat.js");
+importScripts("https://www.gstatic.com/firebasejs/${firebaseVersion}/firebase-messaging-compat.js");
 
 firebase.initializeApp({
     apiKey: "${ctx.env.VITE_FIREBASE_API_KEY}",
