@@ -94,8 +94,10 @@ export async function unsubscribe() {
 }
 
 export function ahtung(message: string) {
+    // TODO: should we check permissions here? if user has a fcm token but no
+    // permissions, they turned them off manually?
     const { fcm } = get(page).props.auth;
-    if (!fcm) return;
+    if (fcm) return;
 
     toaster.info(message);
 }
