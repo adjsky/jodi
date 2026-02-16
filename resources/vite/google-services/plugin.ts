@@ -62,4 +62,6 @@ export async function generateGoogleServices(ctx: Context) {
         path.join("android", "app", GOOGLE_SERVICES_FILENAME),
         JSON.stringify(json, null, 2)
     );
+
+    return json;
 }
