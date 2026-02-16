@@ -1,5 +1,11 @@
 # Releases
 
+## 0.15.3 (2026-02-16)
+
+### Fix
+
+- set device id cookie on first page visit
+
 ## 0.15.2 (2026-02-16)
 
 ### Fix
