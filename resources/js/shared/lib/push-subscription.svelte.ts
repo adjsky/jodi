@@ -111,7 +111,7 @@ async function checkPermission() {
 
 async function getDeviceContext() {
     const { token } = await FirebaseMessaging.getToken({
-        vapidKey: import.meta.env.VITE_FIREBASE_VAPID_KEY
+        vapidKey: get(page).props.config.firebase.vapidKey
     });
 
     const { identifier } = await Device.getId();

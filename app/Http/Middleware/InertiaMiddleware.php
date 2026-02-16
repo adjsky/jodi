@@ -5,6 +5,8 @@ declare(strict_types=1);
 namespace App\Http\Middleware;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Arr;
+use Illuminate\Support\Str;
 use Inertia\Middleware;
 
 class InertiaMiddleware extends Middleware
@@ -54,6 +56,12 @@ class InertiaMiddleware extends Middleware
                 'message' => fn () => $request->session()->get('message'),
                 'error' => fn () => $request->session()->get('error'),
                 'success' => fn () => $request->session()->get('success'),
+            ],
+            'config' => [
+                'firebase' => Arr::mapWithKeys(
+                    config('services.firebase'),
+                    fn ($value, $key) => [Str::camel($key) => $value]
+                ),
             ],
         ];
     }

@@ -28,4 +28,15 @@ export interface AppPageProps {
         error: string | null;
         success: string | null;
     };
+    config: {
+        firebase: {
+            apiKey: string;
+            authDomain: string;
+            projectId: string;
+            storageBucket: string;
+            messagingSenderId: string;
+            appId: string;
+            vapidKey: string;
+        };
+    };
 }

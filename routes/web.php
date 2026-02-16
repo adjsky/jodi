@@ -9,6 +9,7 @@ use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\CurrentUserController;
 use App\Http\Controllers\DaySummaryController;
 use App\Http\Controllers\EventController;
+use App\Http\Controllers\FirebaseServiceWorkerController;
 use App\Http\Controllers\FriendController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\LoginController;
@@ -21,6 +22,8 @@ use App\Models\Event;
 use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Route;
+
+Route::get('/firebase-messaging-sw.js', [FirebaseServiceWorkerController::class, 'serve']);
 
 Route::middleware('guest')->group(function () {
     Route::prefix('/login')

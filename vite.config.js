@@ -8,7 +8,7 @@ import { VitePWA } from "vite-plugin-pwa";
 import tsconfigPaths from "vite-tsconfig-paths";
 
 import { dto } from "./resources/vite/dto/plugin";
-import { firebaseMessaging } from "./resources/vite/firebase-messaging/plugin";
+import { googleServices } from "./resources/vite/google-services/plugin";
 
 export default defineConfig(({ mode }) => {
     const env = loadEnv(mode, process.cwd(), "");
@@ -32,7 +32,7 @@ export default defineConfig(({ mode }) => {
             }),
             svelte(),
             tailwindcss(),
-            firebaseMessaging(),
+            googleServices(),
             VitePWA({
                 registerType: "prompt",
                 injectRegister: false,
