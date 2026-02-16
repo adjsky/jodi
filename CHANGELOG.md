@@ -1,5 +1,11 @@
 # Releases
 
+## 0.15.2 (2026-02-16)
+
+### Fix
+
+- use dynamic configs for firebase
+
 ## 0.15.1 (2026-02-16)
 
 ### Fix
