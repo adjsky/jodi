@@ -49,7 +49,7 @@ export default defineConfig(
                 }
             ],
 
-            "no-console": ["error", { allow: ["warn", "error"] }],
+            "no-console": ["error", { allow: ["info", "warn", "error"] }],
             "no-constant-condition": ["error", { checkLoops: false }],
             "no-undef": "off"
         }

@@ -8,9 +8,10 @@
     type Props = HTMLButtonAttributes & {
         title: string;
         icon?: Snippet;
+        indicator?: Snippet;
     };
 
-    const { title, children, icon, ...props }: Props = $props();
+    const { title, children, icon, indicator, ...props }: Props = $props();
 </script>
 
 <button
@@ -20,7 +21,11 @@
         props.class
     )}
 >
-    <span class="flex items-center gap-2">{@render icon?.()} {title}</span>
+    <span class="flex items-center gap-2">
+        {@render icon?.()}
+        {title}
+        {@render indicator?.()}
+    </span>
     <span class="flex items-center gap-2 text-cream-500">
         {@render children?.()}
         <ChevronRight class="text-xl" />

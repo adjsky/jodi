@@ -31,10 +31,10 @@ index dcaf4ad..6fa18fd 100644
          disableWhileProcessing?: boolean | undefined;
          invalidateCacheTags?: string | string[] | undefined;
 diff --git a/node_modules/@inertiajs/svelte/dist/components/Link.svelte b/node_modules/@inertiajs/svelte/dist/components/Link.svelte
-index 7b7ed7b..b031026 100644
+index 7b7ed7b..8efac39 100644
 --- a/node_modules/@inertiajs/svelte/dist/components/Link.svelte
 +++ b/node_modules/@inertiajs/svelte/dist/components/Link.svelte
-@@ -1,32 +1,50 @@
+@@ -1,32 +1,51 @@
 -<script>import { isUrlMethodPair } from "@inertiajs/core";
 +<script>
 +import { isUrlMethodPair } from "@inertiajs/core";
@@ -79,6 +79,7 @@ index 7b7ed7b..b031026 100644
 +    cacheFor = 0,
 +    cacheTags = [],
 +    viewTransition = false,
++    showProgress,
 +    onCancelToken,
 +    onBefore,
 +    onBeforeUpdate,
@@ -109,10 +110,11 @@ index 7b7ed7b..b031026 100644
  <svelte:element
    this={asProp}
    use:inertia={{
-@@ -46,28 +64,21 @@ $: elProps = {
+@@ -46,28 +65,22 @@ $: elProps = {
      cacheFor,
      cacheTags,
      viewTransition,
++    showProgress,
 +    onCancelToken,
 +    onBefore,
 +    onBeforeUpdate,
@@ -153,7 +155,7 @@ index 7b7ed7b..b031026 100644
 +  {@render children?.()}
  </svelte:element>
 diff --git a/node_modules/@inertiajs/svelte/dist/components/Link.svelte.d.ts b/node_modules/@inertiajs/svelte/dist/components/Link.svelte.d.ts
-index add7fca..5170435 100644
+index add7fca..a966574 100644
 --- a/node_modules/@inertiajs/svelte/dist/components/Link.svelte.d.ts
 +++ b/node_modules/@inertiajs/svelte/dist/components/Link.svelte.d.ts
 @@ -1,3 +1,4 @@
@@ -161,7 +163,7 @@ index add7fca..5170435 100644
  import { SvelteComponent } from "svelte";
  declare const __propDef: {
      props: {
-@@ -19,30 +20,8 @@ declare const __propDef: {
+@@ -19,30 +20,9 @@ declare const __propDef: {
          cacheFor?: import("@inertiajs/core").CacheForOption | import("@inertiajs/core").CacheForOption[] | undefined;
          cacheTags?: string | string[] | undefined;
          viewTransition?: boolean | ((viewTransition: ViewTransition) => void) | undefined;
@@ -189,6 +191,7 @@ index add7fca..5170435 100644
 -    } & {
 -        [evt: string]: CustomEvent<any>;
 -    };
++        showProgress?: boolean;
 +    } & Partial<VisitCallbacks>;
 +    events: {};
      slots: {

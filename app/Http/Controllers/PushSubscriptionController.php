@@ -8,31 +8,19 @@ use Illuminate\Http\Request;
 
 class PushSubscriptionController extends Controller
 {
-    public function create(Request $request)
+    public function store(Request $request)
     {
         $data = $request->validate([
-            'endpoint' => 'required|string',
-            'key' => 'nullable|string',
-            'token' => 'nullable|string',
-            'contentEncoding' => 'nullable|string',
+            'fcm_token' => 'required|string',
+            'platform' => 'required|string|in:web,android',
+            'device_id' => 'required|string',
         ]);
 
-        $this->user()->updatePushSubscription(
-            $data['endpoint'],
-            $data['key'] ?? null,
-            $data['token'] ?? null,
-            $data['contentEncoding'] ?? null
+        $this->user()->pushSubscriptions()->updateOrCreate(
+            ['device_id' => $data['device_id']],
+            $data,
         );
 
-        return response(status: 204);
-    }
-
-    public function destroy(Request $request)
-    {
-        $data = $request->validate(['endpoint' => 'required|string']);
-
-        $this->user()->deletePushSubscription($data['endpoint']);
-
-        return response(status: 204);
+        return back();
     }
 }

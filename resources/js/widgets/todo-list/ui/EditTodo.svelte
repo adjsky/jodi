@@ -22,6 +22,7 @@
     import { NOTIFICATION_DEFAULT_SUBHOURS } from "$/shared/cfg/constants";
     import { diff, normalizeIsoString } from "$/shared/lib/date";
     import { announce, cleanFormPayload } from "$/shared/lib/form";
+    import * as PushSubscription from "$/shared/lib/push-subscription.svelte";
     import { toaster } from "$/shared/lib/toaster";
     import SaveOrClose from "$/shared/ui/SaveOrClose.svelte";
     import Sheet from "$/shared/ui/Sheet.svelte";
@@ -106,6 +107,11 @@
                 ? normalizeIsoString(scheduledAt.toAbsoluteString())
                 : toCalendarDate(scheduledAt).toString()
         })}
+        onSuccess={() => {
+            if (notifyAt) {
+                PushSubscription.ahtung(m["todos.reminder-ahtung"]());
+            }
+        }}
         class="flex grow flex-col pb-18"
         let:isDirty
     >

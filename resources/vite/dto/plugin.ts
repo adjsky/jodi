@@ -4,7 +4,7 @@ import { promisify } from "node:util";
 
 import type { MinimalPluginContextWithoutEnvironment, Plugin } from "vite";
 
-const execAsync = promisify(exec);
+const execa = promisify(exec);
 
 export function dto(): Plugin[] {
     return [
@@ -25,7 +25,7 @@ export function dto(): Plugin[] {
 
 async function generate(this: MinimalPluginContextWithoutEnvironment) {
     try {
-        await execAsync("php artisan typescript:transform", {
+        await execa("php artisan typescript:transform", {
             timeout: 5_000
         });
         this.info("Types generated for DTOs");

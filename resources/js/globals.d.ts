@@ -8,9 +8,6 @@ declare module "@inertiajs/core" {
 
 export interface AppPageProps {
     version: string;
-    config: {
-        VAPID_PUBLIC_KEY: string;
-    };
     auth: {
         user: {
             id: number;
@@ -22,6 +19,9 @@ export interface AppPageProps {
                 notifications: "push" | "mail";
             };
         };
+        fcm: {
+            token: string;
+        } | null;
     };
     flash: {
         message: string | null;

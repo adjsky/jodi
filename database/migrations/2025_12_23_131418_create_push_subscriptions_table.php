@@ -15,14 +15,15 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::connection(config('webpush.database_connection'))->create(config('webpush.table_name'), function (Blueprint $table) {
+        Schema::create('push_subscriptions', function (Blueprint $table) {
             $table->bigIncrements('id');
-            $table->morphs('subscribable', 'push_subscriptions_subscribable_morph_idx');
-            $table->string('endpoint', 500)->unique();
-            $table->string('public_key')->nullable();
-            $table->string('auth_token')->nullable();
-            $table->string('content_encoding')->nullable();
+            $table->foreignId('user_id')->constrained('users');
+            $table->text('fcm_token');
+            $table->string('platform');
+            $table->string('device_id');
             $table->timestamps();
+
+            $table->unique(['user_id', 'device_id']);
         });
     }
 
@@ -33,6 +34,6 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::connection(config('webpush.database_connection'))->dropIfExists(config('webpush.table_name'));
+        Schema::dropIfExists('push_subscriptions');
     }
 };

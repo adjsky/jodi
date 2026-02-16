@@ -15,7 +15,7 @@ class SetupCommand extends Command
     const EXAMPLE_DOTENV_PATH = '.env.example';
 
     protected $signature = 'jodi:setup
-                            {--no-keys : Whether to skip application/vapid keys generation.}
+                            {--no-key : Whether to skip application key generation.}
                             {--seed : Indicates if the seed task should be re-run.}
                             {--recreate : Whether to overwrite existing files.}';
 
@@ -33,13 +33,9 @@ class SetupCommand extends Command
                 return self::FAILURE;
             }
 
-            $withKeys = ! $this->option('no-keys');
+            $withKey = ! $this->option('no-key');
 
-            if ($withKeys && ! $this->generateApplicationKey()) {
-                return self::FAILURE;
-            }
-
-            if ($withKeys && ! $this->generateVapidKeys()) {
+            if ($withKey && ! $this->generateApplicationKey()) {
                 return self::FAILURE;
             }
 
@@ -100,20 +96,6 @@ class SetupCommand extends Command
         return $this->runArtisan(
             'key:generate',
             label: 'application key generation'
-        );
-    }
-
-    protected function generateVapidKeys(): bool
-    {
-        if (config('webpush.vapid.public_key') && config('webpush.vapid.private_key') && ! $this->option('recreate')) {
-            $this->comment('! vapid keys already exist.');
-
-            return true;
-        }
-
-        return $this->runArtisan(
-            'webpush:vapid',
-            label: 'vapid keys generation'
         );
     }
 

@@ -1,15 +1,12 @@
 <script lang="ts">
-    import { page } from "@inertiajs/svelte";
+    import { page, progress } from "@inertiajs/svelte";
     import { Bell } from "@lucide/svelte";
     import { User } from "$/entities/user";
     import { logout } from "$/generated/routes";
     import { m } from "$/paraglide/messages";
     import { getLocale } from "$/paraglide/runtime";
     import { LANGUAGES } from "$/shared/lib/language";
-    import {
-        destroyPushSubscription,
-        showConfigurePushBannerAgain
-    } from "$/shared/lib/push-notifications";
+    import * as PushSubscription from "$/shared/lib/push-subscription.svelte";
     import FloatingView from "$/shared/ui/FloatingView.svelte";
 
     import { buildViewName, view } from "../model/view";
@@ -21,6 +18,7 @@
     import SelectLanguage from "./SelectLanguage.svelte";
     import SelectNotification from "./SelectNotification.svelte";
     import SelectWeekStart from "./SelectWeekStart.svelte";
+    import Warning from "./Warning.svelte";
 
     const user = $derived($page.props.auth.user);
     const { nInvitations, nFriends } = $derived($page.props.me);
@@ -52,21 +50,24 @@
         {
             name: "language",
             value: LANGUAGES[getLocale()],
-            component: SelectLanguage
+            component: SelectLanguage,
+            warning: false
         },
         {
             name: "week-start",
             value: m[
                 `current-user.week-start.${user.preferences.weekStartOn}`
             ](),
-            component: SelectWeekStart
+            component: SelectWeekStart,
+            warning: false
         },
         {
             name: "notifications",
             value: m[
                 `current-user.notifications.${user.preferences.notifications}`
             ](),
-            component: SelectNotification
+            component: SelectNotification,
+            warning: PushSubscription.warnings.needsConfiguration
         }
     ] as const);
 
@@ -115,11 +116,16 @@
             title={m["current-user.app-settings.title"]()}
             class="mt-10"
         >
-            {#each appSettingsRows as { name, value } (name)}
+            {#each appSettingsRows as { name, value, warning } (name)}
                 <User.Info.SettingRow
                     title={m[`current-user.app-settings.${name}`]()}
                     onclick={() => onRowClick(name)}
                 >
+                    {#snippet indicator()}
+                        {#if warning}
+                            <Warning />
+                        {/if}
+                    {/snippet}
                     {value}
                 </User.Info.SettingRow>
             {/each}
@@ -129,9 +135,17 @@
             <User.Info.ActionRow
                 href={logout()}
                 onBefore={async () => {
-                    await destroyPushSubscription();
-                    showConfigurePushBannerAgain();
+                    progress.reveal(true);
+                    progress.start();
+                    await PushSubscription.unsubscribe();
                 }}
+                onInvalid={() => {
+                    progress.remove();
+                }}
+                onSuccess={() => {
+                    progress.finish();
+                }}
+                showProgress={false}
                 viewTransition
             >
                 {m["current-user.log-out"]()}

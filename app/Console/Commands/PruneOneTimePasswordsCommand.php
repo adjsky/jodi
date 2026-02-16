@@ -15,6 +15,6 @@ class PruneOneTimePasswordsCommand extends Command
 
     public function handle(): void
     {
-        UserOneTimePasswords::whereDate('expires_at', '<=', now())->delete();
+        UserOneTimePasswords::where('expires_at', '<=', now())->delete();
     }
 }
