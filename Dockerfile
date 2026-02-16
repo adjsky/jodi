@@ -1,5 +1,5 @@
 ARG PHP_VERSION=8.4
-ARG NODE_VERSION=24
+ARG NODE_VERSION=24.12.0
 
 ###################################################################
 # Stage 1: Base                                                   #
