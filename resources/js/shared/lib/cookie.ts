@@ -15,10 +15,11 @@ type SetCookieOptions = {
     path?: string;
     maxAge?: number;
     sameSite?: "strict" | "lax" | "none";
+    secure?: boolean;
 };
 
 export function set(key: string, value: string, options?: SetCookieOptions) {
-    const { path = "/", maxAge, sameSite } = options ?? {};
+    const { path = "/", maxAge, sameSite, secure } = options ?? {};
 
     let cookie = `${key}=${value}; path=${path};`;
 
@@ -28,6 +29,10 @@ export function set(key: string, value: string, options?: SetCookieOptions) {
 
     if (sameSite) {
         cookie += `samesite=${sameSite};`;
+    }
+
+    if (secure) {
+        cookie += "secure;";
     }
 
     document.cookie = cookie;
