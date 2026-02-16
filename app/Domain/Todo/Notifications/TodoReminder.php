@@ -6,6 +6,7 @@ namespace App\Domain\Todo\Notifications;
 
 use App\Models\Todo;
 use App\Models\User;
+use App\Support\Reminder;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\MailMessage;
@@ -32,19 +33,16 @@ class TodoReminder extends Notification implements ShouldQueue
     {
         return new FcmMessage(notification: new FcmNotification(
             title: __(':title - time to start.', ['title' => $this->todo->title]),
-            body: __('Scheduled for :time.', ['time' => $this->startsIn()]),
+            body: __('Scheduled for :time.', ['time' => Reminder::startsIn($this->todo->scheduled_at)]),
         ));
     }
 
     public function toMail(): MailMessage
     {
-        return (new MailMessage)
-            ->subject(__('mail.todo_reminder.subject', ['title' => $this->todo->title, 'startsIn' => $this->startsIn()]))
-            ->markdown('mail.todo-reminder', ['todo' => $this->todo, 'startsIn' => $this->startsIn()]);
-    }
+        $startsIn = Reminder::startsIn($this->todo->scheduled_at);
 
-    protected function startsIn(): string
-    {
-        return $this->todo->scheduled_at->fromNow(parts: 2);
+        return (new MailMessage)
+            ->subject(__('mail.todo_reminder.subject', ['title' => $this->todo->title, 'startsIn' => $startsIn]))
+            ->markdown('mail.todo-reminder', ['todo' => $this->todo, 'startsIn' => $startsIn]);
     }
 }

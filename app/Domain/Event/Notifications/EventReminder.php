@@ -6,6 +6,7 @@ namespace App\Domain\Event\Notifications;
 
 use App\Models\Event;
 use App\Models\User;
+use App\Support\Reminder;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\MailMessage;
@@ -32,19 +33,14 @@ class EventReminder extends Notification implements ShouldQueue
     {
         return new FcmMessage(notification: new FcmNotification(
             title: __(':title is upcoming.', ['title' => $this->event->title]),
-            body: __('Starts :time.', ['time' => $this->startsIn()]),
+            body: __('Starts :time.', ['time' => Reminder::startsIn($this->event->starts_at)]),
         ));
     }
 
     public function toMail(): MailMessage
     {
         return (new MailMessage)
-            ->subject(__('mail.event_reminder.subject', ['title' => $this->event->title, 'startsIn' => $this->startsIn()]))
+            ->subject(__('mail.event_reminder.subject', ['title' => $this->event->title, 'startsIn' => Reminder::startsIn($this->event->starts_at)]))
             ->markdown('mail.event-reminder', ['event' => $this->event]);
-    }
-
-    protected function startsIn(): string
-    {
-        return $this->event->starts_at->fromNow(parts: 2);
     }
 }

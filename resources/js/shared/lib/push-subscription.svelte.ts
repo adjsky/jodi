@@ -41,10 +41,10 @@ export async function setupListeners() {
         FirebaseMessaging.addListener(
             "notificationReceived",
             ({ notification }) => {
-                const { title } = notification;
+                const { title, ...options } = notification;
                 if (!title) return;
 
-                toaster.info(title);
+                new Notification(title, options);
             }
         )
     ]);
