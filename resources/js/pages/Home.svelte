@@ -1,4 +1,5 @@
 <script lang="ts">
+    import { usePoll } from "@inertiajs/svelte";
     import { AddTodoOrEvent } from "$/features/add-todo-or-event";
     import { m } from "$/paraglide/messages";
     import CalendarCat from "$/shared/assets/calendar-cat.svg";
@@ -18,6 +19,8 @@
     const hasNoEventsAndTodos = $derived(
         todos?.length === 0 && events?.length === 0
     );
+
+    usePoll(30_000);
 </script>
 
 <ActionBanner />
