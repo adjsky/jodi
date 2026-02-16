@@ -68,7 +68,7 @@ firebase.messaging();
     this.info(`${SERVICE_WORKER_FILENAME} generated`);
 }
 
-async function generateGoogleServices(
+export async function generateGoogleServices(
     this: MinimalPluginContextWithoutEnvironment,
     ctx: Context
 ) {

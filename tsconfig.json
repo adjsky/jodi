@@ -27,6 +27,7 @@
     },
     "include": [
         "capacitor.config.ts",
+        "scripts/**/*.ts",
         "resources/**/*.svelte",
         "resources/**/*.svelte.js",
         "resources/**/*.svelte.ts",
