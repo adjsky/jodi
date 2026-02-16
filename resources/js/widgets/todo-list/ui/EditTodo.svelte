@@ -88,7 +88,7 @@
 <Sheet
     bind:open
     defaultSnapPoint={0.6}
-    snapPoints={[0.6, 0.95]}
+    snapPoints={[0.6, 0.9]}
     background="var(--color-white)"
     grip="var(--color-cream-300)"
     onCloseComplete={() => {
