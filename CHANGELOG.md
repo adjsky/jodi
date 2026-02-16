@@ -1,5 +1,11 @@
 # Releases
 
+## 0.15.4 (2026-02-16)
+
+### Fix
+
+- run device id logic after app mount
+
 ## 0.15.3 (2026-02-16)
 
 ### Fix
