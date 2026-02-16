@@ -11,6 +11,7 @@
     import { NOTIFICATION_DEFAULT_SUBHOURS } from "$/shared/cfg/constants";
     import { diff } from "$/shared/lib/date";
     import { cleanFormPayload } from "$/shared/lib/form";
+    import * as PushSubscription from "$/shared/lib/push-subscription.svelte";
     import SaveOrClose from "$/shared/ui/SaveOrClose.svelte";
     import ToolbarAction from "$/shared/ui/ToolbarAction.svelte";
 
@@ -45,7 +46,10 @@
         startsAt: startsAt.toAbsoluteString(),
         endsAt: endsAt.toAbsoluteString()
     })}
-    onSuccess={() => onClose()}
+    onSuccess={() => {
+        PushSubscription.ahtung(m["events.reminder-ahtung"]());
+        onClose();
+    }}
     class="flex grow flex-col pb-18"
     let:processing
 >

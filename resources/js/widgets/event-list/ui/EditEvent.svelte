@@ -17,6 +17,7 @@
     import { m } from "$/paraglide/messages";
     import { diff, normalizeIsoString } from "$/shared/lib/date";
     import { announce, cleanFormPayload } from "$/shared/lib/form";
+    import * as PushSubscription from "$/shared/lib/push-subscription.svelte";
     import SaveOrClose from "$/shared/ui/SaveOrClose.svelte";
     import Sheet from "$/shared/ui/Sheet.svelte";
     import ToolbarAction from "$/shared/ui/ToolbarAction.svelte";
@@ -90,6 +91,9 @@
             startsAt: normalizeIsoString(startsAt.toAbsoluteString()),
             endsAt: normalizeIsoString(endsAt.toAbsoluteString())
         })}
+        onSuccess={() => {
+            PushSubscription.ahtung(m["events.reminder-ahtung"]());
+        }}
         class="flex grow flex-col pb-18"
         let:isDirty
     >

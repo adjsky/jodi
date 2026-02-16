@@ -61,12 +61,13 @@
         "request-error": "Failed to load calendar details. Try again later."
     },
     "todos": {
-        "add": "Add todo",
-        "title": "Todos",
+        "add": "Add task",
+        "title": "Tasks",
         "ungrouped": "No group",
-        "no-todos": "Looks like you have nothing to do. Click + to add a todo.",
+        "no-todos": "Looks like you have nothing to do. Click + to add a task.",
         "select-color": "Select color",
-        "delete-ahtung": "Are you sure you want to delete this todo?",
+        "delete-ahtung": "Are you sure you want to delete this task?",
+        "reminder-ahtung": "Turn on notifications so you don't forget the task.",
         "category": {
             "title": "Category",
             "trigger": "+ Category",
@@ -79,7 +80,7 @@
             "add": "Add time"
         },
         "reminder": {
-            "select-time": "Select a todo time first."
+            "select-time": "Select a task time first."
         },
         "tooltips": {
             "delete": "Delete",
@@ -89,11 +90,11 @@
             "more": "More"
         },
         "errors": {
-            "complete": "Failed to complete todo. Try again later.",
-            "edit": "Failed to update todo. Try again later.",
-            "delete": "Failed to delete todo. Try again later.",
+            "complete": "Failed to complete task. Try again later.",
+            "edit": "Failed to update task. Try again later.",
+            "delete": "Failed to delete task. Try again later.",
             "category": "Failed to delete category. Try again later.",
-            "reorder": "Failed to reorder todos. Try again later."
+            "reorder": "Failed to reorder tasks. Try again later."
         },
         "placeholders": {
             "title": "Task",
@@ -107,6 +108,7 @@
         "time": "Time",
         "select-color": "Select color",
         "delete-ahtung": "Are you sure you want to delete this event?",
+        "reminder-ahtung": "Turn on notifications so you don't forget the event.",
         "tooltips": {
             "delete": "Delete",
             "repeat": "Repeat",

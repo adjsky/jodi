@@ -93,6 +93,13 @@ export async function unsubscribe() {
     await FirebaseMessaging.deleteToken();
 }
 
+export function ahtung(message: string) {
+    const { fcm } = get(page).props.auth;
+    if (!fcm) return;
+
+    toaster.info(message);
+}
+
 // ---------------------------------- HELPERS ----------------------------------
 
 async function checkPermission() {
