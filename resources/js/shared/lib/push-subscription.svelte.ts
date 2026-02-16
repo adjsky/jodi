@@ -1,10 +1,7 @@
 import { FirebaseMessaging } from "@capacitor-firebase/messaging";
 import { Device } from "@capacitor/device";
 import { page, progress, router } from "@inertiajs/svelte";
-import {
-    destroy as _destroy,
-    store as _store
-} from "$/generated/actions/App/Http/Controllers/PushSubscriptionController";
+import { store as _store } from "$/generated/actions/App/Http/Controllers/PushSubscriptionController";
 import { m } from "$/paraglide/messages";
 import { get } from "svelte/store";
 
