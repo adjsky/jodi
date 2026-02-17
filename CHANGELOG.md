@@ -1,5 +1,11 @@
 # Releases
 
+## 0.15.11 (2026-02-17)
+
+### Fix
+
+- expand bottom sheet when focusing on title&description
+
 ## 0.15.10 (2026-02-17)
 
 ### Fix
