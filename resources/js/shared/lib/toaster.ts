@@ -13,7 +13,6 @@ export const toaster = types.reduce(
             toast(Toast, {
                 position: "top-center",
                 unstyled: true,
-                duration: Infinity,
                 class: "w-full [view-transition-name:disabled] top-safe!",
                 componentProps: { title, type }
             });
