@@ -12,7 +12,6 @@ import { googleServices } from "./resources/vite/google-services/plugin";
 
 export default defineConfig(({ mode }) => {
     const env = loadEnv(mode, process.cwd(), "");
-    const hasHostArg = process.argv.includes("--host");
 
     return {
         plugins: [
@@ -123,13 +122,11 @@ export default defineConfig(({ mode }) => {
                 }
             })
         ],
-        ...(hasHostArg && {
-            server: {
-                cors: true,
-                hmr: {
-                    host: new URL(env.CAPACITOR_SERVER_URL).hostname
-                }
+        server: {
+            cors: true,
+            hmr: {
+                host: new URL(env.CAPACITOR_SERVER_URL).hostname
             }
-        })
+        }
     };
 });

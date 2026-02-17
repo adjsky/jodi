@@ -9,14 +9,11 @@ init:
 # -------------------------------- DEVELOPMENT ---------------------------------
 
 [parallel]
-dev: php-serve vite worker logs
+dev: (php-serve "--host=0.0.0.0") (vite "--host") worker logs
 
 dev-preview:
     npm run build
     frankenphp run
-
-[parallel]
-dev-android: (php-serve "--host=0.0.0.0") (vite "--host") worker logs
 
 gen-assets:
     npx pwa-assets-generator
