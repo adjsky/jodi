@@ -38,7 +38,7 @@
             alt=""
             loading="lazy"
             decoding="async"
-            class="mx-auto mt-30 max-w-48"
+            class="mx-auto mt-[15vh] max-w-48"
         />
         <p class="mx-auto mt-8 max-w-74 text-center text-lg font-medium">
             {m["home.empty-day"]()}
