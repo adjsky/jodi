@@ -1,0 +1,9 @@
+vars:
+  CAPACITOR_APP_ID:
+  CI_BUILD_NUMBER:
+    default: 1
+
+platforms:
+  android:
+    versionCode: $CI_BUILD_NUMBER
+    packageName: $CAPACITOR_APP_ID

@@ -1,4 +1,4 @@
-package dev.adjika.jodi;
+package dev.adjika.jodi.dev;
 
 import com.getcapacitor.BridgeActivity;
 
