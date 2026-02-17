@@ -2,6 +2,7 @@
     import { Dialog } from "@ark-ui/svelte";
     import { page } from "@inertiajs/svelte";
     import { HistoryView } from "$/shared/inertia/history-view.svelte";
+    import { DISABLE_SHEET_DRAGGING } from "$/shared/ui/Sheet.svelte";
 
     import YearCalendar from "./YearCalendar.svelte";
 
@@ -18,6 +19,7 @@
     let { selected, children, onSelect }: Props = $props();
 
     const view = new HistoryView<{
+        [DISABLE_SHEET_DRAGGING]: boolean;
         __yearcalendardialog: { isOpen: boolean };
     }>();
 </script>
@@ -30,6 +32,7 @@
             if (v) {
                 void view.push(view.name, {
                     ...view.meta,
+                    [DISABLE_SHEET_DRAGGING]: true,
                     __yearcalendardialog: { isOpen: true }
                 });
             } else {
@@ -54,7 +57,7 @@
         />
         <Dialog.Content
             class={[
-                "fixed inset-x-0 bottom-0 z-100 h-[95%] duration-300",
+                "fixed inset-x-0 bottom-0 z-100 h-[90%] duration-300",
                 "data-[state=closed]:animate-out data-[state=closed]:slide-out-to-bottom",
                 "data-[state=open]:animate-in data-[state=open]:slide-in-from-bottom"
             ]}
@@ -62,7 +65,7 @@
             <YearCalendar
                 {selected}
                 portal={false}
-                class="absolute h-full rounded-t-2xl bg-white"
+                class="absolute h-full rounded-t-2xl bg-white pt-3"
                 start={$page.props.auth.user.preferences.weekStartOn}
                 onSelect={async (date) => {
                     await view.back();

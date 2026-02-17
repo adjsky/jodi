@@ -95,8 +95,9 @@
             }
         }
     }
-    defaultSnapPoint={0.9}
-    snapPoints={[0.6, 0.9]}
+    maxHeight={0.9}
+    snapPoints={[0.6]}
+    startingSnapPoint={0.9}
     background="var(--color-white)"
     grip="var(--color-cream-300)"
 >

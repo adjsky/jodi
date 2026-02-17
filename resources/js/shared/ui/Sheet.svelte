@@ -1,6 +1,11 @@
+<script module>
+    export const DISABLE_SHEET_DRAGGING = "___sheet_disable_dragging";
+</script>
+
 <script lang="ts">
     import { BottomSheet } from "svelte-bottom-sheet";
 
+    import { HistoryView } from "../inertia/history-view.svelte";
     import { tw } from "../lib/styles";
 
     import type { ClassName } from "../lib/styles";
@@ -10,8 +15,9 @@
         open?: boolean;
         background: string;
         grip?: string;
+        maxHeight: number;
         snapPoints: number[];
-        defaultSnapPoint?: number;
+        startingSnapPoint: number;
         class?: ClassName;
         children: Snippet;
         trigger?: Snippet;
@@ -22,21 +28,25 @@
         open = $bindable(false),
         background,
         grip,
+        maxHeight,
         snapPoints,
-        defaultSnapPoint,
+        startingSnapPoint,
         class: classname,
         children,
         trigger,
         onCloseComplete
     }: Props = $props();
+
+    const view = new HistoryView();
 </script>
 
 <BottomSheet
     bind:isSheetOpen={open}
     settings={{
-        maxHeight: Math.max(...snapPoints),
+        maxHeight,
         snapPoints,
-        startingSnapPoint: defaultSnapPoint
+        startingSnapPoint,
+        disableDragging: Boolean(view.meta?.[DISABLE_SHEET_DRAGGING])
     }}
     onclosecomplete={onCloseComplete}
 >

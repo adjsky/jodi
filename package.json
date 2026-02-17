@@ -5,7 +5,7 @@
     "scripts": {
         "build": "vite build",
         "appflow:build": "./scripts/appflow.ts",
-        "dev": "vite --force",
+        "dev": "vite",
         "lint": "eslint",
         "format": "prettier",
         "check": "svelte-check",

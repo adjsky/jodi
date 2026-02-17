@@ -16,7 +16,7 @@ dev-preview:
     frankenphp run
 
 [parallel]
-dev-android: (php-serve "--host=0.0.0.0") (vite "--host") worker logs (cap "open android")
+dev-android: (php-serve "--host=0.0.0.0") (vite "--host") worker logs
 
 gen-assets:
     npx pwa-assets-generator

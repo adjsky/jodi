@@ -65,7 +65,7 @@
     </span>
     <div
         class={[
-            "flex h-10 w-min items-center rounded-lg border border-cream-300 bg-white px-4 select-none",
+            "flex h-10 w-max items-center rounded-lg border border-cream-300 bg-white px-4 select-none",
             !isValid && "border-red"
         ]}
     >

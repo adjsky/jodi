@@ -5,6 +5,7 @@
     import { m } from "$/paraglide/messages";
     import Jelly from "$/shared/assets/jelly.svg";
     import { announce } from "$/shared/lib/form";
+    import { DISABLE_SHEET_DRAGGING } from "$/shared/ui/Sheet.svelte";
     import { tick } from "svelte";
 
     import { view } from "../model/view";
@@ -58,6 +59,7 @@
             if (v) {
                 void view.push(view.name, {
                     ...view.meta,
+                    [DISABLE_SHEET_DRAGGING]: true,
                     __selectcategory: { isOpen: true }
                 });
             } else {
@@ -137,6 +139,7 @@
                     bind:value={search}
                     class="form-input h-13.75 w-full rounded-xl border-none bg-cream-500/10 pl-10 text-lg font-medium outline-none placeholder:text-cream-600 focus:ring-0"
                     placeholder={m["todos.category.placeholder"]()}
+                    data-autofocus
                 />
             </div>
 

@@ -1,5 +1,6 @@
 <script lang="ts">
     import { Check, Trash } from "@lucide/svelte";
+    import { DISABLE_SHEET_DRAGGING } from "$/shared/ui/Sheet.svelte";
 
     import { view } from "../model/view";
 
@@ -46,6 +47,7 @@
                     e.preventDefault();
                     void view.push(view.name, {
                         ...view.meta,
+                        [DISABLE_SHEET_DRAGGING]: true,
                         __selectcategory: { isOpen: true },
                         __categorytodelete: name
                     });
