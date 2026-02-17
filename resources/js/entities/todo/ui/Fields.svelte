@@ -85,6 +85,7 @@
     placeholder={m["todos.placeholders.description"]()}
     class="mt-3 form-input field-sizing-content w-full grow overflow-y-scroll border-none bg-transparent p-0 text-lg font-semibold text-cream-950 placeholder:text-cream-600 focus:ring-0"
     defaultValue={description ?? ""}
+    data-expand-sheet
 ></textarea>
 
 <div
@@ -107,6 +108,7 @@
         placeholder={m["todos.placeholders.title"]()}
         defaultValue={title ?? ""}
         data-autofocus={boolAttr(!title)}
+        data-expand-sheet
         required
     />
 {/snippet}

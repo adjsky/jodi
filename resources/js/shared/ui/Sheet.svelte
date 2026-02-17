@@ -3,6 +3,7 @@
 </script>
 
 <script lang="ts">
+    import { Capacitor } from "@capacitor/core";
     import { BottomSheet } from "svelte-bottom-sheet";
 
     import { HistoryView } from "../inertia/history-view.svelte";
@@ -37,10 +38,13 @@
         onCloseComplete
     }: Props = $props();
 
+    let sheet = $state<ReturnType<typeof BottomSheet> | null>(null);
+
     const view = new HistoryView();
 </script>
 
 <BottomSheet
+    bind:this={sheet}
     bind:isSheetOpen={open}
     settings={{
         maxHeight,
@@ -70,6 +74,13 @@
                     "relative flex! h-full w-full flex-col pt-2! px-safe-offset-4! pb-safe-offset-2!",
                     classname
                 )}
+                onfocusin={(e) => {
+                    if (!Capacitor.isNativePlatform()) return;
+                    const target = e.target as HTMLElement;
+                    if (target.matches("[data-expand-sheet]")) {
+                        sheet?.setSnapPoint(1);
+                    }
+                }}
             >
                 {@render children()}
             </BottomSheet.Content>
