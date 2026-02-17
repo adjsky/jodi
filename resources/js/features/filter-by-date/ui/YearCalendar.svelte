@@ -3,7 +3,6 @@
     import { tw } from "$/shared/lib/styles";
     import Button from "$/shared/ui/Button.svelte";
     import FloatingView from "$/shared/ui/FloatingView.svelte";
-    import { onMount } from "svelte";
 
     import { Year } from "../model/year.svelte";
     import Month from "./Month.svelte";
@@ -36,7 +35,7 @@
 
     let monthsNode = $state<HTMLElement | null>(null);
 
-    onMount(() => {
+    $effect(() => {
         const selected = monthsNode?.querySelector("button[data-selected]");
         selected?.scrollIntoView({ block: "center" });
     });
