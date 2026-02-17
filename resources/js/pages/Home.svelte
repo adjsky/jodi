@@ -20,7 +20,7 @@
         todos?.length === 0 && events?.length === 0
     );
 
-    usePoll(30_000);
+    usePoll(30_000, {}, { keepAlive: false });
 </script>
 
 <ActionBanner />
