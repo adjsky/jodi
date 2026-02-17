@@ -171,7 +171,7 @@
                         alt=""
                         loading="lazy"
                         decoding="async"
-                        class="mx-auto mt-14 w-full max-w-28"
+                        class="mx-auto mt-[10vh] w-full max-w-28"
                     />
                     <p
                         class="mx-auto mt-8 max-w-74 text-center text-lg font-medium"
