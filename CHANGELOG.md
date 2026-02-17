@@ -1,5 +1,12 @@
 # Releases
 
+## 0.15.9 (2026-02-17)
+
+### Fix
+
+- remove fixed width for time picker trigger
+- add relative margin
+
 ## 0.15.8 (2026-02-17)
 
 ### Fix
