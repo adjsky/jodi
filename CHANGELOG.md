@@ -1,5 +1,11 @@
 # Releases
 
+## 0.15.13 (2026-02-17)
+
+### Fix
+
+- don't poll in background
+
 ## 0.15.12 (2026-02-17)
 
 ### Fix
