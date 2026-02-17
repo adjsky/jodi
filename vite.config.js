@@ -122,11 +122,13 @@ export default defineConfig(({ mode }) => {
                 }
             })
         ],
-        server: {
-            cors: true,
-            hmr: {
-                host: new URL(env.CAPACITOR_SERVER_URL).hostname
+        ...(env.CAPACITOR_SERVER_URL && {
+            server: {
+                cors: true,
+                hmr: {
+                    host: new URL(env.CAPACITOR_SERVER_URL).hostname
+                }
             }
-        }
+        })
     };
 });
