@@ -1,5 +1,11 @@
 # Releases
 
+## 0.15.12 (2026-02-17)
+
+### Fix
+
+- onMount -> $effect, for some reason it stopped working????
+
 ## 0.15.11 (2026-02-17)
 
 ### Fix
