@@ -11,6 +11,11 @@ const config: CapacitorConfig = {
     server: {
         url: process.env.CAPACITOR_SERVER_URL,
         cleartext: !process.env.CAPACITOR_SERVER_URL?.startsWith("https://")
+    },
+    plugins: {
+        SystemBars: {
+            style: "LIGHT"
+        }
     }
 };
 
