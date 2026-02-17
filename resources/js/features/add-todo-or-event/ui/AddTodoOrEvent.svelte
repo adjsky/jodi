@@ -97,7 +97,7 @@
     }
     maxHeight={0.9}
     snapPoints={[0.6]}
-    startingSnapPoint={0.9}
+    startingSnapPoint={1}
     background="var(--color-white)"
     grip="var(--color-cream-300)"
 >
