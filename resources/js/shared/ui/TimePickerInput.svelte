@@ -76,7 +76,7 @@
 {:else}
     <button
         type="button"
-        class={tw("w-12 rounded-md text-center font-bold", classname)}
+        class={tw("rounded-md text-center font-bold", classname)}
         onclick={() => showPicker()}
     >
         {visibleValue}
