@@ -2,6 +2,4 @@
 <resources>
     <string name="app_name">Jodi</string>
     <string name="title_activity_main">Jodi</string>
-    <string name="package_name">dev.adjika.jodi</string>
-    <string name="custom_url_scheme">dev.adjika.jodi</string>
 </resources>
