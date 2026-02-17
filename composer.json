@@ -1,7 +1,7 @@
 {
     "$schema": "https://getcomposer.org/schema.json",
     "name": "adjsky/jodi",
-    "version": "0.15.5",
+    "version": "0.15.6",
     "type": "project",
     "description": "Journal & Diary",
     "keywords": [

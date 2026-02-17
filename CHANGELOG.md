@@ -1,5 +1,12 @@
 # Releases
 
+## 0.15.6 (2026-02-17)
+
+### Fix
+
+- nprogress styles
+- category focus issue
+
 ## 0.15.5 (2026-02-17)
 
 ### Fix
