@@ -1,5 +1,15 @@
 # Releases
 
+## 0.15.8 (2026-02-17)
+
+### Fix
+
+- add todos/events sheet starting snap point
+- categories top margin
+- android app id
+- status bar color
+- revert add dev suffix to capacitor app id
+
 ## 0.15.7 (2026-02-17)
 
 ### Fix
