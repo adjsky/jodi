@@ -154,4 +154,13 @@
         width: 1em;
         height: 1em;
     }
+
+    #nprogress .bar {
+        height: 3px !important;
+        top: env(safe-area-inset-top, 0) !important;
+
+        .peg {
+            display: none !important;
+        }
+    }
 }
