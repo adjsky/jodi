@@ -1,5 +1,11 @@
 # Releases
 
+## 0.15.14 (2026-02-17)
+
+### Fix
+
+- remove Infinity from toaster duration
+
 ## 0.15.13 (2026-02-17)
 
 ### Fix
