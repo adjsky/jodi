@@ -1,5 +1,12 @@
 # Releases
 
+## 0.15.10 (2026-02-17)
+
+### Fix
+
+- patch svelte-bottom-sheet to use a stable isSheetOpen reference
+- reset seconds & milliseconds
+
 ## 0.15.9 (2026-02-17)
 
 ### Fix
