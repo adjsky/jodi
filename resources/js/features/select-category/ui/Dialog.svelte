@@ -70,6 +70,7 @@
     onExitComplete={() => {
         search = "";
     }}
+    lazyMount
 >
     <Dialog.Trigger
         class={[
@@ -110,7 +111,12 @@
             />
 
             <div class="relative flex items-center justify-between">
-                <button class="p-2" type="button" onclick={() => view.back()}>
+                <button
+                    class="p-2"
+                    type="button"
+                    onclick={() => view.back()}
+                    data-autofocus
+                >
                     <ChevronLeft class="text-4xl" />
                 </button>
                 <span
@@ -139,7 +145,6 @@
                     bind:value={search}
                     class="form-input h-13.75 w-full rounded-xl border-none bg-cream-500/10 pl-10 text-lg font-medium outline-none placeholder:text-cream-600 focus:ring-0"
                     placeholder={m["todos.category.placeholder"]()}
-                    data-autofocus
                 />
             </div>
 
