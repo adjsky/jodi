@@ -22,7 +22,7 @@
         const day = searchParams["d"]
             ? toZoned(parseDate(searchParams["d"]), TIMEZONE)
             : now(TIMEZONE);
-        return day.set({ hour: 12, minute: 0 });
+        return day.set({ hour: 12, minute: 0, second: 0, millisecond: 0 });
     }
 </script>
 
