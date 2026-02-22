@@ -163,10 +163,10 @@
             {/snippet}
             {#snippet notify()}
                 <Reminder
-                    bind:current={notifyAt}
+                    {startsAt}
+                    bind:notifyAt
                     name="notifyAt"
                     tooltip={m["events.tooltips.notification"]()}
-                    start={startsAt}
                 />
             {/snippet}
             {#snippet more()}

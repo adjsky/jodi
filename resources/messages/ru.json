@@ -133,7 +133,7 @@
                 "match": {
                     "hours=one": "{h} час",
                     "hours=few": "{h} часа",
-                    "hours=other": "{h} часа"
+                    "hours=many": "{h} часов"
                 }
             }
         ],
@@ -144,10 +144,51 @@
                 "match": {
                     "days=one": "{d} день",
                     "days=few": "{d} дня",
-                    "days=other": "{d} дня"
+                    "days=many": "{d} дней"
                 }
             }
-        ]
+        ],
+        "custom": {
+            "title": "Уведомить за",
+            "trigger": "Другое",
+            "ok": "OK",
+            "cancel": "Отмена",
+            "duration": {
+                "minutes": [
+                    {
+                        "declarations": ["input a", "local amount = a: plural"],
+                        "selectors": ["amount"],
+                        "match": {
+                            "amount=one": "Минуту",
+                            "amount=few": "Минуты",
+                            "amount=many": "Минут"
+                        }
+                    }
+                ],
+                "hours": [
+                    {
+                        "declarations": ["input a", "local amount = a: plural"],
+                        "selectors": ["amount"],
+                        "match": {
+                            "amount=one": "Час",
+                            "amount=few": "Часа",
+                            "amount=many": "Часов"
+                        }
+                    }
+                ],
+                "days": [
+                    {
+                        "declarations": ["input a", "local amount = a: plural"],
+                        "selectors": ["amount"],
+                        "match": {
+                            "amount=one": "День",
+                            "amount=few": "Дня",
+                            "amount=many": "Дней"
+                        }
+                    }
+                ]
+            }
+        }
     },
     "current-user": {
         "log-out": "Выйти",
