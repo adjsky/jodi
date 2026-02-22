@@ -121,10 +121,10 @@
         {/snippet}
         {#snippet notify()}
             <Reminder
-                bind:current={notifyAt}
+                bind:notifyAt
+                startsAt={scheduledAt}
                 name="notifyAt"
                 tooltip={m["todos.tooltips.notification"]()}
-                start={scheduledAt}
                 beforeOpen={() => {
                     if (!hasTime) {
                         toaster.info(m["todos.reminder.select-time"]());

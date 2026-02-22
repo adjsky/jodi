@@ -132,8 +132,7 @@
                 "selectors": ["hours"],
                 "match": {
                     "hours=one": "{h} hour",
-                    "hours=few": "{h} hours",
-                    "hours=other": "{h} hours"
+                    "hours=*": "{h} hours"
                 }
             }
         ],
@@ -143,11 +142,48 @@
                 "selectors": ["days"],
                 "match": {
                     "days=one": "{d} day",
-                    "days=few": "{d} days",
-                    "days=other": "{d} days"
+                    "days=*": "{d} days"
                 }
             }
-        ]
+        ],
+        "custom": {
+            "title": "Remind before",
+            "trigger": "Other",
+            "ok": "OK",
+            "cancel": "Cancel",
+            "duration": {
+                "minutes": [
+                    {
+                        "declarations": ["input a", "local amount = a: plural"],
+                        "selectors": ["amount"],
+                        "match": {
+                            "amount=one": "Minute",
+                            "amount=other": "Minutes"
+                        }
+                    }
+                ],
+                "hours": [
+                    {
+                        "declarations": ["input a", "local amount = a: plural"],
+                        "selectors": ["amount"],
+                        "match": {
+                            "amount=one": "Hour",
+                            "amount=other": "Hours"
+                        }
+                    }
+                ],
+                "days": [
+                    {
+                        "declarations": ["input a", "local amount = a: plural"],
+                        "selectors": ["amount"],
+                        "match": {
+                            "amount=one": "Day",
+                            "amount=other": "Days"
+                        }
+                    }
+                ]
+            }
+        }
     },
     "current-user": {
         "log-out": "Log out",
