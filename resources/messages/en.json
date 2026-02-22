@@ -132,7 +132,7 @@
                 "selectors": ["hours"],
                 "match": {
                     "hours=one": "{h} hour",
-                    "hours=*": "{h} hours"
+                    "hours=other": "{h} hours"
                 }
             }
         ],
@@ -142,7 +142,7 @@
                 "selectors": ["days"],
                 "match": {
                     "days=one": "{d} day",
-                    "days=*": "{d} days"
+                    "days=other": "{d} days"
                 }
             }
         ],

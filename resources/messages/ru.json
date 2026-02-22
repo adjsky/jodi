@@ -132,7 +132,8 @@
                 "selectors": ["hours"],
                 "match": {
                     "hours=one": "{h} час",
-                    "hours=*": "{h} часа"
+                    "hours=few": "{h} часа",
+                    "hours=many": "{h} часов"
                 }
             }
         ],
@@ -142,7 +143,8 @@
                 "selectors": ["days"],
                 "match": {
                     "days=one": "{d} день",
-                    "days=*": "{d} дня"
+                    "days=few": "{d} дня",
+                    "days=many": "{d} дней"
                 }
             }
         ],

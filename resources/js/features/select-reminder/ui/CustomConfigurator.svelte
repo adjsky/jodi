@@ -40,14 +40,14 @@
 
         const diffMs =
             startsAt.toDate().getTime() - notifyAt.toDate().getTime();
-        const diffM = Math.round(diffMs / (1000 * 60));
-        const diffH = Math.round(diffM / 60);
-        const diffD = Math.round(diffH / 24);
+        const diffM = diffMs / (1000 * 60);
+        const diffH = diffM / 60;
+        const diffD = diffH / 24;
 
-        if (diffD >= 1) return [2, diffD.toString()];
-        if (diffH >= 1) return [1, diffH.toString()];
+        if (diffD >= 1) return [2, Math.round(diffD).toString()];
+        if (diffH >= 1) return [1, Math.round(diffH).toString()];
 
-        return [0, diffM.toString()];
+        return [0, Math.round(diffM).toString()];
     }
 
     function setter(v: string) {
