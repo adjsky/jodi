@@ -14,12 +14,7 @@
         onSelect?: (duration: string) => void;
     };
 
-    let {
-        open = $bindable(),
-        notifyAt = $bindable(),
-        startsAt,
-        onSelect
-    }: Props = $props();
+    let { open = $bindable(), notifyAt, startsAt, onSelect }: Props = $props();
 
     let [selectedIdx, amount] = $derived(getNotifyOffset());
 
@@ -45,9 +40,9 @@
 
         const diffMs =
             startsAt.toDate().getTime() - notifyAt.toDate().getTime();
-        const diffM = diffMs / (1000 * 60);
-        const diffH = diffM / 60;
-        const diffD = diffH / 24;
+        const diffM = Math.round(diffMs / (1000 * 60));
+        const diffH = Math.round(diffM / 60);
+        const diffD = Math.round(diffH / 24);
 
         if (diffD >= 1) return [2, diffD.toString()];
         if (diffH >= 1) return [1, diffH.toString()];
@@ -55,31 +50,25 @@
         return [0, diffM.toString()];
     }
 
-    function setter(a: string) {
-        if (a == "") {
-            amount = a;
+    function setter(v: string) {
+        const tv = v.trim();
+
+        if (tv == "") {
+            amount = tv;
             return;
         }
 
-        const na = Number(a);
+        const ntv = Number(tv);
 
-        if (isNaN(na)) {
+        if (isNaN(ntv) || tv.length > 3 || tv.includes(".")) {
             return;
         }
 
-        if (a.length > 3) {
-            return;
+        if (ntv < MIN_AMOUNT) {
+            amount = MIN_AMOUNT.toString();
+        } else {
+            amount = tv;
         }
-
-        if (a.split(".")[1]?.length > 0) {
-            return;
-        }
-
-        if (na < MIN_AMOUNT) {
-            a = MIN_AMOUNT.toString();
-        }
-
-        amount = a;
     }
 </script>
 
