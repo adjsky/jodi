@@ -1,5 +1,11 @@
 # Releases
 
+## 0.16.0 (2026-02-22)
+
+### Feat
+
+- customizable reminder (#79)
+
 ## 0.15.14 (2026-02-17)
 
 ### Fix
