@@ -185,6 +185,11 @@
             }
         }
     },
+    "reschedule": {
+        "tomorrow": "Tomorrow",
+        "next-week": "Next week",
+        "next-month": "Next month"
+    },
     "current-user": {
         "log-out": "Log out",
         "account": {

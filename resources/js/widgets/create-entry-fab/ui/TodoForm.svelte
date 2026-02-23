@@ -1,9 +1,10 @@
 <script lang="ts">
     import { Form } from "@inertiajs/svelte";
     import { toCalendarDate } from "@internationalized/date";
-    import { Ellipsis, RotateCw, Trash } from "@lucide/svelte";
+    import { RotateCw, Trash } from "@lucide/svelte";
     import { Todo } from "$/entities/todo";
     import { YearCalendarDialog } from "$/features/filter-by-date";
+    import { RescheduleItem } from "$/features/reschedule-item";
     import { TodoTime } from "$/features/schedule-todo-time";
     import { Category } from "$/features/select-category";
     import { Color } from "$/features/select-color";
@@ -134,9 +135,10 @@
             />
         {/snippet}
         {#snippet more()}
-            <ToolbarAction disabled tooltip={m["todos.tooltips.more"]()}>
-                <Ellipsis />
-            </ToolbarAction>
+            <RescheduleItem
+                bind:startsAt={scheduledAt}
+                tooltip={m["todos.tooltips.more"]()}
+            />
         {/snippet}
     </Todo.Fields>
 </Form>

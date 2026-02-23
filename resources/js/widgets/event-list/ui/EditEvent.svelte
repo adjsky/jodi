@@ -4,10 +4,11 @@
         parseAbsoluteToLocal,
         toCalendarDate
     } from "@internationalized/date";
-    import { Ellipsis, RotateCw } from "@lucide/svelte";
+    import { RotateCw } from "@lucide/svelte";
     import { Event } from "$/entities/event";
     import { DeleteItem } from "$/features/delete-item";
     import { YearCalendarDialog } from "$/features/filter-by-date";
+    import { RescheduleItem } from "$/features/reschedule-item";
     import { Color } from "$/features/select-color";
     import { Reminder } from "$/features/select-reminder";
     import {
@@ -42,11 +43,13 @@
     let startsAtOverride = $state<ZonedDateTime | null>(null);
     let endsAtOverride = $state<ZonedDateTime | null>(null);
     let notifyAtOverride = $state<ZonedDateTime | null>(null);
+    let colorOverride = $state<string | null>(null);
 
     function resetOverrides() {
         startsAtOverride = null;
         endsAtOverride = null;
         notifyAtOverride = null;
+        colorOverride = null;
     }
 
     // --------------------------- EVENT DATA ----------------------------------
@@ -61,6 +64,7 @@
     let notifyAt = $derived(
         notifyAtOverride ?? parseAbsoluteToLocal(event.notifyAt)
     );
+    let currentColor = $derived(colorOverride ?? event.color);
 
     watch(
         () => [props.event],
@@ -156,23 +160,30 @@
             {/snippet}
             {#snippet color()}
                 <Color
+                    bind:current={
+                        () => currentColor, (c) => (colorOverride = c)
+                    }
                     name="color"
                     tooltip={m["events.tooltips.color"]()}
-                    current={event.color}
                 />
             {/snippet}
             {#snippet notify()}
                 <Reminder
                     {startsAt}
-                    bind:notifyAt
+                    bind:notifyAt={
+                        () => notifyAt, (v) => (notifyAtOverride = v)
+                    }
                     name="notifyAt"
                     tooltip={m["events.tooltips.notification"]()}
                 />
             {/snippet}
             {#snippet more()}
-                <ToolbarAction disabled tooltip={m["events.tooltips.more"]()}>
-                    <Ellipsis />
-                </ToolbarAction>
+                <RescheduleItem
+                    bind:startsAt={
+                        () => startsAt, (v) => (startsAtOverride = v)
+                    }
+                    tooltip={m["events.tooltips.more"]()}
+                />
             {/snippet}
         </Event.Fields>
     </Form>

@@ -190,6 +190,11 @@
             }
         }
     },
+    "reschedule": {
+        "tomorrow": "На завтра",
+        "next-week": "На неделю",
+        "next-month": "На месяц"
+    },
     "current-user": {
         "log-out": "Выйти",
         "account": {
