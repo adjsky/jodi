@@ -58,7 +58,7 @@ export const optimistic = {
                     const todos = props.todos as App.Data.TodoDto[];
 
                     const todo = todos.find((t) => t.id == id);
-                    if (!todo) return;
+                    if (!todo || !editView.isOpen()) return;
 
                     return editView.updateMeta(todo);
                 }
