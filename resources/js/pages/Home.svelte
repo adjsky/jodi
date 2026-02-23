@@ -1,10 +1,10 @@
 <script lang="ts">
     import { usePoll } from "@inertiajs/svelte";
-    import { AddTodoOrEvent } from "$/features/add-todo-or-event";
     import { m } from "$/paraglide/messages";
     import CalendarCat from "$/shared/assets/calendar-cat.svg";
     import ActionBanner from "$/shared/ui/ActionBanner.svelte";
     import { CalendarPreview } from "$/widgets/calendar";
+    import { CreateEntryFab } from "$/widgets/create-entry-fab";
     import { CurrentUser } from "$/widgets/current-user";
     import { EventList } from "$/widgets/event-list/";
     import { TodoList } from "$/widgets/todo-list";
@@ -48,5 +48,5 @@
     <EventList {events} class="mt-4" hidden={hasNoEventsAndTodos} />
     <TodoList {todos} class="mt-4" hidden={hasNoEventsAndTodos} />
 
-    <AddTodoOrEvent />
+    <CreateEntryFab />
 </main>
