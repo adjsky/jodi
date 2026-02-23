@@ -1,5 +1,16 @@
 # Releases
 
+## 0.17.0 (2026-02-23)
+
+### Feat
+
+- reschedule quick action (#80)
+
+### Fix
+
+- don't update view meta if view is closed
+- add alertdialog role to confirmable
+
 ## 0.16.0 (2026-02-22)
 
 ### Feat
