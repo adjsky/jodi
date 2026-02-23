@@ -21,17 +21,17 @@
 
     const options = [
         {
-            label: m["reschedule.tomorrow"]({ h: 1 }),
+            label: m["reschedule.tomorrow"](),
             duration: "P1D",
             icon: Sunrise
         },
         {
-            label: m["reschedule.next-week"]({ h: 3 }),
+            label: m["reschedule.next-week"](),
             duration: "P1W",
             icon: CalendarDays
         },
         {
-            label: m["reschedule.next-month"]({ d: 1 }),
+            label: m["reschedule.next-month"](),
             duration: "P1M",
             icon: CalendarRange
         }
