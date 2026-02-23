@@ -28,7 +28,7 @@
     }: Props = $props();
 </script>
 
-<Dialog.Root bind:open>
+<Dialog.Root bind:open role="alertdialog">
     {#if children}
         <Dialog.Trigger>
             {#snippet asChild(props)}{@render children(props)}{/snippet}
