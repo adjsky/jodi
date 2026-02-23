@@ -4,11 +4,12 @@
         parseAbsoluteToLocal,
         toCalendarDate
     } from "@internationalized/date";
-    import { Ellipsis, RotateCw } from "@lucide/svelte";
+    import { RotateCw } from "@lucide/svelte";
     import { Todo } from "$/entities/todo";
     import { Checkbox } from "$/features/complete-todo";
     import { DeleteItem } from "$/features/delete-item";
     import { YearCalendarDialog } from "$/features/filter-by-date";
+    import { RescheduleItem } from "$/features/reschedule-item";
     import { TodoTime } from "$/features/schedule-todo-time";
     import { Category } from "$/features/select-category";
     import { Color } from "$/features/select-color";
@@ -48,11 +49,13 @@
     let scheduledAtOverride = $state<ZonedDateTime | null>(null);
     let hasTimeOverride = $state<boolean | null>(null);
     let notifyAtOverride = $state<ZonedDateTime | null | undefined>(undefined);
+    let colorOverride = $state<string | null>(null);
 
     function resetOverrides() {
         scheduledAtOverride = null;
         hasTimeOverride = null;
         notifyAtOverride = undefined;
+        colorOverride = null;
     }
 
     // --------------------------- TODO DATA -----------------------------------
@@ -75,6 +78,7 @@
 
         return parseAbsoluteToLocal(todo.notifyAt);
     });
+    let currentColor = $derived(colorOverride ?? todo.color);
 
     watch(
         () => [props.todo],
@@ -209,14 +213,18 @@
             {/snippet}
             {#snippet color()}
                 <Color
+                    bind:current={
+                        () => currentColor, (c) => (colorOverride = c)
+                    }
                     name="color"
                     tooltip={m["todos.tooltips.color"]()}
-                    current={todo.color}
                 />
             {/snippet}
             {#snippet notify()}
                 <Reminder
-                    bind:notifyAt
+                    bind:notifyAt={
+                        () => notifyAt, (v) => (notifyAtOverride = v)
+                    }
                     startsAt={scheduledAt}
                     name="notifyAt"
                     tooltip={m["todos.tooltips.notification"]()}
@@ -229,9 +237,12 @@
                 />
             {/snippet}
             {#snippet more()}
-                <ToolbarAction disabled tooltip={m["todos.tooltips.more"]()}>
-                    <Ellipsis />
-                </ToolbarAction>
+                <RescheduleItem
+                    bind:startsAt={
+                        () => scheduledAt, (v) => (scheduledAtOverride = v)
+                    }
+                    tooltip={m["todos.tooltips.more"]()}
+                />
             {/snippet}
         </Todo.Fields>
     </Form>
