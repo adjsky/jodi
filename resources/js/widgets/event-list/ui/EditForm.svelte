@@ -149,8 +149,12 @@
         {/snippet}
         {#snippet more()}
             <RescheduleItem
-                bind:startsAt={draft.startsAt}
+                startsAt={toCalendarDate(draft.startsAt)}
                 tooltip={m["events.tooltips.more"]()}
+                onReschedule={(d) => {
+                    draft.notifyAt = draft.notifyAt.set(d);
+                    draft.startsAt = draft.startsAt.set(d);
+                }}
             />
         {/snippet}
     </Event.Fields>
