@@ -10,14 +10,15 @@
     import { m } from "$/paraglide/messages";
     import ToolbarAction from "$/shared/ui/ToolbarAction.svelte";
 
-    import type { ZonedDateTime } from "@internationalized/date";
+    import type { CalendarDate } from "@internationalized/date";
 
     type Props = {
-        startsAt: ZonedDateTime;
+        startsAt: CalendarDate;
         tooltip: string;
+        onReschedule?: (datetime: CalendarDate) => void;
     };
 
-    let { startsAt = $bindable(), tooltip }: Props = $props();
+    let { startsAt = $bindable(), tooltip, onReschedule }: Props = $props();
 
     const options = [
         {
@@ -42,6 +43,7 @@
     positioning={{ placement: "top" }}
     onSelect={({ value }) => {
         startsAt = startsAt.add(parseDuration(value));
+        onReschedule?.(startsAt);
     }}
 >
     <Menu.Trigger>

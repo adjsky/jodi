@@ -145,18 +145,14 @@
                 onChange={(time, hasTime) => {
                     if (!hasTime) {
                         draft.notifyAt = null;
+                    } else if (draft.notifyAt) {
+                        draft.notifyAt = draft.notifyAt.add(
+                            diff(draft.scheduledAt, time)
+                        );
                     } else {
-                        if (draft.notifyAt) {
-                            draft.notifyAt = draft.notifyAt.add(
-                                diff(draft.scheduledAt, time)
-                            );
-                        } else {
-                            draft.notifyAt = draft.scheduledAt
-                                .set(time)
-                                .subtract({
-                                    hours: NOTIFICATION_DEFAULT_SUBHOURS
-                                });
-                        }
+                        draft.notifyAt = draft.scheduledAt.set(time).subtract({
+                            hours: NOTIFICATION_DEFAULT_SUBHOURS
+                        });
                     }
 
                     draft.scheduledAt = draft.scheduledAt.set(time);
@@ -200,8 +196,14 @@
         {/snippet}
         {#snippet more()}
             <RescheduleItem
-                bind:startsAt={draft.scheduledAt}
+                startsAt={toCalendarDate(draft.scheduledAt)}
                 tooltip={m["todos.tooltips.more"]()}
+                onReschedule={(date) => {
+                    if (draft.notifyAt) {
+                        draft.notifyAt = draft.notifyAt.set(date);
+                    }
+                    draft.scheduledAt = draft.scheduledAt.set(date);
+                }}
             />
         {/snippet}
     </Todo.Fields>
