@@ -136,8 +136,14 @@
         {/snippet}
         {#snippet more()}
             <RescheduleItem
-                bind:startsAt={scheduledAt}
+                startsAt={toCalendarDate(scheduledAt)}
                 tooltip={m["todos.tooltips.more"]()}
+                onReschedule={(d) => {
+                    if (notifyAt) {
+                        notifyAt = notifyAt.set(d);
+                    }
+                    scheduledAt = scheduledAt.set(d);
+                }}
             />
         {/snippet}
     </Todo.Fields>

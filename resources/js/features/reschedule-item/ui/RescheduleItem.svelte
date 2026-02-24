@@ -15,7 +15,7 @@
     type Props = {
         startsAt: CalendarDate;
         tooltip: string;
-        onReschedule?: (datetime: CalendarDate) => void;
+        onReschedule?: (date: CalendarDate) => void;
     };
 
     let { startsAt = $bindable(), tooltip, onReschedule }: Props = $props();

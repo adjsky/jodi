@@ -198,11 +198,11 @@
             <RescheduleItem
                 startsAt={toCalendarDate(draft.scheduledAt)}
                 tooltip={m["todos.tooltips.more"]()}
-                onReschedule={(date) => {
+                onReschedule={(d) => {
                     if (draft.notifyAt) {
-                        draft.notifyAt = draft.notifyAt.set(date);
+                        draft.notifyAt = draft.notifyAt.set(d);
                     }
-                    draft.scheduledAt = draft.scheduledAt.set(date);
+                    draft.scheduledAt = draft.scheduledAt.set(d);
                 }}
             />
         {/snippet}
