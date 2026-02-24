@@ -18,7 +18,7 @@
         onReschedule?: (date: CalendarDate) => void;
     };
 
-    let { startsAt = $bindable(), tooltip, onReschedule }: Props = $props();
+    let { startsAt, tooltip, onReschedule }: Props = $props();
 
     const options = [
         {
@@ -42,8 +42,7 @@
 <Menu.Root
     positioning={{ placement: "top" }}
     onSelect={({ value }) => {
-        startsAt = startsAt.add(parseDuration(value));
-        onReschedule?.(startsAt);
+        onReschedule?.(startsAt.add(parseDuration(value)));
     }}
 >
     <Menu.Trigger>
