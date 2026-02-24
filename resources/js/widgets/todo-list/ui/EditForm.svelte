@@ -1,5 +1,5 @@
 <script lang="ts">
-    import { Form } from "@inertiajs/svelte";
+    import { Form, router } from "@inertiajs/svelte";
     import {
         parseAbsoluteToLocal,
         toCalendarDate
@@ -8,7 +8,7 @@
     import { Todo } from "$/entities/todo";
     import { Checkbox } from "$/features/complete-todo";
     import { DeleteItem } from "$/features/delete-item";
-    import { YearCalendarDialog } from "$/features/filter-by-date";
+    import { daySummary, YearCalendarDialog } from "$/features/filter-by-date";
     import { RescheduleItem } from "$/features/reschedule-item";
     import { TodoTime } from "$/features/schedule-todo-time";
     import { Category } from "$/features/select-category";
@@ -80,6 +80,8 @@
         if (draft.notifyAt) {
             PushSubscription.ahtung(m["todos.reminder-ahtung"]());
         }
+        router.flushByCacheTags("week-carousel");
+        daySummary.flush();
     }}
     class="flex grow flex-col pb-18"
     let:isDirty

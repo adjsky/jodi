@@ -75,5 +75,9 @@ export function useDaySummary(options?: Options) {
         }
     }, 50);
 
-    return { cache, request };
+    function flush() {
+        cache.clear();
+    }
+
+    return { cache, request, flush };
 }
