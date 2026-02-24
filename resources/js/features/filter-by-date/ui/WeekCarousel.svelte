@@ -45,7 +45,8 @@
                     use:inertia={{
                         prefetch: "mount",
                         cacheFor: ["30s", "5m"],
-                        href: `?d=${date.toString()}`
+                        href: `?d=${date.toString()}`,
+                        cacheTags: "week-carousel"
                     }}
                     class="group flex flex-col items-center justify-between"
                     data-selected={boolAttr(compare == "selected")}

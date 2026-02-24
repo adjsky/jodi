@@ -1,5 +1,5 @@
 <script module>
-    const daySummary = useDaySummary({
+    export const daySummary = useDaySummary({
         onError() {
             toaster.error(m["day-summary.request-error"]());
         }
