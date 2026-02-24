@@ -82,9 +82,7 @@
         value={toCalendarDate(draft.startsAt).toString()}
     />
     <Event.Fields
-        bind:endsAt={
-            () => draft.endsAt, (t) => (draft.endsAt = draft.endsAt.set(t))
-        }
+        bind:endsAt={draft.endsAt}
         startsAt={draft.startsAt}
         title={event.title}
         description={event.description}
