@@ -6,7 +6,7 @@
     import { tw } from "$/shared/lib/styles";
 
     import { editView } from "../model/view";
-    import EditEvent from "./EditEvent.svelte";
+    import EditSheet from "./EditSheet.svelte";
 
     import type { SvelteHTMLElements } from "svelte/elements";
 
@@ -58,15 +58,8 @@
         {/if}
     </div>
 
-    <EditEvent
-        bind:open={
-            () => editView.isOpen(),
-            (v) => {
-                if (!v) {
-                    void editView.back();
-                }
-            }
-        }
+    <EditSheet
+        bind:open={() => editView.isOpen(), () => editView.back()}
         event={editView.isOpen() ? editView.meta : null}
     />
 </section>

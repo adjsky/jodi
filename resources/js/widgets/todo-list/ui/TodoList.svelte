@@ -16,7 +16,7 @@
     import { optimistic, visitOptions } from "../cfg/inertia";
     import { groupTodos } from "../helpers/group-todos";
     import { editView } from "../model/view";
-    import EditTodo from "./EditTodo.svelte";
+    import EditSheet from "./EditSheet.svelte";
 
     import type { SvelteHTMLElements } from "svelte/elements";
 
@@ -100,15 +100,8 @@
         </div>
     {/if}
 
-    <EditTodo
-        bind:open={
-            () => editView.isOpen(),
-            (v) => {
-                if (!v) {
-                    void editView.back();
-                }
-            }
-        }
+    <EditSheet
+        bind:open={() => editView.isOpen(), () => editView.back()}
         todo={editView.isOpen() ? editView.meta : null}
     />
 </section>
