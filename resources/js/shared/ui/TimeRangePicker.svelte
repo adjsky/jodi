@@ -12,10 +12,8 @@
     type Props = {
         label: Snippet;
         class?: ClassName;
-        startsAt?: Time;
-        endsAt?: Time;
-        name?: string;
-        required?: boolean;
+        startsAt: Time;
+        endsAt: Time;
         onStartsAtChange?: (time: Time) => void;
         onEndsAtChange?: (time: Time) => void;
     };
@@ -23,40 +21,13 @@
     let {
         label,
         class: classname,
-        name,
         startsAt = $bindable(),
         endsAt = $bindable(),
-        required,
         onStartsAtChange,
         onEndsAtChange
     }: Props = $props();
 
-    let endsAtInput = $state<HTMLInputElement | null>(null);
-
-    let isValid = $derived(
-        endsAt && startsAt ? startsAt.compare(endsAt) < 0 : true
-    );
-
-    function validate() {
-        if (!startsAt || !endsAt) return;
-
-        if (startsAt.hour == 23) {
-            endsAt = endsAt.set({ hour: 23, minute: 59 });
-        } else {
-            endsAt = endsAt.set({
-                hour: startsAt.hour + 1,
-                minute: startsAt.minute
-            });
-        }
-    }
-
-    $effect(() => {
-        if (isValid) {
-            endsAtInput?.setCustomValidity("");
-        } else {
-            endsAtInput?.setCustomValidity(m["common.invalid-time-range"]());
-        }
-    });
+    const isValid = $derived(startsAt.compare(endsAt) < 0);
 </script>
 
 <div class={tw("group flex w-full items-center gap-4 text-lg", classname)}>
@@ -71,10 +42,16 @@
     >
         <TimePickerInput
             bind:value={startsAt}
-            {required}
-            name={name ? name + "_start" : ""}
             onComplete={(time) => {
-                validate();
+                if (time.hour == 23) {
+                    endsAt = time.set({ hour: 23, minute: 59 });
+                } else {
+                    endsAt = time.set({
+                        hour: time.hour + 1,
+                        minute: time.minute
+                    });
+                }
+
                 onStartsAtChange?.(time);
             }}
         />
@@ -84,13 +61,7 @@
         >
             {m["common.to"]()}
         </div>
-        <TimePickerInput
-            bind:ref={endsAtInput}
-            bind:value={endsAt}
-            {required}
-            name={name ? name + "_end" : ""}
-            onComplete={onEndsAtChange}
-        />
+        <TimePickerInput bind:value={endsAt} onComplete={onEndsAtChange} />
         {#if !isValid}
             <TriangleAlert class="ml-2 text-2xl text-red" />
         {/if}

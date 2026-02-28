@@ -21,8 +21,8 @@
     } from "$/generated/actions/App/Http/Controllers/TodoController";
     import { m } from "$/paraglide/messages";
     import { NOTIFICATION_DEFAULT_SUBHOURS } from "$/shared/cfg/constants";
-    import { diff, normalizeIsoString } from "$/shared/lib/date";
-    import { announce, cleanFormPayload } from "$/shared/lib/form";
+    import { normalizeIsoString, timediff } from "$/shared/lib/date";
+    import { announce } from "$/shared/lib/form";
     import * as PushSubscription from "$/shared/lib/push-subscription.svelte";
     import { toaster } from "$/shared/lib/toaster";
     import SaveOrClose from "$/shared/ui/SaveOrClose.svelte";
@@ -40,6 +40,7 @@
     const { onClose, ...props }: Props = $props();
 
     let dateAnnouncerInput: HTMLInputElement | null = $state(null);
+    let hasTimeAnnouncerInput: HTMLInputElement | null = $state(null);
     let lastKnownTodo = $state(props.todo);
 
     let todo = $derived(props.todo ?? (lastKnownTodo as App.Data.TodoDto));
@@ -69,13 +70,6 @@
     action={update(todo.id)}
     options={visitOptions}
     showProgress={false}
-    transform={(data) => ({
-        ...cleanFormPayload(data),
-        hasTime: draft.hasTime,
-        scheduledAt: draft.hasTime
-            ? normalizeIsoString(draft.scheduledAt.toAbsoluteString())
-            : toCalendarDate(draft.scheduledAt).toString()
-    })}
     onSuccess={() => {
         if (draft.notifyAt) {
             PushSubscription.ahtung(m["todos.reminder-ahtung"]());
@@ -86,13 +80,6 @@
     class="flex grow flex-col pb-18"
     let:isDirty
 >
-    <!-- keep to mark form dirty when selecting date in calendar -->
-    <input
-        bind:this={dateAnnouncerInput}
-        hidden
-        name="_date"
-        value={toCalendarDate(draft.scheduledAt).toString()}
-    />
     <Todo.Fields
         scheduledAt={draft.scheduledAt}
         title={todo.title}
@@ -142,12 +129,12 @@
             <TodoTime
                 bind:hasTime={draft.hasTime}
                 scheduledAt={draft.scheduledAt}
-                onChange={(time, hasTime) => {
+                onChange={async (time, hasTime) => {
                     if (!hasTime) {
                         draft.notifyAt = null;
                     } else if (draft.notifyAt) {
                         draft.notifyAt = draft.notifyAt.add(
-                            diff(draft.scheduledAt, time)
+                            timediff(draft.scheduledAt, time)
                         );
                     } else {
                         draft.notifyAt = draft.scheduledAt.set(time).subtract({
@@ -156,6 +143,9 @@
                     }
 
                     draft.scheduledAt = draft.scheduledAt.set(time);
+
+                    await tick();
+                    announce([hasTimeAnnouncerInput, dateAnnouncerInput]);
                 }}
             />
         {/snippet}
@@ -198,13 +188,31 @@
             <RescheduleItem
                 startsAt={toCalendarDate(draft.scheduledAt)}
                 tooltip={m["todos.tooltips.more"]()}
-                onReschedule={(d) => {
+                onReschedule={async (d) => {
                     if (draft.notifyAt) {
                         draft.notifyAt = draft.notifyAt.set(d);
                     }
                     draft.scheduledAt = draft.scheduledAt.set(d);
+
+                    await tick();
+                    announce(dateAnnouncerInput);
                 }}
             />
         {/snippet}
     </Todo.Fields>
+
+    <input
+        bind:this={dateAnnouncerInput}
+        hidden
+        name="scheduledAt"
+        value={draft.hasTime
+            ? normalizeIsoString(draft.scheduledAt.toAbsoluteString())
+            : toCalendarDate(draft.scheduledAt).toString()}
+    />
+    <input
+        bind:this={hasTimeAnnouncerInput}
+        hidden
+        name="hasTime"
+        value={draft.hasTime ? 1 : 0}
+    />
 </Form>

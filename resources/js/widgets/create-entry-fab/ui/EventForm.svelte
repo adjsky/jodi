@@ -10,9 +10,9 @@
     import { create } from "$/generated/actions/App/Http/Controllers/EventController";
     import { m } from "$/paraglide/messages";
     import { NOTIFICATION_DEFAULT_SUBHOURS } from "$/shared/cfg/constants";
-    import { diff } from "$/shared/lib/date";
-    import { cleanFormPayload } from "$/shared/lib/form";
+    import { timediff } from "$/shared/lib/date";
     import * as PushSubscription from "$/shared/lib/push-subscription.svelte";
+    import { toaster } from "$/shared/lib/toaster";
     import SaveOrClose from "$/shared/ui/SaveOrClose.svelte";
     import ToolbarAction from "$/shared/ui/ToolbarAction.svelte";
 
@@ -43,10 +43,16 @@
         replace: true
     }}
     transform={(data) => ({
-        ...cleanFormPayload(data),
+        ...data,
         startsAt: startsAt.toAbsoluteString(),
         endsAt: endsAt.toAbsoluteString()
     })}
+    onBefore={() => {
+        if (startsAt.compare(endsAt) >= 0) {
+            toaster.error(m["common.invalid-time-range"]());
+            return false;
+        }
+    }}
     onSuccess={() => {
         PushSubscription.ahtung(m["events.reminder-ahtung"]());
         onClose();
@@ -59,7 +65,7 @@
         bind:endsAt
         onStartsAtChange={(time) => {
             if (notifyAt) {
-                notifyAt = notifyAt.add(diff(startsAt, time));
+                notifyAt = notifyAt.add(timediff(startsAt, time));
             } else {
                 notifyAt = startsAt.subtract({
                     hours: NOTIFICATION_DEFAULT_SUBHOURS

@@ -12,8 +12,7 @@
     import { create } from "$/generated/actions/App/Http/Controllers/TodoController";
     import { m } from "$/paraglide/messages";
     import { NOTIFICATION_DEFAULT_SUBHOURS } from "$/shared/cfg/constants";
-    import { diff, normalizeIsoString } from "$/shared/lib/date";
-    import { cleanFormPayload } from "$/shared/lib/form";
+    import { normalizeIsoString, timediff } from "$/shared/lib/date";
     import * as PushSubscription from "$/shared/lib/push-subscription.svelte";
     import { toaster } from "$/shared/lib/toaster";
     import SaveOrClose from "$/shared/ui/SaveOrClose.svelte";
@@ -42,7 +41,7 @@
         replace: true
     }}
     transform={(data) => ({
-        ...cleanFormPayload(data),
+        ...data,
         hasTime,
         scheduledAt: hasTime
             ? normalizeIsoString(scheduledAt.toAbsoluteString())
@@ -88,7 +87,9 @@
                         notifyAt = null;
                     } else {
                         if (notifyAt) {
-                            notifyAt = notifyAt.add(diff(scheduledAt, time));
+                            notifyAt = notifyAt.add(
+                                timediff(scheduledAt, time)
+                            );
                         } else {
                             notifyAt = scheduledAt.set(time).subtract({
                                 hours: NOTIFICATION_DEFAULT_SUBHOURS

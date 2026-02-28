@@ -16,9 +16,10 @@
         update
     } from "$/generated/actions/App/Http/Controllers/EventController";
     import { m } from "$/paraglide/messages";
-    import { diff, normalizeIsoString } from "$/shared/lib/date";
-    import { announce, cleanFormPayload } from "$/shared/lib/form";
+    import { normalizeIsoString, timediff } from "$/shared/lib/date";
+    import { announce } from "$/shared/lib/form";
     import * as PushSubscription from "$/shared/lib/push-subscription.svelte";
+    import { toaster } from "$/shared/lib/toaster";
     import SaveOrClose from "$/shared/ui/SaveOrClose.svelte";
     import ToolbarAction from "$/shared/ui/ToolbarAction.svelte";
     import { watch } from "runed";
@@ -33,7 +34,8 @@
 
     const { onClose, ...props }: Props = $props();
 
-    let dateAnnouncerInput: HTMLInputElement | null = $state(null);
+    let startsAtAnnouncerInput: HTMLInputElement | null = $state(null);
+    let endsAtAnnouncerInput: HTMLInputElement | null = $state(null);
     let lastKnownEvent = $state(props.event);
 
     const event = $derived(
@@ -63,11 +65,12 @@
     action={update(event.id)}
     options={visitOptions}
     showProgress={false}
-    transform={(data) => ({
-        ...cleanFormPayload(data),
-        startsAt: normalizeIsoString(draft.startsAt.toAbsoluteString()),
-        endsAt: normalizeIsoString(draft.endsAt.toAbsoluteString())
-    })}
+    onBefore={() => {
+        if (draft.startsAt.compare(draft.endsAt) >= 0) {
+            toaster.error(m["common.invalid-time-range"]());
+            return false;
+        }
+    }}
     onSuccess={() => {
         PushSubscription.ahtung(m["events.reminder-ahtung"]());
         router.flushByCacheTags("week-carousel");
@@ -76,21 +79,26 @@
     class="flex grow flex-col pb-18"
     let:isDirty
 >
-    <!-- keep to mark form dirty when selecting date in calendar -->
-    <input
-        bind:this={dateAnnouncerInput}
-        hidden
-        name="_date"
-        value={toCalendarDate(draft.startsAt).toString()}
-    />
     <Event.Fields
+        bind:startsAt={
+            () => draft.startsAt,
+            (d) => {
+                draft.notifyAt = draft.notifyAt.add(
+                    timediff(draft.startsAt, d)
+                );
+                draft.startsAt = d;
+            }
+        }
         bind:endsAt={draft.endsAt}
-        startsAt={draft.startsAt}
         title={event.title}
         description={event.description}
-        onStartsAtChange={(time) => {
-            draft.notifyAt = draft.notifyAt.add(diff(draft.startsAt, time));
-            draft.startsAt = draft.startsAt.set(time);
+        onStartsAtChange={async () => {
+            await tick();
+            announce(startsAtAnnouncerInput);
+        }}
+        onEndsAtChange={async () => {
+            await tick();
+            announce(endsAtAnnouncerInput);
         }}
     >
         {#snippet calendar(trigger)}
@@ -100,7 +108,7 @@
                     draft.notifyAt = draft.notifyAt.set(d);
                     draft.startsAt = draft.startsAt.set(d);
                     await tick();
-                    announce(dateAnnouncerInput);
+                    announce(startsAtAnnouncerInput);
                 }}
             >
                 {#snippet children(props)}
@@ -151,11 +159,26 @@
             <RescheduleItem
                 startsAt={toCalendarDate(draft.startsAt)}
                 tooltip={m["events.tooltips.more"]()}
-                onReschedule={(d) => {
+                onReschedule={async (d) => {
                     draft.notifyAt = draft.notifyAt.set(d);
                     draft.startsAt = draft.startsAt.set(d);
+                    await tick();
+                    announce(startsAtAnnouncerInput);
                 }}
             />
         {/snippet}
     </Event.Fields>
+
+    <input
+        bind:this={startsAtAnnouncerInput}
+        hidden
+        name="startsAt"
+        value={normalizeIsoString(draft.startsAt.toAbsoluteString())}
+    />
+    <input
+        bind:this={endsAtAnnouncerInput}
+        hidden
+        name="endsAt"
+        value={normalizeIsoString(draft.endsAt.toAbsoluteString())}
+    />
 </Form>
