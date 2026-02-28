@@ -1,5 +1,12 @@
 # Releases
 
+## 0.17.1 (2026-02-28)
+
+### Fix
+
+- update notification time after rescheduling (#84)
+- flush caches after modifying todos/events (#83)
+
 ## 0.17.0 (2026-02-23)
 
 ### Feat
