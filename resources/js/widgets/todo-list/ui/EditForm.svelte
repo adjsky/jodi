@@ -95,7 +95,7 @@
                     }
                     draft.scheduledAt = draft.scheduledAt.set(d);
                     await tick();
-                    announce([hasTimeAnnouncerInput, dateAnnouncerInput]);
+                    announce(dateAnnouncerInput);
                 }}
             >
                 {#snippet children(props)}
@@ -145,7 +145,7 @@
                     draft.scheduledAt = draft.scheduledAt.set(time);
 
                     await tick();
-                    announce(dateAnnouncerInput);
+                    announce([hasTimeAnnouncerInput, dateAnnouncerInput]);
                 }}
             />
         {/snippet}
