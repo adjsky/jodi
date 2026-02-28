@@ -21,7 +21,7 @@
     } from "$/generated/actions/App/Http/Controllers/TodoController";
     import { m } from "$/paraglide/messages";
     import { NOTIFICATION_DEFAULT_SUBHOURS } from "$/shared/cfg/constants";
-    import { diff, normalizeIsoString } from "$/shared/lib/date";
+    import { normalizeIsoString, timediff } from "$/shared/lib/date";
     import { announce } from "$/shared/lib/form";
     import * as PushSubscription from "$/shared/lib/push-subscription.svelte";
     import { toaster } from "$/shared/lib/toaster";
@@ -134,7 +134,7 @@
                         draft.notifyAt = null;
                     } else if (draft.notifyAt) {
                         draft.notifyAt = draft.notifyAt.add(
-                            diff(draft.scheduledAt, time)
+                            timediff(draft.scheduledAt, time)
                         );
                     } else {
                         draft.notifyAt = draft.scheduledAt.set(time).subtract({

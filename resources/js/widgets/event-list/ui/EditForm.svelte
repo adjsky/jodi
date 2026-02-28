@@ -16,7 +16,7 @@
         update
     } from "$/generated/actions/App/Http/Controllers/EventController";
     import { m } from "$/paraglide/messages";
-    import { diff, normalizeIsoString } from "$/shared/lib/date";
+    import { normalizeIsoString, timediff } from "$/shared/lib/date";
     import { announce } from "$/shared/lib/form";
     import * as PushSubscription from "$/shared/lib/push-subscription.svelte";
     import { toaster } from "$/shared/lib/toaster";
@@ -80,12 +80,19 @@
     let:isDirty
 >
     <Event.Fields
-        bind:startsAt={draft.startsAt}
+        bind:startsAt={
+            () => draft.startsAt,
+            (d) => {
+                draft.notifyAt = draft.notifyAt.add(
+                    timediff(draft.startsAt, d)
+                );
+                draft.startsAt = d;
+            }
+        }
         bind:endsAt={draft.endsAt}
         title={event.title}
         description={event.description}
-        onStartsAtChange={async (time) => {
-            draft.notifyAt = draft.notifyAt.add(diff(draft.startsAt, time));
+        onStartsAtChange={async () => {
             await tick();
             announce(startsAtAnnouncerInput);
         }}
