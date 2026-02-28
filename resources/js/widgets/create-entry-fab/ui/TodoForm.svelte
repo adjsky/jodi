@@ -13,7 +13,6 @@
     import { m } from "$/paraglide/messages";
     import { NOTIFICATION_DEFAULT_SUBHOURS } from "$/shared/cfg/constants";
     import { diff, normalizeIsoString } from "$/shared/lib/date";
-    import { cleanFormPayload } from "$/shared/lib/form";
     import * as PushSubscription from "$/shared/lib/push-subscription.svelte";
     import { toaster } from "$/shared/lib/toaster";
     import SaveOrClose from "$/shared/ui/SaveOrClose.svelte";
@@ -42,7 +41,7 @@
         replace: true
     }}
     transform={(data) => ({
-        ...cleanFormPayload(data),
+        ...data,
         hasTime,
         scheduledAt: hasTime
             ? normalizeIsoString(scheduledAt.toAbsoluteString())

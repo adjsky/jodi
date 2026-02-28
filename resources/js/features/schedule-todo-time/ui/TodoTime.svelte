@@ -2,9 +2,7 @@
     import { Time, toTime } from "@internationalized/date";
     import { Plus, X } from "@lucide/svelte";
     import { m } from "$/paraglide/messages";
-    import { announce } from "$/shared/lib/form";
     import TimePickerInput from "$/shared/ui/TimePickerInput.svelte";
-    import { tick } from "svelte";
 
     import type { ZonedDateTime } from "@internationalized/date";
     import type { HTMLButtonAttributes } from "svelte/elements";
@@ -20,16 +18,7 @@
         hasTime = $bindable(),
         onChange
     }: Props = $props();
-
-    let hasTimeAnnouncerInput = $state<HTMLInputElement | null>(null);
 </script>
-
-<input
-    bind:this={hasTimeAnnouncerInput}
-    name="_hasTime"
-    value={hasTime}
-    hidden
-/>
 
 <div
     class="relative flex h-10 items-center rounded-lg border border-cream-300 text-lg"
@@ -49,13 +38,10 @@
             (time) => (scheduledAt = scheduledAt.set(time))
         }
         class="h-full w-max pr-10 pl-3"
-        name="_time"
         trigger={hasTime ? undefined : trigger}
         onComplete={async (time) => {
             if (!hasTime) {
                 hasTime = true;
-                await tick();
-                announce(hasTimeAnnouncerInput);
             }
             onChange?.(time, true);
         }}
@@ -71,9 +57,6 @@
                 const time = new Time(0, 0, 0, 0);
                 scheduledAt.set(time);
                 onChange?.(time, false);
-
-                await tick();
-                announce(hasTimeAnnouncerInput);
             }}
         >
             <X class="text-xl" />

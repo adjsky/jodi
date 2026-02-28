@@ -23,6 +23,7 @@
         notify: Snippet;
         more: Snippet;
         onStartsAtChange?: (time: Time) => void;
+        onEndsAtChange?: (time: Time) => void;
     };
 
     let {
@@ -37,7 +38,8 @@
         color,
         notify,
         more,
-        onStartsAtChange
+        onStartsAtChange,
+        onEndsAtChange
     }: Props = $props();
 </script>
 
@@ -80,9 +82,8 @@
     }
     bind:endsAt={() => toTime(endsAt), (time) => (endsAt = endsAt.set(time))}
     {onStartsAtChange}
+    {onEndsAtChange}
     class="mt-4"
-    name="_time"
-    required
 >
     {#snippet label()}
         <Clock class="text-2xl" />

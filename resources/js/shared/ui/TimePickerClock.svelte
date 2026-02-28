@@ -18,7 +18,7 @@
     };
 
     let {
-        value = toTime(now(TIMEZONE)),
+        value = $bindable(toTime(now(TIMEZONE))),
         open = $bindable(),
         onAbort,
         onComplete
@@ -209,6 +209,7 @@
                         class="text-ms font-bold text-brand"
                         onclick={() => {
                             open = false;
+                            value = internalValue;
                             onComplete?.(internalValue);
                         }}
                     >

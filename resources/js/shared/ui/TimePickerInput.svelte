@@ -1,8 +1,5 @@
 <script lang="ts">
-    import { tick } from "svelte";
-
     import { HistoryView } from "../inertia/history-view.svelte";
-    import { announce } from "../lib/form";
     import { tw } from "../lib/styles";
     import { DISABLE_SHEET_DRAGGING } from "./Sheet.svelte";
     import TimePickerClock from "./TimePickerClock.svelte";
@@ -13,22 +10,17 @@
     import type { HTMLButtonAttributes } from "svelte/elements";
 
     type Props = {
-        ref?: HTMLInputElement | null;
         class?: ClassName;
-        name: string;
-        value?: Time;
-        required?: boolean;
+        value: Time;
         trigger?: Snippet<[HTMLButtonAttributes]>;
         onAbort?: VoidFunction;
         onComplete?: (time: Time) => void;
     };
 
+    let id = $props.id();
     let {
-        ref = $bindable(null),
         class: classname,
-        name,
         value = $bindable(),
-        required,
         trigger,
         onAbort,
         onComplete
@@ -40,31 +32,20 @@
     }>();
 
     const visibleValue = $derived.by(() => {
-        if (!value) {
-            return "";
-        }
-
         const hours = value.hour.toString().padStart(2, "0");
         const minutes = value.minute.toString().padStart(2, "0");
 
         return hours + ":" + minutes;
     });
 
-    function oncomplete(time: Time) {
-        value = value?.set(time);
-        onComplete?.(time);
-    }
-
     function showPicker() {
         void view.push(view.name, {
             ...view.meta,
             [DISABLE_SHEET_DRAGGING]: true,
-            __timepickerinput: { isPickerOpen: name }
+            __timepickerinput: { isPickerOpen: id }
         });
     }
 </script>
-
-<input bind:this={ref} {name} {required} value={visibleValue} class="sr-only" />
 
 {#if trigger}
     {@render trigger({
@@ -84,10 +65,9 @@
 {/if}
 
 <TimePickerClock
-    {value}
-    {onAbort}
+    bind:value
     bind:open={
-        () => view.meta?.__timepickerinput?.isPickerOpen == name,
+        () => view.meta?.__timepickerinput?.isPickerOpen == id,
         (v) => {
             if (v) {
                 showPicker();
@@ -96,9 +76,6 @@
             }
         }
     }
-    onComplete={async (t) => {
-        oncomplete(t);
-        await tick();
-        announce(ref);
-    }}
+    {onAbort}
+    {onComplete}
 />
