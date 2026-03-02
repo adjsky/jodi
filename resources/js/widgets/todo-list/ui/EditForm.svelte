@@ -40,7 +40,6 @@
     const { onClose, ...props }: Props = $props();
 
     let dateAnnouncerInput: HTMLInputElement | null = $state(null);
-    let hasTimeAnnouncerInput: HTMLInputElement | null = $state(null);
     let lastKnownTodo = $state(props.todo);
 
     let todo = $derived(props.todo ?? (lastKnownTodo as App.Data.TodoDto));
@@ -69,6 +68,10 @@
     {...optimistic.edit(todo.id)}
     action={update(todo.id)}
     options={visitOptions}
+    transform={(data) => ({
+        ...data,
+        hasTime: draft.hasTime
+    })}
     showProgress={false}
     onSuccess={() => {
         if (draft.notifyAt) {
@@ -145,7 +148,7 @@
                     draft.scheduledAt = draft.scheduledAt.set(time);
 
                     await tick();
-                    announce([hasTimeAnnouncerInput, dateAnnouncerInput]);
+                    announce(dateAnnouncerInput);
                 }}
             />
         {/snippet}
@@ -208,11 +211,5 @@
         value={draft.hasTime
             ? normalizeIsoString(draft.scheduledAt.toAbsoluteString())
             : toCalendarDate(draft.scheduledAt).toString()}
-    />
-    <input
-        bind:this={hasTimeAnnouncerInput}
-        hidden
-        name="hasTime"
-        value={draft.hasTime ? 1 : 0}
     />
 </Form>
