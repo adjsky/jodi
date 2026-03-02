@@ -42,7 +42,7 @@
     >
         <TimePickerInput
             bind:value={startsAt}
-            onComplete={(time) => {
+            onConfirm={(time) => {
                 if (time.hour == 23) {
                     endsAt = time.set({ hour: 23, minute: 59 });
                 } else {
@@ -61,7 +61,7 @@
         >
             {m["common.to"]()}
         </div>
-        <TimePickerInput bind:value={endsAt} onComplete={onEndsAtChange} />
+        <TimePickerInput bind:value={endsAt} onConfirm={onEndsAtChange} />
         {#if !isValid}
             <TriangleAlert class="ml-2 text-2xl text-red" />
         {/if}
