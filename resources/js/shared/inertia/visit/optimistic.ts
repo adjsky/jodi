@@ -4,11 +4,13 @@ import { router } from "@inertiajs/svelte";
 import { toaster } from "$/shared/lib/toaster";
 
 import type { PageProps, VisitCallbacks } from "@inertiajs/core";
+import type { MaybePromise } from "$/shared/lib/types";
 
 type CommitFn = (prev: any, data: any) => any;
 type Options = {
     error?: string;
     omitHash?: boolean;
+    onBefore?: () => MaybePromise<boolean | void>;
     onSuccess?: (props: PageProps) => void;
 };
 
@@ -21,6 +23,10 @@ export function optimistic(
 
     return {
         async onBefore(e) {
+            if ((await options?.onBefore?.()) === false) {
+                return false;
+            }
+
             await router.replace({
                 preserveScroll: true,
                 preserveState: true,

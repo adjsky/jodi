@@ -19,7 +19,6 @@
     import { normalizeIsoString, timediff } from "$/shared/lib/date";
     import { announce } from "$/shared/lib/form";
     import * as PushSubscription from "$/shared/lib/push-subscription.svelte";
-    import { toaster } from "$/shared/lib/toaster";
     import SaveOrClose from "$/shared/ui/SaveOrClose.svelte";
     import ToolbarAction from "$/shared/ui/ToolbarAction.svelte";
     import { watch } from "runed";
@@ -61,16 +60,10 @@
 </script>
 
 <Form
-    {...optimistic.edit(event.id)}
+    {...optimistic.edit(event.id, () => draft)}
     action={update(event.id)}
     options={visitOptions}
     showProgress={false}
-    onBefore={() => {
-        if (draft.startsAt.compare(draft.endsAt) >= 0) {
-            toaster.error(m["common.invalid-time-range"]());
-            return false;
-        }
-    }}
     onSuccess={() => {
         PushSubscription.ahtung(m["events.reminder-ahtung"]());
         router.flushByCacheTags("week-carousel");

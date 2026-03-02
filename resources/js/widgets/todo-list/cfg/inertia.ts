@@ -15,7 +15,7 @@ export const visitOptions: VisitOptions = {
 };
 
 export const optimistic = {
-    edit: (id: number, close = true) =>
+    edit: (id: number) =>
         _optimistic(
             (prev, data) => ({
                 todos: prev.todos.map((t: App.Data.TodoDto) =>
@@ -24,18 +24,7 @@ export const optimistic = {
             }),
             {
                 error: m["todos.errors.edit"](),
-                onSuccess(props) {
-                    const todos = props.todos as App.Data.TodoDto[];
-
-                    if (close) {
-                        return editView.back();
-                    }
-
-                    const todo = todos.find((t) => t.id == id);
-                    if (!todo) return;
-
-                    return editView.updateMeta(todo);
-                }
+                onSuccess: () => editView.back()
             }
         ),
     complete: (id: number) =>
