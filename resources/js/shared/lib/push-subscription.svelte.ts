@@ -61,7 +61,7 @@ export async function subscribe() {
         const permission = await FirebaseMessaging.requestPermissions();
 
         if (permission.receive != "granted") {
-            toaster.error(m["push-notifications.failed-to-subscribe"]());
+            toaster.error(m["push-notifications.no-permission"]());
             return;
         }
 
