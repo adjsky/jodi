@@ -1,5 +1,11 @@
 # Releases
 
+## 0.17.3 (2026-03-02)
+
+### Fix
+
+- properly handle hasTime while updating
+
 ## 0.17.2 (2026-03-02)
 
 ### Fix
