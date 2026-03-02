@@ -39,7 +39,7 @@
         }
         class="h-full w-max pr-10 pl-3"
         trigger={hasTime ? undefined : trigger}
-        onComplete={async (time) => {
+        onConfirm={async (time) => {
             if (!hasTime) {
                 hasTime = true;
             }

@@ -14,7 +14,7 @@
         value: Time;
         trigger?: Snippet<[HTMLButtonAttributes]>;
         onAbort?: VoidFunction;
-        onComplete?: (time: Time) => void;
+        onConfirm?: (time: Time) => void;
     };
 
     let id = $props.id();
@@ -23,7 +23,7 @@
         value = $bindable(),
         trigger,
         onAbort,
-        onComplete
+        onConfirm
     }: Props = $props();
 
     const view = new HistoryView<{
@@ -77,5 +77,5 @@
         }
     }
     {onAbort}
-    {onComplete}
+    {onConfirm}
 />

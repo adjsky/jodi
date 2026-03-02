@@ -1,10 +1,10 @@
 <script lang="ts">
-    import { Dialog, Portal } from "@ark-ui/svelte";
     import { now, toTime } from "@internationalized/date";
     import { m } from "$/paraglide/messages";
     import { boolAttr } from "runed";
 
     import { TIMEZONE } from "../cfg/constants";
+    import PromptDialog from "./PromptDialog.svelte";
 
     import type { Time } from "@internationalized/date";
 
@@ -14,14 +14,14 @@
         value?: Time;
         open: boolean;
         onAbort?: VoidFunction;
-        onComplete?: (time: Time) => void;
+        onConfirm?: (time: Time) => void;
     };
 
     let {
         value = $bindable(toTime(now(TIMEZONE))),
         open = $bindable(),
         onAbort,
-        onComplete
+        onConfirm
     }: Props = $props();
 
     let clockRef = $state<Element | null>(null);
@@ -123,103 +123,72 @@
 
 <svelte:window {onpointermove} {onpointerup} />
 
-<Dialog.Root
+<PromptDialog
     bind:open
+    {onAbort}
+    title={m["common.time-picker.title"]()}
+    label={{
+        abort: m["common.time-picker.cancel"](),
+        confirm: m["common.time-picker.ok"]()
+    }}
+    onConfirm={() => {
+        open = false;
+        value = internalValue;
+        onConfirm?.(internalValue);
+    }}
     onExitComplete={() => {
         internalValue = value;
         view = "hour";
     }}
 >
-    <Portal>
-        <Dialog.Backdrop
-            class={[
-                "fixed inset-0 z-150 bg-cream-950/60 duration-300",
-                "data-[state=closed]:animate-out data-[state=closed]:fade-out",
-                "data-[state=open]:animate-in data-[state=open]:fade-in"
-            ]}
-        />
-        <Dialog.Positioner>
-            <Dialog.Content
-                class={[
-                    "fixed top-1/2 left-1/2 z-150 w-80 -translate-1/2 rounded-4xl bg-white px-6 py-4 duration-300",
-                    "data-[state=closed]:animate-out data-[state=closed]:fade-out data-[state=closed]:slide-out-to-bottom",
-                    "data-[state=open]:animate-in data-[state=open]:fade-in data-[state=open]:slide-in-from-bottom"
-                ]}
-            >
-                <Dialog.Title class="text-sm font-semibold">
-                    {m["common.time-picker.title"]()}
-                </Dialog.Title>
-                <div
-                    class="mt-4 flex items-center justify-center gap-2 text-5xl"
-                >
-                    <button
-                        class="h-20 w-24 rounded-lg bg-cream-50 data-selected:bg-brand data-selected:text-white"
-                        data-selected={boolAttr(view == "hour")}
-                        onclick={() => (view = "hour")}
-                    >
-                        {internalValue.hour.toString().padStart(2, "0")}
-                    </button>
-                    :
-                    <button
-                        class="h-20 w-24 rounded-lg bg-cream-50 data-selected:bg-brand data-selected:text-white"
-                        data-selected={boolAttr(view == "minutes")}
-                        onclick={() => (view = "minutes")}
-                    >
-                        {internalValue.minute.toString().padStart(2, "0")}
-                    </button>
-                </div>
-                <div
-                    bind:this={clockRef}
-                    class="relative mt-5 aspect-square w-full touch-none rounded-full bg-cream-50 select-none"
-                    role="group"
-                    {onpointerdown}
-                >
-                    <div
-                        aria-hidden="true"
-                        class="absolute top-1/2 left-1/2 size-2 -translate-1/2 rounded-full bg-brand"
-                    ></div>
-                    <div
-                        aria-hidden="true"
-                        class="absolute top-1/2 left-1/2 origin-left bg-brand"
-                        style="width: {Math.sqrt(
-                            handlePosition.x ** 2 + handlePosition.y ** 2
-                        )}px; height: 2px; margin-top: -1px; transform: rotate({handleAngle}deg);"
-                    ></div>
-                    <div
-                        aria-hidden="true"
-                        class="absolute size-10 rounded-full bg-brand"
-                        style="left: calc(50% + {handlePosition.x}px - 20px); top: calc(50% + {handlePosition.y}px - 20px);"
-                    ></div>
-                    <div role="listbox">
-                        {#if view == "hour"}
-                            {@render clockHH()}
-                        {:else}
-                            {@render clockMM()}
-                        {/if}
-                    </div>
-                </div>
-                <div class="mt-5 flex justify-end gap-8">
-                    <Dialog.CloseTrigger
-                        class="text-ms font-bold text-brand"
-                        onclick={() => onAbort?.()}
-                    >
-                        {m["common.time-picker.cancel"]()}
-                    </Dialog.CloseTrigger>
-                    <button
-                        class="text-ms font-bold text-brand"
-                        onclick={() => {
-                            open = false;
-                            value = internalValue;
-                            onComplete?.(internalValue);
-                        }}
-                    >
-                        {m["common.time-picker.ok"]()}
-                    </button>
-                </div>
-            </Dialog.Content>
-        </Dialog.Positioner>
-    </Portal>
-</Dialog.Root>
+    <div class="mt-4 flex items-center justify-center gap-2 text-5xl">
+        <button
+            class="h-20 w-24 rounded-lg bg-cream-50 data-selected:bg-brand data-selected:text-white"
+            data-selected={boolAttr(view == "hour")}
+            onclick={() => (view = "hour")}
+        >
+            {internalValue.hour.toString().padStart(2, "0")}
+        </button>
+        :
+        <button
+            class="h-20 w-24 rounded-lg bg-cream-50 data-selected:bg-brand data-selected:text-white"
+            data-selected={boolAttr(view == "minutes")}
+            onclick={() => (view = "minutes")}
+        >
+            {internalValue.minute.toString().padStart(2, "0")}
+        </button>
+    </div>
+    <div
+        bind:this={clockRef}
+        class="relative mt-5 aspect-square w-full touch-none rounded-full bg-cream-50 select-none"
+        role="group"
+        {onpointerdown}
+    >
+        <div
+            aria-hidden="true"
+            class="absolute top-1/2 left-1/2 size-2 -translate-1/2 rounded-full bg-brand"
+        ></div>
+        <div
+            aria-hidden="true"
+            class="absolute top-1/2 left-1/2 origin-left bg-brand"
+            style="width: {Math.sqrt(
+                handlePosition.x ** 2 + handlePosition.y ** 2
+            )}px; height: 2px; margin-top: -1px; transform: rotate({handleAngle}deg);"
+        ></div>
+        <div
+            aria-hidden="true"
+            class="absolute size-10 rounded-full bg-brand"
+            style="left: calc(50% + {handlePosition.x}px - 20px); top: calc(50% + {handlePosition.y}px - 20px);"
+        ></div>
+        <div role="listbox">
+            {#if view == "hour"}
+                {@render clockHH()}
+            {:else}
+                {@render clockMM()}
+            {/if}
+        </div>
+    </div>
+</PromptDialog>
 
 {#snippet clockHH()}
     {#each Array.from({ length: 24 }, (_, i) => i) as hour (hour)}
