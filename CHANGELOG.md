@@ -1,5 +1,12 @@
 # Releases
 
+## 0.17.2 (2026-03-02)
+
+### Fix
+
+- proper edit form handling
+- use proper error message for ungranted permissions
+
 ## 0.17.1 (2026-02-28)
 
 ### Fix
