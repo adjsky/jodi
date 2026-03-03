@@ -1,5 +1,11 @@
 # Releases
 
+## 0.17.4 (2026-03-03)
+
+### Fix
+
+- apply new date to endsAt
+
 ## 0.17.3 (2026-03-02)
 
 ### Fix
