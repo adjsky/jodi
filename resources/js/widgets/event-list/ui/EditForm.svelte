@@ -100,6 +100,7 @@
                 onSelect={async (d) => {
                     draft.notifyAt = draft.notifyAt.set(d);
                     draft.startsAt = draft.startsAt.set(d);
+                    draft.endsAt = draft.endsAt.set(d);
                     await tick();
                     announce(startsAtAnnouncerInput);
                 }}
@@ -155,6 +156,7 @@
                 onReschedule={async (d) => {
                     draft.notifyAt = draft.notifyAt.set(d);
                     draft.startsAt = draft.startsAt.set(d);
+                    draft.endsAt = draft.endsAt.set(d);
                     await tick();
                     announce(startsAtAnnouncerInput);
                 }}

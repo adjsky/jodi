@@ -80,6 +80,7 @@
                 onSelect={(d) => {
                     notifyAt = notifyAt.set(d);
                     startsAt = startsAt.set(d);
+                    endsAt = endsAt.set(d);
                 }}
             >
                 {#snippet children(props)}
@@ -125,6 +126,7 @@
                 onReschedule={(d) => {
                     notifyAt = notifyAt.set(d);
                     startsAt = startsAt.set(d);
+                    endsAt = endsAt.set(d);
                 }}
             />
         {/snippet}
