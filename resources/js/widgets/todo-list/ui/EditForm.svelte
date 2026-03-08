@@ -39,7 +39,7 @@
     const { onClose, ...props }: Props = $props();
 
     let dateAnnouncerInput: HTMLInputElement | null = $state(null);
-    let lastKnownTodo = $state(props.todo);
+    let lastKnownTodo = $state(untrack(() => props.todo));
 
     let todo = $derived(props.todo ?? (lastKnownTodo as App.Data.TodoDto));
 

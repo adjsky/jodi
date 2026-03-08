@@ -34,7 +34,7 @@
 
     let startsAtAnnouncerInput: HTMLInputElement | null = $state(null);
     let endsAtAnnouncerInput: HTMLInputElement | null = $state(null);
-    let lastKnownEvent = $state(props.event);
+    let lastKnownEvent = $state(untrack(() => props.event));
 
     const event = $derived(
         props.event ?? (lastKnownEvent as App.Data.EventDto)

@@ -6,7 +6,7 @@
     import Jelly from "$/shared/assets/jelly.svg";
     import { announce } from "$/shared/lib/form";
     import { DISABLE_SHEET_DRAGGING } from "$/shared/ui/Sheet.svelte";
-    import { tick } from "svelte";
+    import { tick, untrack } from "svelte";
 
     import { view } from "../model/view";
     import AddCategory from "./AddCategory.svelte";
@@ -18,7 +18,7 @@
         current: string | null;
     };
 
-    let { name, ...props }: Props = $props();
+    let { name, current }: Props = $props();
 
     const filters = useFilter({ sensitivity: "base" });
     const { collection, filter, set } = useListCollection({
@@ -29,7 +29,7 @@
     });
 
     let formInput = $state<HTMLInputElement | null>(null);
-    let selected = $state(props.current);
+    let selected = $state(untrack(() => current));
     let search = $state("");
 
     let showAddButton = $derived(search != "" && !collection().has(search));

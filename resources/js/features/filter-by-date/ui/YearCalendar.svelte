@@ -7,8 +7,8 @@
     import { Year } from "../model/year.svelte";
     import Month from "./Month.svelte";
 
-    import type { WeekStart } from "../cfg/preferences";
     import type { CalendarDate } from "@internationalized/date";
+    import type { WeekStart } from "$/shared/lib/types";
     import type { Attachment } from "svelte/attachments";
     import type { SvelteHTMLElements } from "svelte/elements";
     import type { Except } from "type-fest";
