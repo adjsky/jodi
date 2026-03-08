@@ -4,7 +4,7 @@
     import type { DialogRootProps } from "@ark-ui/svelte";
     import type { Snippet } from "svelte";
 
-    type Props = Pick<DialogRootProps, "trapFocus" | "onExitComplete"> & {
+    type Props = Pick<DialogRootProps, "onExitComplete"> & {
         open?: boolean;
         title: string;
         portal?: boolean;
@@ -29,9 +29,11 @@
         onConfirm,
         ...dialogRootProps
     }: Props = $props();
+
+    let closeTrigger = $state<HTMLButtonElement | null>(null);
 </script>
 
-<Dialog.Root bind:open {...dialogRootProps}>
+<Dialog.Root bind:open {...dialogRootProps} initialFocusEl={() => closeTrigger}>
     <Portal disabled={!portal}>
         <Dialog.Backdrop
             class={[
@@ -56,6 +58,7 @@
 
                 <div class="mt-5 flex justify-end gap-8">
                     <Dialog.CloseTrigger
+                        bind:ref={closeTrigger}
                         class="text-ms font-bold text-brand"
                         onclick={onAbort}
                     >

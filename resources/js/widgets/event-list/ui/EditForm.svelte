@@ -4,12 +4,12 @@
         parseAbsoluteToLocal,
         toCalendarDate
     } from "@internationalized/date";
-    import { RotateCw } from "@lucide/svelte";
     import { Event } from "$/entities/event";
     import { DeleteItem } from "$/features/delete-item";
     import { daySummary, YearCalendarDialog } from "$/features/filter-by-date";
     import { RescheduleItem } from "$/features/reschedule-item";
     import { Color } from "$/features/select-color";
+    import { Recurrence } from "$/features/select-recurrence";
     import { Reminder } from "$/features/select-reminder";
     import {
         destroy as _destroy,
@@ -20,7 +20,6 @@
     import { announce } from "$/shared/lib/form";
     import * as PushSubscription from "$/shared/lib/push-subscription.svelte";
     import SaveOrClose from "$/shared/ui/SaveOrClose.svelte";
-    import ToolbarAction from "$/shared/ui/ToolbarAction.svelte";
     import { watch } from "runed";
     import { tick, untrack } from "svelte";
 
@@ -46,7 +45,8 @@
             startsAt: parseAbsoluteToLocal(event.startsAt),
             endsAt: parseAbsoluteToLocal(event.endsAt),
             notifyAt: parseAbsoluteToLocal(event.notifyAt),
-            color: event.color
+            color: event.color,
+            rrule: event.rrule
         }))
     );
 
@@ -130,9 +130,12 @@
             />
         {/snippet}
         {#snippet repeat()}
-            <ToolbarAction disabled tooltip={m["events.tooltips.repeat"]()}>
-                <RotateCw />
-            </ToolbarAction>
+            <Recurrence
+                bind:rrule={draft.rrule}
+                day={draft.startsAt}
+                name="rrule"
+                tooltip={m["events.tooltips.repeat"]()}
+            />
         {/snippet}
         {#snippet color()}
             <Color

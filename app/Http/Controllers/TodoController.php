@@ -73,14 +73,15 @@ class TodoController extends Controller
         }
 
         DB::transaction(function () use ($data, $todo) {
-            $data['category_id'] = $data['category']
-                ? $this->user()->categories()
-                    ->where('name', $data['category'])
-                    ->firstOrFail(['id'])
-                    ->id
-                : null;
-
-            $todo->fill($data);
+            $todo->fill([
+                ...$data,
+                'category_id' => $data['category']
+                    ? $this->user()->categories()
+                        ->where('name', $data['category'])
+                        ->firstOrFail(['id'])
+                        ->id
+                    : null]
+            );
 
             $isCategoryChanged = $todo->isDirty('category_id');
             $isScheduledAtSameDay = $todo->scheduled_at->isSameDay($todo->getOriginal('scheduled_at'));
@@ -90,6 +91,7 @@ class TodoController extends Controller
             }
 
             $todo->save();
+
         });
 
         return back();

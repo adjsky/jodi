@@ -22,6 +22,7 @@ class Event extends Model
         'notify_at',
         'notify_status',
         'color',
+        'rrule',
     ];
 
     protected $hidden = [];
@@ -38,15 +39,15 @@ class Event extends Model
         ];
     }
 
-    /** @return HasMany<EventAttendee,$this> */
-    public function attendees(): HasMany
-    {
-        return $this->hasMany(EventAttendee::class);
-    }
-
     /** @return BelongsTo<User,$this> */
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
+    }
+
+    /** @return HasMany<EventAttendee,$this> */
+    public function attendees(): HasMany
+    {
+        return $this->hasMany(EventAttendee::class);
     }
 }

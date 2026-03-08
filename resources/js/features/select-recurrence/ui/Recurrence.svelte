@@ -1,11 +1,9 @@
 <script lang="ts">
     import { HistoryView } from "$/shared/inertia/history-view.svelte";
-    import { normalizeIsoString } from "$/shared/lib/date";
     import { announce } from "$/shared/lib/form";
     import { DISABLE_SHEET_DRAGGING } from "$/shared/ui/Sheet.svelte";
     import { tick } from "svelte";
 
-    import { durationToZonedDT } from "../helpers/duration";
     import BasicMenu from "./BasicMenu.svelte";
     import CustomConfigurator from "./CustomConfigurator.svelte";
 
@@ -13,63 +11,49 @@
 
     type Props = {
         tooltip: string;
-        notifyAt: ZonedDateTime | null;
-        startsAt: ZonedDateTime;
+        day: ZonedDateTime;
+        rrule?: string | null;
         name: string;
-        beforeOpen?: () => void | boolean;
     };
 
-    let {
-        tooltip,
-        notifyAt = $bindable(),
-        startsAt,
-        name,
-        beforeOpen
-    }: Props = $props();
+    let { tooltip, day, rrule = $bindable(), name }: Props = $props();
 
     const customPickerView = new HistoryView<{
         [DISABLE_SHEET_DRAGGING]: boolean;
-        __selectreminder: { isOpen: boolean };
+        __selectrecurrence: { isOpen: boolean };
     }>();
 
-    let announcerInput = $state<HTMLInputElement | null>(null);
+    let rruleAnnouncer = $state<HTMLInputElement | null>(null);
     let isMenuOpen = $state(false);
 
-    async function onSelect(duration: string) {
-        notifyAt = durationToZonedDT(startsAt, duration);
+    async function onSelect(r: string | null) {
+        rrule = r;
         await tick();
-        announce(announcerInput);
+        announce(rruleAnnouncer);
     }
 </script>
 
 <BasicMenu
-    {notifyAt}
-    {startsAt}
     {tooltip}
+    {rrule}
     {onSelect}
-    bind:open={
-        () => isMenuOpen,
-        (v) => {
-            if (v && beforeOpen?.() === false) return;
-            isMenuOpen = v;
-        }
-    }
+    bind:open={isMenuOpen}
     onCustomTrigger={() => {
         isMenuOpen = false;
         void customPickerView.push(customPickerView.name, {
             ...customPickerView.meta,
             [DISABLE_SHEET_DRAGGING]: true,
-            __selectreminder: { isOpen: true }
+            __selectrecurrence: { isOpen: true }
         });
     }}
 />
 
 <CustomConfigurator
-    {notifyAt}
-    {startsAt}
+    {day}
+    {rrule}
     {onSelect}
     bind:open={
-        () => customPickerView.meta?.__selectreminder?.isOpen ?? false,
+        () => customPickerView.meta?.__selectrecurrence?.isOpen ?? false,
         (v) => {
             if (!v) {
                 void customPickerView.back();
@@ -78,9 +62,4 @@
     }
 />
 
-<input
-    bind:this={announcerInput}
-    hidden
-    value={notifyAt ? normalizeIsoString(notifyAt.toAbsoluteString()) : null}
-    {name}
-/>
+<input {name} bind:this={rruleAnnouncer} hidden value={rrule} />

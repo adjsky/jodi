@@ -1,11 +1,12 @@
 <script lang="ts">
     import { Form } from "@inertiajs/svelte";
     import { toCalendarDate } from "@internationalized/date";
-    import { RotateCw, Trash } from "@lucide/svelte";
+    import { Trash } from "@lucide/svelte";
     import { Event } from "$/entities/event";
     import { YearCalendarDialog } from "$/features/filter-by-date";
     import { RescheduleItem } from "$/features/reschedule-item";
     import { Color } from "$/features/select-color";
+    import { Recurrence } from "$/features/select-recurrence";
     import { Reminder } from "$/features/select-reminder";
     import { create } from "$/generated/actions/App/Http/Controllers/EventController";
     import { m } from "$/paraglide/messages";
@@ -100,16 +101,14 @@
             </ToolbarAction>
         {/snippet}
         {#snippet repeat()}
-            <ToolbarAction disabled tooltip={m["events.tooltips.repeat"]()}>
-                <RotateCw />
-            </ToolbarAction>
+            <Recurrence
+                day={startsAt}
+                name="rrule"
+                tooltip={m["events.tooltips.repeat"]()}
+            />
         {/snippet}
         {#snippet color()}
-            <Color
-                name="color"
-                tooltip={m["events.tooltips.color"]()}
-                current={null}
-            />
+            <Color name="color" tooltip={m["events.tooltips.color"]()} />
         {/snippet}
         {#snippet notify()}
             <Reminder

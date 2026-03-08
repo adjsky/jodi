@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Http\Requests\Todo;
 
+use App\Rules\ValidRRule;
 use App\Support\FormRequest\ConvertsToSnakeCase;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
@@ -32,6 +33,8 @@ class UpdateRequest extends FormRequest
             'scheduledAt' => 'required|date',
             'hasTime' => 'required|boolean',
             'notifyAt' => 'nullable|date',
+            'rrule' => ['nullable', 'string', new ValidRRule],
+            'recurringUntil' => 'nullable|date',
         ];
     }
 }

@@ -4,7 +4,6 @@
         parseAbsoluteToLocal,
         toCalendarDate
     } from "@internationalized/date";
-    import { RotateCw } from "@lucide/svelte";
     import { Todo } from "$/entities/todo";
     import { Checkbox } from "$/features/complete-todo";
     import { DeleteItem } from "$/features/delete-item";
@@ -13,6 +12,7 @@
     import { TodoTime } from "$/features/schedule-todo-time";
     import { Category } from "$/features/select-category";
     import { Color } from "$/features/select-color";
+    import { Recurrence } from "$/features/select-recurrence";
     import { Reminder } from "$/features/select-reminder";
     import {
         destroy as _destroy,
@@ -26,7 +26,6 @@
     import * as PushSubscription from "$/shared/lib/push-subscription.svelte";
     import { toaster } from "$/shared/lib/toaster";
     import SaveOrClose from "$/shared/ui/SaveOrClose.svelte";
-    import ToolbarAction from "$/shared/ui/ToolbarAction.svelte";
     import { watch } from "runed";
     import { tick, untrack } from "svelte";
 
@@ -51,7 +50,8 @@
             notifyAt: todo.notifyAt
                 ? parseAbsoluteToLocal(todo.notifyAt)
                 : null,
-            color: todo.color
+            color: todo.color,
+            rrule: todo.rrule
         }))
     );
 
@@ -162,9 +162,12 @@
             />
         {/snippet}
         {#snippet repeat()}
-            <ToolbarAction disabled tooltip={m["todos.tooltips.repeat"]()}>
-                <RotateCw />
-            </ToolbarAction>
+            <Recurrence
+                bind:rrule={draft.rrule}
+                day={draft.scheduledAt}
+                name="rrule"
+                tooltip={m["todos.tooltips.repeat"]()}
+            />
         {/snippet}
         {#snippet color()}
             <Color

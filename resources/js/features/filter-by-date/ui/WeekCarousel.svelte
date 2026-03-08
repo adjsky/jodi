@@ -9,8 +9,8 @@
     import { compareDates } from "../helpers/date";
     import { Week } from "../model/week.svelte";
 
-    import type { WeekStart } from "../cfg/preferences";
     import type { CalendarDate } from "@internationalized/date";
+    import type { WeekStart } from "$/shared/lib/types";
 
     type Props = {
         selected: CalendarDate;

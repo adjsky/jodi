@@ -1,13 +1,14 @@
 <script lang="ts">
     import { Form } from "@inertiajs/svelte";
     import { toCalendarDate } from "@internationalized/date";
-    import { RotateCw, Trash } from "@lucide/svelte";
+    import { Trash } from "@lucide/svelte";
     import { Todo } from "$/entities/todo";
     import { YearCalendarDialog } from "$/features/filter-by-date";
     import { RescheduleItem } from "$/features/reschedule-item";
     import { TodoTime } from "$/features/schedule-todo-time";
     import { Category } from "$/features/select-category";
     import { Color } from "$/features/select-color";
+    import { Recurrence } from "$/features/select-recurrence";
     import Reminder from "$/features/select-reminder/ui/Reminder.svelte";
     import { create } from "$/generated/actions/App/Http/Controllers/TodoController";
     import { m } from "$/paraglide/messages";
@@ -110,16 +111,14 @@
             </ToolbarAction>
         {/snippet}
         {#snippet repeat()}
-            <ToolbarAction disabled tooltip={m["todos.tooltips.repeat"]()}>
-                <RotateCw />
-            </ToolbarAction>
+            <Recurrence
+                day={scheduledAt}
+                name="rrule"
+                tooltip={m["todos.tooltips.repeat"]()}
+            />
         {/snippet}
         {#snippet color()}
-            <Color
-                name="color"
-                tooltip={m["todos.tooltips.color"]()}
-                current={null}
-            />
+            <Color name="color" tooltip={m["todos.tooltips.color"]()} />
         {/snippet}
         {#snippet notify()}
             <Reminder

@@ -25,6 +25,7 @@ class Todo extends Model implements Sortable
         'notify_at',
         'notify_status',
         'color',
+        'rrule',
     ];
 
     protected $hidden = [];
