@@ -7,7 +7,7 @@
     import type { HTMLButtonAttributes } from "svelte/elements";
 
     type Props = HTMLButtonAttributes & {
-        label: string | Snippet;
+        label?: string | Snippet;
         checked?: boolean;
     };
 
@@ -34,7 +34,7 @@
     </span>
     {#if typeof label == "function"}
         {@render label?.()}
-    {:else}
+    {:else if label}
         <span>{label}</span>
     {/if}
 </button>

@@ -227,12 +227,23 @@
         "month": "Each month",
         "year": "Each year",
         "custom": {
-            "title": "Repeat once every",
+            "title": "Repeat",
             "trigger": "Other",
-            "ok": "OK",
-            "cancel": "Cancel",
+            "apply": "Apply",
+            "select-frequency": "Repeat once every",
             "select-weekdays": "Select weekdays",
-            "select-when-to-end": "Select when to end"
+            "select-when-to-end": "Select when to end",
+            "never": "Never",
+            "end-after-times": [
+                {
+                    "declarations": ["input t", "local times = t: plural"],
+                    "selectors": ["times"],
+                    "match": {
+                        "times=one": "After {#input}{/input} time",
+                        "times=other": "After {#input}{/input} times"
+                    }
+                }
+            ]
         }
     },
     "current-user": {

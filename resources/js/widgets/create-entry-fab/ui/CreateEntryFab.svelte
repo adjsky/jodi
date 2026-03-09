@@ -61,28 +61,26 @@
                 "data-[state=open]:animate-in data-[state=open]:fade-in"
             ]}
         />
-        <Dialog.Positioner>
-            <Dialog.Content
-                class={[
-                    "fixed right-4 bottom-safe-offset-23 z-20 flex flex-col items-end gap-5",
-                    "data-[state=closed]:animate-out data-[state=closed]:fade-out data-[state=closed]:slide-out-to-right",
-                    "data-[state=open]:animate-in data-[state=open]:fade-in data-[state=open]:slide-in-from-right"
-                ]}
+        <Dialog.Content
+            class={[
+                "fixed right-4 bottom-safe-offset-23 z-20 flex flex-col items-end gap-5",
+                "data-[state=closed]:animate-out data-[state=closed]:fade-out data-[state=closed]:slide-out-to-right",
+                "data-[state=open]:animate-in data-[state=open]:fade-in data-[state=open]:slide-in-from-right"
+            ]}
+        >
+            <ActionRow
+                title={m["events.add"]()}
+                onclick={() => view.replace("add-event")}
             >
-                <ActionRow
-                    title={m["events.add"]()}
-                    onclick={() => view.replace("add-event")}
-                >
-                    <CalendarClock />
-                </ActionRow>
-                <ActionRow
-                    title={m["todos.add"]()}
-                    onclick={() => view.replace("add-todo")}
-                >
-                    <Check />
-                </ActionRow>
-            </Dialog.Content>
-        </Dialog.Positioner>
+                <CalendarClock />
+            </ActionRow>
+            <ActionRow
+                title={m["todos.add"]()}
+                onclick={() => view.replace("add-todo")}
+            >
+                <Check />
+            </ActionRow>
+        </Dialog.Content>
     </Portal>
 </Dialog.Root>
 

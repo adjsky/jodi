@@ -235,13 +235,24 @@
         "month": "Каждый месяц",
         "year": "Каждый год",
         "custom": {
-            "title": "Повторять раз в",
+            "title": "Повторение",
             "trigger": "Другое",
-            "ok": "OK",
-            "cancel": "Отмена",
+            "apply": "Применить",
+            "select-frequency": "Повторять раз в",
             "select-weekdays": "Когда повторяется",
             "select-when-to-end": "Когда завершается",
-            "never": "Никогда"
+            "never": "Никогда",
+            "end-after-times": [
+                {
+                    "declarations": ["input t", "local times = t: plural"],
+                    "selectors": ["times"],
+                    "match": {
+                        "times=one": "После {#input}{/input} раза",
+                        "times=few": "После {#input}{/input} раз",
+                        "times=many": "После {#input}{/input} раз"
+                    }
+                }
+            ]
         }
     },
     "current-user": {
