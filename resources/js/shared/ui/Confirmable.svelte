@@ -13,7 +13,8 @@
         title: string;
         open?: boolean;
         portal?: boolean;
-        children?: Snippet<[() => HTMLAttributes<HTMLElement>]>;
+        trigger?: Snippet<[() => HTMLAttributes<HTMLElement>]>;
+        content?: Snippet;
         onConfirm?: () => MaybePromise<boolean | void>;
         onAbort?: VoidFunction;
     };
@@ -22,16 +23,17 @@
         title,
         open = $bindable(false),
         portal = true,
-        children,
+        trigger,
+        content,
         onConfirm,
         onAbort
     }: Props = $props();
 </script>
 
 <Dialog.Root bind:open role="alertdialog">
-    {#if children}
+    {#if trigger}
         <Dialog.Trigger>
-            {#snippet asChild(props)}{@render children(props)}{/snippet}
+            {#snippet asChild(props)}{@render trigger(props)}{/snippet}
         </Dialog.Trigger>
     {/if}
     <Portal disabled={!portal}>
@@ -52,6 +54,9 @@
             <Dialog.Title class="text-2xl font-bold">
                 {title}
             </Dialog.Title>
+
+            {@render content?.()}
+
             <div class="mt-5 flex gap-2">
                 <Dialog.CloseTrigger onclick={onAbort}>
                     {#snippet asChild(props)}

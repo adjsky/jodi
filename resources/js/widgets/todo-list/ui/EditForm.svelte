@@ -1,5 +1,5 @@
 <script lang="ts">
-    import { Form, router } from "@inertiajs/svelte";
+    import { Form } from "@inertiajs/svelte";
     import {
         parseAbsoluteToLocal,
         toCalendarDate
@@ -7,7 +7,7 @@
     import { Todo } from "$/entities/todo";
     import { Checkbox } from "$/features/complete-todo";
     import { DeleteItem } from "$/features/delete-item";
-    import { daySummary, YearCalendarDialog } from "$/features/filter-by-date";
+    import { YearCalendarDialog } from "$/features/filter-by-date";
     import { RescheduleItem } from "$/features/reschedule-item";
     import { TodoTime } from "$/features/schedule-todo-time";
     import { Category } from "$/features/select-category";
@@ -23,7 +23,6 @@
     import { NOTIFICATION_DEFAULT_SUBHOURS } from "$/shared/cfg/constants";
     import { normalizeIsoString, timediff } from "$/shared/lib/date";
     import { announce } from "$/shared/lib/form";
-    import * as PushSubscription from "$/shared/lib/push-subscription.svelte";
     import { toaster } from "$/shared/lib/toaster";
     import SaveOrClose from "$/shared/ui/SaveOrClose.svelte";
     import { watch } from "runed";
@@ -65,7 +64,7 @@
 </script>
 
 <Form
-    {...optimistic.edit(todo.id)}
+    {...optimistic.edit(todo.id, draft.notifyAt != null)}
     action={update(todo.id)}
     options={visitOptions}
     transform={(data) => ({
@@ -73,13 +72,6 @@
         hasTime: draft.hasTime
     })}
     showProgress={false}
-    onSuccess={() => {
-        if (draft.notifyAt) {
-            PushSubscription.ahtung(m["todos.reminder-ahtung"]());
-        }
-        router.flushByCacheTags("week-carousel");
-        daySummary.flush();
-    }}
     class="flex grow flex-col pb-18"
     let:isDirty
 >

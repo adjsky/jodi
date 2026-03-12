@@ -2,7 +2,7 @@
     import { router } from "@inertiajs/svelte";
     import { Trash } from "@lucide/svelte";
     import { HistoryView } from "$/shared/inertia/history-view.svelte";
-    import Confirmable from "$/shared/ui/Confirmable.svelte";
+    import RecurrenceActionDialog from "$/shared/ui/RecurrenceActionDialog.svelte";
     import ToolbarAction from "$/shared/ui/ToolbarAction.svelte";
 
     import type { UrlMethodPair, VisitOptions } from "@inertiajs/core";
@@ -10,16 +10,29 @@
     type Props = VisitOptions & {
         href: string | UrlMethodPair;
         title: string;
+        fallbackTitle: string;
         tooltip: string;
+        recurring: boolean;
+        occursAt: string | null;
+        scopeLabels: { this: string; all: string };
     };
 
-    const { tooltip, title, href, ...options }: Props = $props();
+    const {
+        href,
+        title,
+        fallbackTitle,
+        tooltip,
+        recurring,
+        occursAt,
+        scopeLabels,
+        ...options
+    }: Props = $props();
 
     const view = new HistoryView<{ __deleteitem: { isOpen: boolean } }>();
 </script>
 
-<Confirmable
-    {title}
+<RecurrenceActionDialog
+    {scopeLabels}
     bind:open={
         () => view.meta?.__deleteitem?.isOpen ?? false,
         (v) => {
@@ -33,17 +46,20 @@
             }
         }
     }
-    onConfirm={() => {
+    title={recurring ? title : fallbackTitle}
+    fallback={!recurring}
+    onConfirm={(scope) => {
         void router.visit(href, {
             ...options,
+            data: { scope, occursAt },
             showProgress: false
         });
         return true;
     }}
 >
-    {#snippet children(props)}
+    {#snippet trigger(props)}
         <ToolbarAction {...props()} {tooltip}>
             <Trash />
         </ToolbarAction>
     {/snippet}
-</Confirmable>
+</RecurrenceActionDialog>

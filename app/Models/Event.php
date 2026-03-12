@@ -4,15 +4,17 @@ declare(strict_types=1);
 
 namespace App\Models;
 
+use App\Support\Recurrence\HasRecurrence;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\MorphMany;
 
 class Event extends Model
 {
     /** @use HasFactory<\Database\Factories\EventFactory> */
-    use HasFactory;
+    use HasFactory, HasRecurrence;
 
     protected $fillable = [
         'title',
@@ -39,6 +41,19 @@ class Event extends Model
         ];
     }
 
+    protected function recurrenceStartColumn(): string
+    {
+        return 'starts_at';
+    }
+
+    protected function recurrenceDateColumns(): array
+    {
+        return [
+            'ends_at',
+            'notify_at',
+        ];
+    }
+
     /** @return BelongsTo<User,$this> */
     public function user(): BelongsTo
     {
@@ -49,5 +64,11 @@ class Event extends Model
     public function attendees(): HasMany
     {
         return $this->hasMany(EventAttendee::class);
+    }
+
+    /** @return MorphMany<RecurrenceException,$this> */
+    public function recurrenceExceptions(): MorphMany
+    {
+        return $this->morphMany(RecurrenceException::class, 'recurrenceable');
     }
 }

@@ -161,6 +161,12 @@
         "placeholders": {
             "title": "Task",
             "description": "Add a few extra notes here..."
+        },
+        "recurrence-action": {
+            "delete-title": "Delete recurrable task?",
+            "edit-title": "Save recurrable task",
+            "this": "This task",
+            "all": "All tasks"
         }
     },
     "events": {
@@ -185,6 +191,12 @@
         "placeholders": {
             "title": "Event",
             "description": "Add a few extra notes here..."
+        },
+        "recurrence-action": {
+            "delete-title": "Delete recurrable event?",
+            "edit-title": "Save recurrable event",
+            "this": "This event",
+            "all": "All events"
         }
     },
     "reminders": {

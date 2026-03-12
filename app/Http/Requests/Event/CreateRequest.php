@@ -28,7 +28,6 @@ class CreateRequest extends FormRequest
             'endsAt' => 'required|date',
             'notifyAt' => 'required|date',
             'rrule' => ['nullable', 'string', new ValidRRule],
-            'recurringUntil' => 'nullable|date',
         ];
     }
 }

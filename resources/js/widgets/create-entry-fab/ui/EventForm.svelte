@@ -1,16 +1,19 @@
 <script lang="ts">
-    import { Form } from "@inertiajs/svelte";
+    import { Form, router } from "@inertiajs/svelte";
     import { toCalendarDate } from "@internationalized/date";
     import { Trash } from "@lucide/svelte";
     import { Event } from "$/entities/event";
-    import { YearCalendarDialog } from "$/features/filter-by-date";
+    import { daySummary, YearCalendarDialog } from "$/features/filter-by-date";
     import { RescheduleItem } from "$/features/reschedule-item";
     import { Color } from "$/features/select-color";
     import { Recurrence } from "$/features/select-recurrence";
     import { Reminder } from "$/features/select-reminder";
     import { create } from "$/generated/actions/App/Http/Controllers/EventController";
     import { m } from "$/paraglide/messages";
-    import { NOTIFICATION_DEFAULT_SUBHOURS } from "$/shared/cfg/constants";
+    import {
+        NOTIFICATION_DEFAULT_SUBHOURS,
+        WEEK_CAROUSEL_CACHE_TAG
+    } from "$/shared/cfg/constants";
     import { timediff } from "$/shared/lib/date";
     import * as PushSubscription from "$/shared/lib/push-subscription.svelte";
     import { toaster } from "$/shared/lib/toaster";
@@ -56,6 +59,10 @@
     }}
     onSuccess={() => {
         PushSubscription.ahtung(m["events.reminder-ahtung"]());
+
+        router.flushByCacheTags(WEEK_CAROUSEL_CACHE_TAG);
+        daySummary.flush();
+
         onClose();
     }}
     class="flex grow flex-col pb-18"

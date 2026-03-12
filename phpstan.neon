@@ -11,5 +11,7 @@ parameters:
         -
             identifier: missingType.iterableValue
         -
+            identifier: missingType.generics
+        -
             identifier: missingType.return
             path: app/Http/Controllers

@@ -26,17 +26,23 @@ class HomeController extends Controller
             'todos' => TodoDto::collect(
                 $this->user()->todos()
                     ->with('category')
-                    ->whereBetween('todos.scheduled_at', [$startUtc, $endUtc])
-                    ->orderBy('todos.position', 'asc')
+                    ->withPossibleOccurrencesBetween($startUtc, $endUtc)
                     ->get()
-                    ->sortBy(fn ($todo) => $todo->category?->name)
+                    ->flatMap(fn ($t) => $t->occurrencesBetween($startUtc, $endUtc))
+                    ->sortBy([
+                        ['category.name', 'asc'],
+                        ['position', 'asc'],
+                        ['created_at', 'asc'],
+                    ])
                     ->values()
             ),
             'events' => EventDto::collect(
                 $this->user()->events()
-                    ->whereBetween('starts_at', [$startUtc, $endUtc])
-                    ->orderBy('starts_at', 'asc')
+                    ->withPossibleOccurrencesBetween($startUtc, $endUtc)
                     ->get()
+                    ->flatMap(fn ($e) => $e->occurrencesBetween($startUtc, $endUtc))
+                    ->sortBy('starts_at')
+                    ->values()
             ),
             'me' => [
                 'nInvitations' => $this->user()->invitations->count(),

@@ -1,9 +1,9 @@
 <script lang="ts">
-    import { Form } from "@inertiajs/svelte";
+    import { Form, router } from "@inertiajs/svelte";
     import { toCalendarDate } from "@internationalized/date";
     import { Trash } from "@lucide/svelte";
     import { Todo } from "$/entities/todo";
-    import { YearCalendarDialog } from "$/features/filter-by-date";
+    import { daySummary, YearCalendarDialog } from "$/features/filter-by-date";
     import { RescheduleItem } from "$/features/reschedule-item";
     import { TodoTime } from "$/features/schedule-todo-time";
     import { Category } from "$/features/select-category";
@@ -12,7 +12,10 @@
     import Reminder from "$/features/select-reminder/ui/Reminder.svelte";
     import { create } from "$/generated/actions/App/Http/Controllers/TodoController";
     import { m } from "$/paraglide/messages";
-    import { NOTIFICATION_DEFAULT_SUBHOURS } from "$/shared/cfg/constants";
+    import {
+        NOTIFICATION_DEFAULT_SUBHOURS,
+        WEEK_CAROUSEL_CACHE_TAG
+    } from "$/shared/cfg/constants";
     import { normalizeIsoString, timediff } from "$/shared/lib/date";
     import * as PushSubscription from "$/shared/lib/push-subscription.svelte";
     import { toaster } from "$/shared/lib/toaster";
@@ -52,6 +55,10 @@
         if (notifyAt) {
             PushSubscription.ahtung(m["todos.reminder-ahtung"]());
         }
+
+        router.flushByCacheTags(WEEK_CAROUSEL_CACHE_TAG);
+        daySummary.flush();
+
         onClose();
     }}
     class="flex grow flex-col pb-18"

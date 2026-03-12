@@ -1,12 +1,15 @@
+import { router } from "@inertiajs/core";
+import { daySummary } from "$/features/filter-by-date";
 import { m } from "$/paraglide/messages";
+import { WEEK_CAROUSEL_CACHE_TAG } from "$/shared/cfg/constants";
 import { optimistic as _optimistic } from "$/shared/inertia/visit/optimistic";
+import * as PushSubscription from "$/shared/lib/push-subscription.svelte";
 import { toaster } from "$/shared/lib/toaster";
 
 import { editView } from "../model/view";
 
 import type { VisitOptions } from "@inertiajs/core";
 import type { ZonedDateTime } from "@internationalized/date";
-import type { Getter } from "runed";
 
 export const visitOptions: VisitOptions = {
     only: ["events"],
@@ -19,7 +22,7 @@ export const visitOptions: VisitOptions = {
 export const optimistic = {
     edit: (
         id: number,
-        draft: Getter<{ startsAt: ZonedDateTime; endsAt: ZonedDateTime }>
+        draft: { startsAt: ZonedDateTime; endsAt: ZonedDateTime }
     ) =>
         _optimistic(
             (prev, data) => ({
@@ -30,12 +33,19 @@ export const optimistic = {
             {
                 error: m["events.errors.edit"](),
                 onBefore() {
-                    if (draft().startsAt.compare(draft().endsAt) >= 0) {
+                    if (draft.startsAt.compare(draft.endsAt) >= 0) {
                         toaster.error(m["common.invalid-time-range"]());
                         return false;
                     }
                 },
-                onSuccess: () => editView.back()
+                onSuccess: () => {
+                    PushSubscription.ahtung(m["events.reminder-ahtung"]());
+
+                    router.flushByCacheTags(WEEK_CAROUSEL_CACHE_TAG);
+                    daySummary.flush();
+
+                    void editView.back();
+                }
             }
         ),
     delete: (id: number) =>
@@ -45,7 +55,12 @@ export const optimistic = {
             }),
             {
                 error: m["events.errors.delete"](),
-                onSuccess: () => editView.back()
+                onSuccess: () => {
+                    router.flushByCacheTags(WEEK_CAROUSEL_CACHE_TAG);
+                    daySummary.flush();
+
+                    void editView.back();
+                }
             }
         )
 };

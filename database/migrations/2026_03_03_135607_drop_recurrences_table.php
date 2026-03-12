@@ -16,12 +16,12 @@ return new class extends Migration
         Schema::table('todos', function (Blueprint $table) {
             $table->dropForeign(['recurrence_id']);
             $table->dropColumn('recurrence_id');
-            $table->text('rrule')->nullable();
+            $table->text('rrule')->nullable()->index();
         });
         Schema::table('events', function (Blueprint $table) {
             $table->dropForeign(['recurrence_id']);
             $table->dropColumn('recurrence_id');
-            $table->text('rrule')->nullable();
+            $table->text('rrule')->nullable()->index();
         });
 
         Schema::drop('recurrences');

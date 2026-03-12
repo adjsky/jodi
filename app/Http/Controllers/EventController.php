@@ -8,6 +8,8 @@ use App\Http\Requests\Event\CreateRequest;
 use App\Http\Requests\Event\DestroyRequest;
 use App\Http\Requests\Event\UpdateRequest;
 use App\Models\Event;
+use Illuminate\Support\Arr;
+use Illuminate\Support\Facades\Log;
 
 class EventController extends Controller
 {
@@ -25,18 +27,29 @@ class EventController extends Controller
     {
         $data = $request->validatedInSnakeCase();
 
-        if ($event->notify_at->ne($data['notify_at'])) {
-            $data['notify_status'] = 'waiting';
-        }
+        Log::info(Arr::only($data, ['title']));
 
-        $event->update($data);
+        // if ($event->notify_at->ne($data['notify_at'])) {
+        //     $data['notify_status'] = 'waiting';
+        // }
+
+        $event->applyException($data['starts_at'], Arr::only($data, ['title']));
+
+        // $event->update($data);
 
         return back();
     }
 
     public function destroy(DestroyRequest $request, Event $event)
     {
-        $event->delete();
+        $data = $request->validatedInSnakeCase();
+
+        if (is_null($event->rrule) || $data['scope'] == 'all') {
+            $event->deleteExceptions();
+            $event->delete();
+        } else {
+            $event->cancelOccurrence($data['occurs_at']);
+        }
 
         return back();
     }

@@ -1,6 +1,10 @@
+import { router } from "@inertiajs/core";
+import { daySummary } from "$/features/filter-by-date";
 import { m } from "$/paraglide/messages";
+import { WEEK_CAROUSEL_CACHE_TAG } from "$/shared/cfg/constants";
 import { optimistic as _optimistic } from "$/shared/inertia/visit/optimistic";
 import { normalizeIsoString } from "$/shared/lib/date";
+import * as PushSubscription from "$/shared/lib/push-subscription.svelte";
 
 import { editView } from "../model/view";
 
@@ -15,7 +19,7 @@ export const visitOptions: VisitOptions = {
 };
 
 export const optimistic = {
-    edit: (id: number) =>
+    edit: (id: number, withAhtungReminder: boolean) =>
         _optimistic(
             (prev, data) => ({
                 todos: prev.todos.map((t: App.Data.TodoDto) =>
@@ -24,7 +28,16 @@ export const optimistic = {
             }),
             {
                 error: m["todos.errors.edit"](),
-                onSuccess: () => editView.back()
+                onSuccess: () => {
+                    if (withAhtungReminder) {
+                        PushSubscription.ahtung(m["todos.reminder-ahtung"]());
+                    }
+
+                    router.flushByCacheTags(WEEK_CAROUSEL_CACHE_TAG);
+                    daySummary.flush();
+
+                    void editView.back();
+                }
             }
         ),
     complete: (id: number) =>
@@ -60,7 +73,12 @@ export const optimistic = {
             }),
             {
                 error: m["todos.errors.delete"](),
-                onSuccess: () => editView.back()
+                onSuccess: () => {
+                    router.flushByCacheTags(WEEK_CAROUSEL_CACHE_TAG);
+                    daySummary.flush();
+
+                    void editView.back();
+                }
             }
         )
 };

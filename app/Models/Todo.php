@@ -4,17 +4,19 @@ declare(strict_types=1);
 
 namespace App\Models;
 
+use App\Support\Recurrence\HasRecurrence;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Spatie\EloquentSortable\Sortable;
 use Spatie\EloquentSortable\SortableTrait;
 
 class Todo extends Model implements Sortable
 {
     /** @use HasFactory<\Database\Factories\TodoFactory> */
-    use HasFactory, SortableTrait;
+    use HasFactory, HasRecurrence, SortableTrait;
 
     protected $fillable = [
         'title',
@@ -43,6 +45,18 @@ class Todo extends Model implements Sortable
         ];
     }
 
+    protected function recurrenceStartColumn(): string
+    {
+        return 'scheduled_at';
+    }
+
+    protected function recurrenceDateColumns(): array
+    {
+        return [
+            'notify_at',
+        ];
+    }
+
     /** @return BelongsTo<User,$this> */
     public function user(): BelongsTo
     {
@@ -61,5 +75,11 @@ class Todo extends Model implements Sortable
         return static::query()
             ->where('category_id', $this->category_id)
             ->whereDate('scheduled_at', $this->scheduled_at);
+    }
+
+    /** @return MorphMany<RecurrenceException,$this> */
+    public function recurrenceExceptions(): MorphMany
+    {
+        return $this->morphMany(RecurrenceException::class, 'recurrenceable');
     }
 }

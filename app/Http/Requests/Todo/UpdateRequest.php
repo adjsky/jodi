@@ -34,7 +34,6 @@ class UpdateRequest extends FormRequest
             'hasTime' => 'required|boolean',
             'notifyAt' => 'nullable|date',
             'rrule' => ['nullable', 'string', new ValidRRule],
-            'recurringUntil' => 'nullable|date',
         ];
     }
 }

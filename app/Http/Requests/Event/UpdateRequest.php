@@ -28,7 +28,11 @@ class UpdateRequest extends FormRequest
             'endsAt' => 'required|date',
             'notifyAt' => 'required|date',
             'rrule' => ['nullable', 'string', new ValidRRule],
-            'recurringUntil' => 'nullable|date',
+            'occursAt' => [
+                $this->event->rrule ? 'required_if:scope,this' : 'nullable',
+                'date',
+            ],
+            'scope' => 'nullable|in:this,all',
         ];
     }
 }
