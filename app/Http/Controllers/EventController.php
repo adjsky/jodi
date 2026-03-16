@@ -9,7 +9,7 @@ use App\Http\Requests\Event\DestroyRequest;
 use App\Http\Requests\Event\UpdateRequest;
 use App\Models\Event;
 use Illuminate\Support\Arr;
-use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\DB;
 
 class EventController extends Controller
 {
@@ -27,15 +27,42 @@ class EventController extends Controller
     {
         $data = $request->validatedInSnakeCase();
 
-        Log::info(Arr::only($data, ['title']));
+        DB::transaction(function () use ($event, $data) {
+            if (! is_null($event->rrule) && $data['scope'] == 'this') {
+                $existingException = $event->findException($data['occurs_at']);
 
-        // if ($event->notify_at->ne($data['notify_at'])) {
-        //     $data['notify_status'] = 'waiting';
-        // }
+                $overrides = $event->computeOccurenceOverrides(
+                    $data['occurs_at'],
+                    Arr::only($data, ['title', 'description', 'color', 'starts_at', 'ends_at', 'notify_at']),
+                    $existingException
+                );
 
-        $event->applyException($data['starts_at'], Arr::only($data, ['title']));
+                if (isset($overrides['notify_at']) && isset($existingException->overrides['notify_status'])) {
+                    $existingException->overrides = Arr::except($existingException->overrides, ['notify_status']);
+                }
 
-        // $event->update($data);
+                $event->applyException($data['occurs_at'], $overrides, $existingException);
+
+                return back();
+            }
+
+            if (! is_null($event->rrule) && $data['scope'] == 'all') {
+                $event->deleteExceptions();
+                $data = $event->normalizeRecurringDataForUpdate($data);
+            }
+
+            if ($event->notify_at->ne($data['notify_at'])) {
+                if ($event->rrule) {
+                    $event->recurrenceExceptions()
+                        ->whereJsonContainsKey('overrides->notify_status')
+                        ->update(['overrides' => DB::raw("json_remove(overrides, '$.notify_status')")]);
+                } else {
+                    $data['notify_status'] = 'waiting';
+                }
+            }
+
+            $event->update($data);
+        });
 
         return back();
     }

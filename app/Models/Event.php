@@ -41,12 +41,12 @@ class Event extends Model
         ];
     }
 
-    protected function recurrenceStartColumn(): string
+    protected function recurrenceStartKey(): string
     {
         return 'starts_at';
     }
 
-    protected function recurrenceDateColumns(): array
+    protected function recurrenceDateKeys(): array
     {
         return [
             'ends_at',

@@ -47,9 +47,9 @@
     <Confirmable
         {title}
         {portal}
-        onConfirm={() => onConfirm?.(selectedScope)}
         {onAbort}
         bind:open
+        onConfirm={() => onConfirm?.(selectedScope)}
     >
         {#snippet trigger(props)}
             {@render trigger?.(props)}

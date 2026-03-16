@@ -36,12 +36,7 @@
     bind:open={
         () => view.meta?.__saveitem?.isOpen ?? false,
         (v) => {
-            if (v) {
-                void view.push(view.name, {
-                    ...view.meta,
-                    __saveitem: { isOpen: true }
-                });
-            } else {
+            if (!v) {
                 void view.back();
             }
         }
@@ -54,9 +49,9 @@
 >
     {#snippet trigger(props)}
         <button
-            type={variant == "save" ? "submit" : "button"}
             {...props()}
             {disabled}
+            type={variant == "save" ? "submit" : "button"}
             class={tw(
                 "flex size-7 shrink-0 items-center justify-center rounded-full",
                 variant == "close" && "bg-cream-100",
@@ -65,8 +60,15 @@
             onclick={(e) => {
                 if (variant == "close") {
                     onClose?.();
-                } else {
-                    props().onclick?.(e);
+                    return;
+                }
+
+                if (recurring) {
+                    e.preventDefault();
+                    void view.push(view.name, {
+                        ...view.meta,
+                        __saveitem: { isOpen: true }
+                    });
                 }
             }}
         >

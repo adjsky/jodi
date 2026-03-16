@@ -2,6 +2,7 @@
     import { Form } from "@inertiajs/svelte";
     import {
         parseAbsoluteToLocal,
+        parseDate,
         toCalendarDate
     } from "@internationalized/date";
     import { Event } from "$/entities/event";
@@ -96,6 +97,9 @@
         {#snippet calendar(trigger)}
             <YearCalendarDialog
                 selected={toCalendarDate(draft.startsAt)}
+                min={event.recurringSince
+                    ? parseDate(event.recurringSince)
+                    : null}
                 onSelect={async (d) => {
                     draft.notifyAt = draft.notifyAt.set(d);
                     draft.startsAt = draft.startsAt.set(d);
@@ -131,8 +135,10 @@
                 {...visitOptions}
                 {...optimistic.delete(event.id)}
                 href={_destroy(event.id)}
-                title={m["events.recurrence-action.delete-title"]()}
-                fallbackTitle={m["events.delete-ahtung"]()}
+                title={{
+                    recurring: m["events.recurrence-action.delete-title"](),
+                    general: m["events.delete-ahtung"]()
+                }}
                 tooltip={m["events.tooltips.delete"]()}
                 recurring={event.rrule != null}
                 occursAt={event.occursAt}

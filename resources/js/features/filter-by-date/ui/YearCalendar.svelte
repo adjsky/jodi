@@ -17,6 +17,7 @@
         portal?: boolean;
         selected: CalendarDate;
         start: WeekStart;
+        min?: CalendarDate | null;
         getDateAttachment?: (
             date: CalendarDate
         ) => Attachment<HTMLButtonElement>;
@@ -27,6 +28,7 @@
     const {
         selected,
         start,
+        min,
         getDateAttachment,
         onClose,
         onSelect,
@@ -102,6 +104,7 @@
                 {...month}
                 {year}
                 {selected}
+                {min}
                 {onSelect}
                 container={monthsNode}
                 attachment={getDateAttachment}

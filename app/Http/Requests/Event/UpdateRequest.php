@@ -29,7 +29,7 @@ class UpdateRequest extends FormRequest
             'notifyAt' => 'required|date',
             'rrule' => ['nullable', 'string', new ValidRRule],
             'occursAt' => [
-                $this->event->rrule ? 'required_if:scope,this' : 'nullable',
+                $this->event->rrule ? 'required' : 'nullable',
                 'date',
             ],
             'scope' => 'nullable|in:this,all',

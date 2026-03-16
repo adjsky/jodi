@@ -23,6 +23,7 @@
         selected: CalendarDate;
         year: Year;
         date: CalendarDate;
+        min?: CalendarDate | null;
         name: string;
         container: HTMLElement;
         attachment?: (date: CalendarDate) => Attachment<HTMLButtonElement>;
@@ -33,6 +34,7 @@
         selected,
         year,
         date,
+        min,
         name,
         container,
         attachment,
@@ -69,11 +71,13 @@
 
 {#snippet day(date: CalendarDate, isWithinMonth: boolean)}
     {@const summary = daySummary.cache.get(date.year)?.get(date.toString())}
+    {@const disabled = min ? min.compare(date) > 0 : false}
     <td class:invisible={!isWithinMonth}>
         <button
             {@attach attachment?.(date)}
+            {disabled}
             type="button"
-            class="group flex h-22 w-full flex-col items-center pt-1 text-lg"
+            class="group flex h-22 w-full flex-col items-center pt-1 text-lg disabled:cursor-not-allowed disabled:line-through disabled:opacity-40"
             data-selected={boolAttr(compareDates(selected, date) == "selected")}
             onclick={() => onSelect?.(date)}
         >

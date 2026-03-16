@@ -45,12 +45,12 @@ class Todo extends Model implements Sortable
         ];
     }
 
-    protected function recurrenceStartColumn(): string
+    protected function recurrenceStartKey(): string
     {
         return 'scheduled_at';
     }
 
-    protected function recurrenceDateColumns(): array
+    protected function recurrenceDateKeys(): array
     {
         return [
             'notify_at',

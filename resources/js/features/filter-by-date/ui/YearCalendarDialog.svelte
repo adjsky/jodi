@@ -13,11 +13,12 @@
     type Props = {
         id?: string;
         selected: CalendarDate;
+        min?: CalendarDate | null;
         children?: Snippet<[() => HTMLAttributes<HTMLElement>]>;
         onSelect?: (date: CalendarDate) => void;
     };
 
-    let { id = "general", selected, children, onSelect }: Props = $props();
+    let { id = "general", selected, min, children, onSelect }: Props = $props();
 
     const view = new HistoryView<{
         [DISABLE_SHEET_DRAGGING]: boolean;
@@ -51,6 +52,7 @@
 
     <YearCalendar
         {selected}
+        {min}
         portal={false}
         class="absolute h-full rounded-t-2xl bg-white pt-3"
         start={$page.props.auth.user.preferences.weekStartOn}

@@ -9,8 +9,10 @@
 
     type Props = VisitOptions & {
         href: string | UrlMethodPair;
-        title: string;
-        fallbackTitle: string;
+        title: {
+            recurring: string;
+            general: string;
+        };
         tooltip: string;
         recurring: boolean;
         occursAt: string | null;
@@ -20,7 +22,6 @@
     const {
         href,
         title,
-        fallbackTitle,
         tooltip,
         recurring,
         occursAt,
@@ -46,7 +47,7 @@
             }
         }
     }
-    title={recurring ? title : fallbackTitle}
+    title={recurring ? title.recurring : title.general}
     fallback={!recurring}
     onConfirm={(scope) => {
         void router.visit(href, {
