@@ -1,5 +1,4 @@
 import { router } from "@inertiajs/core";
-import { daySummary } from "$/features/filter-by-date";
 import { m } from "$/paraglide/messages";
 import { WEEK_CAROUSEL_CACHE_TAG } from "$/shared/cfg/constants";
 import { optimistic as _optimistic } from "$/shared/inertia/visit/optimistic";
@@ -40,9 +39,7 @@ export const optimistic = {
                 },
                 onSuccess: () => {
                     PushSubscription.ahtung(m["events.reminder-ahtung"]());
-
                     router.flushByCacheTags(WEEK_CAROUSEL_CACHE_TAG);
-                    daySummary.flush();
 
                     void editView.back();
                 }
@@ -57,8 +54,6 @@ export const optimistic = {
                 error: m["events.errors.delete"](),
                 onSuccess: () => {
                     router.flushByCacheTags(WEEK_CAROUSEL_CACHE_TAG);
-                    daySummary.flush();
-
                     void editView.back();
                 }
             }

@@ -3,7 +3,7 @@
     import { toCalendarDate } from "@internationalized/date";
     import { Trash } from "@lucide/svelte";
     import { Event } from "$/entities/event";
-    import { daySummary, YearCalendarDialog } from "$/features/filter-by-date";
+    import { YearCalendarDialog } from "$/features/filter-by-date";
     import { RescheduleItem } from "$/features/reschedule-item";
     import { Color } from "$/features/select-color";
     import { Recurrence } from "$/features/select-recurrence";
@@ -59,9 +59,7 @@
     }}
     onSuccess={() => {
         PushSubscription.ahtung(m["events.reminder-ahtung"]());
-
         router.flushByCacheTags(WEEK_CAROUSEL_CACHE_TAG);
-        daySummary.flush();
 
         onClose();
     }}

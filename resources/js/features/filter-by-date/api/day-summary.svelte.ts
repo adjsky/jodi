@@ -59,6 +59,15 @@ export function useDaySummary(options?: Options) {
             const yearCache = cache.get(requests.year);
 
             if (yearCache) {
+                for (const date of yearCache.keys()) {
+                    if (
+                        requests.months.has(parseInt(date.split("-")[1])) &&
+                        !json[date]
+                    ) {
+                        yearCache.delete(date);
+                    }
+                }
+
                 for (const [day, s] of Object.entries(json)) {
                     yearCache.set(day, s);
                 }
@@ -75,9 +84,5 @@ export function useDaySummary(options?: Options) {
         }
     }, 50);
 
-    function flush() {
-        cache.clear();
-    }
-
-    return { cache, request, flush };
+    return { cache, request };
 }

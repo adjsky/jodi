@@ -3,7 +3,7 @@
     import { toCalendarDate } from "@internationalized/date";
     import { Trash } from "@lucide/svelte";
     import { Todo } from "$/entities/todo";
-    import { daySummary, YearCalendarDialog } from "$/features/filter-by-date";
+    import { YearCalendarDialog } from "$/features/filter-by-date";
     import { RescheduleItem } from "$/features/reschedule-item";
     import { TodoTime } from "$/features/schedule-todo-time";
     import { Category } from "$/features/select-category";
@@ -57,7 +57,6 @@
         }
 
         router.flushByCacheTags(WEEK_CAROUSEL_CACHE_TAG);
-        daySummary.flush();
 
         onClose();
     }}
