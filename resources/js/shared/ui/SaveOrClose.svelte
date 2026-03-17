@@ -11,7 +11,7 @@
         title: string;
         variant: "save" | "close";
         disabled?: boolean;
-        recurring: boolean;
+        confirm: boolean;
         scopeLabels: { this: string; all: string };
         onConfirm?: (scope: Scope) => void;
         onClose?: VoidFunction;
@@ -21,7 +21,7 @@
         title,
         variant,
         disabled,
-        recurring,
+        confirm,
         scopeLabels,
         onConfirm,
         onClose
@@ -41,7 +41,7 @@
             }
         }
     }
-    skip={!recurring}
+    skip={!confirm}
     onConfirm={(scope) => {
         onConfirm?.(scope);
         return true;
@@ -63,7 +63,7 @@
                     return;
                 }
 
-                if (recurring) {
+                if (confirm) {
                     e.preventDefault();
                     void view.push(view.name, {
                         ...view.meta,

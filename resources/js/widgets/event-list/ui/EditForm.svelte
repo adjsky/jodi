@@ -69,6 +69,11 @@
     options={visitOptions}
     showProgress={false}
     class="flex grow flex-col pb-18"
+    transform={(data) => ({
+        ...data,
+        occursAt: event.occursAt,
+        scope
+    })}
     let:isDirty
     let:submit
 >
@@ -122,7 +127,7 @@
                     this: m["events.recurrence-action.this"](),
                     all: m["events.recurrence-action.all"]()
                 }}
-                recurring={event.rrule != null}
+                confirm={event.rrule != null && event.rrule === draft.rrule}
                 onConfirm={async (s) => {
                     scope = s;
                     await tick();
@@ -154,6 +159,13 @@
                 day={draft.startsAt}
                 name="rrule"
                 tooltip={m["events.tooltips.repeat"]()}
+                onChange={(rrule) => {
+                    if (rrule !== event.rrule) {
+                        scope = "all";
+                    } else {
+                        scope = "this";
+                    }
+                }}
             />
         {/snippet}
         {#snippet color()}
@@ -198,7 +210,4 @@
         name="endsAt"
         value={normalizeIsoString(draft.endsAt.toAbsoluteString())}
     />
-
-    <input hidden name="occursAt" value={event.occursAt} />
-    <input hidden name="scope" value={scope} />
 </Form>

@@ -14,9 +14,10 @@
         day: ZonedDateTime;
         rrule?: string | null;
         name: string;
+        onChange?: (rrule: string | null) => void;
     };
 
-    let { tooltip, day, rrule = $bindable(), name }: Props = $props();
+    let { tooltip, day, rrule = $bindable(), name, onChange }: Props = $props();
 
     const customPickerView = new HistoryView<{
         [DISABLE_SHEET_DRAGGING]: boolean;
@@ -28,6 +29,7 @@
 
     async function onSelect(r: string | null) {
         rrule = r;
+        onChange?.(r);
         await tick();
         announce(rruleAnnouncer);
     }
