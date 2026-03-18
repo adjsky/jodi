@@ -28,7 +28,7 @@ class HomeController extends Controller
         $endUtc = Carbon::parse($date, $tz)->endOfDay()->setTimezone('UTC');
 
         return inertia('Home', [
-            'todos' => TodoDto::collect($this->todosForDay($startUtc, $endUtc, $tz)),
+            'todos' => TodoDto::collect($this->todosForDay($startUtc, $endUtc)),
             'events' => EventDto::collect($this->eventsForDay($startUtc, $endUtc)),
             'me' => [
                 'nInvitations' => $this->user()->invitations->count(),
@@ -40,7 +40,7 @@ class HomeController extends Controller
         ]);
     }
 
-    private function todosForDay(Carbon $start, Carbon $end, string $tz): Collection
+    private function todosForDay(Carbon $start, Carbon $end): Collection
     {
         /** @var Collection<int, Todo> */
         $todos = $this->user()->todos()
@@ -54,7 +54,7 @@ class HomeController extends Controller
         $todoIds = $todos->pluck('id')->unique();
         $positions = Position::where('positionable_type', Todo::class)
             ->whereIn('positionable_id', $todoIds)
-            ->where('date', $start->clone()->setTimezone($tz)->toDateString())
+            ->whereBetween('date', [$start->toDateString(), $end->toDateString()])
             ->get()
             ->keyBy('positionable_id');
 
