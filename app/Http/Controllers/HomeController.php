@@ -24,8 +24,8 @@ class HomeController extends Controller
 
         $date = $search['d'] ?? now($tz)->toDateString();
 
-        $startUtc = Carbon::parse($date, $tz)->startOfDay()->setTimezone('UTC');
-        $endUtc = Carbon::parse($date, $tz)->endOfDay()->setTimezone('UTC');
+        $startUtc = Carbon::parse($date, $tz)->startOfDay()->utc();
+        $endUtc = Carbon::parse($date, $tz)->endOfDay()->utc();
 
         return inertia('Home', [
             'todos' => TodoDto::collect($this->todosForDay($date, $startUtc, $endUtc)),
@@ -53,7 +53,7 @@ class HomeController extends Controller
 
         $todoIds = $todos->pluck('id')->unique();
         $positions = TodoPosition::whereIn('todo_id', $todoIds)
-            ->where('date', $date)
+            ->where('occurs_at', $date)
             ->get()
             ->keyBy('todo_id');
 

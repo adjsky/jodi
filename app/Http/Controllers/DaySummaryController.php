@@ -22,8 +22,8 @@ class DaySummaryController extends Controller
             $date = CarbonImmutable::createFromDate($year, (int) $month, 1, $tz);
 
             return [
-                'start' => $date->startOfMonth()->setTimezone('UTC'),
-                'end' => $date->endOfMonth()->setTimezone('UTC'),
+                'start' => $date->startOfMonth()->utc(),
+                'end' => $date->endOfMonth()->utc(),
             ];
         });
 
@@ -40,7 +40,7 @@ class DaySummaryController extends Controller
 
         $summary = $events
             ->sortBy('starts_at')
-            ->groupBy(fn ($e) => $e->starts_at->setTimezone($tz)->format('Y-m-d'))
+            ->groupBy(fn ($e) => $e->starts_at->setTimezone($tz)->toDateString())
             ->map(fn ($events) => new DaySummaryDto(
                 DaySummaryEventDto::collect($events->take(2)->toArray()),
                 max(0, $events->count() - 2)

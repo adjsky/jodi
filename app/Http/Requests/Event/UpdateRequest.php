@@ -31,7 +31,7 @@ class UpdateRequest extends FormRequest
             'rrule' => ['nullable', 'string', new ValidRRule],
             'occursAt' => [
                 $this->event->rrule ? 'required' : 'nullable',
-                'date:Y-m-d',
+                'date_format:Y-m-d',
             ],
             'scope' => 'nullable|in:this,all',
         ];

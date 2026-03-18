@@ -75,7 +75,7 @@ class EventController extends Controller
             $event->deleteExceptions();
             $event->delete();
         } else {
-            $event->cancelOccurrence($data['occurs_at']);
+            $event->cancelOccurrence($data['occurs_at']['utc']);
         }
 
         return back();

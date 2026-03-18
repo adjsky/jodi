@@ -1,6 +1,8 @@
 <script lang="ts">
     import { router } from "@inertiajs/svelte";
+    import { parseAbsolute, toCalendarDate } from "@internationalized/date";
     import { Trash } from "@lucide/svelte";
+    import { TIMEZONE } from "$/shared/cfg/constants";
     import { HistoryView } from "$/shared/inertia/history-view.svelte";
     import RecurrenceActionDialog from "$/shared/ui/RecurrenceActionDialog.svelte";
     import ToolbarAction from "$/shared/ui/ToolbarAction.svelte";
@@ -15,7 +17,7 @@
         };
         tooltip: string;
         recurring: boolean;
-        occursAt: string | null;
+        date: string;
         scopeLabels: { this: string; all: string };
     };
 
@@ -24,7 +26,7 @@
         title,
         tooltip,
         recurring,
-        occursAt,
+        date,
         scopeLabels,
         ...options
     }: Props = $props();
@@ -50,9 +52,18 @@
     title={recurring ? title.recurring : title.general}
     fallback={!recurring}
     onConfirm={(scope) => {
+        const utcOccursAt = toCalendarDate(parseAbsolute(date, "UTC"));
+        const localOccursAt = toCalendarDate(parseAbsolute(date, TIMEZONE));
+
         void router.visit(href, {
             ...options,
-            data: { scope, occursAt },
+            data: {
+                scope,
+                occursAt: {
+                    utc: utcOccursAt.toString(),
+                    local: localOccursAt.toString()
+                }
+            },
             showProgress: false
         });
         return true;

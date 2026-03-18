@@ -23,7 +23,7 @@ class CompleteRequest extends FormRequest
         return [
             'occursAt' => [
                 $this->todo->rrule ? 'required' : 'nullable',
-                'date:Y-m-d',
+                'date_format:Y-m-d',
             ],
         ];
     }

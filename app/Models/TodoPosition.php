@@ -14,19 +14,19 @@ class TodoPosition extends Model
     use HasFactory;
 
     protected $fillable = [
-        'date',
+        'occurs_at',
         'position',
     ];
 
     protected $hidden = [];
 
     /**
-     * @return array{date: "date:Y-m-d"}
+     * @return array{occurs_at: "date:Y-m-d"}
      */
     protected function casts(): array
     {
         return [
-            'date' => 'date:Y-m-d',
+            'occurs_at' => 'date:Y-m-d',
         ];
     }
 }

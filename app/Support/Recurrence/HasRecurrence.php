@@ -56,7 +56,10 @@ trait HasRecurrence
         }
 
         $exceptions = $this->recurrenceExceptions()
-            ->whereBetween('occurs_at', [$viewStart, $viewEnd])
+            ->whereIn('occurs_at', [
+                $viewStart->toDateString(),
+                $viewEnd->toDateString(),
+            ])
             ->get()
             ->keyBy(fn ($e) => $e->occurs_at->toDateString());
 

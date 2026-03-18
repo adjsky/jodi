@@ -44,10 +44,10 @@ class TodoController extends Controller
             TodoPosition::upsert(
                 Arr::map($data['todos'], fn ($t) => [
                     'todo_id' => $t['id'],
-                    'date' => $t['date'],
+                    'occurs_at' => $t['occursAt'],
                     'position' => $t['position'],
                 ]),
-                uniqueBy: ['todo_id', 'date'],
+                uniqueBy: ['todo_id', 'occurs_at'],
                 update: ['position']
             );
 
@@ -146,15 +146,15 @@ class TodoController extends Controller
         $data = $request->validatedInSnakeCase();
 
         DB::transaction(function () use ($todo, $data) {
-            $todo->position()->delete();
-
             if (is_null($todo->rrule) || $data['scope'] == 'all') {
                 $todo->deleteExceptions();
                 $todo->delete();
             } else {
-                $todo->cancelOccurrence($data['occurs_at']);
+                $todo->cancelOccurrence($data['occurs_at']['utc']);
+                $todo->position()
+                    ->where('occurs_at', $data['occurs_at']['local'])
+                    ->delete();
             }
-
         });
 
         return back();

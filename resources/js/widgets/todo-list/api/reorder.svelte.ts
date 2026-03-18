@@ -36,7 +36,7 @@ export function useReorder(options?: Options) {
                             name: t.title,
                             position: idx + 1,
                             category: group == UNGROUPED_KEY ? null : group,
-                            date: toCalendarDate(
+                            occursAt: toCalendarDate(
                                 parseAbsolute(t.scheduledAt, TIMEZONE)
                             ).toString()
                         }))

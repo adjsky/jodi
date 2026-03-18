@@ -21,10 +21,8 @@ class DestroyRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'occursAt' => [
-                $this->event->rrule ? 'required_if:scope,this' : 'nullable',
-                'date:Y-m-d',
-            ],
+            'occursAt' => 'required_if:scope,this|array',
+            'occursAt.utc' => 'required_if:scope,this|date_format:Y-m-d',
             'scope' => 'required|in:this,all',
         ];
     }

@@ -56,6 +56,7 @@
             rrule: todo.rrule
         }))
     );
+    const occursAt = $derived(todo.scheduledAt.split("T")[0]);
 
     let scope: Scope = $state("this");
 
@@ -74,8 +75,8 @@
     options={visitOptions}
     transform={(data) => ({
         ...data,
-        occursAt: todo.occursAt,
         hasTime: draft.hasTime,
+        occursAt,
         scope
     })}
     showProgress={false}
@@ -133,9 +134,9 @@
             <Checkbox
                 {...visitOptions}
                 {...optimistic.complete(todo.id)}
+                {occursAt}
                 href={complete(todo.id)}
                 completedAt={todo.completedAt}
-                occursAt={todo.occursAt}
                 class="size-6 text-lg"
             />
         {/snippet}
@@ -174,7 +175,7 @@
                 }}
                 tooltip={m["todos.tooltips.delete"]()}
                 recurring={todo.rrule != null}
-                occursAt={todo.occursAt}
+                date={todo.scheduledAt}
                 scopeLabels={{
                     this: m["todos.recurrence-action.this"](),
                     all: m["todos.recurrence-action.all"]()
