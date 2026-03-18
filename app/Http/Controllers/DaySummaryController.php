@@ -33,13 +33,12 @@ class DaySummaryController extends Controller
         /** @var Collection<int, Event> */
         $events = $this->user()->events()
             ->withPossibleOccurrencesBetween($overallStart, $overallEnd)
-            ->get(['id', 'title', 'color', 'starts_at', 'rrule']);
+            ->get(['id', 'title', 'color', 'starts_at', 'rrule'])
+            ->flatMap(
+                fn ($e) => $e->occurrencesBetween($overallStart, $overallEnd)
+            );
 
-        $occurences = $ranges->flatMap(fn ($range) => $events->flatMap(
-            fn ($e) => $e->occurrencesBetween($range['start'], $range['end'])
-        ));
-
-        $summary = $occurences
+        $summary = $events
             ->sortBy('starts_at')
             ->groupBy(fn ($e) => $e->starts_at->setTimezone($tz)->format('Y-m-d'))
             ->map(fn ($events) => new DaySummaryDto(

@@ -60,7 +60,7 @@ trait HasRecurrence
             ->get()
             ->keyBy(fn ($e) => $e->occurs_at->toDateString());
 
-        $dtstart = $this->getAttribute($this->recurrenceStartKey())->toDateString();
+        $dtstart = $this->getAttribute($this->recurrenceStartKey());
 
         $rrule = new RRule([
             ...RRule::parseRfcString($this->rrule),
@@ -78,7 +78,7 @@ trait HasRecurrence
                 $model = $this->replicate();
                 $model->id = $this->id;
                 $model->occurs_at = Carbon::instance($date)->toDateString();
-                $model->recurring_since = $dtstart;
+                $model->recurring_since = $dtstart->toDateString();
 
                 $dateKeys = [$this->recurrenceStartKey(), ...$this->recurrenceDateKeys()];
 

@@ -4,13 +4,13 @@ declare(strict_types=1);
 
 namespace App\Models;
 
-use Database\Factories\PositionFactory;
+use Database\Factories\TodoPositionFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class Position extends Model
+class TodoPosition extends Model
 {
-    /** @use HasFactory<PositionFactory> */
+    /** @use HasFactory<TodoPositionFactory> */
     use HasFactory;
 
     protected $fillable = [

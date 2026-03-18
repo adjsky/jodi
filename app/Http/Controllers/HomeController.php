@@ -8,8 +8,8 @@ use App\Data\EventDto;
 use App\Data\TodoDto;
 use App\Models\Category;
 use App\Models\Event;
-use App\Models\Position;
 use App\Models\Todo;
+use App\Models\TodoPosition;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Collection;
@@ -28,7 +28,7 @@ class HomeController extends Controller
         $endUtc = Carbon::parse($date, $tz)->endOfDay()->setTimezone('UTC');
 
         return inertia('Home', [
-            'todos' => TodoDto::collect($this->todosForDay($startUtc, $endUtc)),
+            'todos' => TodoDto::collect($this->todosForDay($date, $startUtc, $endUtc)),
             'events' => EventDto::collect($this->eventsForDay($startUtc, $endUtc)),
             'me' => [
                 'nInvitations' => $this->user()->invitations->count(),
@@ -40,7 +40,7 @@ class HomeController extends Controller
         ]);
     }
 
-    private function todosForDay(Carbon $start, Carbon $end): Collection
+    private function todosForDay(string $date, Carbon $start, Carbon $end): Collection
     {
         /** @var Collection<int, Todo> */
         $todos = $this->user()->todos()
@@ -52,20 +52,19 @@ class HomeController extends Controller
         $categories = Category::whereIn('id', $categoryIds)->get()->keyBy('id');
 
         $todoIds = $todos->pluck('id')->unique();
-        $positions = Position::where('positionable_type', Todo::class)
-            ->whereIn('positionable_id', $todoIds)
-            ->whereBetween('date', [$start->toDateString(), $end->toDateString()])
+        $positions = TodoPosition::whereIn('todo_id', $todoIds)
+            ->where('date', $date)
             ->get()
-            ->keyBy('positionable_id');
+            ->keyBy('todo_id');
 
         return $todos
             ->each(function ($t) use ($categories, $positions) {
                 $t->setRelation('category', $categories->get($t->category_id));
-                $t->setAttribute('position', $positions->get($t->id)->position ?? PHP_INT_MAX);
+                $t->setAttribute('order', $positions->get($t->id)->position ?? PHP_INT_MAX);
             })
             ->sortBy([
                 ['category.name', 'asc'],
-                ['position', 'asc'],
+                ['order', 'asc'],
                 ['created_at', 'asc'],
             ])
             ->values();

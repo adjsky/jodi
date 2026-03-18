@@ -43,7 +43,7 @@
                 {@const compare = compareDates(selected, date)}
                 <button
                     use:inertia={{
-                        prefetch: "mount",
+                        // prefetch: "mount",
                         cacheFor: ["30s", "5m"],
                         href: `?d=${date.toString()}`,
                         cacheTags: WEEK_CAROUSEL_CACHE_TAG

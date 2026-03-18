@@ -9,6 +9,7 @@ use Database\Factories\TodoFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
 
 class Todo extends Model
@@ -65,6 +66,12 @@ class Todo extends Model
     public function category(): BelongsTo
     {
         return $this->belongsTo(Category::class);
+    }
+
+    /** @return HasMany<TodoPosition,$this> */
+    public function position(): HasMany
+    {
+        return $this->hasMany(TodoPosition::class);
     }
 
     /** @return MorphMany<RecurrenceException,$this> */

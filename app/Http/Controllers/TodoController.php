@@ -9,8 +9,8 @@ use App\Http\Requests\Todo\CreateRequest;
 use App\Http\Requests\Todo\DestroyRequest;
 use App\Http\Requests\Todo\ReorderRequest;
 use App\Http\Requests\Todo\UpdateRequest;
-use App\Models\Position;
 use App\Models\Todo;
+use App\Models\TodoPosition;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\DB;
 
@@ -41,14 +41,13 @@ class TodoController extends Controller
         $data = $request->validated();
 
         DB::transaction(function () use ($data) {
-            Position::upsert(
+            TodoPosition::upsert(
                 Arr::map($data['todos'], fn ($t) => [
-                    'positionable_type' => Todo::class,
-                    'positionable_id' => $t['id'],
+                    'todo_id' => $t['id'],
                     'date' => $t['date'],
                     'position' => $t['position'],
                 ]),
-                uniqueBy: ['positionable_type', 'positionable_id', 'date'],
+                uniqueBy: ['todo_id', 'date'],
                 update: ['position']
             );
 
@@ -146,12 +145,17 @@ class TodoController extends Controller
     {
         $data = $request->validatedInSnakeCase();
 
-        if (is_null($todo->rrule) || $data['scope'] == 'all') {
-            $todo->deleteExceptions();
-            $todo->delete();
-        } else {
-            $todo->cancelOccurrence($data['occurs_at']);
-        }
+        DB::transaction(function () use ($todo, $data) {
+            $todo->position()->delete();
+
+            if (is_null($todo->rrule) || $data['scope'] == 'all') {
+                $todo->deleteExceptions();
+                $todo->delete();
+            } else {
+                $todo->cancelOccurrence($data['occurs_at']);
+            }
+
+        });
 
         return back();
     }
