@@ -11,7 +11,6 @@ class OneTimeLoginCode extends Notification
 {
     public function __construct(public string $otp) {}
 
-    /** @return string[] */
     public function via(): array
     {
         return ['mail'];

@@ -8,11 +8,11 @@
     import type { Scope } from "../lib/types";
 
     type Props = {
-        title: string;
+        title?: string;
         variant: "save" | "close";
         disabled?: boolean;
-        confirm: boolean;
-        scopeLabels: { this: string; all: string };
+        confirm?: boolean;
+        scopeLabels?: { this: string; all: string };
         onConfirm?: (scope: Scope) => void;
         onClose?: VoidFunction;
     };

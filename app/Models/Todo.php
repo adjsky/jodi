@@ -5,18 +5,16 @@ declare(strict_types=1);
 namespace App\Models;
 
 use App\Support\Recurrence\HasRecurrence;
-use Illuminate\Database\Eloquent\Builder;
+use Database\Factories\TodoFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
-use Spatie\EloquentSortable\Sortable;
-use Spatie\EloquentSortable\SortableTrait;
 
-class Todo extends Model implements Sortable
+class Todo extends Model
 {
-    /** @use HasFactory<\Database\Factories\TodoFactory> */
-    use HasFactory, HasRecurrence, SortableTrait;
+    /** @use HasFactory<TodoFactory> */
+    use HasFactory, HasRecurrence;
 
     protected $fillable = [
         'title',
@@ -67,14 +65,6 @@ class Todo extends Model implements Sortable
     public function category(): BelongsTo
     {
         return $this->belongsTo(Category::class);
-    }
-
-    /** @return Builder<static> */
-    public function buildSortQuery(): Builder
-    {
-        return static::query()
-            ->where('category_id', $this->category_id)
-            ->whereDate('scheduled_at', $this->scheduled_at);
     }
 
     /** @return MorphMany<RecurrenceException,$this> */

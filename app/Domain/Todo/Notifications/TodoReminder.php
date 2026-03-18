@@ -21,7 +21,6 @@ class TodoReminder extends Notification implements ShouldQueue
 
     public function __construct(public Todo $todo) {}
 
-    /** @return array<int, string> */
     public function via(User $user): array
     {
         return $user->preferences['notifications'] == 'push'

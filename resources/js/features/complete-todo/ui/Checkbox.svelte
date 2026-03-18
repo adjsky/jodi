@@ -11,13 +11,24 @@
         href: string | UrlMethodPair;
         class?: ClassName;
         completedAt: string | null;
+        occursAt: string | null;
     };
 
-    const { class: classname, completedAt, ...options }: Props = $props();
+    const {
+        class: classname,
+        completedAt,
+        occursAt,
+        ...options
+    }: Props = $props();
 </script>
 
 <button
-    use:inertia={{ ...options, only: ["todos"], showProgress: false }}
+    use:inertia={{
+        ...options,
+        only: ["todos"],
+        data: { occursAt },
+        showProgress: false
+    }}
     type="button"
     class={tw(
         "group flex size-5.5 shrink-0 items-center justify-center rounded-full border border-cream-950 text-ms data-completed:bg-cream-950 data-completed:text-cream-50",

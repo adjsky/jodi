@@ -20,7 +20,7 @@ class TodoDto extends Data
         public ?string $color,
         public ?string $rrule,
         public ?string $recurringSince,
-        public ?Carbon $occursAt,
+        public ?string $occursAt,
         public Carbon $scheduledAt,
         public bool $hasTime,
         public ?Carbon $notifyAt,

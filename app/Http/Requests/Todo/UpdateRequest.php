@@ -34,6 +34,11 @@ class UpdateRequest extends FormRequest
             'hasTime' => 'required|boolean',
             'notifyAt' => 'nullable|date',
             'rrule' => ['nullable', 'string', new ValidRRule],
+            'occursAt' => [
+                $this->todo->rrule ? 'required' : 'nullable',
+                'date',
+            ],
+            'scope' => 'nullable|in:this,all',
         ];
     }
 }

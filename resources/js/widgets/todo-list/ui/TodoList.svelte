@@ -125,6 +125,7 @@
                         {...optimistic.complete(todo.id)}
                         href={complete(todo.id)}
                         completedAt={todo.completedAt}
+                        occursAt={todo.occursAt}
                     />
                 {/snippet}
                 {#snippet edit()}

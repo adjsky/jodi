@@ -67,13 +67,13 @@
     {...optimistic.edit(event.id, draft)}
     action={update(event.id)}
     options={visitOptions}
-    showProgress={false}
-    class="flex grow flex-col pb-18"
     transform={(data) => ({
         ...data,
         occursAt: event.occursAt,
         scope
     })}
+    showProgress={false}
+    class="flex grow flex-col pb-18"
     let:isDirty
     let:submit
 >
@@ -121,7 +121,7 @@
         {#snippet close()}
             <SaveOrClose
                 {onClose}
-                title={m["todos.recurrence-action.edit-title"]()}
+                title={m["events.recurrence-action.edit-title"]()}
                 variant={isDirty ? "save" : "close"}
                 scopeLabels={{
                     this: m["events.recurrence-action.this"](),

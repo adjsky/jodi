@@ -20,7 +20,7 @@ class EventDto extends Data
         public ?string $location,
         public ?string $rrule,
         public ?string $recurringSince,
-        public ?Carbon $occursAt,
+        public ?string $occursAt,
         public Carbon $startsAt,
         public Carbon $endsAt,
         public Carbon $notifyAt,

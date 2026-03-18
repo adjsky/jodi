@@ -21,7 +21,6 @@ class EventReminder extends Notification implements ShouldQueue
 
     public function __construct(public Event $event) {}
 
-    /** @return array<int, string> */
     public function via(User $user): array
     {
         return $user->preferences['notifications'] == 'push'

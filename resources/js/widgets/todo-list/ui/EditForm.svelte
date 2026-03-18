@@ -2,6 +2,7 @@
     import { Form } from "@inertiajs/svelte";
     import {
         parseAbsoluteToLocal,
+        parseDate,
         toCalendarDate
     } from "@internationalized/date";
     import { Todo } from "$/entities/todo";
@@ -30,6 +31,8 @@
 
     import { optimistic, visitOptions } from "../cfg/inertia";
 
+    import type { Scope } from "$/shared/lib/types";
+
     type Props = {
         todo: App.Data.TodoDto | null;
         onClose?: VoidFunction;
@@ -54,6 +57,8 @@
         }))
     );
 
+    let scope: Scope = $state("this");
+
     watch(
         () => [props.todo],
         () => {
@@ -69,11 +74,14 @@
     options={visitOptions}
     transform={(data) => ({
         ...data,
-        hasTime: draft.hasTime
+        occursAt: todo.occursAt,
+        hasTime: draft.hasTime,
+        scope
     })}
     showProgress={false}
     class="flex grow flex-col pb-18"
     let:isDirty
+    let:submit
 >
     <Todo.Fields
         scheduledAt={draft.scheduledAt}
@@ -84,6 +92,9 @@
         {#snippet calendar(trigger)}
             <YearCalendarDialog
                 selected={toCalendarDate(draft.scheduledAt)}
+                min={todo.recurringSince
+                    ? parseDate(todo.recurringSince)
+                    : null}
                 onSelect={async (d) => {
                     if (draft.notifyAt) {
                         draft.notifyAt = draft.notifyAt.set(d);
@@ -100,11 +111,18 @@
         {/snippet}
         {#snippet close()}
             <SaveOrClose
+                {onClose}
+                title={m["todos.recurrence-action.edit-title"]()}
                 variant={isDirty ? "save" : "close"}
-                onclick={() => {
-                    if (!isDirty) {
-                        onClose?.();
-                    }
+                scopeLabels={{
+                    this: m["todos.recurrence-action.this"](),
+                    all: m["todos.recurrence-action.all"]()
+                }}
+                confirm={todo.rrule != null && todo.rrule === draft.rrule}
+                onConfirm={async (s) => {
+                    scope = s;
+                    await tick();
+                    submit();
                 }}
             />
         {/snippet}
@@ -117,6 +135,7 @@
                 {...optimistic.complete(todo.id)}
                 href={complete(todo.id)}
                 completedAt={todo.completedAt}
+                occursAt={todo.occursAt}
                 class="size-6 text-lg"
             />
         {/snippet}
@@ -149,8 +168,17 @@
                 {...visitOptions}
                 {...optimistic.delete(todo.id)}
                 href={_destroy(todo.id)}
-                title={m["todos.delete-ahtung"]()}
+                title={{
+                    recurring: m["todos.recurrence-action.delete-title"](),
+                    general: m["todos.delete-ahtung"]()
+                }}
                 tooltip={m["todos.tooltips.delete"]()}
+                recurring={todo.rrule != null}
+                occursAt={todo.occursAt}
+                scopeLabels={{
+                    this: m["todos.recurrence-action.this"](),
+                    all: m["todos.recurrence-action.all"]()
+                }}
             />
         {/snippet}
         {#snippet repeat()}

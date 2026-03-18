@@ -6,8 +6,13 @@ namespace App\Http\Controllers;
 
 use App\Data\EventDto;
 use App\Data\TodoDto;
+use App\Models\Category;
+use App\Models\Event;
+use App\Models\Position;
+use App\Models\Todo;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
+use Illuminate\Support\Collection;
 use Inertia\Inertia;
 
 class HomeController extends Controller
@@ -23,27 +28,8 @@ class HomeController extends Controller
         $endUtc = Carbon::parse($date, $tz)->endOfDay()->setTimezone('UTC');
 
         return inertia('Home', [
-            'todos' => TodoDto::collect(
-                $this->user()->todos()
-                    ->with('category')
-                    ->withPossibleOccurrencesBetween($startUtc, $endUtc)
-                    ->get()
-                    ->flatMap(fn ($t) => $t->occurrencesBetween($startUtc, $endUtc))
-                    ->sortBy([
-                        ['category.name', 'asc'],
-                        ['position', 'asc'],
-                        ['created_at', 'asc'],
-                    ])
-                    ->values()
-            ),
-            'events' => EventDto::collect(
-                $this->user()->events()
-                    ->withPossibleOccurrencesBetween($startUtc, $endUtc)
-                    ->get()
-                    ->flatMap(fn ($e) => $e->occurrencesBetween($startUtc, $endUtc))
-                    ->sortBy('starts_at')
-                    ->values()
-            ),
+            'todos' => TodoDto::collect($this->todosForDay($startUtc, $endUtc, $tz)),
+            'events' => EventDto::collect($this->eventsForDay($startUtc, $endUtc)),
             'me' => [
                 'nInvitations' => $this->user()->invitations->count(),
                 'nFriends' => $this->user()->friends->count(),
@@ -52,5 +38,49 @@ class HomeController extends Controller
                 fn () => $this->user()->categories->pluck('name'),
             ),
         ]);
+    }
+
+    private function todosForDay(Carbon $start, Carbon $end, string $tz): Collection
+    {
+        /** @var Collection<int, Todo> */
+        $todos = $this->user()->todos()
+            ->withPossibleOccurrencesBetween($start, $end)
+            ->get()
+            ->flatMap(fn ($t) => $t->occurrencesBetween($start, $end));
+
+        $categoryIds = $todos->pluck('category_id')->unique()->filter();
+        $categories = Category::whereIn('id', $categoryIds)->get()->keyBy('id');
+
+        $todoIds = $todos->pluck('id')->unique();
+        $positions = Position::where('positionable_type', Todo::class)
+            ->whereIn('positionable_id', $todoIds)
+            ->where('date', $start->clone()->setTimezone($tz)->toDateString())
+            ->get()
+            ->keyBy('positionable_id');
+
+        return $todos
+            ->each(function ($t) use ($categories, $positions) {
+                $t->setRelation('category', $categories->get($t->category_id));
+                $t->setAttribute('position', $positions->get($t->id)->position ?? PHP_INT_MAX);
+            })
+            ->sortBy([
+                ['category.name', 'asc'],
+                ['position', 'asc'],
+                ['created_at', 'asc'],
+            ])
+            ->values();
+    }
+
+    private function eventsForDay(Carbon $start, Carbon $end): Collection
+    {
+        /** @var Collection<int, Event> */
+        $events = $this->user()->events()
+            ->withPossibleOccurrencesBetween($start, $end)
+            ->get();
+
+        return $events
+            ->flatMap(fn ($e) => $e->occurrencesBetween($start, $end))
+            ->sortBy('starts_at')
+            ->values();
     }
 }

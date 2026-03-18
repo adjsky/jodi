@@ -7,8 +7,8 @@
     import type { HTMLAttributes } from "svelte/elements";
 
     type Props = {
-        title: string;
-        scopeLabels: { this: string; all: string };
+        title?: string;
+        scopeLabels?: { this: string; all: string };
         open?: boolean;
         portal?: boolean;
         fallback?: boolean;
@@ -19,7 +19,7 @@
     };
 
     let {
-        title,
+        title = "",
         scopeLabels,
         open = $bindable(),
         portal,
@@ -29,14 +29,6 @@
         onConfirm,
         onAbort
     }: Props = $props();
-
-    const scopes = $derived([
-        {
-            label: scopeLabels["this"],
-            value: "this"
-        },
-        { label: scopeLabels["all"], value: "all" }
-    ] as const);
 
     let selectedScope: Scope = $state("this");
 </script>
@@ -57,11 +49,11 @@
         {#snippet content()}
             {#if !fallback}
                 <div class="mt-2">
-                    {#each scopes as { label, value } (value)}
+                    {#each ["this", "all"] as const as scope (scope)}
                         <Checkbox
-                            {label}
-                            checked={selectedScope == value}
-                            onclick={() => (selectedScope = value)}
+                            label={scopeLabels?.[scope]}
+                            checked={selectedScope == scope}
+                            onclick={() => (selectedScope = scope)}
                         />
                     {/each}
                 </div>

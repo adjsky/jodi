@@ -33,7 +33,8 @@ export function useReorder(options?: Options) {
                             id: t.id,
                             name: t.title,
                             position: idx + 1,
-                            category: group == UNGROUPED_KEY ? null : group
+                            category: group == UNGROUPED_KEY ? null : group,
+                            date: t.occursAt ?? t.scheduledAt.split("T")[0]
                         }))
                     )
                     .flat()

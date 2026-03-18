@@ -14,7 +14,7 @@ use Illuminate\Support\Collection;
 use RRule\RRule;
 
 /**
- * @property ?Carbon $occurs_at
+ * @property ?string $occurs_at
  * @property ?string $recurring_since
  */
 trait HasRecurrence
@@ -48,7 +48,7 @@ trait HasRecurrence
      */
     public function occurrencesBetween(CarbonInterface $viewStart, CarbonInterface $viewEnd): Collection
     {
-        if (! $this->rrule) {
+        if (is_null($this->rrule)) {
             $model = $this->replicate();
             $model->id = $this->id;
 
@@ -77,7 +77,7 @@ trait HasRecurrence
 
                 $model = $this->replicate();
                 $model->id = $this->id;
-                $model->occurs_at = Carbon::instance($date);
+                $model->occurs_at = Carbon::instance($date)->toDateString();
                 $model->recurring_since = $dtstart;
 
                 $dateKeys = [$this->recurrenceStartKey(), ...$this->recurrenceDateKeys()];
@@ -89,7 +89,7 @@ trait HasRecurrence
 
                     $attribute = $this->getAttribute($key);
 
-                    if (! $attribute) {
+                    if (is_null($attribute)) {
                         continue;
                     }
 
@@ -113,8 +113,6 @@ trait HasRecurrence
 
     public function applyException(string $occursAt, array $overrides, ?RecurrenceException $existingException): void
     {
-        $occursAt = Carbon::parse($occursAt)->toDateString();
-
         if (is_null($existingException)) {
             $this->recurrenceExceptions()->create(
                 ['occurs_at' => $occursAt, 'is_cancelled' => false, 'overrides' => $overrides]
@@ -129,7 +127,8 @@ trait HasRecurrence
     public function findException(string $occursAt): ?RecurrenceException
     {
         return $this->recurrenceExceptions()
-            ->where('occurs_at', Carbon::parse($occursAt)->toDateString())
+            ->where('occurs_at', $occursAt)
+            ->sharedLock()
             ->first();
     }
 
@@ -138,7 +137,7 @@ trait HasRecurrence
         $qb = $this->recurrenceExceptions();
 
         if (! is_null($occursAt)) {
-            $qb = $qb->where('occurs_at', Carbon::parse($occursAt)->toDateString());
+            $qb = $qb->where('occurs_at', $occursAt);
         }
 
         $qb->delete();
@@ -153,7 +152,15 @@ trait HasRecurrence
             $current = $exception?->overrides[$key] ?? $this->getAttribute($key);
 
             if (in_array($key, $dateKeys)) {
-                $currentDate = Carbon::parse($exception?->overrides[$key] ?? $this->getAttribute($key)->setDateFrom($occursAt));
+                $attribute = $this->getAttribute($key);
+
+                if (is_null($attribute)) {
+                    $overrides[$key] = $value;
+
+                    continue;
+                }
+
+                $currentDate = Carbon::parse($exception?->overrides[$key] ?? $attribute->setDateFrom($occursAt));
 
                 if ($currentDate->ne($value)) {
                     $overrides[$key] = $value;
@@ -171,7 +178,7 @@ trait HasRecurrence
     public function cancelOccurrence(string $occursAt): void
     {
         $this->recurrenceExceptions()->updateOrCreate(
-            ['occurs_at' => Carbon::parse($occursAt)->toDateString()],
+            ['occurs_at' => $occursAt],
             ['is_cancelled' => true, 'overrides' => []]
         );
     }
