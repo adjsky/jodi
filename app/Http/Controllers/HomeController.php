@@ -35,7 +35,7 @@ class HomeController extends Controller
                 'nFriends' => $this->user()->friends->count(),
             ],
             'categories' => Inertia::defer(
-                fn () => $this->user()->categories->pluck('name'),
+                fn () => $this->user()->categories()->pluck('name'),
             ),
         ]);
     }
