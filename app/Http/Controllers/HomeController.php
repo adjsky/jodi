@@ -53,7 +53,7 @@ class HomeController extends Controller
 
         $todoIds = $todos->pluck('id')->unique();
         $positions = TodoPosition::whereIn('todo_id', $todoIds)
-            ->where('occurs_at', $date)
+            ->where('date', $date)
             ->get()
             ->keyBy('todo_id');
 

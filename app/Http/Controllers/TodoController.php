@@ -44,10 +44,10 @@ class TodoController extends Controller
             TodoPosition::upsert(
                 Arr::map($data['todos'], fn ($t) => [
                     'todo_id' => $t['id'],
-                    'occurs_at' => $t['occursAt'],
+                    'date' => $t['date'],
                     'position' => $t['position'],
                 ]),
-                uniqueBy: ['todo_id', 'occurs_at'],
+                uniqueBy: ['todo_id', 'date'],
                 update: ['position']
             );
 
@@ -150,10 +150,8 @@ class TodoController extends Controller
                 $todo->deleteExceptions();
                 $todo->delete();
             } else {
-                $todo->cancelOccurrence($data['occurs_at']['utc']);
-                $todo->position()
-                    ->where('occurs_at', $data['occurs_at']['local'])
-                    ->delete();
+                $todo->cancelOccurrence($data['occurs_at']);
+                $todo->position()->where('date', $data['date'])->delete();
             }
         });
 

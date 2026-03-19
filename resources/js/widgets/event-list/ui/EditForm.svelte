@@ -69,7 +69,7 @@
     options={visitOptions}
     transform={(data) => ({
         ...data,
-        occursAt: event.startsAt.split("T")[0],
+        occursAt: event.occursAt,
         scope
     })}
     showProgress={false}
@@ -146,7 +146,7 @@
                 }}
                 tooltip={m["events.tooltips.delete"]()}
                 recurring={event.rrule != null}
-                date={event.startsAt}
+                occursAt={event.occursAt}
                 scopeLabels={{
                     this: m["events.recurrence-action.this"](),
                     all: m["events.recurrence-action.all"]()

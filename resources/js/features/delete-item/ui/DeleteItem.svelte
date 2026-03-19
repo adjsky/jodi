@@ -17,7 +17,8 @@
         };
         tooltip: string;
         recurring: boolean;
-        date: string;
+        occursAt: string | null;
+        date?: string;
         scopeLabels: { this: string; all: string };
     };
 
@@ -26,6 +27,7 @@
         title,
         tooltip,
         recurring,
+        occursAt,
         date,
         scopeLabels,
         ...options
@@ -52,17 +54,14 @@
     title={recurring ? title.recurring : title.general}
     fallback={!recurring}
     onConfirm={(scope) => {
-        const utcOccursAt = toCalendarDate(parseAbsolute(date, "UTC"));
-        const localOccursAt = toCalendarDate(parseAbsolute(date, TIMEZONE));
-
         void router.visit(href, {
             ...options,
             data: {
                 scope,
-                occursAt: {
-                    utc: utcOccursAt.toString(),
-                    local: localOccursAt.toString()
-                }
+                occursAt,
+                date: date
+                    ? toCalendarDate(parseAbsolute(date, TIMEZONE)).toString()
+                    : null
             },
             showProgress: false
         });

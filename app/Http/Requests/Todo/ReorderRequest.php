@@ -23,7 +23,7 @@ class ReorderRequest extends FormRequest
             'todos.*.id' => 'required|integer',
             'todos.*.position' => 'required|integer|min:1',
             'todos.*.category' => 'nullable|string',
-            'todos.*.occursAt' => 'required|date_format:Y-m-d',
+            'todos.*.date' => 'required|date_format:Y-m-d',
         ];
     }
 }

@@ -14,6 +14,7 @@ use Illuminate\Support\Collection;
 use RRule\RRule;
 
 /**
+ * @property ?string $occurs_at
  * @property ?string $recurring_since
  */
 trait HasRecurrence
@@ -79,6 +80,7 @@ trait HasRecurrence
 
                 $model = $this->replicate();
                 $model->id = $this->id;
+                $model->occurs_at = Carbon::instance($date)->toDateString();
                 $model->recurring_since = $dtstart->toDateString();
 
                 $dateKeys = [$this->recurrenceStartKey(), ...$this->recurrenceDateKeys()];

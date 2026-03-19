@@ -16,11 +16,11 @@ return new class extends Migration
         Schema::create('todo_positions', function (Blueprint $table) {
             $table->id();
             $table->foreignId('todo_id')->constrained()->cascadeOnDelete();
-            $table->date('occurs_at');
+            $table->date('date');
             $table->unsignedInteger('position');
             $table->timestamps();
 
-            $table->unique(['todo_id', 'occurs_at']);
+            $table->unique(['todo_id', 'date']);
         });
 
         Schema::table('todos', function (Blueprint $table) {
