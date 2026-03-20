@@ -48,7 +48,7 @@ class EventController extends Controller
 
             if (! is_null($event->rrule) && $data['scope'] == 'all') {
                 $event->deleteExceptions();
-                $data = $event->normalizeRecurringDataForUpdate($data);
+                $data = $event->normalizeRecurringDataForUpdate($data, $data['occurs_at']);
             }
 
             if ($event->notify_at->ne($data['notify_at'])) {

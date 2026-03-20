@@ -199,14 +199,18 @@ trait HasRecurrence
         );
     }
 
-    public function normalizeRecurringDataForUpdate(array $data): array
+    public function normalizeRecurringDataForUpdate(array $data, string $occursAt): array
     {
-        $start = $this->getAttribute($this->recurrenceStartKey());
-        $dateKeys = [$this->recurrenceStartKey(), ...$this->recurrenceDateKeys()];
+        $rstartKey = $this->recurrenceStartKey();
 
-        foreach ($dateKeys as $key) {
-            if (isset($data[$key])) {
-                $data[$key] = Carbon::parse($data[$key])->setDateFrom($start);
+        if (Carbon::parse($data[$rstartKey])->isSameDay($occursAt)) {
+            $start = $this->getAttribute($rstartKey);
+            $dateKeys = [$rstartKey, ...$this->recurrenceDateKeys()];
+
+            foreach ($dateKeys as $key) {
+                if (isset($data[$key])) {
+                    $data[$key] = Carbon::parse($data[$key])->setDateFrom($start);
+                }
             }
         }
 

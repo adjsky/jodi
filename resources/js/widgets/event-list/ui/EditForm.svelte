@@ -37,6 +37,7 @@
     let startsAtAnnouncerInput: HTMLInputElement | null = $state(null);
     let endsAtAnnouncerInput: HTMLInputElement | null = $state(null);
     let lastKnownEvent = $state(untrack(() => props.event));
+    let scope: Scope = $state("this");
 
     const event = $derived(
         props.event ?? (lastKnownEvent as App.Data.EventDto)
@@ -52,7 +53,7 @@
         }))
     );
 
-    let scope: Scope = $state("this");
+    const isRRuleDirty = $derived(event.rrule != draft.rrule);
 
     watch(
         () => [props.event],
@@ -65,12 +66,13 @@
 
 <Form
     {...optimistic.edit(event, draft)}
-    action={update(event.id)}
+    action={update(event.id, {
+        query: { scope: isRRuleDirty ? "all" : scope }
+    })}
     options={visitOptions}
     transform={(data) => ({
         ...data,
-        occursAt: event.occursAt,
-        scope
+        occursAt: event.occursAt
     })}
     showProgress={false}
     class="flex grow flex-col pb-18"
@@ -127,9 +129,10 @@
                     this: m["events.recurrence-action.this"](),
                     all: m["events.recurrence-action.all"]()
                 }}
-                confirm={event.rrule != null && event.rrule === draft.rrule}
-                onConfirm={(s) => {
+                confirm={event.rrule != null && !isRRuleDirty}
+                onConfirm={async (s) => {
                     scope = s;
+                    await tick();
                     submit();
                 }}
             />
@@ -158,13 +161,6 @@
                 day={draft.startsAt}
                 name="rrule"
                 tooltip={m["events.tooltips.repeat"]()}
-                onChange={(rrule) => {
-                    if (rrule !== event.rrule) {
-                        scope = "all";
-                    } else {
-                        scope = "this";
-                    }
-                }}
             />
         {/snippet}
         {#snippet color()}

@@ -93,7 +93,13 @@ class TodoController extends Controller
                     $existingException->overrides = Arr::except($existingException->overrides, ['notify_status']);
                 }
 
-                if (isset($overrides['category_id'])) {
+                if (isset($overrides['scheduled_at'])) {
+                    $isScheduledAtSameDay = Carbon::parse($overrides['scheduled_at'])->isSameDay($existingException->overrides['scheduled_at'] ?? $data['occurs_at']);
+                } else {
+                    $isScheduledAtSameDay = false;
+                }
+
+                if (isset($overrides['category_id']) || ! $isScheduledAtSameDay) {
                     $date = Carbon::parse($data['scheduled_at'], $tz)->toDateString();
                     $todo->position()->where('date', $date)->delete();
                 }
@@ -105,7 +111,7 @@ class TodoController extends Controller
 
             if (! is_null($todo->rrule) && $data['scope'] == 'all') {
                 $todo->deleteExceptions();
-                $data = $todo->normalizeRecurringDataForUpdate($data);
+                $data = $todo->normalizeRecurringDataForUpdate($data, $data['occurs_at']);
             }
 
             if ($data['notify_at']) {
@@ -120,34 +126,17 @@ class TodoController extends Controller
                 $data['notify_status'] = null;
             }
 
-            $todo->update($data);
+            $todo->fill($data);
 
-            if ($todo->wasChanged('category_id')) {
+            $isCategoryChanged = $todo->isDirty('category_id');
+            $isScheduledAtSameDay = $todo->scheduled_at->isSameDay($todo->getOriginal('scheduled_at'));
+
+            if ($isCategoryChanged || ! $isScheduledAtSameDay) {
                 $todo->position()->delete();
             }
+
+            $todo->save();
         });
-
-        // DB::transaction(function () use ($data, $todo) {
-        //     $todo->fill([
-        //         ...$data,
-        //         'category_id' => $data['category']
-        //             ? $this->user()->categories()
-        //                 ->where('name', $data['category'])
-        //                 ->firstOrFail(['id'])
-        //                 ->id
-        //             : null]
-        //     );
-
-        //     $isCategoryChanged = $todo->isDirty('category_id');
-        //     $isScheduledAtSameDay = $todo->scheduled_at->isSameDay($todo->getOriginal('scheduled_at'));
-
-        //     if ($isCategoryChanged || ! $isScheduledAtSameDay) {
-        //         $todo->position = $todo->getHighestOrderNumber() + 1;
-        //     }
-
-        //     $todo->save();
-
-        // });
 
         return back();
     }

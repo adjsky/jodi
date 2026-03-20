@@ -42,6 +42,7 @@
 
     let dateAnnouncerInput: HTMLInputElement | null = $state(null);
     let lastKnownTodo = $state(untrack(() => props.todo));
+    let scope: Scope = $state("this");
 
     let todo = $derived(props.todo ?? (lastKnownTodo as App.Data.TodoDto));
 
@@ -57,7 +58,7 @@
         }))
     );
 
-    let scope: Scope = $state("this");
+    const isRRuleDirty = $derived(todo.rrule != draft.rrule);
 
     watch(
         () => [props.todo],
@@ -70,13 +71,14 @@
 
 <Form
     {...optimistic.edit(todo, draft.notifyAt != null)}
-    action={update(todo.id)}
+    action={update(todo.id, {
+        query: { scope: isRRuleDirty ? "all" : scope }
+    })}
     options={visitOptions}
     transform={(data) => ({
         ...data,
         hasTime: draft.hasTime,
-        occursAt: todo.occursAt,
-        scope
+        occursAt: todo.occursAt
     })}
     showProgress={false}
     class="flex grow flex-col pb-18"
@@ -118,9 +120,10 @@
                     this: m["todos.recurrence-action.this"](),
                     all: m["todos.recurrence-action.all"]()
                 }}
-                confirm={todo.rrule != null && todo.rrule === draft.rrule}
-                onConfirm={(s) => {
+                confirm={todo.rrule != null && !isRRuleDirty}
+                onConfirm={async (s) => {
                     scope = s;
+                    await tick();
                     submit();
                 }}
             />
@@ -187,13 +190,6 @@
                 day={draft.scheduledAt}
                 name="rrule"
                 tooltip={m["todos.tooltips.repeat"]()}
-                onChange={(rrule) => {
-                    if (rrule !== todo.rrule) {
-                        scope = "all";
-                    } else {
-                        scope = "this";
-                    }
-                }}
             />
         {/snippet}
         {#snippet color()}
