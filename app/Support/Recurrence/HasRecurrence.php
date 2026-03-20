@@ -56,34 +56,51 @@ trait HasRecurrence
         }
 
         $exceptions = $this->recurrenceExceptions()
-            ->whereIn('occurs_at', [
-                $viewStart->toDateString(),
-                $viewEnd->toDateString(),
-            ])
             ->get()
             ->keyBy(fn ($e) => $e->occurs_at->toDateString());
 
-        $dtstart = $this->getAttribute($this->recurrenceStartKey());
+        $rstartKey = $this->recurrenceStartKey();
+        $dtstart = $this->getAttribute($rstartKey);
 
         $rrule = new RRule([
             ...RRule::parseRfcString($this->rrule),
             'DTSTART' => $dtstart,
         ]);
 
-        return collect($rrule->getOccurrencesBetween($viewStart, $viewEnd))
-            ->map(function ($date) use ($dtstart, $exceptions) {
-                $exception = $exceptions->get(Carbon::instance($date)->toDateString());
+        $occurences = collect($rrule->getOccurrencesBetween($viewStart, $viewEnd))
+            ->keyBy(fn ($dt) => Carbon::instance($dt)->toDateString())
+            ->map(fn ($dt) => Carbon::instance($dt));
 
-                if ($exception?->is_cancelled) {
-                    return null;
-                }
+        foreach ($exceptions as $datestr => $exception) {
+            if ($exception->is_cancelled) {
+                $occurences->forget($datestr);
+
+                continue;
+            }
+
+            if (! isset($exception->overrides[$rstartKey])) {
+                continue;
+            }
+
+            $start = Carbon::parse($exception->overrides[$rstartKey]);
+
+            if ($start->between($viewStart, $viewEnd)) {
+                $occurences->put($datestr, Carbon::parse($datestr));
+            } else {
+                $occurences->forget($datestr);
+            }
+        }
+
+        return $occurences
+            ->map(function ($date, $datestr) use ($dtstart, $exceptions, $rstartKey) {
+                $exception = $exceptions->get($datestr);
 
                 $model = $this->replicate();
                 $model->id = $this->id;
-                $model->occurs_at = Carbon::instance($date)->toDateString();
+                $model->occurs_at = $datestr;
                 $model->recurring_since = $dtstart->toDateString();
 
-                $dateKeys = [$this->recurrenceStartKey(), ...$this->recurrenceDateKeys()];
+                $dateKeys = [$rstartKey, ...$this->recurrenceDateKeys()];
 
                 foreach ($dateKeys as $key) {
                     if (isset($exception->overrides[$key])) {
@@ -96,10 +113,7 @@ trait HasRecurrence
                         continue;
                     }
 
-                    $model->setAttribute(
-                        $key,
-                        Carbon::instance($date)->setTimeFrom($attribute)
-                    );
+                    $model->setAttribute($key, $date->setTimeFrom($attribute));
                 }
 
                 if ($exception) {
@@ -110,7 +124,6 @@ trait HasRecurrence
 
                 return $model;
             })
-            ->filter()
             ->values();
     }
 

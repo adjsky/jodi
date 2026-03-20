@@ -5,6 +5,7 @@ import { optimistic as _optimistic } from "$/shared/inertia/visit/optimistic";
 import * as PushSubscription from "$/shared/lib/push-subscription.svelte";
 import { toaster } from "$/shared/lib/toaster";
 
+import { id } from "../helpers/id";
 import { editView } from "../model/view";
 
 import type { VisitOptions } from "@inertiajs/core";
@@ -20,13 +21,13 @@ export const visitOptions: VisitOptions = {
 
 export const optimistic = {
     edit: (
-        id: number,
+        event: App.Data.EventDto,
         draft: { startsAt: ZonedDateTime; endsAt: ZonedDateTime }
     ) =>
         _optimistic(
             (prev, data) => ({
                 events: prev.events.map((e: App.Data.EventDto) =>
-                    e.id == id ? { ...e, ...data } : e
+                    id(e) === id(event) ? { ...e, ...data } : e
                 )
             }),
             {
@@ -45,10 +46,12 @@ export const optimistic = {
                 }
             }
         ),
-    delete: (id: number) =>
+    delete: (event: App.Data.EventDto) =>
         _optimistic(
             (prev) => ({
-                events: prev.events.filter((e: App.Data.EventDto) => e.id != id)
+                events: prev.events.filter(
+                    (e: App.Data.EventDto) => id(e) !== id(event)
+                )
             }),
             {
                 error: m["events.errors.delete"](),

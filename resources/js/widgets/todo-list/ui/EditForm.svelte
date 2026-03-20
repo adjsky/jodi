@@ -69,7 +69,7 @@
 </script>
 
 <Form
-    {...optimistic.edit(todo.id, draft.notifyAt != null)}
+    {...optimistic.edit(todo, draft.notifyAt != null)}
     action={update(todo.id)}
     options={visitOptions}
     transform={(data) => ({
@@ -119,9 +119,8 @@
                     all: m["todos.recurrence-action.all"]()
                 }}
                 confirm={todo.rrule != null && todo.rrule === draft.rrule}
-                onConfirm={async (s) => {
+                onConfirm={(s) => {
                     scope = s;
-                    await tick();
                     submit();
                 }}
             />
@@ -132,7 +131,7 @@
         {#snippet checkbox()}
             <Checkbox
                 {...visitOptions}
-                {...optimistic.complete(todo.id)}
+                {...optimistic.complete(todo)}
                 href={complete(todo.id)}
                 completedAt={todo.completedAt}
                 occursAt={todo.occursAt}
@@ -166,7 +165,7 @@
         {#snippet destroy()}
             <DeleteItem
                 {...visitOptions}
-                {...optimistic.delete(todo.id)}
+                {...optimistic.delete(todo)}
                 href={_destroy(todo.id)}
                 title={{
                     recurring: m["todos.recurrence-action.delete-title"](),
@@ -188,6 +187,13 @@
                 day={draft.scheduledAt}
                 name="rrule"
                 tooltip={m["todos.tooltips.repeat"]()}
+                onChange={(rrule) => {
+                    if (rrule !== todo.rrule) {
+                        scope = "all";
+                    } else {
+                        scope = "this";
+                    }
+                }}
             />
         {/snippet}
         {#snippet color()}
@@ -220,7 +226,6 @@
                         draft.notifyAt = draft.notifyAt.set(d);
                     }
                     draft.scheduledAt = draft.scheduledAt.set(d);
-
                     await tick();
                     announce(dateAnnouncerInput);
                 }}

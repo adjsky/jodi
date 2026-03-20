@@ -64,7 +64,7 @@
 </script>
 
 <Form
-    {...optimistic.edit(event.id, draft)}
+    {...optimistic.edit(event, draft)}
     action={update(event.id)}
     options={visitOptions}
     transform={(data) => ({
@@ -128,9 +128,8 @@
                     all: m["events.recurrence-action.all"]()
                 }}
                 confirm={event.rrule != null && event.rrule === draft.rrule}
-                onConfirm={async (s) => {
+                onConfirm={(s) => {
                     scope = s;
-                    await tick();
                     submit();
                 }}
             />
@@ -138,7 +137,7 @@
         {#snippet destroy()}
             <DeleteItem
                 {...visitOptions}
-                {...optimistic.delete(event.id)}
+                {...optimistic.delete(event)}
                 href={_destroy(event.id)}
                 title={{
                     recurring: m["events.recurrence-action.delete-title"](),

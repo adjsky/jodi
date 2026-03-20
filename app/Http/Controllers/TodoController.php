@@ -11,6 +11,7 @@ use App\Http\Requests\Todo\ReorderRequest;
 use App\Http\Requests\Todo\UpdateRequest;
 use App\Models\Todo;
 use App\Models\TodoPosition;
+use Carbon\Carbon;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\DB;
 
@@ -72,8 +73,9 @@ class TodoController extends Controller
     public function update(UpdateRequest $request, Todo $todo)
     {
         $data = $request->validatedInSnakeCase();
+        $tz = $request->cookies->getString('jodi-timezone');
 
-        DB::transaction(function () use ($todo, $data) {
+        DB::transaction(function () use ($todo, $data, $tz) {
             $data['category_id'] = $data['category']
                 ? $this->user()->categories()->where('name', $data['category'])->firstOrFail(['id'])->id
                 : null;
@@ -89,6 +91,11 @@ class TodoController extends Controller
 
                 if (isset($overrides['notify_at']) && isset($existingException->overrides['notify_status'])) {
                     $existingException->overrides = Arr::except($existingException->overrides, ['notify_status']);
+                }
+
+                if (isset($overrides['category_id'])) {
+                    $date = Carbon::parse($data['scheduled_at'], $tz)->toDateString();
+                    $todo->position()->where('date', $date)->delete();
                 }
 
                 $todo->applyException($data['occurs_at'], $overrides, $existingException);
@@ -114,6 +121,10 @@ class TodoController extends Controller
             }
 
             $todo->update($data);
+
+            if ($todo->wasChanged('category_id')) {
+                $todo->position()->delete();
+            }
         });
 
         // DB::transaction(function () use ($data, $todo) {

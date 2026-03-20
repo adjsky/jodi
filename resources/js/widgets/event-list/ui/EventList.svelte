@@ -5,6 +5,7 @@
     import { formatToHHMM } from "$/shared/lib/date";
     import { tw } from "$/shared/lib/styles";
 
+    import { id } from "../helpers/id";
     import { editView } from "../model/view";
     import EditSheet from "./EditSheet.svelte";
 
@@ -29,7 +30,7 @@
                 {m["events.no-events"]()}
             </p>
         {:else}
-            {#each events as event (event.id)}
+            {#each events as event (id(event))}
                 <Event.Row
                     onclick={() => editView.push(event)}
                     color={event.color}

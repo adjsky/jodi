@@ -5,6 +5,7 @@ import { optimistic as _optimistic } from "$/shared/inertia/visit/optimistic";
 import { normalizeIsoString } from "$/shared/lib/date";
 import * as PushSubscription from "$/shared/lib/push-subscription.svelte";
 
+import { id } from "../helpers/id";
 import { editView } from "../model/view";
 
 import type { VisitOptions } from "@inertiajs/core";
@@ -18,11 +19,11 @@ export const visitOptions: VisitOptions = {
 };
 
 export const optimistic = {
-    edit: (id: number, withAhtungReminder: boolean) =>
+    edit: (todo: App.Data.TodoDto, withAhtungReminder: boolean) =>
         _optimistic(
             (prev, data) => ({
                 todos: prev.todos.map((t: App.Data.TodoDto) =>
-                    t.id == id ? { ...t, ...data } : t
+                    id(t) === id(todo) ? { ...t, ...data } : t
                 )
             }),
             {
@@ -38,11 +39,11 @@ export const optimistic = {
                 }
             }
         ),
-    complete: (id: number) =>
+    complete: (todo: App.Data.TodoDto) =>
         _optimistic(
             (prev) => ({
                 todos: prev.todos.map((t: App.Data.TodoDto) =>
-                    t.id == id
+                    id(t) === id(todo)
                         ? {
                               ...t,
                               completedAt: t.completedAt
@@ -57,17 +58,19 @@ export const optimistic = {
                 onSuccess(props) {
                     const todos = props.todos as App.Data.TodoDto[];
 
-                    const todo = todos.find((t) => t.id == id);
-                    if (!todo || !editView.isOpen()) return;
+                    const updatedTodo = todos.find((t) => id(t) === id(todo));
+                    if (!updatedTodo || !editView.isOpen()) return;
 
-                    return editView.updateMeta(todo);
+                    return editView.updateMeta(updatedTodo);
                 }
             }
         ),
-    delete: (id: number) =>
+    delete: (todo: App.Data.TodoDto) =>
         _optimistic(
             (prev) => ({
-                todos: prev.todos.filter((t: App.Data.TodoDto) => t.id != id)
+                todos: prev.todos.filter(
+                    (t: App.Data.TodoDto) => id(t) !== id(todo)
+                )
             }),
             {
                 error: m["todos.errors.delete"](),
