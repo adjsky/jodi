@@ -177,7 +177,7 @@ trait HasRecurrence
                     continue;
                 }
 
-                $currentDate = Carbon::parse($exception?->overrides[$key] ?? $attribute->setDateFrom($occursAt));
+                $currentDate = Carbon::parse($exception?->overrides[$key] ?? $attribute->copy()->setDateFrom($occursAt));
 
                 if ($currentDate->ne($value)) {
                     $overrides[$key] = $value;
