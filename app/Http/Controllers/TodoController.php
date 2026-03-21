@@ -101,7 +101,7 @@ class TodoController extends Controller
 
                 if (isset($overrides['category_id']) || ! $isScheduledAtSameDay) {
                     $date = Carbon::parse($data['scheduled_at'], $tz)->toDateString();
-                    $todo->position()->where('date', $date)->delete();
+                    $todo->positions()->where('date', $date)->delete();
                 }
 
                 $todo->applyException($data['occurs_at'], $overrides, $existingException);
@@ -132,7 +132,7 @@ class TodoController extends Controller
             $isScheduledAtSameDay = $todo->scheduled_at->isSameDay($todo->getOriginal('scheduled_at'));
 
             if ($isCategoryChanged || ! $isScheduledAtSameDay) {
-                $todo->position()->delete();
+                $todo->positions()->delete();
             }
 
             $todo->save();
@@ -151,7 +151,7 @@ class TodoController extends Controller
                 $todo->delete();
             } else {
                 $todo->cancelOccurrence($data['occurs_at']);
-                $todo->position()->where('date', $data['date'])->delete();
+                $todo->positions()->where('date', $data['date'])->delete();
             }
         });
 

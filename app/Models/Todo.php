@@ -69,7 +69,7 @@ class Todo extends Model
     }
 
     /** @return HasMany<TodoPosition,$this> */
-    public function position(): HasMany
+    public function positions(): HasMany
     {
         return $this->hasMany(TodoPosition::class);
     }

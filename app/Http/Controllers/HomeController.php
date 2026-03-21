@@ -44,7 +44,7 @@ class HomeController extends Controller
         $todos = $this->user()->todos()
             ->with([
                 'category',
-                'position' => fn ($q) => $q->where('date', $date),
+                'positions' => fn ($q) => $q->where('date', $date),
             ])
             ->withPossibleOccurrencesBetween($start, $end)
             ->get()
@@ -53,7 +53,7 @@ class HomeController extends Controller
         return $todos
             ->each(fn ($t) => $t->setAttribute(
                 'nth',
-                $t->position->first()->position ?? PHP_INT_MAX
+                $t->positions->first()->position ?? PHP_INT_MAX
             ))
             ->sortBy([
                 ['category.name', 'asc'],
