@@ -5,15 +5,15 @@ declare(strict_types=1);
 namespace App\Models;
 
 use App\Support\Recurrence\HasRecurrence;
+use Database\Factories\EventFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
-use Illuminate\Database\Eloquent\Relations\MorphMany;
 
 class Event extends Model
 {
-    /** @use HasFactory<\Database\Factories\EventFactory> */
+    /** @use HasFactory<EventFactory> */
     use HasFactory, HasRecurrence;
 
     protected $fillable = [
@@ -64,11 +64,5 @@ class Event extends Model
     public function attendees(): HasMany
     {
         return $this->hasMany(EventAttendee::class);
-    }
-
-    /** @return MorphMany<RecurrenceException,$this> */
-    public function recurrenceExceptions(): MorphMany
-    {
-        return $this->morphMany(RecurrenceException::class, 'recurrenceable');
     }
 }

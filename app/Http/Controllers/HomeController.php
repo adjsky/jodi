@@ -6,10 +6,8 @@ namespace App\Http\Controllers;
 
 use App\Data\EventDto;
 use App\Data\TodoDto;
-use App\Models\Category;
 use App\Models\Event;
 use App\Models\Todo;
-use App\Models\TodoPosition;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Collection;
@@ -44,27 +42,22 @@ class HomeController extends Controller
     {
         /** @var Collection<int, Todo> */
         $todos = $this->user()->todos()
+            ->with([
+                'category',
+                'position' => fn ($q) => $q->where('date', $date),
+            ])
             ->withPossibleOccurrencesBetween($start, $end)
             ->get()
             ->flatMap(fn ($t) => $t->occurrencesBetween($start, $end));
 
-        $categoryIds = $todos->pluck('category_id')->unique()->filter();
-        $categories = Category::whereIn('id', $categoryIds)->get()->keyBy('id');
-
-        $todoIds = $todos->pluck('id')->unique();
-        $positions = TodoPosition::whereIn('todo_id', $todoIds)
-            ->where('date', $date)
-            ->get()
-            ->keyBy('todo_id');
-
         return $todos
-            ->each(function ($t) use ($categories, $positions) {
-                $t->setRelation('category', $categories->get($t->category_id));
-                $t->setAttribute('order', $positions->get($t->id)->position ?? PHP_INT_MAX);
-            })
+            ->each(fn ($t) => $t->setAttribute(
+                'nth',
+                $t->position->first()->position ?? PHP_INT_MAX
+            ))
             ->sortBy([
                 ['category.name', 'asc'],
-                ['order', 'asc'],
+                ['nth', 'asc'],
                 ['created_at', 'asc'],
             ])
             ->values();
