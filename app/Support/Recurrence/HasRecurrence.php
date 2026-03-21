@@ -25,10 +25,7 @@ trait HasRecurrence
     abstract protected function recurrenceDateKeys(): array;
 
     /** @return MorphMany<RecurrenceException,$this> */
-    public function recurrenceExceptions(): MorphMany
-    {
-        return $this->morphMany(RecurrenceException::class, 'recurrenceable');
-    }
+    abstract public function recurrenceExceptions(): MorphMany;
 
     #[Scope]
     protected function withPossibleOccurrencesBetween(Builder $query, CarbonInterface $viewStart, CarbonInterface $viewEnd): void
