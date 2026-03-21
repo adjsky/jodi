@@ -37,9 +37,6 @@
             }
         }
     }
-    onExitComplete={() => {
-        day = getCurrentDay();
-    }}
 >
     <Dialog.Trigger>
         {#snippet asChild(props)}
@@ -98,6 +95,9 @@
     startingSnapPoint={1}
     background="var(--color-white)"
     grip="var(--color-cream-300)"
+    onCloseComplete={() => {
+        day = getCurrentDay();
+    }}
 >
     {#if view.isOpen("add-todo")}
         <TodoForm bind:day onClose={() => void view.back()} />
