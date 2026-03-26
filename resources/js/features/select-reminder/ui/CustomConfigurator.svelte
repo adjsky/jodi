@@ -1,4 +1,5 @@
 <script lang="ts">
+    import { page } from "@inertiajs/svelte";
     import { m } from "$/paraglide/messages";
     import Checkbox from "$/shared/ui/Checkbox.svelte";
     import NumericInput from "$/shared/ui/NumericInput.svelte";
@@ -17,18 +18,23 @@
 
     let [selectedIdx, amount] = $derived(getNotifyOffset());
 
+    const window = $derived($page.props.config.reminders.window);
+
     const durations = $derived([
         {
             label: m["common.intervals.minutes"]({ a: amount }),
-            template: "PT{A}M"
+            template: "PT{A}M",
+            max: window.minutes
         },
         {
             label: m["common.intervals.hours"]({ a: amount }),
-            template: "PT{A}H"
+            template: "PT{A}H",
+            max: window.hours
         },
         {
             label: m["common.intervals.days"]({ a: amount }),
-            template: "P{A}D"
+            template: "P{A}D",
+            max: window.days
         }
     ]);
 
@@ -66,7 +72,12 @@
         [selectedIdx, amount] = getNotifyOffset();
     }}
 >
-    <NumericInput bind:value={amount} class="mt-4" min={0} />
+    <NumericInput
+        bind:value={amount}
+        class="mt-4"
+        min={0}
+        max={durations[selectedIdx].max}
+    />
 
     <div class="mt-3">
         {#each durations as { label, template }, idx (template)}

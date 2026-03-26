@@ -62,6 +62,9 @@ class InertiaMiddleware extends Middleware
                     config('services.firebase'),
                     fn ($value, $key) => [Str::camel($key) => $value]
                 ),
+                'reminders' => [
+                    'window' => config('jodi.reminders.window'),
+                ],
             ],
         ];
     }

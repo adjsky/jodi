@@ -54,7 +54,7 @@
 
 <CustomConfiguratorBlock title={m["recurrence.custom.select-frequency"]()}>
     <div class="mt-3 flex gap-2">
-        <NumericInput bind:value={interval} class="w-20" min={0} />
+        <NumericInput bind:value={interval} class="w-20" min={0} max={999} />
 
         <Select.Root
             bind:value={

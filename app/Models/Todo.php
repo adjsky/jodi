@@ -44,16 +44,9 @@ class Todo extends Model
         ];
     }
 
-    protected function recurrenceStartKey(): string
+    protected function rkstart(): string
     {
         return 'scheduled_at';
-    }
-
-    protected function recurrenceDateKeys(): array
-    {
-        return [
-            'notify_at',
-        ];
     }
 
     /** @return BelongsTo<User,$this> */

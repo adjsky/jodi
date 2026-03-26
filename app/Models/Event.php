@@ -42,17 +42,9 @@ class Event extends Model
         ];
     }
 
-    protected function recurrenceStartKey(): string
+    protected function rkstart(): string
     {
         return 'starts_at';
-    }
-
-    protected function recurrenceDateKeys(): array
-    {
-        return [
-            'ends_at',
-            'notify_at',
-        ];
     }
 
     /** @return BelongsTo<User,$this> */

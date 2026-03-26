@@ -9,7 +9,7 @@ export const DEVICE_ID_COOKIE = "jodi-device-id";
 
 export const TIMEZONE = Intl.DateTimeFormat().resolvedOptions().timeZone;
 
-export const NOTIFICATION_DEFAULT_SUBHOURS = 3;
+export const NOTIFICATION_DEFAULT_SUBHOURS = 1;
 
 export const PLATFORM = Capacitor.getPlatform();
 

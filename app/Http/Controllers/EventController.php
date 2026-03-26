@@ -31,7 +31,7 @@ class EventController extends Controller
             if (! is_null($event->rrule) && $data['scope'] == 'this') {
                 $existingException = $event->findException($data['occurs_at']);
 
-                $overrides = $event->computeOccurenceOverrides(
+                $overrides = $event->computeOccurrenceOverrides(
                     $data['occurs_at'],
                     Arr::only($data, ['title', 'description', 'color', 'starts_at', 'ends_at', 'notify_at']),
                     $existingException

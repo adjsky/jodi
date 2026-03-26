@@ -88,6 +88,7 @@
                         <NumericInput
                             bind:value={count}
                             min={0}
+                            max={999}
                             class="w-15 text-center"
                         />
                     {/snippet}

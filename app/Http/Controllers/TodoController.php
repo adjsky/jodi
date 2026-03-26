@@ -83,7 +83,7 @@ class TodoController extends Controller
             if (! is_null($todo->rrule) && $data['scope'] == 'this') {
                 $existingException = $todo->findException($data['occurs_at']);
 
-                $overrides = $todo->computeOccurenceOverrides(
+                $overrides = $todo->computeOccurrenceOverrides(
                     $data['occurs_at'],
                     Arr::only($data, ['title', 'description', 'color', 'category_id', 'scheduled_at', 'has_time', 'notify_at']),
                     $existingException

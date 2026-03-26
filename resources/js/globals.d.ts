@@ -38,5 +38,12 @@ export interface AppPageProps {
             appId: string;
             vapidKey: string;
         };
+        reminders: {
+            window: {
+                days: number;
+                hours: number;
+                minutes: number;
+            };
+        };
     };
 }

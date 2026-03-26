@@ -1,13 +1,21 @@
 <script lang="ts">
+    import { watch } from "runed";
+
     import { tw } from "../lib/styles";
 
     type Props = {
         value: string;
         min?: number;
+        max?: number;
         class?: string;
     };
 
-    let { value = $bindable(), min, ...props }: Props = $props();
+    let {
+        value = $bindable(),
+        min = Number.MIN_SAFE_INTEGER,
+        max = Number.MAX_SAFE_INTEGER,
+        ...props
+    }: Props = $props();
 
     function setter(v: string) {
         const tv = v.trim();
@@ -19,16 +27,25 @@
 
         const ntv = Number(tv);
 
-        if (isNaN(ntv) || tv.length > 3 || tv.includes(".")) {
+        if (isNaN(ntv) || tv.includes(".")) {
             return;
         }
 
-        if (min !== undefined && ntv < min) {
+        if (ntv < min) {
             value = min.toString();
+        } else if (ntv > max) {
+            value = max.toString();
         } else {
             value = tv;
         }
     }
+
+    watch(
+        () => [max, min],
+        () => {
+            setter(value);
+        }
+    );
 </script>
 
 <input
