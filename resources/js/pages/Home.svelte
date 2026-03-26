@@ -1,5 +1,4 @@
 <script lang="ts">
-    import { usePoll } from "@inertiajs/svelte";
     import { m } from "$/paraglide/messages";
     import CalendarCat from "$/shared/assets/calendar-cat.svg";
     import ActionBanner from "$/shared/ui/ActionBanner.svelte";
@@ -19,8 +18,6 @@
     const hasNoEventsAndTodos = $derived(
         todos?.length === 0 && events?.length === 0
     );
-
-    usePoll(30_000, {}, { keepAlive: false });
 </script>
 
 <ActionBanner />
