@@ -93,7 +93,8 @@
     <div class="flex grow items-end pb-5">
         <Button
             type="button"
-            disabled={Number(interval) === 0}
+            disabled={Number(interval) === 0 ||
+                (limit === "count" && Number(count) === 0)}
             onclick={onApply}
         >
             {m["recurrence.custom.apply"]()}
