@@ -138,7 +138,7 @@
                     >
                         <span
                             class={[
-                                "block overflow-hidden text-ellipsis whitespace-nowrap",
+                                "block truncate",
                                 todo.completedAt && "line-through",
                                 todo.color && [
                                     "rounded-xl px-1.5",
