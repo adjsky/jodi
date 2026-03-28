@@ -47,20 +47,17 @@
 
 <div class="flex items-center justify-between">
     <div class="flex items-center gap-3">
-        <!-- DO NOT REMOVE DIV -->
-        <div>
-            {#snippet trigger(props: HTMLButtonAttributes)}
-                <button {...props} class="text-lg font-bold" type="button">
-                    {new DateFormatter(getLocale(), {
-                        day: "2-digit",
-                        year: "numeric",
-                        month: "short",
-                        weekday: "short"
-                    }).format(scheduledAt.toDate())}
-                </button>
-            {/snippet}
-            {@render calendar(trigger)}
-        </div>
+        {#snippet trigger(props: HTMLButtonAttributes)}
+            <button {...props} class="text-lg font-bold" type="button">
+                {new DateFormatter(getLocale(), {
+                    day: "2-digit",
+                    year: "numeric",
+                    month: "short",
+                    weekday: "short"
+                }).format(scheduledAt.toDate())}
+            </button>
+        {/snippet}
+        {@render calendar(trigger)}
         {@render category()}
     </div>
     {@render close()}
@@ -89,7 +86,7 @@
 ></textarea>
 
 <div
-    class="absolute inset-x-0 bottom-0 z-10 flex items-end justify-between bg-white px-4 pb-safe-offset-6"
+    class="absolute inset-x-0 bottom-0 flex items-end justify-between bg-white px-4 pb-safe-offset-6"
 >
     {@render destroy()}
     {@render repeat()}

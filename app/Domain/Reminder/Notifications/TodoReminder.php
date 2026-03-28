@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace App\Domain\Event\Notifications;
+namespace App\Domain\Reminder\Notifications;
 
-use App\Models\Event;
+use App\Domain\Reminder\Support\Helpers;
+use App\Models\Todo;
 use App\Models\User;
-use App\Support\Reminder;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\MailMessage;
@@ -15,13 +15,12 @@ use NotificationChannels\Fcm\FcmChannel;
 use NotificationChannels\Fcm\FcmMessage;
 use NotificationChannels\Fcm\Resources\Notification as FcmNotification;
 
-class EventReminder extends Notification implements ShouldQueue
+class TodoReminder extends Notification implements ShouldQueue
 {
     use Queueable;
 
-    public function __construct(public Event $event) {}
+    public function __construct(public Todo $model, public ?string $occursAt) {}
 
-    /** @return array<int, string> */
     public function via(User $user): array
     {
         return $user->preferences['notifications'] == 'push'
@@ -32,15 +31,17 @@ class EventReminder extends Notification implements ShouldQueue
     public function toFcm(): FcmMessage
     {
         return new FcmMessage(notification: new FcmNotification(
-            title: __(':title is upcoming.', ['title' => $this->event->title]),
-            body: __('Starts :time.', ['time' => Reminder::startsIn($this->event->starts_at)]),
+            title: __(':title - time to start.', ['title' => $this->model->title]),
+            body: __('Scheduled for :time.', ['time' => Helpers::startsIn($this->model->scheduled_at)]),
         ));
     }
 
     public function toMail(): MailMessage
     {
+        $startsIn = Helpers::startsIn($this->model->scheduled_at);
+
         return (new MailMessage)
-            ->subject(__('mail.event_reminder.subject', ['title' => $this->event->title, 'startsIn' => Reminder::startsIn($this->event->starts_at)]))
-            ->markdown('mail.event-reminder', ['event' => $this->event]);
+            ->subject(__('mail.todo_reminder.subject', ['title' => $this->model->title, 'startsIn' => $startsIn]))
+            ->markdown('mail.todo-reminder', ['todo' => $this->model, 'startsIn' => $startsIn]);
     }
 }

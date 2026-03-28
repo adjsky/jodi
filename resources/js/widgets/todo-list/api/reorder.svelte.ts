@@ -1,5 +1,7 @@
 import { router } from "@inertiajs/svelte";
+import { parseAbsolute, toCalendarDate } from "@internationalized/date";
 import { reorder } from "$/generated/actions/App/Http/Controllers/TodoController";
+import { TIMEZONE } from "$/shared/cfg/constants";
 import { useDebounce } from "runed";
 
 import { UNGROUPED_KEY } from "../cfg/constants";
@@ -33,7 +35,10 @@ export function useReorder(options?: Options) {
                             id: t.id,
                             name: t.title,
                             position: idx + 1,
-                            category: group == UNGROUPED_KEY ? null : group
+                            category: group == UNGROUPED_KEY ? null : group,
+                            date: toCalendarDate(
+                                parseAbsolute(t.scheduledAt, TIMEZONE)
+                            ).toString()
                         }))
                     )
                     .flat()

@@ -1,6 +1,8 @@
 <script lang="ts">
+    import { HistoryView } from "$/shared/inertia/history-view.svelte";
     import { normalizeIsoString } from "$/shared/lib/date";
     import { announce } from "$/shared/lib/form";
+    import { DISABLE_SHEET_DRAGGING } from "$/shared/ui/Sheet.svelte";
     import { tick } from "svelte";
 
     import { durationToZonedDT } from "../helpers/duration";
@@ -25,9 +27,13 @@
         beforeOpen
     }: Props = $props();
 
+    const customPickerView = new HistoryView<{
+        [DISABLE_SHEET_DRAGGING]: boolean;
+        __selectreminder: { isOpen: boolean };
+    }>();
+
     let announcerInput = $state<HTMLInputElement | null>(null);
     let isMenuOpen = $state(false);
-    let isCustomPickerOpen = $state(false);
 
     async function onSelect(duration: string) {
         notifyAt = durationToZonedDT(startsAt, duration);
@@ -50,7 +56,11 @@
     }
     onCustomTrigger={() => {
         isMenuOpen = false;
-        isCustomPickerOpen = true;
+        void customPickerView.push(customPickerView.name, {
+            ...customPickerView.meta,
+            [DISABLE_SHEET_DRAGGING]: true,
+            __selectreminder: { isOpen: true }
+        });
     }}
 />
 
@@ -58,7 +68,14 @@
     {notifyAt}
     {startsAt}
     {onSelect}
-    bind:open={isCustomPickerOpen}
+    bind:open={
+        () => customPickerView.meta?.__selectreminder?.isOpen ?? false,
+        (v) => {
+            if (!v) {
+                void customPickerView.back();
+            }
+        }
+    }
 />
 
 <input

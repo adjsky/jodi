@@ -1,12 +1,12 @@
 import { startOfWeek } from "@internationalized/date";
 import { getLocale } from "$/paraglide/runtime";
+import { WEEK_START_PREFERENCE_MAP } from "$/shared/cfg/constants";
 import { extract } from "runed";
 
-import { DMAP } from "../cfg/preferences";
 import { getWeekDays } from "../helpers/date";
 
-import type { WeekStart } from "../cfg/preferences";
 import type { CalendarDate } from "@internationalized/date";
+import type { WeekStart } from "$/shared/lib/types";
 import type { Getter } from "runed";
 
 export class Week {
@@ -31,6 +31,10 @@ export class Week {
     }
 
     #startOfWeek(date: CalendarDate) {
-        return startOfWeek(date, getLocale(), DMAP[extract(this.#start)]);
+        return startOfWeek(
+            date,
+            getLocale(),
+            WEEK_START_PREFERENCE_MAP[extract(this.#start)]
+        );
     }
 }

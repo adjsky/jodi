@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Http\Requests\Event;
 
+use App\Rules\ValidRRule;
 use App\Support\FormRequest\ConvertsToSnakeCase;
 use Illuminate\Foundation\Http\FormRequest;
 
@@ -26,6 +27,7 @@ class CreateRequest extends FormRequest
             'startsAt' => 'required|date',
             'endsAt' => 'required|date',
             'notifyAt' => 'required|date',
+            'rrule' => ['nullable', 'string', new ValidRRule],
         ];
     }
 }

@@ -3,14 +3,14 @@
     import { DateFormatter } from "@internationalized/date";
     import { ChevronLeft, ChevronRight } from "@lucide/svelte";
     import { getLocale } from "$/paraglide/runtime";
-    import { TIMEZONE } from "$/shared/cfg/constants";
+    import { TIMEZONE, WEEK_CAROUSEL_CACHE_TAG } from "$/shared/cfg/constants";
     import { boolAttr } from "runed";
 
     import { compareDates } from "../helpers/date";
     import { Week } from "../model/week.svelte";
 
-    import type { WeekStart } from "../cfg/preferences";
     import type { CalendarDate } from "@internationalized/date";
+    import type { WeekStart } from "$/shared/lib/types";
 
     type Props = {
         selected: CalendarDate;
@@ -46,7 +46,7 @@
                         prefetch: "mount",
                         cacheFor: ["30s", "5m"],
                         href: `?d=${date.toString()}`,
-                        cacheTags: "week-carousel"
+                        cacheTags: WEEK_CAROUSEL_CACHE_TAG
                     }}
                     class="group flex flex-col items-center justify-between"
                     data-selected={boolAttr(compare == "selected")}

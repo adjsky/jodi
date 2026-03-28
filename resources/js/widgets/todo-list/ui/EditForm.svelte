@@ -1,18 +1,19 @@
 <script lang="ts">
-    import { Form, router } from "@inertiajs/svelte";
+    import { Form } from "@inertiajs/svelte";
     import {
         parseAbsoluteToLocal,
+        parseDate,
         toCalendarDate
     } from "@internationalized/date";
-    import { RotateCw } from "@lucide/svelte";
     import { Todo } from "$/entities/todo";
     import { Checkbox } from "$/features/complete-todo";
     import { DeleteItem } from "$/features/delete-item";
-    import { daySummary, YearCalendarDialog } from "$/features/filter-by-date";
+    import { YearCalendarDialog } from "$/features/filter-by-date";
     import { RescheduleItem } from "$/features/reschedule-item";
     import { TodoTime } from "$/features/schedule-todo-time";
     import { Category } from "$/features/select-category";
     import { Color } from "$/features/select-color";
+    import { Recurrence } from "$/features/select-recurrence";
     import { Reminder } from "$/features/select-reminder";
     import {
         destroy as _destroy,
@@ -23,14 +24,14 @@
     import { NOTIFICATION_DEFAULT_SUBHOURS } from "$/shared/cfg/constants";
     import { normalizeIsoString, timediff } from "$/shared/lib/date";
     import { announce } from "$/shared/lib/form";
-    import * as PushSubscription from "$/shared/lib/push-subscription.svelte";
     import { toaster } from "$/shared/lib/toaster";
     import SaveOrClose from "$/shared/ui/SaveOrClose.svelte";
-    import ToolbarAction from "$/shared/ui/ToolbarAction.svelte";
     import { watch } from "runed";
     import { tick, untrack } from "svelte";
 
     import { optimistic, visitOptions } from "../cfg/inertia";
+
+    import type { Scope } from "$/shared/lib/types";
 
     type Props = {
         todo: App.Data.TodoDto | null;
@@ -40,7 +41,8 @@
     const { onClose, ...props }: Props = $props();
 
     let dateAnnouncerInput: HTMLInputElement | null = $state(null);
-    let lastKnownTodo = $state(props.todo);
+    let lastKnownTodo = $state(untrack(() => props.todo));
+    let scope: Scope = $state("this");
 
     let todo = $derived(props.todo ?? (lastKnownTodo as App.Data.TodoDto));
 
@@ -51,9 +53,12 @@
             notifyAt: todo.notifyAt
                 ? parseAbsoluteToLocal(todo.notifyAt)
                 : null,
-            color: todo.color
+            color: todo.color,
+            rrule: todo.rrule
         }))
     );
+
+    const isRRuleDirty = $derived(todo.rrule != draft.rrule);
 
     watch(
         () => [props.todo],
@@ -65,23 +70,20 @@
 </script>
 
 <Form
-    {...optimistic.edit(todo.id)}
-    action={update(todo.id)}
+    {...optimistic.edit(todo, draft.notifyAt != null)}
+    action={update(todo.id, {
+        query: { scope: isRRuleDirty ? "all" : scope }
+    })}
     options={visitOptions}
     transform={(data) => ({
         ...data,
-        hasTime: draft.hasTime
+        hasTime: draft.hasTime,
+        occursAt: todo.occursAt
     })}
     showProgress={false}
-    onSuccess={() => {
-        if (draft.notifyAt) {
-            PushSubscription.ahtung(m["todos.reminder-ahtung"]());
-        }
-        router.flushByCacheTags("week-carousel");
-        daySummary.flush();
-    }}
     class="flex grow flex-col pb-18"
     let:isDirty
+    let:submit
 >
     <Todo.Fields
         scheduledAt={draft.scheduledAt}
@@ -92,6 +94,9 @@
         {#snippet calendar(trigger)}
             <YearCalendarDialog
                 selected={toCalendarDate(draft.scheduledAt)}
+                min={todo.recurringSince
+                    ? parseDate(todo.recurringSince)
+                    : null}
                 onSelect={async (d) => {
                     if (draft.notifyAt) {
                         draft.notifyAt = draft.notifyAt.set(d);
@@ -108,11 +113,18 @@
         {/snippet}
         {#snippet close()}
             <SaveOrClose
+                {onClose}
+                title={m["todos.recurrence-action.edit-title"]()}
                 variant={isDirty ? "save" : "close"}
-                onclick={() => {
-                    if (!isDirty) {
-                        onClose?.();
-                    }
+                scopeLabels={{
+                    this: m["todos.recurrence-action.this"](),
+                    all: m["todos.recurrence-action.all"]()
+                }}
+                confirm={todo.rrule != null && !isRRuleDirty}
+                onConfirm={async (s) => {
+                    scope = s;
+                    await tick();
+                    submit();
                 }}
             />
         {/snippet}
@@ -122,9 +134,10 @@
         {#snippet checkbox()}
             <Checkbox
                 {...visitOptions}
-                {...optimistic.complete(todo.id)}
+                {...optimistic.complete(todo)}
                 href={complete(todo.id)}
                 completedAt={todo.completedAt}
+                occursAt={todo.occursAt}
                 class="size-6 text-lg"
             />
         {/snippet}
@@ -155,16 +168,29 @@
         {#snippet destroy()}
             <DeleteItem
                 {...visitOptions}
-                {...optimistic.delete(todo.id)}
+                {...optimistic.delete(todo)}
                 href={_destroy(todo.id)}
-                title={m["todos.delete-ahtung"]()}
+                title={{
+                    recurring: m["todos.recurrence-action.delete-title"](),
+                    general: m["todos.delete-ahtung"]()
+                }}
                 tooltip={m["todos.tooltips.delete"]()}
+                recurring={todo.rrule != null}
+                occursAt={todo.occursAt}
+                date={todo.scheduledAt}
+                scopeLabels={{
+                    this: m["todos.recurrence-action.this"](),
+                    all: m["todos.recurrence-action.all"]()
+                }}
             />
         {/snippet}
         {#snippet repeat()}
-            <ToolbarAction disabled tooltip={m["todos.tooltips.repeat"]()}>
-                <RotateCw />
-            </ToolbarAction>
+            <Recurrence
+                bind:rrule={draft.rrule}
+                day={draft.scheduledAt}
+                name="rrule"
+                tooltip={m["todos.tooltips.repeat"]()}
+            />
         {/snippet}
         {#snippet color()}
             <Color
@@ -196,7 +222,6 @@
                         draft.notifyAt = draft.notifyAt.set(d);
                     }
                     draft.scheduledAt = draft.scheduledAt.set(d);
-
                     await tick();
                     announce(dateAnnouncerInput);
                 }}

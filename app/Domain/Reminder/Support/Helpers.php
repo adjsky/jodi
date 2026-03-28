@@ -2,13 +2,13 @@
 
 declare(strict_types=1);
 
-namespace App\Support;
+namespace App\Domain\Reminder\Support;
 
-use Carbon\Carbon;
+use Carbon\CarbonInterface;
 
-class Reminder
+class Helpers
 {
-    public static function startsIn(Carbon $start): string
+    public static function startsIn(CarbonInterface $start): string
     {
         $diff = $start->diffInMinutes();
 

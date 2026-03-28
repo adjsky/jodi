@@ -4,7 +4,9 @@ declare(strict_types=1);
 
 namespace App\Http\Requests\Event;
 
+use App\Rules\ValidRRule;
 use App\Support\FormRequest\ConvertsToSnakeCase;
+use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
 
 class UpdateRequest extends FormRequest
@@ -16,7 +18,7 @@ class UpdateRequest extends FormRequest
         return $this->user()?->can('update', $this->event) ?? false;
     }
 
-    /** @return array<string, \Illuminate\Contracts\Validation\ValidationRule|array<mixed>|string> */
+    /** @return array<string, ValidationRule|array<mixed>|string> */
     public function rules(): array
     {
         return [
@@ -26,6 +28,12 @@ class UpdateRequest extends FormRequest
             'startsAt' => 'required|date',
             'endsAt' => 'required|date',
             'notifyAt' => 'required|date',
+            'rrule' => ['nullable', 'string', new ValidRRule],
+            'occursAt' => [
+                $this->event->rrule ? 'required' : 'nullable',
+                'date_format:Y-m-d',
+            ],
+            'scope' => 'nullable|in:this,all',
         ];
     }
 }

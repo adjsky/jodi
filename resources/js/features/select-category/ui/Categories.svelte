@@ -1,5 +1,6 @@
 <script lang="ts">
-    import { Check, Trash } from "@lucide/svelte";
+    import { Trash } from "@lucide/svelte";
+    import Checkbox from "$/shared/ui/Checkbox.svelte";
     import { DISABLE_SHEET_DRAGGING } from "$/shared/ui/Sheet.svelte";
 
     import { view } from "../model/view";
@@ -18,9 +19,9 @@
         <div
             class="relative flex h-13.75 items-center border-cream-300 not-first:border-t"
         >
-            <button
-                type="button"
-                class="absolute inset-0 flex items-center gap-2 px-2 text-start text-lg font-medium"
+            <Checkbox
+                label={name}
+                checked={selected == name}
                 onclick={() => {
                     if (selected == name) {
                         onSelect?.(null);
@@ -28,19 +29,8 @@
                         onSelect?.(name);
                     }
                 }}
-            >
-                <span
-                    class={[
-                        "flex size-5.5 items-center justify-center rounded-full border border-cream-950",
-                        selected == name && "bg-cream-950"
-                    ]}
-                >
-                    {#if selected == name}
-                        <Check class="shrink-0 text-md text-white" />
-                    {/if}
-                </span>
-                <span>{name}</span>
-            </button>
+                class="absolute inset-0 px-2 py-0 text-lg"
+            />
             <button
                 type="button"
                 onclick={(e) => {

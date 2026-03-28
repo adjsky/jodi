@@ -4,15 +4,18 @@ declare(strict_types=1);
 
 namespace App\Models;
 
+use App\Support\Recurrence\HasRecurrence;
+use Database\Factories\EventFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\MorphMany;
 
 class Event extends Model
 {
-    /** @use HasFactory<\Database\Factories\EventFactory> */
-    use HasFactory;
+    /** @use HasFactory<EventFactory> */
+    use HasFactory, HasRecurrence;
 
     protected $fillable = [
         'title',
@@ -22,6 +25,7 @@ class Event extends Model
         'notify_at',
         'notify_status',
         'color',
+        'rrule',
     ];
 
     protected $hidden = [];
@@ -38,15 +42,26 @@ class Event extends Model
         ];
     }
 
-    /** @return HasMany<EventAttendee,$this> */
-    public function attendees(): HasMany
+    protected function rkstart(): string
     {
-        return $this->hasMany(EventAttendee::class);
+        return 'starts_at';
     }
 
     /** @return BelongsTo<User,$this> */
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
+    }
+
+    /** @return HasMany<EventAttendee,$this> */
+    public function attendees(): HasMany
+    {
+        return $this->hasMany(EventAttendee::class);
+    }
+
+    /** @return MorphMany<RecurrenceException,$this> */
+    public function recurrenceExceptions(): MorphMany
+    {
+        return $this->morphMany(RecurrenceException::class, 'recurrenceable');
     }
 }

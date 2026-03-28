@@ -14,6 +14,68 @@
             "title": "Select time",
             "ok": "OK",
             "cancel": "Cancel"
+        },
+        "intervals": {
+            "minutes": [
+                {
+                    "declarations": ["input a", "local amount = a: plural"],
+                    "selectors": ["amount"],
+                    "match": {
+                        "amount=one": "Minute",
+                        "amount=other": "Minutes"
+                    }
+                }
+            ],
+            "hours": [
+                {
+                    "declarations": ["input a", "local amount = a: plural"],
+                    "selectors": ["amount"],
+                    "match": {
+                        "amount=one": "Hour",
+                        "amount=other": "Hours"
+                    }
+                }
+            ],
+            "days": [
+                {
+                    "declarations": ["input a", "local amount = a: plural"],
+                    "selectors": ["amount"],
+                    "match": {
+                        "amount=one": "Day",
+                        "amount=other": "Days"
+                    }
+                }
+            ],
+            "weeks": [
+                {
+                    "declarations": ["input a", "local amount = a: plural"],
+                    "selectors": ["amount"],
+                    "match": {
+                        "amount=one": "Week",
+                        "amount=other": "Weeks"
+                    }
+                }
+            ],
+            "months": [
+                {
+                    "declarations": ["input a", "local amount = a: plural"],
+                    "selectors": ["amount"],
+                    "match": {
+                        "amount=one": "Month",
+                        "amount=other": "Months"
+                    }
+                }
+            ],
+            "years": [
+                {
+                    "declarations": ["input a", "local amount = a: plural"],
+                    "selectors": ["amount"],
+                    "match": {
+                        "amount=one": "Year",
+                        "amount=other": "Years"
+                    }
+                }
+            ]
         }
     },
     "push-notifications": {
@@ -99,6 +161,12 @@
         "placeholders": {
             "title": "Task",
             "description": "Add a few extra notes here..."
+        },
+        "recurrence-action": {
+            "delete-title": "Delete recurrable task?",
+            "edit-title": "Save recurrable task",
+            "this": "This task",
+            "all": "All tasks"
         }
     },
     "events": {
@@ -123,6 +191,12 @@
         "placeholders": {
             "title": "Event",
             "description": "Add a few extra notes here..."
+        },
+        "recurrence-action": {
+            "delete-title": "Delete recurrable event?",
+            "edit-title": "Save recurrable event",
+            "this": "This event",
+            "all": "All events"
         }
     },
     "reminders": {
@@ -150,45 +224,39 @@
             "title": "Remind before",
             "trigger": "Other",
             "ok": "OK",
-            "cancel": "Cancel",
-            "duration": {
-                "minutes": [
-                    {
-                        "declarations": ["input a", "local amount = a: plural"],
-                        "selectors": ["amount"],
-                        "match": {
-                            "amount=one": "Minute",
-                            "amount=other": "Minutes"
-                        }
-                    }
-                ],
-                "hours": [
-                    {
-                        "declarations": ["input a", "local amount = a: plural"],
-                        "selectors": ["amount"],
-                        "match": {
-                            "amount=one": "Hour",
-                            "amount=other": "Hours"
-                        }
-                    }
-                ],
-                "days": [
-                    {
-                        "declarations": ["input a", "local amount = a: plural"],
-                        "selectors": ["amount"],
-                        "match": {
-                            "amount=one": "Day",
-                            "amount=other": "Days"
-                        }
-                    }
-                ]
-            }
+            "cancel": "Cancel"
         }
     },
     "reschedule": {
         "tomorrow": "Tomorrow",
         "next-week": "Next week",
         "next-month": "Next month"
+    },
+    "recurrence": {
+        "never": "Never",
+        "day": "Each day",
+        "week": "Each week",
+        "month": "Each month",
+        "year": "Each year",
+        "custom": {
+            "title": "Repeat",
+            "trigger": "Other",
+            "apply": "Apply",
+            "select-frequency": "Repeat once every",
+            "select-weekdays": "Select weekdays",
+            "select-when-to-end": "Select when to end",
+            "never": "Never",
+            "end-after-times": [
+                {
+                    "declarations": ["input t", "local times = t: plural"],
+                    "selectors": ["times"],
+                    "match": {
+                        "times=one": "After {#input}{/input} time",
+                        "times=other": "After {#input}{/input} times"
+                    }
+                }
+            ]
+        }
     },
     "current-user": {
         "log-out": "Log out",

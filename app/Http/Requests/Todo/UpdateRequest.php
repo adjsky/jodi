@@ -4,7 +4,9 @@ declare(strict_types=1);
 
 namespace App\Http\Requests\Todo;
 
+use App\Rules\ValidRRule;
 use App\Support\FormRequest\ConvertsToSnakeCase;
+use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
 
@@ -17,7 +19,7 @@ class UpdateRequest extends FormRequest
         return $this->user()?->can('update', $this->todo) ?? false;
     }
 
-    /** @return array<string, \Illuminate\Contracts\Validation\ValidationRule|array<mixed>|string> */
+    /** @return array<string, ValidationRule|array<mixed>|string> */
     public function rules(): array
     {
         return [
@@ -32,6 +34,12 @@ class UpdateRequest extends FormRequest
             'scheduledAt' => 'required|date',
             'hasTime' => 'required|boolean',
             'notifyAt' => 'nullable|date',
+            'rrule' => ['nullable', 'string', new ValidRRule],
+            'occursAt' => [
+                $this->todo->rrule ? 'required' : 'nullable',
+                'date_format:Y-m-d',
+            ],
+            'scope' => 'nullable|in:this,all',
         ];
     }
 }

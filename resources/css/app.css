@@ -164,3 +164,13 @@
         }
     }
 }
+
+@layer components {
+    .triangle {
+        width: 0px;
+        height: 0px;
+        border-style: solid;
+        border-width: 6px 4px 0 4px;
+        border-color: currentColor transparent transparent transparent;
+    }
+}

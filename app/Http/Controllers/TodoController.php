@@ -10,6 +10,9 @@ use App\Http\Requests\Todo\DestroyRequest;
 use App\Http\Requests\Todo\ReorderRequest;
 use App\Http\Requests\Todo\UpdateRequest;
 use App\Models\Todo;
+use App\Models\TodoPosition;
+use Carbon\Carbon;
+use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\DB;
 
 class TodoController extends Controller
@@ -38,22 +41,29 @@ class TodoController extends Controller
     {
         $data = $request->validated();
 
-        $user = $this->user();
-        $categories = $user->categories()->pluck('id', 'name');
+        DB::transaction(function () use ($data) {
+            TodoPosition::upsert(
+                Arr::map($data['todos'], fn ($t) => [
+                    'todo_id' => $t['id'],
+                    'date' => $t['date'],
+                    'position' => $t['position'],
+                ]),
+                uniqueBy: ['todo_id', 'date'],
+                update: ['position']
+            );
 
-        DB::transaction(function () use ($user, $categories, $data) {
-            // TODO: use a CASE/WHEN query if this will seriously slow down the request.
-            foreach ($data['todos'] as $todo) {
-                $category = $todo['category'] ?? null;
+            $categories = $this->user()->categories()->pluck('id', 'name');
 
-                $user->todos()
-                    ->where('id', $todo['id'])
-                    ->update([
-                        'position' => $todo['position'],
-                        'category_id' => $category && isset($categories[$category])
-                            ? $categories[$category]
-                            : null,
-                    ]);
+            foreach ($data['todos'] as $t) {
+                if ($t['category']) {
+                    $categoryId = $categories->get($t['category']);
+                } else {
+                    $categoryId = null;
+                }
+
+                $this->user()->todos()
+                    ->where('id', $t['id'])
+                    ->update(['category_id' => $categoryId]);
             }
         });
 
@@ -63,22 +73,58 @@ class TodoController extends Controller
     public function update(UpdateRequest $request, Todo $todo)
     {
         $data = $request->validatedInSnakeCase();
+        $tz = $request->cookies->getString('jodi-timezone');
 
-        if ($data['notify_at']) {
-            if (! $todo->notify_at || $todo->notify_at->ne($data['notify_at'])) {
-                $data['notify_status'] = 'waiting';
-            }
-        } else {
-            $data['notify_status'] = null;
-        }
-
-        DB::transaction(function () use ($data, $todo) {
+        DB::transaction(function () use ($todo, $data, $tz) {
             $data['category_id'] = $data['category']
-                ? $this->user()->categories()
-                    ->where('name', $data['category'])
-                    ->firstOrFail(['id'])
-                    ->id
+                ? $this->user()->categories()->where('name', $data['category'])->firstOrFail(['id'])->id
                 : null;
+
+            if (! is_null($todo->rrule) && $data['scope'] == 'this') {
+                $existingException = $todo->findException($data['occurs_at']);
+
+                $overrides = $todo->computeOccurrenceOverrides(
+                    $data['occurs_at'],
+                    Arr::only($data, ['title', 'description', 'color', 'category_id', 'scheduled_at', 'has_time', 'notify_at']),
+                    $existingException
+                );
+
+                if (isset($overrides['notify_at']) && isset($existingException->overrides['notify_status'])) {
+                    $existingException->overrides = Arr::except($existingException->overrides, ['notify_status']);
+                }
+
+                if (isset($overrides['scheduled_at'])) {
+                    $isScheduledAtSameDay = Carbon::parse($overrides['scheduled_at'])->isSameDay($existingException->overrides['scheduled_at'] ?? $data['occurs_at']);
+                } else {
+                    $isScheduledAtSameDay = false;
+                }
+
+                if (isset($overrides['category_id']) || ! $isScheduledAtSameDay) {
+                    $date = Carbon::parse($data['scheduled_at'], $tz)->toDateString();
+                    $todo->positions()->where('date', $date)->delete();
+                }
+
+                $todo->applyException($data['occurs_at'], $overrides, $existingException);
+
+                return back();
+            }
+
+            if (! is_null($todo->rrule) && $data['scope'] == 'all') {
+                $todo->deleteExceptions();
+                $data = $todo->normalizeRecurringDataForUpdate($data, $data['occurs_at']);
+            }
+
+            if ($data['notify_at']) {
+                if ($todo->rrule) {
+                    $todo->recurrenceExceptions()
+                        ->whereJsonContainsKey('overrides->notify_status')
+                        ->update(['overrides' => DB::raw("json_remove(overrides, '$.notify_status')")]);
+                } else {
+                    $data['notify_status'] = 'waiting';
+                }
+            } else {
+                $data['notify_status'] = null;
+            }
 
             $todo->fill($data);
 
@@ -86,7 +132,7 @@ class TodoController extends Controller
             $isScheduledAtSameDay = $todo->scheduled_at->isSameDay($todo->getOriginal('scheduled_at'));
 
             if ($isCategoryChanged || ! $isScheduledAtSameDay) {
-                $todo->position = $todo->getHighestOrderNumber() + 1;
+                $todo->positions()->delete();
             }
 
             $todo->save();
@@ -97,15 +143,43 @@ class TodoController extends Controller
 
     public function destroy(DestroyRequest $request, Todo $todo)
     {
-        $todo->delete();
+        $data = $request->validatedInSnakeCase();
+
+        DB::transaction(function () use ($todo, $data) {
+            if (is_null($todo->rrule) || $data['scope'] == 'all') {
+                $todo->deleteExceptions();
+                $todo->delete();
+            } else {
+                $todo->cancelOccurrence($data['occurs_at']);
+                $todo->positions()->where('date', $data['date'])->delete();
+            }
+        });
 
         return back();
     }
 
     public function complete(CompleteRequest $request, Todo $todo)
     {
-        $todo->completed_at = $todo->completed_at ? null : now();
-        $todo->save();
+        $data = $request->validatedInSnakeCase();
+
+        DB::transaction(function () use ($todo, $data) {
+            if (! is_null($todo->rrule)) {
+                $existingException = $todo->findException($data['occurs_at']);
+
+                $overrides = [];
+
+                if (isset($existingException->overrides['completed_at'])) {
+                    $overrides['completed_at'] = null;
+                } else {
+                    $overrides['completed_at'] = now();
+                }
+
+                $todo->applyException($data['occurs_at'], $overrides, $existingException);
+            } else {
+                $todo->completed_at = $todo->completed_at ? null : now();
+                $todo->save();
+            }
+        });
 
         return back();
     }

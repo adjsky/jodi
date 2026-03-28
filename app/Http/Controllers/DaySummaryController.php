@@ -6,8 +6,10 @@ namespace App\Http\Controllers;
 
 use App\Data\DaySummaryDto;
 use App\Data\DaySummaryEventDto;
+use App\Models\Event;
 use Carbon\CarbonImmutable;
 use Illuminate\Http\Request;
+use Illuminate\Support\Collection;
 
 class DaySummaryController extends Controller
 {
@@ -16,22 +18,29 @@ class DaySummaryController extends Controller
         $months = explode(',', $request->query('m', ''));
         $tz = $request->cookies->getString('jodi-timezone');
 
-        $events = $this->user()->events()
-            ->whereYear('starts_at', $year)
-            ->where(function ($query) use ($year, $months, $tz) {
-                foreach ($months as $month) {
-                    $date = CarbonImmutable::createFromDate($year, (int) $month, 1, $tz);
-                    $startUtc = $date->startOfMonth()->setTimezone('UTC');
-                    $endUtc = $date->endOfMonth()->setTimezone('UTC');
+        $ranges = collect($months)->map(function ($month) use ($year, $tz) {
+            $date = CarbonImmutable::createFromDate($year, (int) $month, 1, $tz);
 
-                    $query->orWhereBetween('starts_at', [$startUtc, $endUtc]);
-                }
-            })
-            ->orderBy('starts_at')
-            ->get(['title', 'color', 'starts_at']);
+            return [
+                'start' => $date->startOfMonth()->utc(),
+                'end' => $date->endOfMonth()->utc(),
+            ];
+        });
+
+        $overallStart = $ranges->min('start');
+        $overallEnd = $ranges->max('end');
+
+        /** @var Collection<int, Event> */
+        $events = $this->user()->events()
+            ->withPossibleOccurrencesBetween($overallStart, $overallEnd)
+            ->get(['id', 'title', 'color', 'starts_at', 'rrule'])
+            ->flatMap(
+                fn ($e) => $e->occurrencesBetween($overallStart, $overallEnd)
+            );
 
         $summary = $events
-            ->groupBy(fn ($event) => $event->starts_at->setTimezone($tz)->format('Y-m-d'))
+            ->sortBy('starts_at')
+            ->groupBy(fn ($e) => $e->starts_at->setTimezone($tz)->toDateString())
             ->map(fn ($events) => new DaySummaryDto(
                 DaySummaryEventDto::collect($events->take(2)->toArray()),
                 max(0, $events->count() - 2)

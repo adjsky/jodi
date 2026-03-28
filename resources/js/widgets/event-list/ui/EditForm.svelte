@@ -1,15 +1,16 @@
 <script lang="ts">
-    import { Form, router } from "@inertiajs/svelte";
+    import { Form } from "@inertiajs/svelte";
     import {
         parseAbsoluteToLocal,
+        parseDate,
         toCalendarDate
     } from "@internationalized/date";
-    import { RotateCw } from "@lucide/svelte";
     import { Event } from "$/entities/event";
     import { DeleteItem } from "$/features/delete-item";
-    import { daySummary, YearCalendarDialog } from "$/features/filter-by-date";
+    import { YearCalendarDialog } from "$/features/filter-by-date";
     import { RescheduleItem } from "$/features/reschedule-item";
     import { Color } from "$/features/select-color";
+    import { Recurrence } from "$/features/select-recurrence";
     import { Reminder } from "$/features/select-reminder";
     import {
         destroy as _destroy,
@@ -18,13 +19,13 @@
     import { m } from "$/paraglide/messages";
     import { normalizeIsoString, timediff } from "$/shared/lib/date";
     import { announce } from "$/shared/lib/form";
-    import * as PushSubscription from "$/shared/lib/push-subscription.svelte";
     import SaveOrClose from "$/shared/ui/SaveOrClose.svelte";
-    import ToolbarAction from "$/shared/ui/ToolbarAction.svelte";
     import { watch } from "runed";
     import { tick, untrack } from "svelte";
 
     import { optimistic, visitOptions } from "../cfg/inertia";
+
+    import type { Scope } from "$/shared/lib/types";
 
     type Props = {
         event: App.Data.EventDto | null;
@@ -35,7 +36,8 @@
 
     let startsAtAnnouncerInput: HTMLInputElement | null = $state(null);
     let endsAtAnnouncerInput: HTMLInputElement | null = $state(null);
-    let lastKnownEvent = $state(props.event);
+    let lastKnownEvent = $state(untrack(() => props.event));
+    let scope: Scope = $state("this");
 
     const event = $derived(
         props.event ?? (lastKnownEvent as App.Data.EventDto)
@@ -46,9 +48,12 @@
             startsAt: parseAbsoluteToLocal(event.startsAt),
             endsAt: parseAbsoluteToLocal(event.endsAt),
             notifyAt: parseAbsoluteToLocal(event.notifyAt),
-            color: event.color
+            color: event.color,
+            rrule: event.rrule
         }))
     );
+
+    const isRRuleDirty = $derived(event.rrule != draft.rrule);
 
     watch(
         () => [props.event],
@@ -60,17 +65,19 @@
 </script>
 
 <Form
-    {...optimistic.edit(event.id, () => draft)}
-    action={update(event.id)}
+    {...optimistic.edit(event, draft)}
+    action={update(event.id, {
+        query: { scope: isRRuleDirty ? "all" : scope }
+    })}
     options={visitOptions}
+    transform={(data) => ({
+        ...data,
+        occursAt: event.occursAt
+    })}
     showProgress={false}
-    onSuccess={() => {
-        PushSubscription.ahtung(m["events.reminder-ahtung"]());
-        router.flushByCacheTags("week-carousel");
-        daySummary.flush();
-    }}
     class="flex grow flex-col pb-18"
     let:isDirty
+    let:submit
 >
     <Event.Fields
         bind:startsAt={
@@ -97,6 +104,9 @@
         {#snippet calendar(trigger)}
             <YearCalendarDialog
                 selected={toCalendarDate(draft.startsAt)}
+                min={event.recurringSince
+                    ? parseDate(event.recurringSince)
+                    : null}
                 onSelect={async (d) => {
                     draft.notifyAt = draft.notifyAt.set(d);
                     draft.startsAt = draft.startsAt.set(d);
@@ -112,27 +122,46 @@
         {/snippet}
         {#snippet close()}
             <SaveOrClose
+                {onClose}
+                title={m["events.recurrence-action.edit-title"]()}
                 variant={isDirty ? "save" : "close"}
-                onclick={() => {
-                    if (!isDirty) {
-                        onClose?.();
-                    }
+                scopeLabels={{
+                    this: m["events.recurrence-action.this"](),
+                    all: m["events.recurrence-action.all"]()
+                }}
+                confirm={event.rrule != null && !isRRuleDirty}
+                onConfirm={async (s) => {
+                    scope = s;
+                    await tick();
+                    submit();
                 }}
             />
         {/snippet}
         {#snippet destroy()}
             <DeleteItem
                 {...visitOptions}
-                {...optimistic.delete(event.id)}
+                {...optimistic.delete(event)}
                 href={_destroy(event.id)}
-                title={m["events.delete-ahtung"]()}
+                title={{
+                    recurring: m["events.recurrence-action.delete-title"](),
+                    general: m["events.delete-ahtung"]()
+                }}
                 tooltip={m["events.tooltips.delete"]()}
+                recurring={event.rrule != null}
+                occursAt={event.occursAt}
+                scopeLabels={{
+                    this: m["events.recurrence-action.this"](),
+                    all: m["events.recurrence-action.all"]()
+                }}
             />
         {/snippet}
         {#snippet repeat()}
-            <ToolbarAction disabled tooltip={m["events.tooltips.repeat"]()}>
-                <RotateCw />
-            </ToolbarAction>
+            <Recurrence
+                bind:rrule={draft.rrule}
+                day={draft.startsAt}
+                name="rrule"
+                tooltip={m["events.tooltips.repeat"]()}
+            />
         {/snippet}
         {#snippet color()}
             <Color

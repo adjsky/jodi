@@ -15,6 +15,7 @@
     import { UNGROUPED_KEY } from "../cfg/constants";
     import { optimistic, visitOptions } from "../cfg/inertia";
     import { groupTodos } from "../helpers/group-todos";
+    import { id } from "../helpers/id";
     import { editView } from "../model/view";
     import EditSheet from "./EditSheet.svelte";
 
@@ -115,16 +116,17 @@
         onconsider={(e) => consider(group, e.detail.items)}
         onfinalize={(e) => finalize(group, e.detail.items)}
     >
-        {#each todos as todo (todo.id)}
+        {#each todos as todo (id(todo))}
             <Todo.Row
                 class={["outline-none", todo.completedAt && "opacity-40"]}
             >
                 {#snippet checkbox()}
                     <Checkbox
                         {...visitOptions}
-                        {...optimistic.complete(todo.id)}
+                        {...optimistic.complete(todo)}
                         href={complete(todo.id)}
                         completedAt={todo.completedAt}
+                        occursAt={todo.occursAt}
                     />
                 {/snippet}
                 {#snippet edit()}

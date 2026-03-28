@@ -14,6 +14,74 @@
             "title": "Выбор времени",
             "ok": "OK",
             "cancel": "Отмена"
+        },
+        "intervals": {
+            "minutes": [
+                {
+                    "declarations": ["input a", "local amount = a: plural"],
+                    "selectors": ["amount"],
+                    "match": {
+                        "amount=one": "Минуту",
+                        "amount=few": "Минуты",
+                        "amount=many": "Минут"
+                    }
+                }
+            ],
+            "hours": [
+                {
+                    "declarations": ["input a", "local amount = a: plural"],
+                    "selectors": ["amount"],
+                    "match": {
+                        "amount=one": "Час",
+                        "amount=few": "Часа",
+                        "amount=many": "Часов"
+                    }
+                }
+            ],
+            "days": [
+                {
+                    "declarations": ["input a", "local amount = a: plural"],
+                    "selectors": ["amount"],
+                    "match": {
+                        "amount=one": "День",
+                        "amount=few": "Дня",
+                        "amount=many": "Дней"
+                    }
+                }
+            ],
+            "weeks": [
+                {
+                    "declarations": ["input a", "local amount = a: plural"],
+                    "selectors": ["amount"],
+                    "match": {
+                        "amount=one": "Неделю",
+                        "amount=few": "Недели",
+                        "amount=many": "Недель"
+                    }
+                }
+            ],
+            "months": [
+                {
+                    "declarations": ["input a", "local amount = a: plural"],
+                    "selectors": ["amount"],
+                    "match": {
+                        "amount=one": "Месяц",
+                        "amount=few": "Месяца",
+                        "amount=many": "Месяцев"
+                    }
+                }
+            ],
+            "years": [
+                {
+                    "declarations": ["input a", "local amount = a: plural"],
+                    "selectors": ["amount"],
+                    "match": {
+                        "amount=one": "Год",
+                        "amount=few": "Года",
+                        "amount=many": "Лет"
+                    }
+                }
+            ]
         }
     },
     "push-notifications": {
@@ -99,6 +167,12 @@
         "placeholders": {
             "title": "Задача",
             "description": "Добавьте несколько дополнительных заметок здесь..."
+        },
+        "recurrence-action": {
+            "delete-title": "Удалить повторяющуюся задачу?",
+            "edit-title": "Сохранение повторяющейся задачи",
+            "this": "Эта задача",
+            "all": "Все задачи"
         }
     },
     "events": {
@@ -123,6 +197,12 @@
         "placeholders": {
             "title": "Событие",
             "description": "Добавьте сюда несколько дополнительных заметок..."
+        },
+        "recurrence-action": {
+            "delete-title": "Удалить повторяющееся событие?",
+            "edit-title": "Сохранение повторяющегося события",
+            "this": "Это событие",
+            "all": "Все события"
         }
     },
     "reminders": {
@@ -152,48 +232,40 @@
             "title": "Уведомить за",
             "trigger": "Другое",
             "ok": "OK",
-            "cancel": "Отмена",
-            "duration": {
-                "minutes": [
-                    {
-                        "declarations": ["input a", "local amount = a: plural"],
-                        "selectors": ["amount"],
-                        "match": {
-                            "amount=one": "Минуту",
-                            "amount=few": "Минуты",
-                            "amount=many": "Минут"
-                        }
-                    }
-                ],
-                "hours": [
-                    {
-                        "declarations": ["input a", "local amount = a: plural"],
-                        "selectors": ["amount"],
-                        "match": {
-                            "amount=one": "Час",
-                            "amount=few": "Часа",
-                            "amount=many": "Часов"
-                        }
-                    }
-                ],
-                "days": [
-                    {
-                        "declarations": ["input a", "local amount = a: plural"],
-                        "selectors": ["amount"],
-                        "match": {
-                            "amount=one": "День",
-                            "amount=few": "Дня",
-                            "amount=many": "Дней"
-                        }
-                    }
-                ]
-            }
+            "cancel": "Отмена"
         }
     },
     "reschedule": {
         "tomorrow": "На завтра",
         "next-week": "На неделю",
         "next-month": "На месяц"
+    },
+    "recurrence": {
+        "never": "Не повторяется",
+        "day": "Каждый день",
+        "week": "Каждую неделю",
+        "month": "Каждый месяц",
+        "year": "Каждый год",
+        "custom": {
+            "title": "Повторение",
+            "trigger": "Другое",
+            "apply": "Применить",
+            "select-frequency": "Повторять раз в",
+            "select-weekdays": "Когда повторяется",
+            "select-when-to-end": "Когда завершается",
+            "never": "Никогда",
+            "end-after-times": [
+                {
+                    "declarations": ["input t", "local times = t: plural"],
+                    "selectors": ["times"],
+                    "match": {
+                        "times=one": "После {#input}{/input} раза",
+                        "times=few": "После {#input}{/input} раз",
+                        "times=many": "После {#input}{/input} раз"
+                    }
+                }
+            ]
+        }
     },
     "current-user": {
         "log-out": "Выйти",

@@ -1,78 +1,65 @@
 <script lang="ts">
-    import { Dialog } from "@ark-ui/svelte";
     import { page } from "@inertiajs/svelte";
     import { HistoryView } from "$/shared/inertia/history-view.svelte";
     import { DISABLE_SHEET_DRAGGING } from "$/shared/ui/Sheet.svelte";
+    import SheetDialog from "$/shared/ui/SheetDialog.svelte";
 
     import YearCalendar from "./YearCalendar.svelte";
 
     import type { CalendarDate } from "@internationalized/date";
     import type { Snippet } from "svelte";
-    import type { HTMLButtonAttributes } from "svelte/elements";
+    import type { HTMLAttributes } from "svelte/elements";
 
     type Props = {
+        id?: string;
         selected: CalendarDate;
-        children?: Snippet<[() => HTMLButtonAttributes]>;
+        min?: CalendarDate | null;
+        children?: Snippet<[() => HTMLAttributes<HTMLElement>]>;
         onSelect?: (date: CalendarDate) => void;
     };
 
-    let { selected, children, onSelect }: Props = $props();
+    let { id = "general", selected, min, children, onSelect }: Props = $props();
 
     const view = new HistoryView<{
         [DISABLE_SHEET_DRAGGING]: boolean;
-        __yearcalendardialog: { isOpen: boolean };
+        __yearcalendardialog: { isOpen: string };
     }>();
 </script>
 
-<Dialog.Root
-    lazyMount
+<SheetDialog
     bind:open={
-        () => view.meta?.__yearcalendardialog?.isOpen ?? false,
+        () => view.meta?.__yearcalendardialog?.isOpen == id,
         (v) => {
             if (v) {
                 void view.push(view.name, {
                     ...view.meta,
                     [DISABLE_SHEET_DRAGGING]: true,
-                    __yearcalendardialog: { isOpen: true }
+                    __yearcalendardialog: { isOpen: id }
                 });
             } else {
                 void view.back();
             }
         }
     }
+    height={90}
+    lazyMount
 >
-    {#if children}
-        <Dialog.Trigger>
-            {#snippet asChild(props)}{@render children(props)}{/snippet}
-        </Dialog.Trigger>
-    {/if}
+    {#snippet trigger(props)}
+        {#if children}
+            {@render children(props)}
+        {/if}
+    {/snippet}
 
-    <Dialog.Positioner>
-        <Dialog.Backdrop
-            class={[
-                "fixed inset-0 z-100 bg-cream-950/60 duration-300",
-                "data-[state=closed]:animate-out data-[state=closed]:fade-out",
-                "data-[state=open]:animate-in data-[state=open]:fade-in"
-            ]}
-        />
-        <Dialog.Content
-            class={[
-                "fixed inset-x-0 bottom-0 z-100 h-[90%] duration-300",
-                "data-[state=closed]:animate-out data-[state=closed]:slide-out-to-bottom",
-                "data-[state=open]:animate-in data-[state=open]:slide-in-from-bottom"
-            ]}
-        >
-            <YearCalendar
-                {selected}
-                portal={false}
-                class="absolute h-full rounded-t-2xl bg-white pt-3"
-                start={$page.props.auth.user.preferences.weekStartOn}
-                onSelect={async (date) => {
-                    await view.back();
-                    onSelect?.(date);
-                }}
-                onClose={() => view.back()}
-            />
-        </Dialog.Content>
-    </Dialog.Positioner>
-</Dialog.Root>
+    <YearCalendar
+        {selected}
+        {min}
+        portal={false}
+        class="absolute h-full rounded-t-2xl bg-white pt-3"
+        start={$page.props.auth.user.preferences.weekStartOn}
+        onSelect={async (date) => {
+            await view.back();
+            onSelect?.(date);
+        }}
+        onClose={() => view.back()}
+    />
+</SheetDialog>

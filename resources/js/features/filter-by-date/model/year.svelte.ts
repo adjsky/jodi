@@ -6,14 +6,13 @@ import {
     today
 } from "@internationalized/date";
 import { getLocale } from "$/paraglide/runtime";
-import { TIMEZONE } from "$/shared/cfg/constants";
+import { TIMEZONE, WEEK_START_PREFERENCE_MAP } from "$/shared/cfg/constants";
 import { extract } from "runed";
 
-import { DMAP } from "../cfg/preferences";
 import { getWeekDays } from "../helpers/date";
 
-import type { WeekStart } from "../cfg/preferences";
 import type { CalendarDate } from "@internationalized/date";
+import type { WeekStart } from "$/shared/lib/types";
 import type { Getter } from "runed";
 
 export class Year {
@@ -76,10 +75,18 @@ export class Year {
     }
 
     #startOfWeek(date: CalendarDate) {
-        return startOfWeek(date, getLocale(), DMAP[extract(this.#start)]);
+        return startOfWeek(
+            date,
+            getLocale(),
+            WEEK_START_PREFERENCE_MAP[extract(this.#start)]
+        );
     }
 
     #weeksInMonth(date: CalendarDate) {
-        return getWeeksInMonth(date, getLocale(), DMAP[extract(this.#start)]);
+        return getWeeksInMonth(
+            date,
+            getLocale(),
+            WEEK_START_PREFERENCE_MAP[extract(this.#start)]
+        );
     }
 }

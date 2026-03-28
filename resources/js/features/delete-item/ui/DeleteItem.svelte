@@ -1,25 +1,43 @@
 <script lang="ts">
     import { router } from "@inertiajs/svelte";
+    import { parseAbsolute, toCalendarDate } from "@internationalized/date";
     import { Trash } from "@lucide/svelte";
+    import { TIMEZONE } from "$/shared/cfg/constants";
     import { HistoryView } from "$/shared/inertia/history-view.svelte";
-    import Confirmable from "$/shared/ui/Confirmable.svelte";
+    import RecurrenceActionDialog from "$/shared/ui/RecurrenceActionDialog.svelte";
     import ToolbarAction from "$/shared/ui/ToolbarAction.svelte";
 
     import type { UrlMethodPair, VisitOptions } from "@inertiajs/core";
 
     type Props = VisitOptions & {
         href: string | UrlMethodPair;
-        title: string;
+        title: {
+            recurring: string;
+            general: string;
+        };
         tooltip: string;
+        recurring: boolean;
+        occursAt: string | null;
+        date?: string;
+        scopeLabels: { this: string; all: string };
     };
 
-    const { tooltip, title, href, ...options }: Props = $props();
+    const {
+        href,
+        title,
+        tooltip,
+        recurring,
+        occursAt,
+        date,
+        scopeLabels,
+        ...options
+    }: Props = $props();
 
     const view = new HistoryView<{ __deleteitem: { isOpen: boolean } }>();
 </script>
 
-<Confirmable
-    {title}
+<RecurrenceActionDialog
+    {scopeLabels}
     bind:open={
         () => view.meta?.__deleteitem?.isOpen ?? false,
         (v) => {
@@ -33,17 +51,26 @@
             }
         }
     }
-    onConfirm={() => {
+    title={recurring ? title.recurring : title.general}
+    fallback={!recurring}
+    onConfirm={(scope) => {
         void router.visit(href, {
             ...options,
+            data: {
+                scope,
+                occursAt,
+                date: date
+                    ? toCalendarDate(parseAbsolute(date, TIMEZONE)).toString()
+                    : null
+            },
             showProgress: false
         });
         return true;
     }}
 >
-    {#snippet children(props)}
+    {#snippet trigger(props)}
         <ToolbarAction {...props()} {tooltip}>
             <Trash />
         </ToolbarAction>
     {/snippet}
-</Confirmable>
+</RecurrenceActionDialog>

@@ -7,7 +7,7 @@
 
     type Props = {
         tooltip: string;
-        current: string | null;
+        current?: string | null;
         name: string;
     };
 

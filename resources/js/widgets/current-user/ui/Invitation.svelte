@@ -95,7 +95,7 @@
                     return true;
                 }}
             >
-                {#snippet children(props)}
+                {#snippet trigger(props)}
                     <Button {...props()}>
                         {m["current-user.invitations.delete"]()}
                     </Button>
