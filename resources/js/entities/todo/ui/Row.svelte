@@ -16,7 +16,7 @@
 <div
     {...props}
     class={tw(
-        "grid grid-cols-[auto_1fr_auto] items-center gap-2 py-2.25",
+        "grid grid-cols-[auto_1fr_auto] items-center gap-2 py-2.25 outline-none",
         props.class
     )}
 >

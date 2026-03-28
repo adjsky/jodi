@@ -117,9 +117,7 @@
         onfinalize={(e) => finalize(group, e.detail.items)}
     >
         {#each todos as todo (id(todo))}
-            <Todo.Row
-                class={["outline-none", todo.completedAt && "opacity-40"]}
-            >
+            <Todo.Row class={[todo.completedAt && "opacity-40"]}>
                 {#snippet checkbox()}
                     <Checkbox
                         {...visitOptions}
@@ -134,13 +132,13 @@
                         ? formatToHHMM(new Date(todo.scheduledAt))
                         : null}
                     <button
-                        class="relative table w-full table-fixed text-start text-lg font-medium"
+                        class="relative w-full min-w-0 text-start text-lg font-medium"
                         data-part="edit"
                         onclick={() => editView.push(todo)}
                     >
                         <span
                             class={[
-                                "table-cell overflow-hidden text-ellipsis whitespace-nowrap",
+                                "block overflow-hidden text-ellipsis whitespace-nowrap",
                                 todo.completedAt && "line-through",
                                 todo.color && [
                                     "rounded-xl px-1.5",
