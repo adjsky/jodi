@@ -51,7 +51,7 @@
                 "data-[state=open]:animate-in data-[state=open]:fade-in data-[state=open]:slide-in-from-bottom"
             ]}
         >
-            <Dialog.Title class="text-2xl font-bold">
+            <Dialog.Title class="text-2xl font-bold wrap-break-word">
                 {title}
             </Dialog.Title>
 
