@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Http\Requests\Todo;
 
-use App\Support\FormRequest\ConvertsToSnakeCase;
+use App\Support\FormRequests\ConvertsToSnakeCase;
 use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
 

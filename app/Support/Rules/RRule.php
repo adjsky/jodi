@@ -2,23 +2,23 @@
 
 declare(strict_types=1);
 
-namespace App\Rules;
+namespace App\Support\Rules;
 
 use Closure;
 use Illuminate\Contracts\Validation\ValidationRule;
-use RRule\RRule;
+use Illuminate\Translation\PotentiallyTranslatedString;
 
-class ValidRRule implements ValidationRule
+class RRule implements ValidationRule
 {
     /**
      * Run the validation rule.
      *
-     * @param  \Closure(string, ?string=): \Illuminate\Translation\PotentiallyTranslatedString  $fail
+     * @param  Closure(string, ?string=): PotentiallyTranslatedString  $fail
      */
     public function validate(string $attribute, mixed $value, Closure $fail): void
     {
         try {
-            new RRule($value);
+            new \RRule\RRule($value);
         } catch (\InvalidArgumentException) {
             $fail("The {$attribute} is not a valid recurrence rule.");
         }

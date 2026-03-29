@@ -4,8 +4,9 @@ declare(strict_types=1);
 
 namespace App\Http\Requests\Todo;
 
-use App\Rules\ValidRRule;
-use App\Support\FormRequest\ConvertsToSnakeCase;
+use App\Support\FormRequests\ConvertsToSnakeCase;
+use App\Support\Rules\RRule;
+use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
 
@@ -18,7 +19,7 @@ class CreateRequest extends FormRequest
         return true;
     }
 
-    /** @return array<string, \Illuminate\Contracts\Validation\ValidationRule|array<mixed>|string> */
+    /** @return array<string, ValidationRule|array<mixed>|string> */
     public function rules(): array
     {
         return [
@@ -33,7 +34,7 @@ class CreateRequest extends FormRequest
             'scheduledAt' => 'required|date',
             'hasTime' => 'required|boolean',
             'notifyAt' => 'nullable|date',
-            'rrule' => ['nullable', 'string', new ValidRRule],
+            'rrule' => ['nullable', 'string', new RRule],
         ];
     }
 }

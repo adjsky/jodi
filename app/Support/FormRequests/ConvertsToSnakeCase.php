@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\Support\FormRequest;
+namespace App\Support\FormRequests;
 
 use Illuminate\Support\Str;
 
