@@ -32,16 +32,25 @@ class TodoReminder extends Notification implements ShouldQueue
     {
         return new FcmMessage(notification: new FcmNotification(
             title: __(':title - time to start.', ['title' => $this->model->title]),
-            body: __('Scheduled for :time.', ['time' => Helpers::startsIn($this->model->scheduled_at)]),
+            body: __('Scheduled for :time.', ['time' => $this->startsIn()]),
         ));
     }
 
     public function toMail(): MailMessage
     {
-        $startsIn = Helpers::startsIn($this->model->scheduled_at);
-
         return (new MailMessage)
-            ->subject(__('mail.todo_reminder.subject', ['title' => $this->model->title, 'startsIn' => $startsIn]))
-            ->markdown('mail.todo-reminder', ['todo' => $this->model, 'startsIn' => $startsIn]);
+            ->subject(__('mail.todo_reminder.subject', ['title' => $this->model->title, 'startsIn' => $this->startsIn()]))
+            ->markdown('mail.todo-reminder', ['todo' => $this->model, 'startsIn' => $this->startsIn()]);
+    }
+
+    private function startsIn(): string
+    {
+        $scheduledAt = $this->model->scheduled_at->copy();
+
+        if (! is_null($this->occursAt)) {
+            $scheduledAt->setDateFrom($this->occursAt);
+        }
+
+        return Helpers::startsIn($scheduledAt);
     }
 }

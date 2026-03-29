@@ -32,14 +32,25 @@ class EventReminder extends Notification implements ShouldQueue
     {
         return new FcmMessage(notification: new FcmNotification(
             title: __(':title is upcoming.', ['title' => $this->model->title]),
-            body: __('Starts :time.', ['time' => Helpers::startsIn($this->model->starts_at)]),
+            body: __('Starts :time.', ['time' => $this->startsIn()]),
         ));
     }
 
     public function toMail(): MailMessage
     {
         return (new MailMessage)
-            ->subject(__('mail.event_reminder.subject', ['title' => $this->model->title, 'startsIn' => Helpers::startsIn($this->model->starts_at)]))
+            ->subject(__('mail.event_reminder.subject', ['title' => $this->model->title, 'startsIn' => $this->startsIn()]))
             ->markdown('mail.event-reminder', ['event' => $this->model]);
+    }
+
+    private function startsIn(): string
+    {
+        $startsAt = $this->model->starts_at->copy();
+
+        if (! is_null($this->occursAt)) {
+            $startsAt->setDateFrom($this->occursAt);
+        }
+
+        return Helpers::startsIn($startsAt);
     }
 }
