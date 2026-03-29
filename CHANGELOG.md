@@ -1,5 +1,16 @@
 # Releases
 
+## 0.18.0 (2026-03-29)
+
+### Feat
+
+- recurrences (#96)
+
+### Fix
+
+- word overflows (#98)
+- todo title overflow (#97)
+
 ## 0.17.4 (2026-03-03)
 
 ### Fix
