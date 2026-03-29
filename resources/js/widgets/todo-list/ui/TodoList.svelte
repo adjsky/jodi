@@ -138,7 +138,7 @@
                     >
                         <span
                             class={[
-                                "block truncate",
+                                "block w-fit max-w-full truncate",
                                 todo.completedAt && "line-through",
                                 todo.color && [
                                     "rounded-xl px-1.5",

@@ -29,7 +29,7 @@
                         onSelect?.(name);
                     }
                 }}
-                class="absolute inset-0 px-2 py-0 text-lg"
+                class="absolute inset-0 py-0 ps-2 pe-9 text-lg"
             />
             <button
                 type="button"

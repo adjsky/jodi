@@ -79,14 +79,14 @@
         <button
             {...props()}
             class={[
-                "flex items-center gap-1 rounded-full px-2.5 py-0.5 font-bold",
+                "w-fit max-w-full truncate rounded-full px-2.5 py-0.5 font-bold",
                 selected && "bg-peach",
                 !selected &&
                     "text-cream-700 outline outline-cream-400 outline-dashed"
             ]}
         >
             {#if selected}
-                <Tag class="text-sm" />
+                <Tag class="inline text-sm" />
                 {selected}
             {:else}
                 {m["todos.category.trigger"]()}
@@ -119,7 +119,7 @@
 
         <input
             bind:value={search}
-            class="form-input h-13.75 w-full rounded-xl border-none bg-cream-500/10 pl-10 text-lg font-medium outline-none placeholder:text-cream-600 focus:ring-0"
+            class="form-input h-13.75 w-full rounded-xl border-none bg-cream-500/10 ps-10 pe-12 text-lg font-medium outline-none placeholder:text-cream-600 focus:ring-0"
             placeholder={m["todos.category.placeholder"]()}
         />
     </div>

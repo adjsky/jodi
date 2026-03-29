@@ -45,21 +45,19 @@
     }: Props = $props();
 </script>
 
-<div class="flex items-center justify-between">
-    <div class="flex items-center gap-3">
-        {#snippet trigger(props: HTMLButtonAttributes)}
-            <button {...props} class="text-lg font-bold" type="button">
-                {new DateFormatter(getLocale(), {
-                    day: "2-digit",
-                    year: "numeric",
-                    month: "short",
-                    weekday: "short"
-                }).format(scheduledAt.toDate())}
-            </button>
-        {/snippet}
-        {@render calendar(trigger)}
-        {@render category()}
-    </div>
+<div class="grid grid-cols-[auto_1fr_auto] items-center gap-3">
+    {#snippet trigger(props: HTMLButtonAttributes)}
+        <button {...props} class="text-lg font-bold" type="button">
+            {new DateFormatter(getLocale(), {
+                day: "2-digit",
+                year: "numeric",
+                month: "short",
+                weekday: "short"
+            }).format(scheduledAt.toDate())}
+        </button>
+    {/snippet}
+    {@render calendar(trigger)}
+    <div class="w-full min-w-0">{@render category()}</div>
     {@render close()}
 </div>
 

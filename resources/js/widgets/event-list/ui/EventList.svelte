@@ -44,14 +44,8 @@
                         </time>
                     {/snippet}
                     {#snippet title()}
-                        <span
-                            class="table w-full table-fixed text-start font-medium"
-                        >
-                            <span
-                                class="table-cell overflow-hidden text-ellipsis whitespace-nowrap"
-                            >
-                                {event.title}
-                            </span>
+                        <span class="truncate text-start font-medium">
+                            {event.title}
                         </span>
                     {/snippet}
                 </Event.Row>

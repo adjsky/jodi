@@ -17,7 +17,7 @@
 <button
     {...props}
     class={tw(
-        "flex items-center gap-2 rounded-xl border border-cream-200 px-2 py-2.25 text-lg",
+        "grid w-full grid-cols-[auto_1fr] items-center gap-2 rounded-xl border border-cream-200 px-2 py-2.25 text-lg",
         !color && "bg-brand/10",
         props.class
     )}
