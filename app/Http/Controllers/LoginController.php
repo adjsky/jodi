@@ -43,10 +43,8 @@ class LoginController extends Controller
 
     public function logout(Request $request)
     {
-        $deviceId = $request->cookies->get('jodi-device-id');
-
         $this->user()->pushSubscriptions()
-            ->where('device_id', $deviceId)
+            ->where('device_id', $request->deviceId())
             ->delete();
 
         Auth::logout();

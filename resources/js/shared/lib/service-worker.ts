@@ -1,6 +1,7 @@
 import { progress } from "@inertiajs/svelte";
 import { m } from "$/paraglide/messages";
 import { watch } from "runed";
+import { onMount } from "svelte";
 import { fromStore } from "svelte/store";
 import { useRegisterSW } from "virtual:pwa-register/svelte";
 
@@ -28,4 +29,15 @@ export function useServiceWorker() {
             });
         }
     );
+
+    onMount(() => {
+        if (!("serviceWorker" in navigator)) return;
+
+        function handler(event: MessageEvent) {}
+
+        navigator.serviceWorker.addEventListener("message", handler);
+
+        return () =>
+            navigator.serviceWorker.removeEventListener("message", handler);
+    });
 }

@@ -6,10 +6,10 @@ namespace App\Http\Middleware;
 
 use Closure;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\App;
+use Illuminate\Support\Arr;
 use Symfony\Component\HttpFoundation\Response;
 
-class LocaleMiddleware
+class TimezoneMiddleware
 {
     /**
      * Handle an incoming request.
@@ -18,12 +18,12 @@ class LocaleMiddleware
      */
     public function handle(Request $request, Closure $next): Response
     {
-        $locale = $request->user()->preferences['locale'] ??
-                  $request->locale() ??
-                  $request->getPreferredLanguage();
+        $user = $request->user();
+        $tz = $request->timezone();
 
-        if (gettype($locale) == 'string') {
-            App::setLocale($locale);
+        if (! is_null($user) && $tz && Arr::get($user->preferences, 'timezone') != $tz) {
+            $user->preferences = [...$user->preferences, 'timezone' => $tz];
+            $user->save();
         }
 
         return $next($request);

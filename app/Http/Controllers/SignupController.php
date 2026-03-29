@@ -24,8 +24,9 @@ class SignupController extends Controller
     public function signup(Request $request, string $code)
     {
         $data = $request->validate(['name' => 'required|string|min:1|max:36']);
+        $timezone = $request->timezone();
 
-        $user = DB::transaction(function () use ($code, $data) {
+        $user = DB::transaction(function () use ($code, $data, $timezone) {
             $invitation = RegistrationInvitation::where('code', '=', $code)->firstOrFail();
 
             $user = User::create([
@@ -33,6 +34,7 @@ class SignupController extends Controller
                 'name' => $data['name'],
                 'preferences' => [
                     'locale' => app()->getLocale(),
+                    'timezone' => $timezone,
                     ...config('jodi.preferences'),
                 ],
             ]);

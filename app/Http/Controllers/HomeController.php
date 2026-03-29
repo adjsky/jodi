@@ -18,12 +18,12 @@ class HomeController extends Controller
     public function show(Request $request)
     {
         $search = $request->validate(['d' => 'nullable|date_format:Y-m-d']);
-        $tz = $request->cookies->getString('jodi-timezone');
+        $timezone = $request->timezone();
 
-        $date = $search['d'] ?? now($tz)->toDateString();
+        $date = $search['d'] ?? now($timezone)->toDateString();
 
-        $startUtc = Carbon::parse($date, $tz)->startOfDay()->utc();
-        $endUtc = Carbon::parse($date, $tz)->endOfDay()->utc();
+        $startUtc = Carbon::parse($date, $timezone)->startOfDay()->utc();
+        $endUtc = Carbon::parse($date, $timezone)->endOfDay()->utc();
 
         return inertia('Home', [
             'todos' => TodoDto::collect($this->todosForDay($date, $startUtc, $endUtc)),

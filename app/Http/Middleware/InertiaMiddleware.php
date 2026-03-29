@@ -39,8 +39,6 @@ class InertiaMiddleware extends Middleware
      */
     public function share(Request $request): array
     {
-        $deviceId = $request->cookies->get('jodi-device-id');
-
         return [
             ...parent::share($request),
             'version' => config('jodi.version'),
@@ -49,7 +47,7 @@ class InertiaMiddleware extends Middleware
                     ?->only(['id', 'name', 'email', 'preferences']),
                 'fcm' => $request->user()
                     ?->pushSubscriptions()
-                    ->where('device_id', $deviceId)
+                    ->where('device_id', $request->deviceId())
                     ->first(['fcm_token as token']),
             ],
             'flash' => [

@@ -49,7 +49,9 @@ trait HasRecurrence
             return collect([$model]);
         }
 
-        $exceptions = $this->recurrenceExceptions->keyBy(fn ($e) => $e->occurs_at->toDateString());
+        $exceptions = $this->recurrenceExceptions->keyBy(
+            fn ($e) => $e->occurs_at->toDateString()
+        );
         $rkstart = $this->rkstart();
         $dtstart = $this->getAttribute($rkstart);
 
@@ -165,7 +167,9 @@ trait HasRecurrence
                     continue;
                 }
 
-                $currentDate = Carbon::parse($exception?->overrides[$key] ?? $attribute->copy()->setDateFrom($occursAt));
+                $currentDate = Carbon::parse(
+                    $exception?->overrides[$key] ?? $attribute->copy()->setDateFrom($occursAt)
+                );
 
                 if ($currentDate->ne($value)) {
                     $overrides[$key] = $value;
@@ -235,15 +239,15 @@ trait HasRecurrence
 
                 $model->user->notify(new $notification($occurrence, $occurrence->occurs_at));
 
-                if ($occurrence->occurs_at) {
-                    $model->applyException(
-                        $occurrence->occurs_at,
-                        ['notify_status' => 'processing'],
-                        $model->findException($occurrence->occurs_at)
-                    );
-                } else {
-                    $model->update(['notify_status' => 'processing']);
-                }
+                // if ($occurrence->occurs_at) {
+                //     $model->applyException(
+                //         $occurrence->occurs_at,
+                //         ['notify_status' => 'processing'],
+                //         $model->findException($occurrence->occurs_at)
+                //     );
+                // } else {
+                //     $model->update(['notify_status' => 'processing']);
+                // }
             }
         }
     }

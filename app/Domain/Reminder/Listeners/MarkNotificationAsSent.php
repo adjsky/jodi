@@ -21,15 +21,15 @@ class MarkNotificationAsSent
             $model = $event->notification->model;
             $occursAt = $event->notification->occursAt;
 
-            if ($occursAt) {
-                $model->applyException(
-                    $occursAt,
-                    ['notify_status' => 'sent'],
-                    $model->findException($occursAt)
-                );
-            } else {
-                $model->update(['notify_status' => 'sent']);
-            }
+            // if ($occursAt) {
+            //     $model->applyException(
+            //         $occursAt,
+            //         ['notify_status' => 'sent'],
+            //         $model->findException($occursAt)
+            //     );
+            // } else {
+            //     $model->update(['notify_status' => 'sent']);
+            // }
         }
     }
 }

@@ -33,7 +33,25 @@ class TodoReminder extends Notification implements ShouldQueue
         return new FcmMessage(notification: new FcmNotification(
             title: __(':title - time to start.', ['title' => $this->model->title]),
             body: __('Scheduled for :time.', ['time' => $this->startsIn()]),
-        ));
+        ))
+            ->data([
+                'todo_id' => (string) $this->model->id,
+            ])
+            ->custom([
+                'webpush' => [
+                    'notification' => [
+                        'actions' => [
+                            [
+                                'action' => 'complete-todo',
+                                'title' => __('Complete'),
+                            ],
+                        ],
+                    ],
+                    'fcm_options' => [
+                        'link' => config('app.url'),
+                    ],
+                ],
+            ]);
     }
 
     public function toMail(): MailMessage

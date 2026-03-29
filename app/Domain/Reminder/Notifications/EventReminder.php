@@ -33,7 +33,25 @@ class EventReminder extends Notification implements ShouldQueue
         return new FcmMessage(notification: new FcmNotification(
             title: __(':title is upcoming.', ['title' => $this->model->title]),
             body: __('Starts :time.', ['time' => $this->startsIn()]),
-        ));
+        ))
+            ->data([
+                'event_id' => (string) $this->model->id,
+            ])
+            ->custom([
+                'webpush' => [
+                    'notification' => [
+                        'actions' => [
+                            [
+                                'action' => 'complete-todo',
+                                'title' => __('Complete'),
+                            ],
+                        ],
+                    ],
+                    'fcm_options' => [
+                        'link' => config('app.url'),
+                    ],
+                ],
+            ]);
     }
 
     public function toMail(): MailMessage
