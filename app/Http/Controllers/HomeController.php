@@ -8,14 +8,14 @@ use App\Data\EventDto;
 use App\Data\TodoDto;
 use App\Models\Event;
 use App\Models\Todo;
+use App\Support\Http\JodiRequest;
 use Carbon\Carbon;
-use Illuminate\Http\Request;
 use Illuminate\Support\Collection;
 use Inertia\Inertia;
 
 class HomeController extends Controller
 {
-    public function show(Request $request)
+    public function show(JodiRequest $request)
     {
         $search = $request->validate(['d' => 'nullable|date_format:Y-m-d']);
         $timezone = $request->timezone();

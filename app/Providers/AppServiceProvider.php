@@ -4,9 +4,10 @@ declare(strict_types=1);
 
 namespace App\Providers;
 
+use App\Support\Http\JodiRequest;
 use Illuminate\Cookie\Middleware\EncryptCookies;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Http\Request;
+use Illuminate\Http\Request as LaravelRequest;
 use Illuminate\Support\ServiceProvider;
 
 class AppServiceProvider extends ServiceProvider
@@ -16,18 +17,7 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register(): void
     {
-        Request::macro('deviceId', fn () => $this->cookies->getString(config('constants.cookies.device_id')));
-        Request::macro('locale', fn () => $this->cookies->getString(config('constants.cookies.locale')));
-
-        Request::macro('timezone', function () {
-            $timezone = $this->cookies->getString(config('constants.cookies.timezone'));
-
-            if (! in_array($timezone, timezone_identifiers_list())) {
-                return null;
-            }
-
-            return $timezone;
-        });
+        $this->app->alias(LaravelRequest::class, JodiRequest::class);
     }
 
     /**

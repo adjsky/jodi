@@ -5,11 +5,11 @@ declare(strict_types=1);
 namespace App\Http\Controllers;
 
 use App\Data\FriendDto;
-use Illuminate\Http\Request;
+use App\Support\Http\JodiRequest;
 
 class FriendController extends Controller
 {
-    public function getAll(Request $request)
+    public function getAll(JodiRequest $request)
     {
         return response()->json(FriendDto::collect($this->user()->friends->all()));
     }

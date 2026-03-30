@@ -7,16 +7,16 @@ namespace App\Http\Controllers;
 use App\Data\DaySummaryDto;
 use App\Data\DaySummaryEventDto;
 use App\Models\Event;
+use App\Support\Http\JodiRequest;
 use Carbon\CarbonImmutable;
-use Illuminate\Http\Request;
 use Illuminate\Support\Collection;
 
 class DaySummaryController extends Controller
 {
-    public function get(Request $request, int $year)
+    public function get(JodiRequest $request, int $year)
     {
         $months = explode(',', $request->query('m', ''));
-        $timezone = $request->timezone();
+        $timezone = $request->timezone('UTC');
 
         $ranges = collect($months)->map(function ($month) use ($year, $timezone) {
             $date = CarbonImmutable::createFromDate($year, (int) $month, 1, $timezone);

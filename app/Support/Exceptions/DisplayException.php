@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace App\Support\Exceptions;
 
+use App\Support\Http\JodiRequest;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
-use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Throwable;
 
@@ -20,7 +20,7 @@ class DisplayException extends JodiException
         parent::__construct($message, $statusCode, $previous);
     }
 
-    public function render(Request $request): JsonResponse|RedirectResponse
+    public function render(JodiRequest $request): JsonResponse|RedirectResponse
     {
         if ($request->expectsJson()) {
             return response()->json(

@@ -4,11 +4,11 @@ declare(strict_types=1);
 
 namespace App\Http\Requests\Event;
 
-use App\Support\FormRequests\ConvertsToSnakeCase;
+use App\Support\Http\JodiFormRequest;
+use App\Support\Traits\ConvertsToSnakeCase;
 use Illuminate\Contracts\Validation\ValidationRule;
-use Illuminate\Foundation\Http\FormRequest;
 
-class DestroyRequest extends FormRequest
+class DestroyRequest extends JodiFormRequest
 {
     use ConvertsToSnakeCase;
 

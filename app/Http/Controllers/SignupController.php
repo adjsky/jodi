@@ -6,13 +6,13 @@ namespace App\Http\Controllers;
 
 use App\Models\RegistrationInvitation;
 use App\Models\User;
-use Illuminate\Http\Request;
+use App\Support\Http\JodiRequest;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 
 class SignupController extends Controller
 {
-    public function show(Request $request, string $code)
+    public function show(JodiRequest $request, string $code)
     {
         if (! $request->hasValidSignature()) {
             return to_route('login')->with(['error' => __('URL signature is invalid. Request a new invitation.')]);
@@ -21,7 +21,7 @@ class SignupController extends Controller
         return inertia('Signup', ['code' => $code]);
     }
 
-    public function signup(Request $request, string $code)
+    public function signup(JodiRequest $request, string $code)
     {
         $data = $request->validate(['name' => 'required|string|min:1|max:36']);
         $timezone = $request->timezone();

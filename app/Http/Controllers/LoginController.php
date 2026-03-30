@@ -8,7 +8,7 @@ use App\Domain\Auth\Enums\OtpPurpose;
 use App\Domain\Auth\Notifications;
 use App\Domain\Auth\Services\OtpService;
 use App\Models\User;
-use Illuminate\Http\Request;
+use App\Support\Http\JodiRequest;
 use Illuminate\Support\Facades\Auth;
 
 class LoginController extends Controller
@@ -17,12 +17,12 @@ class LoginController extends Controller
         private OtpService $otpService
     ) {}
 
-    public function show(Request $request)
+    public function show(JodiRequest $request)
     {
         return inertia('Login');
     }
 
-    public function login(Request $request)
+    public function login(JodiRequest $request)
     {
         $user = User::where(
             $request->validate(['email' => 'required|email'])
@@ -41,7 +41,7 @@ class LoginController extends Controller
         return to_route('two-factor-challenge');
     }
 
-    public function logout(Request $request)
+    public function logout(JodiRequest $request)
     {
         $this->user()->pushSubscriptions()
             ->where('device_id', $request->deviceId())

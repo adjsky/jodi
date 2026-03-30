@@ -4,13 +4,13 @@ declare(strict_types=1);
 
 namespace App\Http\Requests\Todo;
 
-use App\Support\FormRequests\ConvertsToSnakeCase;
+use App\Support\Http\JodiFormRequest;
 use App\Support\Rules\RRule;
+use App\Support\Traits\ConvertsToSnakeCase;
 use Illuminate\Contracts\Validation\ValidationRule;
-use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
 
-class CreateRequest extends FormRequest
+class CreateRequest extends JodiFormRequest
 {
     use ConvertsToSnakeCase;
 

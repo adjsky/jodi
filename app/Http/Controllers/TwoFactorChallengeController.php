@@ -12,7 +12,7 @@ use App\Domain\Auth\Notifications;
 use App\Domain\Auth\Services\OtpService;
 use App\Domain\Auth\Services\ThrottleService;
 use App\Models\User;
-use Illuminate\Http\Request;
+use App\Support\Http\JodiRequest;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Validation\ValidationException;
 
@@ -23,12 +23,12 @@ class TwoFactorChallengeController extends Controller
         private ThrottleService $throttleService
     ) {}
 
-    public function show(Request $request)
+    public function show(JodiRequest $request)
     {
         return inertia('TwoFactorChallenge');
     }
 
-    public function consume(Request $request)
+    public function consume(JodiRequest $request)
     {
         ['password' => $password] = $request->validate(['password' => 'required|string']);
 
@@ -67,7 +67,7 @@ class TwoFactorChallengeController extends Controller
         }
     }
 
-    public function resend(Request $request)
+    public function resend(JodiRequest $request)
     {
         $email = $request->session()->get(
             sprintf('%s.email', config('auth.2fa.session_key'))

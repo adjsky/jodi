@@ -4,11 +4,11 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
+use App\Support\Http\JodiRequest;
 
 class PushSubscriptionController extends Controller
 {
-    public function store(Request $request)
+    public function store(JodiRequest $request)
     {
         $data = $request->validate([
             'fcm_token' => 'required|string',
