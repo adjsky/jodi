@@ -31,8 +31,7 @@
 
         Cookie.set(DEVICE_ID_COOKIE, identifier, {
             maxAge: 34560000,
-            sameSite: "lax",
-            secure: true
+            sameSite: "lax"
         });
     });
 

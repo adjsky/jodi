@@ -15,6 +15,8 @@ export const warnings = $state({
     needsConfiguration: false
 });
 
+let isSubscribing = false;
+
 export async function synchronize() {
     const { fcm, user } = get(page).props.auth;
     if (!user) return;
@@ -35,6 +37,7 @@ export async function synchronize() {
 export async function setupListeners() {
     const [tokenHandle, notificationHandle] = await Promise.all([
         FirebaseMessaging.addListener("tokenReceived", async ({ token }) => {
+            if (isSubscribing) return;
             const { identifier } = await Device.getId();
             await store(token, identifier, { async: true });
         }),
@@ -58,6 +61,8 @@ export async function setupListeners() {
 
 export async function subscribe() {
     try {
+        isSubscribing = true;
+
         const permission = await FirebaseMessaging.requestPermissions();
 
         if (permission.receive != "granted") {
@@ -86,6 +91,8 @@ export async function subscribe() {
         progress.remove();
         console.error(e);
         toaster.error(m["common.unexpected-error"]());
+    } finally {
+        isSubscribing = false;
     }
 }
 
@@ -125,16 +132,7 @@ type StoreOptions = {
     onInvalid?: VoidFunction;
 };
 
-let lastStoredToken: string | null = null;
-
 async function store(token: string, deviceId: string, options?: StoreOptions) {
-    // This is the easiest approach to prevent multiple calls to backend when
-    // we receive two identical tokens because the `tokenReceived` event fires
-    // even when we manually call `getToken`.
-    if (lastStoredToken === token) return;
-    const previousLastStoredToken = lastStoredToken;
-    lastStoredToken = token;
-
     await router.visit(_store(), {
         data: {
             fcm_token: token,
@@ -152,7 +150,6 @@ async function store(token: string, deviceId: string, options?: StoreOptions) {
             options?.onSuccess?.();
         },
         onInvalid() {
-            lastStoredToken = previousLastStoredToken;
             options?.onInvalid?.();
             return false;
         }
