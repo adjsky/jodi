@@ -21,7 +21,11 @@ class TimezoneMiddleware
         $user = $request->user();
         $tz = $request->timezone();
 
-        if (! is_null($user) && $tz && Arr::get($user->preferences, 'timezone') != $tz) {
+        if (is_null($user) || is_null($tz)) {
+            return $next($request);
+        }
+
+        if (Arr::get($user->preferences, 'timezone') !== $tz) {
             $user->preferences = [...$user->preferences, 'timezone' => $tz];
             $user->save();
         }
