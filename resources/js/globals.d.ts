@@ -8,6 +8,7 @@ declare module "@inertiajs/core" {
 
 export interface AppPageProps {
     version: string;
+    environment: string;
     auth: {
         user: {
             id: number;

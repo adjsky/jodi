@@ -45,6 +45,7 @@ class InertiaMiddleware extends Middleware
         return [
             ...parent::share($request),
             'version' => config('jodi.version'),
+            'environment' => config('app.env'),
             'auth' => fn () => [
                 'user' => $request->user()
                     ?->only(['id', 'name', 'email', 'preferences']),
