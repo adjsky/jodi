@@ -5,10 +5,12 @@
     import { complete } from "$/generated/actions/App/Http/Controllers/TodoController";
     import { m } from "$/paraglide/messages";
     import PencilNote from "$/shared/assets/pencil-note.svg";
+    import { useSearchParams } from "$/shared/inertia/use-search-params.svelte";
     import { prefersLightText } from "$/shared/lib/color";
     import { formatToHHMM } from "$/shared/lib/date";
     import { tw } from "$/shared/lib/styles";
     import { toaster } from "$/shared/lib/toaster";
+    import { onMount } from "svelte";
     import { dragHandle, dragHandleZone } from "svelte-dnd-action";
 
     import { useReorder } from "../api/reorder.svelte";
@@ -32,6 +34,24 @@
             isDragging = false;
             toaster.error(m["todos.errors.reorder"]());
         }
+    });
+
+    const searchParams = useSearchParams();
+
+    onMount(async () => {
+        if (searchParams["target"] !== "todo") return;
+
+        const id = searchParams["id"];
+        if (!id || isNaN(Number(id))) return;
+
+        const todo = todos.find((t) => t.id === Number(id));
+        if (!todo) return;
+
+        await searchParams.update(
+            { target: null, id: null },
+            { replace: true, showProgress: false }
+        );
+        await editView.replace(todo);
     });
 
     // svelte-ignore state_referenced_locally

@@ -40,7 +40,7 @@ class DaySummaryController extends Controller
 
         $summary = $events
             ->sortBy('starts_at')
-            ->groupBy(fn ($e) => $e->starts_at->setTimezone($timezone)->toDateString())
+            ->groupBy(fn ($e) => $e->starts_at->timezone($timezone)->toDateString())
             ->map(fn ($events) => new DaySummaryDto(
                 DaySummaryEventDto::collect($events->take(2)->toArray()),
                 max(0, $events->count() - 2)

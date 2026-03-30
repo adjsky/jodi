@@ -2,8 +2,10 @@
     import { CalendarClock } from "@lucide/svelte";
     import { Event } from "$/entities/event";
     import { m } from "$/paraglide/messages";
+    import { useSearchParams } from "$/shared/inertia/use-search-params.svelte";
     import { formatToHHMM } from "$/shared/lib/date";
     import { tw } from "$/shared/lib/styles";
+    import { onMount } from "svelte";
 
     import { id } from "../helpers/id";
     import { editView } from "../model/view";
@@ -16,6 +18,24 @@
     };
 
     const { events, ...rest }: Props = $props();
+
+    const searchParams = useSearchParams();
+
+    onMount(async () => {
+        if (searchParams["target"] !== "event") return;
+
+        const id = searchParams["id"];
+        if (!id || isNaN(Number(id))) return;
+
+        const event = events.find((t) => t.id === Number(id));
+        if (!event) return;
+
+        await searchParams.update(
+            { target: null, id: null },
+            { replace: true, showProgress: false }
+        );
+        await editView.replace(event);
+    });
 </script>
 
 <section {...rest} class={tw("px-4", rest.class)}>
