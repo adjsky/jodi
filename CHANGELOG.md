@@ -1,5 +1,12 @@
 # Releases
 
+## 0.19.1 (2026-03-31)
+
+### Fix
+
+- prefetch only todos and events
+- relax 2fa attempts restriction (#103)
+
 ## 0.19.0 (2026-03-31)
 
 ### Feat
