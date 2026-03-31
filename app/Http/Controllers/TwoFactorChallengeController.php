@@ -15,6 +15,7 @@ use App\Models\User;
 use App\Support\Http\JodiRequest;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Validation\ValidationException;
+use Inertia\Inertia;
 
 class TwoFactorChallengeController extends Controller
 {
@@ -55,6 +56,8 @@ class TwoFactorChallengeController extends Controller
             );
 
             Auth::login($user, remember: true);
+
+            Inertia::clearHistory();
             $request->session()->regenerate();
 
             return redirect()->intended();

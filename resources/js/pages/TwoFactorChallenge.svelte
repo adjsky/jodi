@@ -1,5 +1,5 @@
 <script lang="ts">
-    import { Form } from "@inertiajs/svelte";
+    import { Form, router } from "@inertiajs/svelte";
     import Intro from "$/app/ui/auth/Intro.svelte";
     import AuthLayout from "$/app/ui/layouts/AuthLayout.svelte";
     import { m } from "$/paraglide/messages";
@@ -21,6 +21,7 @@
     const view = new HistoryView(null, { viewTransition: true });
 
     async function handleSuccessfulLogin() {
+        router.clearHistory();
         await PushSubscription.synchronize();
 
         if (PushSubscription.warnings.needsConfiguration) {
