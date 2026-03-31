@@ -31,11 +31,7 @@ export function useSearchParams(options?: Options) {
             replace: options?.replace ?? !push,
             preserveScroll: true,
             preserveState: true,
-            async: true,
-            headers: {
-                ...options?.headers,
-                "Cache-Control": "no-cache"
-            }
+            async: false
         });
     }
 

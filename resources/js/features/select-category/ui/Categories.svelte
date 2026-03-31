@@ -36,10 +36,12 @@
                 onclick={(e) => {
                     e.preventDefault();
                     void view.push(view.name, {
-                        ...view.meta,
-                        [DISABLE_SHEET_DRAGGING]: true,
-                        __selectcategory: { isOpen: true },
-                        __categorytodelete: name
+                        meta: {
+                            ...view.meta,
+                            [DISABLE_SHEET_DRAGGING]: true,
+                            __selectcategory: { isOpen: true },
+                            __categorytodelete: name
+                        }
                     });
                 }}
                 class="absolute right-0 z-10 p-2"

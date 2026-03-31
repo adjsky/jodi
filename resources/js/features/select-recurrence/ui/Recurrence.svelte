@@ -41,9 +41,11 @@
     onCustomTrigger={() => {
         isMenuOpen = false;
         void customPickerView.push(customPickerView.name, {
-            ...customPickerView.meta,
-            [DISABLE_SHEET_DRAGGING]: true,
-            __selectrecurrence: { isOpen: true }
+            meta: {
+                ...customPickerView.meta,
+                [DISABLE_SHEET_DRAGGING]: true,
+                __selectrecurrence: { isOpen: true }
+            }
         });
     }}
 />

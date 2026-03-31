@@ -40,9 +40,11 @@
 
     function showPicker() {
         void view.push(view.name, {
-            ...view.meta,
-            [DISABLE_SHEET_DRAGGING]: true,
-            __timepickerinput: { isPickerOpen: id }
+            meta: {
+                ...view.meta,
+                [DISABLE_SHEET_DRAGGING]: true,
+                __timepickerinput: { isPickerOpen: id }
+            }
         });
     }
 </script>

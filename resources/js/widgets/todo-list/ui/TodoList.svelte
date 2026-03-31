@@ -10,6 +10,7 @@
     import { formatToHHMM } from "$/shared/lib/date";
     import { tw } from "$/shared/lib/styles";
     import { toaster } from "$/shared/lib/toaster";
+    import { watch } from "runed";
     import { dragHandle, dragHandleZone } from "svelte-dnd-action";
 
     import { useReorder } from "../api/reorder.svelte";
@@ -37,25 +38,23 @@
 
     const searchParams = useSearchParams();
 
-    $effect(() => {
-        if (searchParams["target"] !== "todo") return;
+    watch(
+        () => [searchParams["target"]],
+        () => {
+            if (searchParams["target"] !== "todo") return;
 
-        const id = searchParams["id"];
-        if (!id || isNaN(Number(id))) return;
+            const id = searchParams["id"];
+            if (!id || isNaN(Number(id))) return;
 
-        const todo = todos.find((t) => t.id === Number(id));
-        if (!todo) return;
+            const todo = todos.find((t) => t.id === Number(id));
+            if (!todo) return;
 
-        async function show() {
-            await searchParams.update(
-                { target: null, id: null },
-                { replace: true, showProgress: false }
-            );
-            await editView.push(todo);
+            void editView.replace({
+                meta: todo,
+                search: { d: searchParams["d"] }
+            });
         }
-
-        void show();
-    });
+    );
 
     // svelte-ignore state_referenced_locally
     let groups = $state(groupTodos(todos));
@@ -157,7 +156,7 @@
                     <button
                         class="relative w-full min-w-0 text-start text-lg font-medium"
                         data-part="edit"
-                        onclick={() => editView.push(todo)}
+                        onclick={() => editView.push({ meta: todo })}
                     >
                         <span
                             class={[

@@ -5,6 +5,7 @@
     import { useSearchParams } from "$/shared/inertia/use-search-params.svelte";
     import { formatToHHMM } from "$/shared/lib/date";
     import { tw } from "$/shared/lib/styles";
+    import { watch } from "runed";
 
     import { id } from "../helpers/id";
     import { editView } from "../model/view";
@@ -20,25 +21,23 @@
 
     const searchParams = useSearchParams();
 
-    $effect(() => {
-        if (searchParams["target"] !== "event") return;
+    watch(
+        () => [searchParams["target"]],
+        () => {
+            if (searchParams["target"] !== "event") return;
 
-        const id = searchParams["id"];
-        if (!id || isNaN(Number(id))) return;
+            const id = searchParams["id"];
+            if (!id || isNaN(Number(id))) return;
 
-        const event = events.find((t) => t.id === Number(id));
-        if (!event) return;
+            const event = events.find((t) => t.id === Number(id));
+            if (!event) return;
 
-        async function show() {
-            await searchParams.update(
-                { target: null, id: null },
-                { replace: true, showProgress: false }
-            );
-            await editView.replace(event);
+            void editView.replace({
+                meta: event,
+                search: { d: searchParams["d"] }
+            });
         }
-
-        void show();
-    });
+    );
 </script>
 
 <section {...rest} class={tw("px-4", rest.class)}>
@@ -55,7 +54,7 @@
         {:else}
             {#each events as event (id(event))}
                 <Event.Row
-                    onclick={() => editView.push(event)}
+                    onclick={() => editView.push({ meta: event })}
                     color={event.color}
                 >
                     {#snippet time()}

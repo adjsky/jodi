@@ -5,7 +5,7 @@
     "scripts": {
         "build": "vite build",
         "appflow:build": "trapeze run appflow.yml -y --$CI_PLATFORM && ./scripts/appflow.ts",
-        "dev": "vite",
+        "dev": "vite --force",
         "lint": "eslint",
         "format": "prettier",
         "check": "svelte-check",

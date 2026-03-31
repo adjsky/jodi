@@ -1,6 +1,4 @@
-import { router } from "@inertiajs/core";
 import { m } from "$/paraglide/messages";
-import { WEEK_CAROUSEL_CACHE_TAG } from "$/shared/cfg/constants";
 import { optimistic as _optimistic } from "$/shared/inertia/visit/optimistic";
 import * as PushSubscription from "$/shared/lib/push-subscription.svelte";
 import { toaster } from "$/shared/lib/toaster";
@@ -38,10 +36,8 @@ export const optimistic = {
                         return false;
                     }
                 },
-                onSuccess: () => {
+                onSuccess() {
                     PushSubscription.ahtung(m["events.reminder-ahtung"]());
-                    router.flushByCacheTags(WEEK_CAROUSEL_CACHE_TAG);
-
                     void editView.back();
                 }
             }
@@ -55,8 +51,7 @@ export const optimistic = {
             }),
             {
                 error: m["events.errors.delete"](),
-                onSuccess: () => {
-                    router.flushByCacheTags(WEEK_CAROUSEL_CACHE_TAG);
+                onSuccess() {
                     void editView.back();
                 }
             }

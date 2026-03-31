@@ -59,9 +59,11 @@
         (v) => {
             if (v) {
                 void view.push(view.name, {
-                    ...view.meta,
-                    [DISABLE_SHEET_DRAGGING]: true,
-                    __selectcategory: { isOpen: true }
+                    meta: {
+                        ...view.meta,
+                        [DISABLE_SHEET_DRAGGING]: true,
+                        __selectcategory: { isOpen: true }
+                    }
                 });
             } else {
                 void view.back();

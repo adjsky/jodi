@@ -43,8 +43,7 @@
         (v) => {
             if (v) {
                 void view.push(view.name, {
-                    ...view.meta,
-                    __deleteitem: { isOpen: true }
+                    meta: { ...view.meta, __deleteitem: { isOpen: true } }
                 });
             } else {
                 void view.back();
