@@ -66,6 +66,7 @@
         getDateAttachment={(date) =>
             fromAction(inertia, () => ({
                 href: `?d=${date.toString()}`,
+                showProgress: true,
                 replace: true,
                 preserveScroll: true,
                 preserveState: true,

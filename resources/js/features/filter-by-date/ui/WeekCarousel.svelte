@@ -44,7 +44,8 @@
                 <button
                     use:inertia={{
                         href: `?d=${date.toString()}`,
-                        only: ["todos", "events"]
+                        only: ["todos", "events"],
+                        showProgress: true
                     }}
                     class="group flex flex-col items-center justify-between"
                     data-selected={boolAttr(compare == "selected")}
