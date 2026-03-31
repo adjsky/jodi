@@ -7,7 +7,7 @@ namespace App\Http\Controllers;
 use App\Data\RegistrationInvitationDto;
 use App\Domain\Auth\Mail\InviteToJodi;
 use App\Models\RegistrationInvitation;
-use Illuminate\Http\Request;
+use App\Support\Http\JodiRequest;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\URL;
@@ -15,17 +15,17 @@ use Illuminate\Support\Str;
 
 class RegistrationInvitationController extends Controller
 {
-    public function getAll(Request $request)
+    public function getAll(JodiRequest $request)
     {
         return response()->json(RegistrationInvitationDto::collect($this->user()->invitations->all()));
     }
 
-    public function get(Request $request, RegistrationInvitation $invitation)
+    public function get(JodiRequest $request, RegistrationInvitation $invitation)
     {
         return response()->json(RegistrationInvitationDto::fromModel($invitation));
     }
 
-    public function invite(Request $request)
+    public function invite(JodiRequest $request)
     {
         $data = $request->validate([
             'email' => 'required|email|unique:registration_invitations',
@@ -48,7 +48,7 @@ class RegistrationInvitationController extends Controller
         return back();
     }
 
-    public function destroy(Request $request, RegistrationInvitation $invitation)
+    public function destroy(JodiRequest $request, RegistrationInvitation $invitation)
     {
         Gate::authorize('destroy', $invitation);
 

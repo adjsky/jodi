@@ -5,10 +5,10 @@ declare(strict_types=1);
 namespace App\Http\Requests\Todo;
 
 use App\Models\Todo;
+use App\Support\Http\JodiFormRequest;
 use Illuminate\Contracts\Validation\ValidationRule;
-use Illuminate\Foundation\Http\FormRequest;
 
-class ReorderRequest extends FormRequest
+class ReorderRequest extends JodiFormRequest
 {
     public function authorize(): bool
     {

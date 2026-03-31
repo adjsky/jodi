@@ -5,10 +5,11 @@ declare(strict_types=1);
 use App\Http\Middleware\InertiaMiddleware;
 use App\Http\Middleware\LocaleMiddleware;
 use App\Http\Middleware\RequestIdMiddleware;
+use App\Http\Middleware\TimezoneMiddleware;
+use App\Support\Http\JodiRequest;
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
-use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response as SymfonyResponse;
 
 return Application::configure(basePath: dirname(__DIR__))
@@ -26,6 +27,7 @@ return Application::configure(basePath: dirname(__DIR__))
                 LocaleMiddleware::class,
                 RequestIdMiddleware::class,
                 InertiaMiddleware::class,
+                TimezoneMiddleware::class,
             ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {
@@ -33,7 +35,7 @@ return Application::configure(basePath: dirname(__DIR__))
             function (
                 SymfonyResponse $response,
                 Throwable $exception,
-                Request $request
+                JodiRequest $request
             ) {
                 if ($response->isRedirect()) {
                     return $response;
@@ -59,16 +61,17 @@ return Application::configure(basePath: dirname(__DIR__))
                     return $response;
                 }
 
+                $headers = collect(['retry-after', 'x-ratelimit-reset'])
+                    ->mapWithKeys(fn ($h) => [$h => $response->headers->get($h)])
+                    ->all();
+
                 return response()->json(
                     [
                         'exception' => get_class($exception),
                         'message' => $exception->getMessage(),
                     ],
                     $status,
-                    collect(['retry-after', 'x-ratelimit-reset'])
-                        ->mapWithKeys(
-                            fn ($h) => [$h => $response->headers->get($h)]
-                        )->all()
+                    $headers
                 );
             }
         );

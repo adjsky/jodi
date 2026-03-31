@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\Support\Recurrence;
+namespace App\Support\Traits;
 
 use App\Models\RecurrenceException;
 use Carbon\Carbon;
@@ -49,7 +49,9 @@ trait HasRecurrence
             return collect([$model]);
         }
 
-        $exceptions = $this->recurrenceExceptions->keyBy(fn ($e) => $e->occurs_at->toDateString());
+        $exceptions = $this->recurrenceExceptions->keyBy(
+            fn ($e) => $e->occurs_at->toDateString()
+        );
         $rkstart = $this->rkstart();
         $dtstart = $this->getAttribute($rkstart);
 
@@ -165,7 +167,9 @@ trait HasRecurrence
                     continue;
                 }
 
-                $currentDate = Carbon::parse($exception?->overrides[$key] ?? $attribute->copy()->setDateFrom($occursAt));
+                $currentDate = Carbon::parse(
+                    $exception?->overrides[$key] ?? $attribute->copy()->setDateFrom($occursAt)
+                );
 
                 if ($currentDate->ne($value)) {
                     $overrides[$key] = $value;

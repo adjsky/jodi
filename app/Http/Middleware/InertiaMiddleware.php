@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Http\Middleware;
 
+use App\Support\Http\JodiRequest;
 use Illuminate\Http\Request;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Str;
@@ -39,17 +40,18 @@ class InertiaMiddleware extends Middleware
      */
     public function share(Request $request): array
     {
-        $deviceId = $request->cookies->get('jodi-device-id');
+        $request = JodiRequest::createFrom($request);
 
         return [
             ...parent::share($request),
             'version' => config('jodi.version'),
+            'environment' => config('app.env'),
             'auth' => fn () => [
                 'user' => $request->user()
                     ?->only(['id', 'name', 'email', 'preferences']),
                 'fcm' => $request->user()
                     ?->pushSubscriptions()
-                    ->where('device_id', $deviceId)
+                    ->where('device_id', $request->deviceId())
                     ->first(['fcm_token as token']),
             ],
             'flash' => [

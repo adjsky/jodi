@@ -4,13 +4,13 @@ declare(strict_types=1);
 
 namespace App\Http\Requests\Todo;
 
-use App\Rules\ValidRRule;
-use App\Support\FormRequest\ConvertsToSnakeCase;
+use App\Support\Http\JodiFormRequest;
+use App\Support\Rules\RRule;
+use App\Support\Traits\ConvertsToSnakeCase;
 use Illuminate\Contracts\Validation\ValidationRule;
-use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
 
-class UpdateRequest extends FormRequest
+class UpdateRequest extends JodiFormRequest
 {
     use ConvertsToSnakeCase;
 
@@ -34,7 +34,7 @@ class UpdateRequest extends FormRequest
             'scheduledAt' => 'required|date',
             'hasTime' => 'required|boolean',
             'notifyAt' => 'nullable|date',
-            'rrule' => ['nullable', 'string', new ValidRRule],
+            'rrule' => ['nullable', 'string', new RRule],
             'occursAt' => [
                 $this->todo->rrule ? 'required' : 'nullable',
                 'date_format:Y-m-d',

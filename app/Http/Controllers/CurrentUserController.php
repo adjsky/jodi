@@ -4,11 +4,11 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
+use App\Support\Http\JodiRequest;
 
 class CurrentUserController extends Controller
 {
-    public function update(Request $request)
+    public function update(JodiRequest $request)
     {
         $data = $request->validate([
             'name' => 'sometimes|string|min:1|max:36',

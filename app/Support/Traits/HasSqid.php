@@ -2,8 +2,9 @@
 
 declare(strict_types=1);
 
-namespace App\Support\Sqids;
+namespace App\Support\Traits;
 
+use App\Support\Identifiers\Sqid;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Model;
 

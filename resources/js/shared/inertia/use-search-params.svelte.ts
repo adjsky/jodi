@@ -11,11 +11,18 @@ type Options = {
 export function useSearchParams(options?: Options) {
     const { showProgress, push } = options ?? {};
 
-    function update(values: Record<string, string>, options?: VisitOptions) {
+    function update(
+        values: Record<string, string | null>,
+        options?: VisitOptions
+    ) {
         const url = new URL(window.location.href);
 
         for (const [key, value] of Object.entries(values)) {
-            url.searchParams.set(key, value);
+            if (value === null) {
+                url.searchParams.delete(key);
+            } else {
+                url.searchParams.set(key, value);
+            }
         }
 
         return router.visit(url, {

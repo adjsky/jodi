@@ -73,9 +73,9 @@ class TodoController extends Controller
     public function update(UpdateRequest $request, Todo $todo)
     {
         $data = $request->validatedInSnakeCase();
-        $tz = $request->cookies->getString('jodi-timezone');
+        $timezone = $request->timezone();
 
-        DB::transaction(function () use ($todo, $data, $tz) {
+        DB::transaction(function () use ($todo, $data, $timezone) {
             $data['category_id'] = $data['category']
                 ? $this->user()->categories()->where('name', $data['category'])->firstOrFail(['id'])->id
                 : null;
@@ -100,7 +100,7 @@ class TodoController extends Controller
                 }
 
                 if (isset($overrides['category_id']) || ! $isScheduledAtSameDay) {
-                    $date = Carbon::parse($data['scheduled_at'], $tz)->toDateString();
+                    $date = Carbon::parse($data['scheduled_at'], $timezone)->toDateString();
                     $todo->positions()->where('date', $date)->delete();
                 }
 

@@ -4,16 +4,17 @@ declare(strict_types=1);
 
 namespace App\Http\Requests\Category;
 
-use Illuminate\Foundation\Http\FormRequest;
+use App\Support\Http\JodiFormRequest;
+use Illuminate\Contracts\Validation\ValidationRule;
 
-class CreateRequest extends FormRequest
+class CreateRequest extends JodiFormRequest
 {
     public function authorize(): bool
     {
         return true;
     }
 
-    /** @return array<string, \Illuminate\Contracts\Validation\ValidationRule|array<mixed>|string> */
+    /** @return array<string, ValidationRule|array<mixed>|string> */
     public function rules(): array
     {
         return [

@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\Support\Sqids;
+namespace App\Support\Identifiers;
 
 use Sqids\Sqids;
 

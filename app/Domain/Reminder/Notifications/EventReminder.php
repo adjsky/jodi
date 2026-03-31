@@ -7,6 +7,7 @@ namespace App\Domain\Reminder\Notifications;
 use App\Domain\Reminder\Support\Helpers;
 use App\Models\Event;
 use App\Models\User;
+use Carbon\CarbonImmutable;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\MailMessage;
@@ -28,22 +29,39 @@ class EventReminder extends Notification implements ShouldQueue
             : ['mail'];
     }
 
-    public function toFcm(): FcmMessage
+    public function toFcm(User $user): FcmMessage
     {
+        $startsAt = $this->startsAt();
+        $startsIn = Helpers::startsIn($startsAt);
+        $timezone = $user->preferences['timezone'];
+
         return new FcmMessage(notification: new FcmNotification(
             title: __(':title is upcoming.', ['title' => $this->model->title]),
-            body: __('Starts :time.', ['time' => $this->startsIn()]),
-        ));
+            body: __('Starts :time.', ['time' => $startsIn]),
+        ))
+            ->data([
+                'purpose' => 'reminder',
+                'target' => 'event',
+                'd' => $startsAt->timezone($timezone)->toDateString(),
+                'id' => (string) $this->model->id,
+            ])
+            ->custom([
+                'fcm_options' => [
+                    'link' => url('/'),
+                ],
+            ]);
     }
 
     public function toMail(): MailMessage
     {
+        $startsIn = Helpers::startsIn($this->startsAt());
+
         return (new MailMessage)
-            ->subject(__('mail.event_reminder.subject', ['title' => $this->model->title, 'startsIn' => $this->startsIn()]))
+            ->subject(__('mail.event_reminder.subject', ['title' => $this->model->title, 'startsIn' => $startsIn]))
             ->markdown('mail.event-reminder', ['event' => $this->model]);
     }
 
-    private function startsIn(): string
+    private function startsAt(): CarbonImmutable
     {
         $startsAt = $this->model->starts_at->copy();
 
@@ -51,6 +69,6 @@ class EventReminder extends Notification implements ShouldQueue
             $startsAt->setDateFrom($this->occursAt);
         }
 
-        return Helpers::startsIn($startsAt);
+        return $startsAt->toImmutable();
     }
 }

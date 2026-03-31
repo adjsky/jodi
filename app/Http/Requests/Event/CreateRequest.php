@@ -4,11 +4,12 @@ declare(strict_types=1);
 
 namespace App\Http\Requests\Event;
 
-use App\Rules\ValidRRule;
-use App\Support\FormRequest\ConvertsToSnakeCase;
-use Illuminate\Foundation\Http\FormRequest;
+use App\Support\Http\JodiFormRequest;
+use App\Support\Rules\RRule;
+use App\Support\Traits\ConvertsToSnakeCase;
+use Illuminate\Contracts\Validation\ValidationRule;
 
-class CreateRequest extends FormRequest
+class CreateRequest extends JodiFormRequest
 {
     use ConvertsToSnakeCase;
 
@@ -17,7 +18,7 @@ class CreateRequest extends FormRequest
         return true;
     }
 
-    /** @return array<string, \Illuminate\Contracts\Validation\ValidationRule|array<mixed>|string> */
+    /** @return array<string, ValidationRule|array<mixed>|string> */
     public function rules(): array
     {
         return [
@@ -27,7 +28,7 @@ class CreateRequest extends FormRequest
             'startsAt' => 'required|date',
             'endsAt' => 'required|date',
             'notifyAt' => 'required|date',
-            'rrule' => ['nullable', 'string', new ValidRRule],
+            'rrule' => ['nullable', 'string', new RRule],
         ];
     }
 }

@@ -32,7 +32,7 @@
         Cookie.set(DEVICE_ID_COOKIE, identifier, {
             maxAge: 34560000,
             sameSite: "lax",
-            secure: true
+            secure: get(page).props.environment == "production"
         });
     });
 

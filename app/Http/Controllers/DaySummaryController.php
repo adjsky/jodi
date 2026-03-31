@@ -7,19 +7,19 @@ namespace App\Http\Controllers;
 use App\Data\DaySummaryDto;
 use App\Data\DaySummaryEventDto;
 use App\Models\Event;
+use App\Support\Http\JodiRequest;
 use Carbon\CarbonImmutable;
-use Illuminate\Http\Request;
 use Illuminate\Support\Collection;
 
 class DaySummaryController extends Controller
 {
-    public function get(Request $request, int $year)
+    public function get(JodiRequest $request, int $year)
     {
         $months = explode(',', $request->query('m', ''));
-        $tz = $request->cookies->getString('jodi-timezone');
+        $timezone = $request->timezone('UTC');
 
-        $ranges = collect($months)->map(function ($month) use ($year, $tz) {
-            $date = CarbonImmutable::createFromDate($year, (int) $month, 1, $tz);
+        $ranges = collect($months)->map(function ($month) use ($year, $timezone) {
+            $date = CarbonImmutable::createFromDate($year, (int) $month, 1, $timezone);
 
             return [
                 'start' => $date->startOfMonth()->utc(),
@@ -40,7 +40,7 @@ class DaySummaryController extends Controller
 
         $summary = $events
             ->sortBy('starts_at')
-            ->groupBy(fn ($e) => $e->starts_at->setTimezone($tz)->toDateString())
+            ->groupBy(fn ($e) => $e->starts_at->timezone($timezone)->toDateString())
             ->map(fn ($events) => new DaySummaryDto(
                 DaySummaryEventDto::collect($events->take(2)->toArray()),
                 max(0, $events->count() - 2)
