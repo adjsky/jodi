@@ -6,6 +6,7 @@ import { fromStore } from "svelte/store";
 import { useRegisterSW } from "virtual:pwa-register/svelte";
 
 import { createActionBanner } from "../ui/ActionBanner.svelte";
+import { handlePushAction } from "./push-actions";
 
 export function useServiceWorker() {
     const { needRefresh: _needRefresh, updateServiceWorker } = useRegisterSW();
@@ -33,7 +34,20 @@ export function useServiceWorker() {
     onMount(() => {
         if (!("serviceWorker" in navigator)) return;
 
-        function handler(event: MessageEvent) {}
+        function handler(event: MessageEvent) {
+            if (event.data.messageType != "notification-clicked") {
+                return;
+            }
+
+            if (
+                "data" in event.data &&
+                typeof event.data.data == "object" &&
+                event.data.data != null &&
+                "purpose" in event.data.data
+            ) {
+                handlePushAction(event.data.data);
+            }
+        }
 
         navigator.serviceWorker.addEventListener("message", handler);
 

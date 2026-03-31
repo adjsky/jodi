@@ -7,7 +7,10 @@ import { get } from "svelte/store";
 
 import { PLATFORM } from "../cfg/constants";
 import { destroyActionBanner } from "../ui/ActionBanner.svelte";
+import { handlePushAction } from "./push-actions";
 import { toaster } from "./toaster";
+
+import type { PushActionData } from "./push-actions";
 
 // ------------------------------ SYNCHRONIZATION ------------------------------
 
@@ -41,6 +44,7 @@ export async function setupListeners() {
             const { identifier } = await Device.getId();
             await store(token, identifier, { async: true });
         }),
+
         FirebaseMessaging.addListener(
             "notificationReceived",
             ({ notification }) => {
@@ -48,6 +52,23 @@ export async function setupListeners() {
                 if (!title) return;
 
                 new Notification(title, options);
+            }
+        ),
+
+        FirebaseMessaging.addListener(
+            "notificationActionPerformed",
+            (event) => {
+                if (
+                    typeof event.notification.data != "object" ||
+                    event.notification.data == null ||
+                    !("purpose" in event.notification.data)
+                ) {
+                    return;
+                }
+
+                handlePushAction(
+                    event.notification.data as unknown as PushActionData
+                );
             }
         )
     ]);

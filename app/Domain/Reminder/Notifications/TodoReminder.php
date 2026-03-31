@@ -35,33 +35,35 @@ class TodoReminder extends Notification implements ShouldQueue
         $startsIn = Helpers::startsIn($scheduledAt);
         $timezone = $user->preferences['timezone'];
 
-        $url = url()->query('/', [
-            'd' => $scheduledAt->timezone($timezone)->toDateString(),
-            'target' => 'todo',
-            'id' => $this->model->id,
-        ]);
+        $data = [
+
+        ];
 
         return new FcmMessage(notification: new FcmNotification(
             title: __(':title - time to start.', ['title' => $this->model->title]),
             body: __('Scheduled for :time.', ['time' => $startsIn]),
         ))
             ->data([
-                'todo_id' => (string) $this->model->id,
+                'purpose' => 'reminder',
+                'target' => 'todo',
+                'd' => $scheduledAt->timezone($timezone)->toDateString(),
+                'id' => (string) $this->model->id,
             ])
             ->custom([
                 'webpush' => [
-                    'notification' => [
-                        'actions' => [
-                            [
-                                'action' => 'complete-todo',
-                                'title' => __('Complete'),
-                            ],
-                        ],
-                    ],
+                    // 'notification' => [
+                    //     'actions' => [
+                    //         [
+                    //             'action' => 'complete-todo',
+                    //             'title' => __('Complete'),
+                    //         ],
+                    //     ],
+                    // ],
                     'fcm_options' => [
-                        'link' => $url,
+                        'link' => url('/'),
                     ],
                 ],
+
             ]);
     }
 

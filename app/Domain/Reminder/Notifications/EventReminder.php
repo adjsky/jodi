@@ -35,32 +35,19 @@ class EventReminder extends Notification implements ShouldQueue
         $startsIn = Helpers::startsIn($startsAt);
         $timezone = $user->preferences['timezone'];
 
-        $url = url()->query('/', [
-            'd' => $startsAt->timezone($timezone)->toDateString(),
-            'target' => 'event',
-            'id' => $this->model->id,
-        ]);
-
         return new FcmMessage(notification: new FcmNotification(
             title: __(':title is upcoming.', ['title' => $this->model->title]),
             body: __('Starts :time.', ['time' => $startsIn]),
         ))
             ->data([
-                'event_id' => (string) $this->model->id,
+                'purpose' => 'reminder',
+                'target' => 'event',
+                'd' => $startsAt->timezone($timezone)->toDateString(),
+                'id' => (string) $this->model->id,
             ])
             ->custom([
-                'webpush' => [
-                    'notification' => [
-                        'actions' => [
-                            [
-                                'action' => 'complete-todo',
-                                'title' => __('Complete'),
-                            ],
-                        ],
-                    ],
-                    'fcm_options' => [
-                        'link' => $url,
-                    ],
+                'fcm_options' => [
+                    'link' => url('/'),
                 ],
             ]);
     }

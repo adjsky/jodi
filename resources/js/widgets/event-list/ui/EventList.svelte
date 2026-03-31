@@ -5,7 +5,6 @@
     import { useSearchParams } from "$/shared/inertia/use-search-params.svelte";
     import { formatToHHMM } from "$/shared/lib/date";
     import { tw } from "$/shared/lib/styles";
-    import { onMount } from "svelte";
 
     import { id } from "../helpers/id";
     import { editView } from "../model/view";
@@ -21,7 +20,7 @@
 
     const searchParams = useSearchParams();
 
-    onMount(async () => {
+    $effect(() => {
         if (searchParams["target"] !== "event") return;
 
         const id = searchParams["id"];
@@ -30,11 +29,15 @@
         const event = events.find((t) => t.id === Number(id));
         if (!event) return;
 
-        await searchParams.update(
-            { target: null, id: null },
-            { replace: true, showProgress: false }
-        );
-        await editView.replace(event);
+        async function show() {
+            await searchParams.update(
+                { target: null, id: null },
+                { replace: true, showProgress: false }
+            );
+            await editView.replace(event);
+        }
+
+        void show();
     });
 </script>
 

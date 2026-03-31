@@ -10,7 +10,6 @@
     import { formatToHHMM } from "$/shared/lib/date";
     import { tw } from "$/shared/lib/styles";
     import { toaster } from "$/shared/lib/toaster";
-    import { onMount } from "svelte";
     import { dragHandle, dragHandleZone } from "svelte-dnd-action";
 
     import { useReorder } from "../api/reorder.svelte";
@@ -38,7 +37,7 @@
 
     const searchParams = useSearchParams();
 
-    onMount(async () => {
+    $effect(() => {
         if (searchParams["target"] !== "todo") return;
 
         const id = searchParams["id"];
@@ -47,11 +46,15 @@
         const todo = todos.find((t) => t.id === Number(id));
         if (!todo) return;
 
-        await searchParams.update(
-            { target: null, id: null },
-            { replace: true, showProgress: false }
-        );
-        await editView.replace(todo);
+        async function show() {
+            await searchParams.update(
+                { target: null, id: null },
+                { replace: true, showProgress: false }
+            );
+            await editView.push(todo);
+        }
+
+        void show();
     });
 
     // svelte-ignore state_referenced_locally
