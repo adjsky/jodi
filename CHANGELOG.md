@@ -1,5 +1,11 @@
 # Releases
 
+## 0.19.0 (2026-03-31)
+
+### Feat
+
+- open bottom sheet when clicking on a reminder notification (#102)
+
 ## 0.18.1 (2026-03-29)
 
 ### Fix
