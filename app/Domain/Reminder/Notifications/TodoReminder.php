@@ -51,14 +51,6 @@ class TodoReminder extends Notification implements ShouldQueue
             ])
             ->custom([
                 'webpush' => [
-                    // 'notification' => [
-                    //     'actions' => [
-                    //         [
-                    //             'action' => 'complete-todo',
-                    //             'title' => __('Complete'),
-                    //         ],
-                    //     ],
-                    // ],
                     'fcm_options' => [
                         'link' => url('/'),
                     ],
