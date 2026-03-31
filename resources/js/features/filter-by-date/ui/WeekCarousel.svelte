@@ -3,7 +3,7 @@
     import { DateFormatter } from "@internationalized/date";
     import { ChevronLeft, ChevronRight } from "@lucide/svelte";
     import { getLocale } from "$/paraglide/runtime";
-    import { TIMEZONE, WEEK_CAROUSEL_CACHE_TAG } from "$/shared/cfg/constants";
+    import { TIMEZONE } from "$/shared/cfg/constants";
     import { boolAttr } from "runed";
 
     import { compareDates } from "../helpers/date";
@@ -43,10 +43,7 @@
                 {@const compare = compareDates(selected, date)}
                 <button
                     use:inertia={{
-                        prefetch: "mount",
-                        cacheFor: ["30s", "5m"],
                         href: `?d=${date.toString()}`,
-                        cacheTags: WEEK_CAROUSEL_CACHE_TAG,
                         only: ["todos", "events"]
                     }}
                     class="group flex flex-col items-center justify-between"

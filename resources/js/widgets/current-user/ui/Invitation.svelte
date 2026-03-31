@@ -72,8 +72,10 @@
                     (v) => {
                         if (v) {
                             void deleteView.push(view.name, {
-                                ...view.meta,
-                                __deleteinvitation: { isOpen: true }
+                                meta: {
+                                    ...view.meta,
+                                    __deleteinvitation: { isOpen: true }
+                                }
                             });
                         } else {
                             void deleteView.back();

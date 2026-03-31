@@ -32,9 +32,11 @@
         (v) => {
             if (v) {
                 void view.push(view.name, {
-                    ...view.meta,
-                    [DISABLE_SHEET_DRAGGING]: true,
-                    __yearcalendardialog: { isOpen: id }
+                    meta: {
+                        ...view.meta,
+                        [DISABLE_SHEET_DRAGGING]: true,
+                        __yearcalendardialog: { isOpen: id }
+                    }
                 });
             } else {
                 void view.back();

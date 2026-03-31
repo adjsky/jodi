@@ -1,5 +1,5 @@
 <script lang="ts">
-    import { Form, router } from "@inertiajs/svelte";
+    import { Form } from "@inertiajs/svelte";
     import { toCalendarDate } from "@internationalized/date";
     import { Trash } from "@lucide/svelte";
     import { Event } from "$/entities/event";
@@ -10,10 +10,7 @@
     import { Reminder } from "$/features/select-reminder";
     import { create } from "$/generated/actions/App/Http/Controllers/EventController";
     import { m } from "$/paraglide/messages";
-    import {
-        NOTIFICATION_DEFAULT_SUBHOURS,
-        WEEK_CAROUSEL_CACHE_TAG
-    } from "$/shared/cfg/constants";
+    import { NOTIFICATION_DEFAULT_SUBHOURS } from "$/shared/cfg/constants";
     import { timediff } from "$/shared/lib/date";
     import * as PushSubscription from "$/shared/lib/push-subscription.svelte";
     import { toaster } from "$/shared/lib/toaster";
@@ -59,8 +56,6 @@
     }}
     onSuccess={() => {
         PushSubscription.ahtung(m["events.reminder-ahtung"]());
-        router.flushByCacheTags(WEEK_CAROUSEL_CACHE_TAG);
-
         onClose();
     }}
     class="flex grow flex-col pb-18"

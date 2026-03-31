@@ -66,8 +66,7 @@
                 if (confirm) {
                     e.preventDefault();
                     void view.push(view.name, {
-                        ...view.meta,
-                        __saveitem: { isOpen: true }
+                        meta: { ...view.meta, __saveitem: { isOpen: true } }
                     });
                 }
             }}

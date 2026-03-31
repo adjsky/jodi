@@ -15,6 +15,12 @@ export type UpdateMetaOptions = {
     viewTransition?: boolean;
 };
 
+export type PushReplaceOptions<T> = {
+    meta?: T;
+    search?: Record<string, string>;
+    viewTransition?: boolean;
+};
+
 export class HistoryView<T extends Record<string, unknown>> {
     #name?: string | null;
     #options?: HistoryViewOptions;
@@ -53,29 +59,53 @@ export class HistoryView<T extends Record<string, unknown>> {
         );
     }
 
-    push(meta?: T): Promise<void>;
-    push(name: string, meta?: T): Promise<void>;
-    push(nameOrMeta?: string | T, metaOrNothing?: T): Promise<void> {
-        const name = typeof nameOrMeta == "string" ? nameOrMeta : this.#name;
-        const meta = typeof nameOrMeta != "string" ? nameOrMeta : metaOrNothing;
+    push(options?: PushReplaceOptions<T>): Promise<void>;
+    push(name: string, options?: PushReplaceOptions<T>): Promise<void>;
+    push(
+        nameOrOptions?: string | PushReplaceOptions<T>,
+        optionsOrNothing?: PushReplaceOptions<T>
+    ): Promise<void> {
+        const name =
+            typeof nameOrOptions == "string" ? nameOrOptions : this.#name;
+        const options =
+            typeof nameOrOptions != "string" ? nameOrOptions : optionsOrNothing;
 
-        return router.push(this.#visitOptions(name, meta));
+        return router.push(
+            this.#visitOptions(
+                name,
+                options?.meta,
+                options?.viewTransition,
+                options?.search
+            )
+        );
     }
 
-    replace(meta?: T): Promise<void>;
-    replace(name: string, meta?: T): Promise<void>;
-    replace(nameOrMeta?: string | T, metaOrNothing?: T): Promise<void> {
-        const name = typeof nameOrMeta == "string" ? nameOrMeta : this.#name;
-        const meta = typeof nameOrMeta != "string" ? nameOrMeta : metaOrNothing;
+    replace(options?: PushReplaceOptions<T>): Promise<void>;
+    replace(name: string, options?: PushReplaceOptions<T>): Promise<void>;
+    replace(
+        nameOrOptions?: string | PushReplaceOptions<T>,
+        optionsOrNothing?: PushReplaceOptions<T>
+    ): Promise<void> {
+        const name =
+            typeof nameOrOptions == "string" ? nameOrOptions : this.#name;
+        const options =
+            typeof nameOrOptions != "string" ? nameOrOptions : optionsOrNothing;
 
-        return router.replace(this.#visitOptions(name, meta));
+        return router.replace(
+            this.#visitOptions(
+                name,
+                options?.meta,
+                options?.viewTransition,
+                options?.search
+            )
+        );
     }
 
     updateMeta(meta: Partial<T>, options?: UpdateMetaOptions) {
         const visitOptions = this.#visitOptions(
             this.#hash.view.slice(1),
             { ...this.#meta, ...meta } as T,
-            options?.viewTransition
+            options?.viewTransition ?? this.#options?.viewTransition
         );
         if (options?.push) {
             return router.push(visitOptions);
@@ -113,14 +143,27 @@ export class HistoryView<T extends Record<string, unknown>> {
     #visitOptions(
         name: string | null | undefined,
         meta: T | undefined,
-        viewTransition?: boolean
+        viewTransition?: boolean,
+        search?: Record<string, string>
     ): ClientSideVisitOptions {
+        const hash = `${typeof name == "string" ? name : this.#name}${meta ? `?${this.#compress(meta)}` : ""}`;
+
         return {
             preserveScroll: true,
             preserveState: true,
-            url: `${this.#url.pathname}${this.#url.search}#${typeof name == "string" ? name : this.#name}${meta ? `?${this.#compress(meta)}` : ""}`,
+            url: `${this.#url.pathname}${this.#buildSearchString(search)}#${hash}`,
             __jodi_isHistoryModal: true,
             viewTransition: viewTransition ?? this.#options?.viewTransition
         };
+    }
+
+    #buildSearchString(search?: Record<string, string>) {
+        if (!search) {
+            return this.#url.search;
+        }
+
+        const sp = new URLSearchParams(search).toString();
+
+        return sp ? `?${sp}` : "";
     }
 }

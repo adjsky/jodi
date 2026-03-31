@@ -17,5 +17,3 @@ export const WEEK_START_PREFERENCE_MAP: { [D in WeekStart]: DayOfWeek } = {
     monday: "mon",
     sunday: "sun"
 };
-
-export const WEEK_CAROUSEL_CACHE_TAG = "week-carousel";

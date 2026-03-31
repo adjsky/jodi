@@ -46,15 +46,10 @@
         const todo = todos.find((t) => t.id === Number(id));
         if (!todo) return;
 
-        async function show() {
-            await searchParams.update(
-                { target: null, id: null },
-                { replace: true, showProgress: false }
-            );
-            await editView.push(todo);
-        }
-
-        void show();
+        void editView.replace({
+            meta: todo,
+            search: { d: searchParams["d"] }
+        });
     });
 
     // svelte-ignore state_referenced_locally
@@ -157,7 +152,7 @@
                     <button
                         class="relative w-full min-w-0 text-start text-lg font-medium"
                         data-part="edit"
-                        onclick={() => editView.push(todo)}
+                        onclick={() => editView.push({ meta: todo })}
                     >
                         <span
                             class={[

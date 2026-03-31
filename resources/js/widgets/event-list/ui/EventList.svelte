@@ -29,15 +29,10 @@
         const event = events.find((t) => t.id === Number(id));
         if (!event) return;
 
-        async function show() {
-            await searchParams.update(
-                { target: null, id: null },
-                { replace: true, showProgress: false }
-            );
-            await editView.replace(event);
-        }
-
-        void show();
+        void editView.replace({
+            meta: event,
+            search: { d: searchParams["d"] }
+        });
     });
 </script>
 
@@ -55,7 +50,7 @@
         {:else}
             {#each events as event (id(event))}
                 <Event.Row
-                    onclick={() => editView.push(event)}
+                    onclick={() => editView.push({ meta: event })}
                     color={event.color}
                 >
                     {#snippet time()}
