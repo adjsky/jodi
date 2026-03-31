@@ -70,7 +70,8 @@
                 replace: true,
                 preserveScroll: true,
                 preserveState: true,
-                viewTransition: true
+                viewTransition: true,
+                only: ["todos", "events"]
             }))}
         onClose={() => view.back()}
     />
