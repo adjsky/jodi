@@ -5,7 +5,6 @@
     import { useSearchParams } from "$/shared/inertia/use-search-params.svelte";
     import { formatToHHMM } from "$/shared/lib/date";
     import { tw } from "$/shared/lib/styles";
-    import { watch } from "runed";
 
     import { id } from "../helpers/id";
     import { editView } from "../model/view";
@@ -21,23 +20,20 @@
 
     const searchParams = useSearchParams();
 
-    watch(
-        () => [searchParams["target"]],
-        () => {
-            if (searchParams["target"] !== "event") return;
+    $effect(() => {
+        if (searchParams["target"] !== "event") return;
 
-            const id = searchParams["id"];
-            if (!id || isNaN(Number(id))) return;
+        const id = searchParams["id"];
+        if (!id || isNaN(Number(id))) return;
 
-            const event = events.find((t) => t.id === Number(id));
-            if (!event) return;
+        const event = events.find((t) => t.id === Number(id));
+        if (!event) return;
 
-            void editView.replace({
-                meta: event,
-                search: { d: searchParams["d"] }
-            });
-        }
-    );
+        void editView.replace({
+            meta: event,
+            search: { d: searchParams["d"] }
+        });
+    });
 </script>
 
 <section {...rest} class={tw("px-4", rest.class)}>

@@ -10,7 +10,6 @@
     import { formatToHHMM } from "$/shared/lib/date";
     import { tw } from "$/shared/lib/styles";
     import { toaster } from "$/shared/lib/toaster";
-    import { watch } from "runed";
     import { dragHandle, dragHandleZone } from "svelte-dnd-action";
 
     import { useReorder } from "../api/reorder.svelte";
@@ -38,23 +37,20 @@
 
     const searchParams = useSearchParams();
 
-    watch(
-        () => [searchParams["target"]],
-        () => {
-            if (searchParams["target"] !== "todo") return;
+    $effect(() => {
+        if (searchParams["target"] !== "todo") return;
 
-            const id = searchParams["id"];
-            if (!id || isNaN(Number(id))) return;
+        const id = searchParams["id"];
+        if (!id || isNaN(Number(id))) return;
 
-            const todo = todos.find((t) => t.id === Number(id));
-            if (!todo) return;
+        const todo = todos.find((t) => t.id === Number(id));
+        if (!todo) return;
 
-            void editView.replace({
-                meta: todo,
-                search: { d: searchParams["d"] }
-            });
-        }
-    );
+        void editView.replace({
+            meta: todo,
+            search: { d: searchParams["d"] }
+        });
+    });
 
     // svelte-ignore state_referenced_locally
     let groups = $state(groupTodos(todos));
