@@ -15,6 +15,7 @@ use App\Models\User;
 use App\Support\Http\JodiRequest;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Validation\ValidationException;
+use Inertia\Inertia;
 
 class TwoFactorChallengeController extends Controller
 {
@@ -55,7 +56,9 @@ class TwoFactorChallengeController extends Controller
             );
 
             Auth::login($user, remember: true);
+
             $request->session()->regenerate();
+            Inertia::clearHistory();
 
             return redirect()->intended();
         } catch (NoUserException|InvalidOtpException) {

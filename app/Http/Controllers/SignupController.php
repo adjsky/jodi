@@ -9,6 +9,7 @@ use App\Models\User;
 use App\Support\Http\JodiRequest;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Inertia\Inertia;
 
 class SignupController extends Controller
 {
@@ -50,7 +51,9 @@ class SignupController extends Controller
         });
 
         Auth::login($user, remember: true);
+
         $request->session()->regenerate();
+        Inertia::clearHistory();
 
         return to_route('home');
     }
