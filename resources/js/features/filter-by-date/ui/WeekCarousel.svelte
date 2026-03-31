@@ -46,7 +46,8 @@
                         prefetch: "mount",
                         cacheFor: ["30s", "5m"],
                         href: `?d=${date.toString()}`,
-                        cacheTags: WEEK_CAROUSEL_CACHE_TAG
+                        cacheTags: WEEK_CAROUSEL_CACHE_TAG,
+                        only: ["todos", "events"]
                     }}
                     class="group flex flex-col items-center justify-between"
                     data-selected={boolAttr(compare == "selected")}
