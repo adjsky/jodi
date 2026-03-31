@@ -1,6 +1,7 @@
 <?php
 
 declare(strict_types=1);
+use App\Models\User;
 
 return [
 
@@ -64,7 +65,7 @@ return [
     'providers' => [
         'users' => [
             'driver' => 'eloquent',
-            'model' => env('AUTH_MODEL', App\Models\User::class),
+            'model' => env('AUTH_MODEL', User::class),
         ],
 
         // 'users' => [
@@ -92,7 +93,7 @@ return [
     '2fa' => [
         'session_key' => env('2FA_SESSION_KEY', '2fa'),
         'throttle' => [
-            'attempts' => (int) env('2FA_THROTTLE_ATTEMPTS', 3),
+            'attempts' => (int) env('2FA_THROTTLE_ATTEMPTS', 5),
             'decay_seconds' => (int) env('2FA_THROTTLE_DECAY_SECONDS', 300),
         ],
         'resend_otp_throttle' => (int) env('2FA_RESEND_OTP_THROTTLE', 60),
