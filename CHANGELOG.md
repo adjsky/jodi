@@ -1,5 +1,12 @@
 # Releases
 
+## 0.19.2 (2026-03-31)
+
+### Fix
+
+- prevent going back after logging in/signing up and after logging out (#104)
+- prefetch only todos and events (year calendar)
+
 ## 0.19.1 (2026-03-31)
 
 ### Fix
