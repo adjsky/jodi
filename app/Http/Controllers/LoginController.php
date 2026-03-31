@@ -10,6 +10,7 @@ use App\Domain\Auth\Services\OtpService;
 use App\Models\User;
 use App\Support\Http\JodiRequest;
 use Illuminate\Support\Facades\Auth;
+use Inertia\Inertia;
 
 class LoginController extends Controller
 {
@@ -51,6 +52,8 @@ class LoginController extends Controller
 
         $request->session()->invalidate();
         $request->session()->regenerateToken();
+
+        Inertia::clearHistory();
 
         return to_route('login');
     }

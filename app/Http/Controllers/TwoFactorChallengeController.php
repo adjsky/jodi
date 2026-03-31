@@ -57,8 +57,8 @@ class TwoFactorChallengeController extends Controller
 
             Auth::login($user, remember: true);
 
-            Inertia::clearHistory();
             $request->session()->regenerate();
+            Inertia::clearHistory();
 
             return redirect()->intended();
         } catch (NoUserException|InvalidOtpException) {

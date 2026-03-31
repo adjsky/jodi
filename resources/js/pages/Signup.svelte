@@ -1,5 +1,5 @@
 <script lang="ts">
-    import { Form, router } from "@inertiajs/svelte";
+    import { Form } from "@inertiajs/svelte";
     import { AtSign } from "@lucide/svelte";
     import Intro from "$/app/ui/auth/Intro.svelte";
     import AuthLayout from "$/app/ui/layouts/AuthLayout.svelte";
@@ -26,7 +26,6 @@
         </Intro>
         <Form
             action={signup(code)}
-            onSuccess={() => router.clearHistory()}
             class="mt-13 space-y-4"
             let:processing
             let:errors

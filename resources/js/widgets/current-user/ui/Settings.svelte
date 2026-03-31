@@ -1,5 +1,5 @@
 <script lang="ts">
-    import { page, progress, router } from "@inertiajs/svelte";
+    import { page, progress } from "@inertiajs/svelte";
     import { Bell } from "@lucide/svelte";
     import { User } from "$/entities/user";
     import { logout } from "$/generated/routes";
@@ -143,7 +143,6 @@
                     progress.remove();
                 }}
                 onSuccess={() => {
-                    router.clearHistory();
                     progress.finish();
                 }}
                 showProgress={false}
