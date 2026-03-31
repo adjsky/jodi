@@ -35,10 +35,6 @@ class TodoReminder extends Notification implements ShouldQueue
         $startsIn = Helpers::startsIn($scheduledAt);
         $timezone = $user->preferences['timezone'];
 
-        $data = [
-
-        ];
-
         return new FcmMessage(notification: new FcmNotification(
             title: __(':title - time to start.', ['title' => $this->model->title]),
             body: __('Scheduled for :time.', ['time' => $startsIn]),
