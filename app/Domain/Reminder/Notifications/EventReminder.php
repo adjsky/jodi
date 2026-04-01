@@ -46,8 +46,13 @@ class EventReminder extends Notification implements ShouldQueue
                 'id' => (string) $this->model->id,
             ])
             ->custom([
-                'fcm_options' => [
-                    'link' => url('/'),
+                'webpush' => [
+                    'fcm_options' => [
+                        'link' => url('/'),
+                    ],
+                ],
+                'android' => [
+                    'priority' => 'high',
                 ],
             ]);
     }

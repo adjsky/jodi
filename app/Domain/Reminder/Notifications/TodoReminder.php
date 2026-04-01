@@ -51,7 +51,9 @@ class TodoReminder extends Notification implements ShouldQueue
                         'link' => url('/'),
                     ],
                 ],
-
+                'android' => [
+                    'priority' => 'high',
+                ],
             ]);
     }
 
