@@ -163,6 +163,11 @@
             display: none !important;
         }
     }
+
+    [data-scope="dialog"][data-part="content"][data-state="closed"],
+    [data-scope="dialog"][data-part="backdrop"][data-state="closed"] {
+        pointer-events: none;
+    }
 }
 
 @layer components {
