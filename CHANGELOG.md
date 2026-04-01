@@ -1,5 +1,11 @@
 # Releases
 
+## 0.19.5 (2026-04-01)
+
+### Fix
+
+- disable sheet/modals while closing (#109)
+
 ## 0.19.4 (2026-04-01)
 
 ### Fix
