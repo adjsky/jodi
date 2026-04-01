@@ -67,8 +67,10 @@
             new RRule({
                 freq,
                 interval: Number(interval),
-                byweekday,
-                ...(limit == "until" && { until }),
+                ...(freq == Frequency.WEEKLY && { byweekday }),
+                ...(limit == "until" && {
+                    until: new Date(until.setHours(23, 59, 59))
+                }),
                 ...(limit == "count" && { count: Number(count) })
             }).toString()
         );
