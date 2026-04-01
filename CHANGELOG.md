@@ -1,5 +1,11 @@
 # Releases
 
+## 0.19.6 (2026-04-01)
+
+### Fix
+
+- fcm push slow delivery (#110)
+
 ## 0.19.5 (2026-04-01)
 
 ### Fix
