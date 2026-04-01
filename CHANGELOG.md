@@ -1,5 +1,11 @@
 # Releases
 
+## 0.19.4 (2026-04-01)
+
+### Fix
+
+- send byweekday only with freq=weekly and until with time set to the end of the day (#108)
+
 ## 0.19.3 (2026-03-31)
 
 ### Fix
