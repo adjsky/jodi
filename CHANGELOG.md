@@ -1,5 +1,11 @@
 # Releases
 
+## 0.19.8 (2026-04-02)
+
+### Fix
+
+- autohide on app launch (#111)
+
 ## 0.19.7 (2026-04-02)
 
 ### Fix
