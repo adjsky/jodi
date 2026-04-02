@@ -1,5 +1,11 @@
 # Releases
 
+## 0.19.7 (2026-04-02)
+
+### Fix
+
+- decrease nprogress delay
+
 ## 0.19.6 (2026-04-01)
 
 ### Fix
