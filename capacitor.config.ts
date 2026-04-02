@@ -1,3 +1,5 @@
+/// <reference types="@capacitor/splash-screen" />
+
 import dotenv from "dotenv";
 
 import type { CapacitorConfig } from "@capacitor/cli";
@@ -15,6 +17,9 @@ const config: CapacitorConfig = {
     plugins: {
         SystemBars: {
             style: "LIGHT"
+        },
+        SplashScreen: {
+            launchAutoHide: false
         }
     }
 };

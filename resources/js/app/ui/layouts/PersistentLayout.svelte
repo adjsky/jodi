@@ -1,5 +1,6 @@
 <script lang="ts">
     import { Device } from "@capacitor/device";
+    import { SplashScreen } from "@capacitor/splash-screen";
     import { page } from "@inertiajs/svelte";
     import { DEVICE_ID_COOKIE } from "$/shared/cfg/constants";
     import { useFlashToaster } from "$/shared/inertia/use-flash-toaster.svelte";
@@ -14,6 +15,10 @@
     import type { Snippet } from "svelte";
 
     const { children }: { children: Snippet } = $props();
+
+    onMount(() => {
+        void SplashScreen.hide();
+    });
 
     onMount(() => {
         initializeApp(get(page).props.config.firebase);
