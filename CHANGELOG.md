@@ -1,5 +1,11 @@
 # Releases
 
+## 0.19.10 (2026-04-03)
+
+### Fix
+
+- move matchers to a site block
+
 ## 0.19.9 (2026-04-03)
 
 ### Fix
