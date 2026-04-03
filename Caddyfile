@@ -1,3 +1,7 @@
+@vite_assets {
+	path /build/assets/*
+}
+
 {
 	skip_install_trust
 
@@ -12,6 +16,7 @@
 	root public/
 
 	header /build/sw.js Service-Worker-Allowed "/"
+	header @vite_assets Cache-Control "public, max-age=31536000, immutable"
 
 	encode zstd br gzip
 
