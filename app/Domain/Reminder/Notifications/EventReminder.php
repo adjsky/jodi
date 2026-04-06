@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 namespace App\Domain\Reminder\Notifications;
 
-use App\Domain\Reminder\Support\Helpers;
+use App\Domain\Reminder\Support\Carbon\CalendarFormatter;
 use App\Models\Event;
 use App\Models\User;
-use Carbon\CarbonImmutable;
+use Carbon\Carbon;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\MailMessage;
@@ -31,18 +31,16 @@ class EventReminder extends Notification implements ShouldQueue
 
     public function toFcm(User $user): FcmMessage
     {
-        $startsAt = $this->startsAt();
-        $startsIn = Helpers::startsIn($startsAt);
-        $timezone = $user->preferences['timezone'];
+        $startsAt = $this->startsAt($user->preferences['timezone']);
 
         return new FcmMessage(notification: new FcmNotification(
-            title: __(':title is upcoming.', ['title' => $this->model->title]),
-            body: __('Starts :time.', ['time' => $startsIn]),
+            title: $this->model->title,
+            body: CalendarFormatter::format($startsAt),
         ))
             ->data([
                 'purpose' => 'reminder',
                 'target' => 'event',
-                'd' => $startsAt->timezone($timezone)->toDateString(),
+                'd' => $startsAt->toDateString(),
                 'id' => (string) $this->model->id,
             ])
             ->custom([
@@ -57,16 +55,16 @@ class EventReminder extends Notification implements ShouldQueue
             ]);
     }
 
-    public function toMail(): MailMessage
+    public function toMail(User $user): MailMessage
     {
-        $startsIn = Helpers::startsIn($this->startsAt());
+        $startsAt = $this->startsAt($user->preferences['timezone']);
 
         return (new MailMessage)
-            ->subject(__('mail.event_reminder.subject', ['title' => $this->model->title, 'startsIn' => $startsIn]))
-            ->markdown('mail.event-reminder', ['event' => $this->model]);
+            ->subject(__('mail.event_reminder.subject', ['title' => $this->model->title]))
+            ->markdown('mail.event-reminder', ['event' => $this->model, 'time' => mb_lcfirst(CalendarFormatter::format($startsAt))]);
     }
 
-    private function startsAt(): CarbonImmutable
+    private function startsAt(string $timezone): Carbon
     {
         $startsAt = $this->model->starts_at->copy();
 
@@ -74,6 +72,6 @@ class EventReminder extends Notification implements ShouldQueue
             $startsAt->setDateFrom($this->occursAt);
         }
 
-        return $startsAt->toImmutable();
+        return $startsAt->timezone($timezone);
     }
 }

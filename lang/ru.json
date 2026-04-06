@@ -1,8 +1,6 @@
 {
     "(and :count more error)": "(и ещё :count ошибка)",
     "(and :count more errors)": "(и ещё :count ошибка)|(и ещё :count ошибки)|(и ещё :count ошибок)",
-    ":title - time to start.": ":title - пора приступать.",
-    ":title is upcoming.": ":title скоро начнется.",
     "A decryption key is required.": "Ключ дешифровки обязателен.",
     "A Timeout Occurred": "Истекло время ожидания",
     "Accept": "Принять",
@@ -188,7 +186,6 @@
     "Solve": "Решить",
     "SSL Handshake Failed": "Квитирование SSL не удалось",
     "Start": "Начать",
-    "Starts :time.": "Начинается :time.",
     "Stop": "Остановить",
     "Submit": "Отправить",
     "Subscribe": "Подписаться",

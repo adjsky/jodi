@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 namespace App\Domain\Reminder\Notifications;
 
-use App\Domain\Reminder\Support\Helpers;
+use App\Domain\Reminder\Support\Carbon\CalendarFormatter;
 use App\Models\Todo;
 use App\Models\User;
-use Carbon\CarbonImmutable;
+use Carbon\Carbon;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\MailMessage;
@@ -31,18 +31,16 @@ class TodoReminder extends Notification implements ShouldQueue
 
     public function toFcm(User $user): FcmMessage
     {
-        $scheduledAt = $this->scheduledAt();
-        $startsIn = Helpers::startsIn($scheduledAt);
-        $timezone = $user->preferences['timezone'];
+        $scheduledAt = $this->scheduledAt($user->preferences['timezone']);
 
         return new FcmMessage(notification: new FcmNotification(
-            title: __(':title - time to start.', ['title' => $this->model->title]),
-            body: __('Scheduled for :time.', ['time' => $startsIn]),
+            title: $this->model->title,
+            body: CalendarFormatter::format($scheduledAt),
         ))
             ->data([
                 'purpose' => 'reminder',
                 'target' => 'todo',
-                'd' => $scheduledAt->timezone($timezone)->toDateString(),
+                'd' => $scheduledAt->toDateString(),
                 'id' => (string) $this->model->id,
             ])
             ->custom([
@@ -57,16 +55,16 @@ class TodoReminder extends Notification implements ShouldQueue
             ]);
     }
 
-    public function toMail(): MailMessage
+    public function toMail(User $user): MailMessage
     {
-        $startsIn = Helpers::startsIn($this->scheduledAt());
+        $scheduledAt = $this->scheduledAt($user->preferences['timezone']);
 
         return (new MailMessage)
-            ->subject(__('mail.todo_reminder.subject', ['title' => $this->model->title, 'startsIn' => $startsIn]))
-            ->markdown('mail.todo-reminder', ['todo' => $this->model, 'startsIn' => $startsIn]);
+            ->subject(__('mail.todo_reminder.subject', ['title' => $this->model->title]))
+            ->markdown('mail.todo-reminder', ['todo' => $this->model, 'time' => mb_lcfirst(CalendarFormatter::format($scheduledAt))]);
     }
 
-    private function scheduledAt(): CarbonImmutable
+    private function scheduledAt(string $timezone): Carbon
     {
         $scheduledAt = $this->model->scheduled_at->copy();
 
@@ -74,6 +72,6 @@ class TodoReminder extends Notification implements ShouldQueue
             $scheduledAt->setDateFrom($this->occursAt);
         }
 
-        return $scheduledAt->toImmutable();
+        return $scheduledAt->timezone($timezone);
     }
 }
