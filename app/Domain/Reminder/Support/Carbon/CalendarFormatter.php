@@ -10,7 +10,8 @@ class CalendarFormatter
 {
     public static function format(CarbonInterface $datetime): string
     {
-        $trans = require __DIR__.sprintf('/Lang/%s.php', $datetime->locale);
+        $file = __DIR__."/Lang/{$datetime->locale}.php";
+        $trans = require file_exists($file) ? $file : __DIR__.'/Lang/en.php';
 
         return $datetime->calendar(formats: $trans['calendar']);
     }

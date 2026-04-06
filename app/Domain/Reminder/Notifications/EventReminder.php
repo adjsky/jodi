@@ -58,10 +58,11 @@ class EventReminder extends Notification implements ShouldQueue
     public function toMail(User $user): MailMessage
     {
         $startsAt = $this->startsAt($user->preferences['timezone']);
+        $time = mb_lcfirst(CalendarFormatter::format($startsAt));
 
         return (new MailMessage)
-            ->subject(__('mail.event_reminder.subject', ['title' => $this->model->title]))
-            ->markdown('mail.event-reminder', ['event' => $this->model, 'time' => mb_lcfirst(CalendarFormatter::format($startsAt))]);
+            ->subject(__('mail.event_reminder.subject', ['title' => $this->model->title, 'time' => $time]))
+            ->markdown('mail.event-reminder', ['event' => $this->model, 'time' => $time]);
     }
 
     private function startsAt(string $timezone): Carbon

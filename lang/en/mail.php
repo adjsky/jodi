@@ -26,7 +26,7 @@ return [
         ],
     ],
     'event_reminder' => [
-        'subject' => ':title starts :startsIn',
+        'subject' => ':title starts :time',
         'paragraphs' => [
             'reminder' => 'This is a reminder about **:title**, starting **:time**.',
         ],
