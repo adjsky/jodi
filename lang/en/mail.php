@@ -26,15 +26,15 @@ return [
         ],
     ],
     'event_reminder' => [
-        'subject' => ':title starts :startsIn',
+        'subject' => ':title starts :time',
         'paragraphs' => [
-            'reminder' => 'This is a reminder that **:title** is scheduled for **:date**.',
+            'reminder' => 'This is a reminder about **:title**, starting **:time**.',
         ],
     ],
     'todo_reminder' => [
-        'subject' => ':title - time to start',
+        'subject' => ':title — time to start',
         'paragraphs' => [
-            'reminder' => 'This is a reminder that it is time to start the task **:date**.',
+            'reminder' => 'This is a reminder that it\'s time to start **:title** — **:time**.',
         ],
     ],
 ];

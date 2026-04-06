@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 use App\Domain\Auth\Mail;
 use App\Domain\Auth\Notifications as AuthNotifications;
-use App\Domain\Event\Notifications as EventNotifications;
+use App\Domain\Reminder\Notifications as ReminderNotications;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\CurrentUserController;
 use App\Http\Controllers\DaySummaryController;
@@ -19,6 +19,7 @@ use App\Http\Controllers\SignupController;
 use App\Http\Controllers\TodoController;
 use App\Http\Controllers\TwoFactorChallengeController;
 use App\Models\Event;
+use App\Models\Todo;
 use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Route;
@@ -112,21 +113,40 @@ Route::middleware('auth')->group(function () {
 });
 
 if (app()->isLocal()) {
+    $user = new User([
+        'email' => 'kirill.t@tuta.io',
+        'name' => 'Kirill T.',
+        'preferences' => [
+            'timezone' => 'Europe/Moscow',
+        ],
+    ]);
+
     Route::get(
         '/mail/otp',
         fn () => new AuthNotifications\OneTimeLoginCode('042712')->toMail()
     );
+
     Route::get(
         '/mail/invite-to-jodi',
         fn () => new Mail\InviteToJodi(
-            new User(['email' => 'kirill.t@tuta.io', 'name' => 'Kirill T.']),
+            $user,
             'http://example.com'
         )
     );
+
     Route::get(
         '/mail/event-reminder',
-        fn () => new EventNotifications\EventReminder(
-            new Event(['title' => 'Take pills', 'starts_at' => Carbon::now()->addHours(3)])
-        )->toMail()
+        fn () => new ReminderNotications\EventReminder(
+            new Event(['title' => 'Take pills', 'starts_at' => Carbon::now()->addHours(3)]),
+            null
+        )->toMail($user)
+    );
+
+    Route::get(
+        '/mail/todo-reminder',
+        fn () => new ReminderNotications\TodoReminder(
+            new Todo(['title' => 'Take pills', 'scheduled_at' => Carbon::now()->addHours(3)]),
+            null
+        )->toMail($user)
     );
 }

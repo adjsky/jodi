@@ -26,15 +26,15 @@ return [
         ],
     ],
     'event_reminder' => [
-        'subject' => ':title начинается :startsIn',
+        'subject' => '«:title» начинается :startsIn',
         'paragraphs' => [
-            'reminder' => 'Напоминаем, что **:date** начнется событие **:title**.',
+            'reminder' => 'Напоминаем, что **:time** начнётся событие «**:title**».',
         ],
     ],
     'todo_reminder' => [
-        'subject' => ':title - пора приступать',
+        'subject' => '«:title» - пора приступать',
         'paragraphs' => [
-            'reminder' => 'Напоминаем, что пора приступать к задаче **:date**.',
+            'reminder' => 'Напоминаем, что **:time** пора приступать к задаче «**:title**».',
         ],
     ],
 ];
