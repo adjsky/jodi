@@ -104,7 +104,8 @@ trait HasRecurrence
                         continue;
                     }
 
-                    $model->setAttribute($key, $date->setTimeFrom($attribute));
+                    $offset = $dtstart->diffInDays($attribute);
+                    $model->setAttribute($key, $date->copy()->addDays($offset)->setTimeFrom($attribute));
                 }
 
                 if ($exception) {
@@ -154,10 +155,9 @@ trait HasRecurrence
     {
         $overrides = [];
         $dateKeys = $this->listDateAttributes();
+        $dtstart = $this->getAttribute($this->rkstart());
 
         foreach ($attributes as $key => $value) {
-            $current = $exception?->overrides[$key] ?? $this->getAttribute($key);
-
             if (in_array($key, $dateKeys)) {
                 $attribute = $this->getAttribute($key);
 
@@ -167,14 +167,19 @@ trait HasRecurrence
                     continue;
                 }
 
-                $currentDate = Carbon::parse(
-                    $exception?->overrides[$key] ?? $attribute->copy()->setDateFrom($occursAt)
-                );
+                $offset = $dtstart->diffInDays($attribute);
+                $excOverrides = $exception->overrides ?? [];
 
-                if ($currentDate->ne($value)) {
+                $current = array_key_exists($key, $excOverrides)
+                    ? Carbon::parse($excOverrides[$key])
+                    : Carbon::parse($occursAt)->addDays($offset)->setTimeFrom($attribute);
+
+                if ($current->ne($value)) {
                     $overrides[$key] = $value;
                 }
             } else {
+                $current = $exception?->overrides[$key] ?? $this->getAttribute($key);
+
                 if ($current !== $value) {
                     $overrides[$key] = $value;
                 }
