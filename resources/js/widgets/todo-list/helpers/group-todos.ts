@@ -1,10 +1,12 @@
 import { UNGROUPED_KEY } from "../cfg/constants";
 
-export function groupTodos(todos: App.Data.TodoDto[]) {
-    const groups: Record<string, App.Data.TodoDto[]> = {};
+import type { TodoData } from "$/entities/todo";
+
+export function groupTodos(todos: TodoData[]) {
+    const groups: Record<string, TodoData[]> = {};
 
     for (const todo of todos) {
-        const group = todo.category || UNGROUPED_KEY;
+        const group = todo.category?.name || UNGROUPED_KEY;
 
         if (!groups[group]) {
             groups[group] = [];

@@ -1,7 +1,7 @@
 <script lang="ts">
     import { Form, progress } from "@inertiajs/svelte";
     import { ChevronRight, Mail } from "@lucide/svelte";
-    import { invite } from "$/generated/actions/App/Http/Controllers/RegistrationInvitationController";
+    import CreateRegistrationInvitation from "$/generated/actions/App/Domain/Identity/Actions/CreateRegistrationInvitation";
     import { m } from "$/paraglide/messages";
     import Dino from "$/shared/assets/dino.svg";
     import SadCat from "$/shared/assets/sad-cat.svg";
@@ -16,6 +16,8 @@
     import { buildViewName, view } from "../model/view";
     import { back } from "./Back.svelte";
     import Invitation from "./Invitation.svelte";
+
+    import type { RegistrationInvitationData } from "$/entities/user/model/types";
 
     let inviteInput = $state<HTMLInputElement | null>(null);
 
@@ -91,7 +93,7 @@
 {#if view.isOpen(buildViewName("invitations", "add"))}
     <FloatingView {back} title={m["current-user.invitations.invite"]()}>
         <Form
-            action={invite()}
+            action={CreateRegistrationInvitation()}
             class="flex grow flex-col justify-between py-5"
             options={{
                 replace: true,
@@ -143,7 +145,7 @@
     />
 {/if}
 
-{#snippet row(invitation?: App.Data.RegistrationInvitationDto)}
+{#snippet row(invitation?: RegistrationInvitationData)}
     <button
         onclick={() => {
             if (!invitation) {

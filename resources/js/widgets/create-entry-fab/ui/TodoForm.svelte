@@ -10,7 +10,7 @@
     import { Color } from "$/features/select-color";
     import { Recurrence } from "$/features/select-recurrence";
     import Reminder from "$/features/select-reminder/ui/Reminder.svelte";
-    import { create } from "$/generated/actions/App/Http/Controllers/TodoController";
+    import CreateTodo from "$/generated/actions/App/Domain/Todo/Actions/CreateTodo";
     import { m } from "$/paraglide/messages";
     import { NOTIFICATION_DEFAULT_SUBHOURS } from "$/shared/cfg/constants";
     import { normalizeIsoString, timediff } from "$/shared/lib/date";
@@ -33,7 +33,7 @@
 </script>
 
 <Form
-    action={create()}
+    action={CreateTodo()}
     options={{
         only: ["todos", "categories"],
         preserveState: true,
@@ -77,7 +77,7 @@
             <SaveOrClose variant="save" disabled={processing} />
         {/snippet}
         {#snippet category()}
-            <Category name="category" current={null} />
+            <Category name="categoryId" current={null} />
         {/snippet}
         {#snippet time()}
             <TodoTime

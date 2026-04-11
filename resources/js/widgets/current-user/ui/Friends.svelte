@@ -11,6 +11,8 @@
     import { fetchFriends } from "../api/friends";
     import { back } from "./Back.svelte";
 
+    import type { FriendData } from "$/entities/user/model/types";
+
     const friendsResource = resource(() => [], fetchFriends);
 </script>
 
@@ -70,7 +72,7 @@
     </div>
 </FloatingView>
 
-{#snippet row(friend?: App.Data.FriendDto)}
+{#snippet row(friend?: FriendData)}
     <div
         class="border-gray-950 flex items-center gap-3 rounded-xl border bg-white px-4 py-3"
     >

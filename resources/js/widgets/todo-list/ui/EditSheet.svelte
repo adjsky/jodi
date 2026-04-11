@@ -3,9 +3,11 @@
 
     import EditForm from "./EditForm.svelte";
 
+    import type { TodoData } from "$/entities/todo";
+
     type Props = {
         open: boolean;
-        todo: App.Data.TodoDto | null;
+        todo: TodoData | null;
     };
 
     let { open = $bindable(), todo }: Props = $props();

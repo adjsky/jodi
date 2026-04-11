@@ -1,8 +1,9 @@
-import { get } from "$/generated/actions/App/Http/Controllers/DaySummaryController";
+import GetDaySummary from "$/generated/actions/App/Domain/Event/Actions/GetDaySummary";
 import { useDebounce } from "runed";
 import { SvelteMap } from "svelte/reactivity";
 
 import type { DateValue } from "@internationalized/date";
+import type { DaySummaryData } from "$/entities/event/model/types";
 
 type Options = {
     onError?: VoidFunction;
@@ -20,10 +21,7 @@ export function useDaySummary(options?: Options) {
     let pendingRequests: PendingRequests | null = null;
     let abortController: AbortController | null = null;
 
-    const cache = new SvelteMap<
-        number,
-        SvelteMap<string, App.Data.DaySummaryDto>
-    >();
+    const cache = new SvelteMap<number, SvelteMap<string, DaySummaryData>>();
 
     function request(date: DateValue) {
         if (pendingRequests && pendingRequests.year == date.year) {
@@ -42,7 +40,7 @@ export function useDaySummary(options?: Options) {
         abortController = new AbortController();
 
         try {
-            const { url, method } = get(
+            const { url, method } = GetDaySummary(
                 { year: requests.year },
                 { query: { m: [...requests.months].join(",") } }
             );
@@ -53,7 +51,7 @@ export function useDaySummary(options?: Options) {
             });
             const json = (await response.json()) as Record<
                 string,
-                App.Data.DaySummaryDto
+                DaySummaryData
             >;
 
             const yearCache = cache.get(requests.year);

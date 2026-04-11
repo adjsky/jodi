@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Database\Factories;
 
-use App\Models\User;
+use App\Domain\Identity\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Support\Str;
 
@@ -24,9 +24,8 @@ class UserFactory extends Factory
             'name' => fake()->name(),
             'email' => fake()->unique()->safeEmail(),
             'preferences' => [
-                'locale' => 'en',
-                'timezone' => 'UTC',
                 ...config('jodi.preferences'),
+                'locale' => 'en',
             ],
             'remember_token' => Str::random(10),
         ];

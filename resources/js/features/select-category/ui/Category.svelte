@@ -14,18 +14,27 @@
     import Categories from "./Categories.svelte";
     import DeleteCategory from "./DeleteCategory.svelte";
 
+    import type { CategoryData } from "$/entities/todo";
+
     type Props = {
         name: string;
-        current: string | null;
+        current: CategoryData | null;
     };
 
     let { name, current }: Props = $props();
 
     const filters = useFilter({ sensitivity: "base" });
+
     const { collection, filter, set } = useListCollection({
-        initialItems: [] as string[],
+        initialItems: [] as { id: number; name: string }[],
         filter(itemString, filterText) {
             return filters().contains(itemString, filterText);
+        },
+        itemToString({ name }) {
+            return name;
+        },
+        itemToValue({ name }) {
+            return name;
         }
     });
 
@@ -35,8 +44,8 @@
 
     let showAddButton = $derived(search != "" && !collection().has(search));
 
-    async function onSelect(name: string | null) {
-        selected = name;
+    async function onSelect(category: CategoryData | null) {
+        selected = category;
         await tick();
         announce(formInput);
     }
@@ -51,7 +60,7 @@
     });
 </script>
 
-<input bind:this={formInput} type="text" value={selected} {name} hidden />
+<input bind:this={formInput} type="number" value={selected?.id} {name} hidden />
 
 <SheetDialog
     bind:open={
@@ -89,7 +98,7 @@
         >
             {#if selected}
                 <Tag class="inline text-sm" />
-                {selected}
+                {selected.name}
             {:else}
                 {m["todos.category.trigger"]()}
             {/if}
@@ -97,8 +106,8 @@
     {/snippet}
 
     <DeleteCategory
-        onDelete={(name) => {
-            if (name == selected) {
+        onDelete={(id) => {
+            if (selected?.id == id) {
                 void onSelect(null);
             }
         }}
@@ -130,8 +139,8 @@
         {#if showAddButton}
             <AddCategory
                 name={search}
-                onAdd={async () => {
-                    void onSelect(search);
+                onAdd={async (id) => {
+                    void onSelect({ id, name: search });
                     search = "";
                 }}
             />
@@ -157,10 +166,10 @@
         {/if}
 
         <Categories
-            {selected}
             list={collection().items}
-            onSelect={(name) => {
-                void onSelect(name);
+            selectedId={selected?.id ?? null}
+            onSelect={(category) => {
+                void onSelect(category);
             }}
         />
     </div>

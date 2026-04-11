@@ -2,7 +2,7 @@
     import { page, progress } from "@inertiajs/svelte";
     import { Bell } from "@lucide/svelte";
     import { User } from "$/entities/user";
-    import { logout } from "$/generated/routes";
+    import LogoutUser from "$/generated/actions/App/Domain/Identity/Actions/LogoutUser";
     import { m } from "$/paraglide/messages";
     import { getLocale } from "$/paraglide/runtime";
     import { LANGUAGES } from "$/shared/lib/language";
@@ -133,7 +133,7 @@
 
         <User.Info.Block class="mt-10">
             <User.Info.ActionRow
-                href={logout()}
+                href={LogoutUser()}
                 onBefore={async () => {
                     progress.reveal(true);
                     progress.start();

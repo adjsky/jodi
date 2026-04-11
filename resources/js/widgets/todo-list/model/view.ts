@@ -1,3 +1,5 @@
 import { HistoryView } from "$/shared/inertia/history-view.svelte";
 
-export const editView = new HistoryView<App.Data.TodoDto>("edit-todo");
+import type { TodoData } from "$/entities/todo";
+
+export const editView = new HistoryView<TodoData>("edit-todo");

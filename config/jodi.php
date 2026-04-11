@@ -22,6 +22,7 @@ return [
     */
 
     'preferences' => [
+        'timezone' => env('PREFERENCES_TIMEZONE', 'UTC'),
         'weekStartOn' => env('PREFERENCES_WEEK_START_ON', 'monday'),
         'notifications' => env('PREFERENCES_NOTIFICATIONS', 'push'),
     ],

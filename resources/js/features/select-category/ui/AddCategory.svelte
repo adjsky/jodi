@@ -1,27 +1,27 @@
 <script lang="ts">
     import { Form } from "@inertiajs/svelte";
     import { Plus } from "@lucide/svelte";
-    import { create } from "$/generated/actions/App/Http/Controllers/CategoryController";
+    import CreateCategory from "$/generated/actions/App/Domain/Todo/Actions/CreateCategory";
     import { m } from "$/paraglide/messages";
 
     type Props = {
         name: string;
-        onAdd?: VoidFunction;
+        onAdd?: (id: number) => void;
     };
 
     const { name, onAdd }: Props = $props();
 </script>
 
 <Form
-    action={create()}
+    action={CreateCategory()}
     options={{
-        only: ["categories"],
+        only: ["flash", "categories"],
         preserveState: true,
         preserveScroll: true,
         preserveUrl: true,
         replace: true
     }}
-    onSuccess={() => onAdd?.()}
+    onSuccess={(page) => onAdd?.(page.props.flash.id)}
     let:processing
 >
     <input hidden name="name" value={name} />

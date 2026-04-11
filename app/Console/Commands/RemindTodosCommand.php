@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace App\Console\Commands;
 
 use App\Domain\Reminder\Notifications\TodoReminder;
-use App\Models\Todo;
+use App\Domain\Todo\Models\Todo;
 use Illuminate\Console\Command;
 
 class RemindTodosCommand extends Command

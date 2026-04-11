@@ -1,6 +1,6 @@
 <script lang="ts">
     import { router } from "@inertiajs/svelte";
-    import { destroy } from "$/generated/actions/App/Http/Controllers/CategoryController";
+    import DestroyCategory from "$/generated/actions/App/Domain/Todo/Actions/DestroyCategory";
     import { m } from "$/paraglide/messages";
     import { optimistic } from "$/shared/inertia/visit/optimistic";
     import { raise } from "$/shared/lib/exceptions";
@@ -8,13 +8,15 @@
 
     import { view } from "../model/view";
 
+    import type { CategoryData, TodoData } from "$/entities/todo";
+
     type Props = {
-        onDelete?: (name: string) => void;
+        onDelete?: (id: number) => void;
     };
 
     const { onDelete }: Props = $props();
 
-    let bufferedCategory = $state<string | null>(null);
+    let bufferedCategory = $state<CategoryData | null>(null);
 
     $effect(() => {
         const category = view.meta?.__categorytodelete;
@@ -34,7 +36,7 @@
         }
     }
     title={m["todos.category.confirm-delete"]({
-        category: bufferedCategory ?? ""
+        category: bufferedCategory?.name ?? ""
     })}
     onConfirm={async () => {
         const category = view.meta?.__categorytodelete ?? bufferedCategory;
@@ -43,21 +45,22 @@
             raise("Can't delete when no category is marked for deletion.");
         }
 
-        void router.visit(destroy(category), {
+        void router.visit(DestroyCategory(category.id), {
             ...optimistic(
                 (prev) => ({
-                    todos: prev.todos.map((t: App.Data.TodoDto) => ({
+                    todos: prev.todos.map((t: TodoData) => ({
                         ...t,
-                        category: t.category == category ? null : t.category
+                        category:
+                            t.category?.id == category.id ? null : t.category
                     })),
                     categories: prev.categories.filter(
-                        (c: string) => c != category
+                        (c: CategoryData) => c.id != category.id
                     )
                 }),
                 {
                     error: m["todos.errors.category"](),
                     onSuccess() {
-                        onDelete?.(category);
+                        onDelete?.(category.id);
                     }
                 }
             ),

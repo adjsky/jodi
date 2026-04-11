@@ -3,9 +3,11 @@
 
     import EditForm from "./EditForm.svelte";
 
+    import type { EventData } from "$/entities/event/model/types";
+
     type Props = {
         open: boolean;
-        event: App.Data.EventDto | null;
+        event: EventData | null;
     };
 
     let { open = $bindable(), event }: Props = $props();

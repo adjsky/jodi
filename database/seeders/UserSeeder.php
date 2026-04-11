@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace Database\Seeders;
 
-use App\Models\Category;
-use App\Models\Todo;
-use App\Models\User;
+use App\Domain\Identity\Models\User;
+use App\Domain\Todo\Models\Category;
+use App\Domain\Todo\Models\Todo;
 use Illuminate\Database\Seeder;
 
 class UserSeeder extends Seeder

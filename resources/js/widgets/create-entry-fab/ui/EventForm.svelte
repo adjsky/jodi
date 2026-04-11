@@ -8,7 +8,7 @@
     import { Color } from "$/features/select-color";
     import { Recurrence } from "$/features/select-recurrence";
     import { Reminder } from "$/features/select-reminder";
-    import { create } from "$/generated/actions/App/Http/Controllers/EventController";
+    import CreateEvent from "$/generated/actions/App/Domain/Event/Actions/CreateEvent";
     import { m } from "$/paraglide/messages";
     import { NOTIFICATION_DEFAULT_SUBHOURS } from "$/shared/cfg/constants";
     import { timediff } from "$/shared/lib/date";
@@ -35,7 +35,7 @@
 </script>
 
 <Form
-    action={create()}
+    action={CreateEvent()}
     options={{
         only: ["events"],
         preserveState: true,

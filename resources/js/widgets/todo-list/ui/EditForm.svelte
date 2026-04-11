@@ -15,11 +15,9 @@
     import { Color } from "$/features/select-color";
     import { Recurrence } from "$/features/select-recurrence";
     import { Reminder } from "$/features/select-reminder";
-    import {
-        destroy as _destroy,
-        complete,
-        update
-    } from "$/generated/actions/App/Http/Controllers/TodoController";
+    import CompleteTodo from "$/generated/actions/App/Domain/Todo/Actions/CompleteTodo";
+    import DestroyTodo from "$/generated/actions/App/Domain/Todo/Actions/DestroyTodo";
+    import UpdateTodo from "$/generated/actions/App/Domain/Todo/Actions/UpdateTodo";
     import { m } from "$/paraglide/messages";
     import { NOTIFICATION_DEFAULT_SUBHOURS } from "$/shared/cfg/constants";
     import { normalizeIsoString, timediff } from "$/shared/lib/date";
@@ -31,10 +29,11 @@
 
     import { optimistic, visitOptions } from "../cfg/inertia";
 
+    import type { TodoData } from "$/entities/todo";
     import type { Scope } from "$/shared/lib/types";
 
     type Props = {
-        todo: App.Data.TodoDto | null;
+        todo: TodoData | null;
         onClose?: VoidFunction;
     };
 
@@ -44,7 +43,7 @@
     let lastKnownTodo = $state(untrack(() => props.todo));
     let scope: Scope = $state("this");
 
-    let todo = $derived(props.todo ?? (lastKnownTodo as App.Data.TodoDto));
+    let todo = $derived(props.todo ?? (lastKnownTodo as TodoData));
 
     const draft = $state(
         untrack(() => ({
@@ -71,7 +70,7 @@
 
 <Form
     {...optimistic.edit(todo, draft.notifyAt != null)}
-    action={update(todo.id, {
+    action={UpdateTodo(todo.id, {
         query: { scope: isRRuleDirty ? "all" : scope }
     })}
     options={visitOptions}
@@ -129,13 +128,13 @@
             />
         {/snippet}
         {#snippet category()}
-            <Category name="category" current={todo.category} />
+            <Category name="categoryId" current={todo.category} />
         {/snippet}
         {#snippet checkbox()}
             <Checkbox
                 {...visitOptions}
                 {...optimistic.complete(todo)}
-                href={complete(todo.id)}
+                href={CompleteTodo(todo.id)}
                 completedAt={todo.completedAt}
                 occursAt={todo.occursAt}
                 class="size-6 text-lg"
@@ -169,7 +168,7 @@
             <DeleteItem
                 {...visitOptions}
                 {...optimistic.delete(todo)}
-                href={_destroy(todo.id)}
+                href={DestroyTodo(todo.id)}
                 title={{
                     recurring: m["todos.recurrence-action.delete-title"](),
                     general: m["todos.delete-ahtung"]()

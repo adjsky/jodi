@@ -7,6 +7,7 @@ import { id } from "../helpers/id";
 import { editView } from "../model/view";
 
 import type { VisitOptions } from "@inertiajs/core";
+import type { TodoData } from "$/entities/todo";
 
 export const visitOptions: VisitOptions = {
     only: ["todos", "categories"],
@@ -17,10 +18,10 @@ export const visitOptions: VisitOptions = {
 };
 
 export const optimistic = {
-    edit: (todo: App.Data.TodoDto, withAhtungReminder: boolean) =>
+    edit: (todo: TodoData, withAhtungReminder: boolean) =>
         _optimistic(
             (prev, data) => ({
-                todos: prev.todos.map((t: App.Data.TodoDto) =>
+                todos: prev.todos.map((t: TodoData) =>
                     id(t) === id(todo) ? { ...t, ...data } : t
                 )
             }),
@@ -34,10 +35,10 @@ export const optimistic = {
                 }
             }
         ),
-    complete: (todo: App.Data.TodoDto) =>
+    complete: (todo: TodoData) =>
         _optimistic(
             (prev) => ({
-                todos: prev.todos.map((t: App.Data.TodoDto) =>
+                todos: prev.todos.map((t: TodoData) =>
                     id(t) === id(todo)
                         ? {
                               ...t,
@@ -51,7 +52,7 @@ export const optimistic = {
             {
                 error: m["todos.errors.complete"](),
                 onSuccess(props) {
-                    const todos = props.todos as App.Data.TodoDto[];
+                    const todos = props.todos as TodoData[];
 
                     const updatedTodo = todos.find((t) => id(t) === id(todo));
                     if (!updatedTodo || !editView.isOpen()) return;
@@ -60,12 +61,10 @@ export const optimistic = {
                 }
             }
         ),
-    delete: (todo: App.Data.TodoDto) =>
+    delete: (todo: TodoData) =>
         _optimistic(
             (prev) => ({
-                todos: prev.todos.filter(
-                    (t: App.Data.TodoDto) => id(t) !== id(todo)
-                )
+                todos: prev.todos.filter((t: TodoData) => id(t) !== id(todo))
             }),
             {
                 error: m["todos.errors.delete"](),

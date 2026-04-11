@@ -3,7 +3,7 @@
     import { AtSign } from "@lucide/svelte";
     import Intro from "$/app/ui/auth/Intro.svelte";
     import AuthLayout from "$/app/ui/layouts/AuthLayout.svelte";
-    import { signup } from "$/generated/actions/App/Http/Controllers/SignupController";
+    import RegisterUser from "$/generated/actions/App/Domain/Identity/Actions/RegisterUser";
     import { m } from "$/paraglide/messages";
     import Bee from "$/shared/assets/bee.svg";
     import Calendar from "$/shared/assets/calendar.svg";
@@ -25,7 +25,7 @@
             {/snippet}
         </Intro>
         <Form
-            action={signup(code)}
+            action={RegisterUser(code)}
             class="mt-13 space-y-4"
             let:processing
             let:errors

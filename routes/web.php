@@ -2,114 +2,116 @@
 
 declare(strict_types=1);
 
-use App\Domain\Auth\Mail;
-use App\Domain\Auth\Notifications as AuthNotifications;
+use App\Domain\Event\Actions\CreateEvent;
+use App\Domain\Event\Actions\DestroyEvent;
+use App\Domain\Event\Actions\GetDaySummary;
+use App\Domain\Event\Actions\UpdateEvent;
+use App\Domain\Event\Models\Event;
+use App\Domain\Identity\Actions\AuthenticateUser;
+use App\Domain\Identity\Actions\CompleteTwoFactorChallenge;
+use App\Domain\Identity\Actions\CreateRegistrationInvitation;
+use App\Domain\Identity\Actions\DestroyRegistrationInvitation;
+use App\Domain\Identity\Actions\GetRegistrationInvitation;
+use App\Domain\Identity\Actions\ListFriends;
+use App\Domain\Identity\Actions\ListRegistrationInvitations;
+use App\Domain\Identity\Actions\LogoutUser;
+use App\Domain\Identity\Actions\RegisterUser;
+use App\Domain\Identity\Actions\ResendTwoFactorChallengeCode;
+use App\Domain\Identity\Actions\UpdateUser;
+use App\Domain\Identity\Actions\UpsertPushSubscription;
+use App\Domain\Identity\Mail;
+use App\Domain\Identity\Models\User;
+use App\Domain\Identity\Notifications as AuthNotifications;
 use App\Domain\Reminder\Notifications as ReminderNotications;
-use App\Http\Controllers\CategoryController;
-use App\Http\Controllers\CurrentUserController;
-use App\Http\Controllers\DaySummaryController;
-use App\Http\Controllers\EventController;
+use App\Domain\Todo\Actions\CompleteTodo;
+use App\Domain\Todo\Actions\CreateCategory;
+use App\Domain\Todo\Actions\CreateTodo;
+use App\Domain\Todo\Actions\DestroyCategory;
+use App\Domain\Todo\Actions\DestroyTodo;
+use App\Domain\Todo\Actions\ReorderTodos;
+use App\Domain\Todo\Actions\UpdateTodo;
+use App\Domain\Todo\Models\Todo;
 use App\Http\Controllers\FirebaseServiceWorkerController;
-use App\Http\Controllers\FriendController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\LoginController;
-use App\Http\Controllers\PushSubscriptionController;
-use App\Http\Controllers\RegistrationInvitationController;
 use App\Http\Controllers\SignupController;
-use App\Http\Controllers\TodoController;
 use App\Http\Controllers\TwoFactorChallengeController;
-use App\Models\Event;
-use App\Models\Todo;
-use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Route;
 
-Route::get('/firebase-messaging-sw.js', [FirebaseServiceWorkerController::class, 'serve']);
+Route::get('/firebase-messaging-sw.js', FirebaseServiceWorkerController::class);
 
 Route::middleware('guest')->group(function () {
     Route::prefix('/login')
-        ->controller(LoginController::class)
         ->group(function () {
-            Route::get('/', 'show')->name('login');
-            Route::post('/', 'login');
+            Route::get('/', LoginController::class)->name('login');
+            Route::post('/', AuthenticateUser::class);
         });
 
     Route::prefix('/signup')
-        ->controller(SignupController::class)
         ->group(function () {
-            Route::get('/{code}', 'show')->name('signup');
-            Route::post('/{code}', 'signup');
+            Route::get('/{code}', SignupController::class)->name('signup');
+            Route::post('/{code}', RegisterUser::class);
         });
 
     Route::prefix('/two-factor-challenge')
-        ->controller(TwoFactorChallengeController::class)
         ->group(function () {
-            Route::get('/', 'show')->name('two-factor-challenge');
-            Route::post('/consume', 'consume');
-            // TODO: a regular string syntax coflicts with resend-laravel
-            // package for some reason. Maybe there is a better solution? idk,
-            // maybe i should create a bug report.
-            Route::post('/resend', [TwoFactorChallengeController::class, 'resend']);
+            Route::get('/', TwoFactorChallengeController::class)->name('two-factor-challenge');
+            Route::post('/', CompleteTwoFactorChallenge::class);
+            Route::post('/resend', ResendTwoFactorChallengeCode::class);
         });
 });
 
 Route::middleware('auth')->group(function () {
-    Route::get('/', [HomeController::class, 'show'])->name('home');
-    Route::post('/logout', [LoginController::class, 'logout'])->name('logout');
+    Route::get('/', HomeController::class)->name('home');
+    Route::post('/logout', LogoutUser::class);
 
     Route::prefix('/categories')
-        ->controller(CategoryController::class)
         ->group(function () {
-            Route::post('/', 'create');
-            Route::delete('/{name}', 'destroy');
+            Route::post('/', CreateCategory::class);
+            Route::delete('/{category}', DestroyCategory::class);
         });
 
     Route::prefix('/todos')
-        ->controller(TodoController::class)
         ->group(function () {
-            Route::post('/', 'create');
-            Route::post('/reorder', 'reorder');
-            Route::put('/{todo}', 'update');
-            Route::delete('/{todo}', 'destroy');
-            Route::post('/{todo}/complete', 'complete');
+            Route::post('/', CreateTodo::class);
+            Route::post('/reorder', ReorderTodos::class);
+            Route::put('/{todo}', UpdateTodo::class);
+            Route::delete('/{todo}', DestroyTodo::class);
+            Route::post('/{todo}/complete', CompleteTodo::class);
         });
 
     Route::prefix('/events')
-        ->controller(EventController::class)
         ->group(function () {
-            Route::post('/', 'create');
-            Route::put('/{event}', 'update');
-            Route::delete('/{event}', 'destroy');
+            Route::post('/', CreateEvent::class);
+            Route::put('/{event}', UpdateEvent::class);
+            Route::delete('/{event}', DestroyEvent::class);
         });
 
     Route::prefix('/me')
-        ->controller(CurrentUserController::class)
         ->group(function () {
-            Route::patch('/', 'update');
+            Route::patch('/', UpdateUser::class);
         });
 
     Route::prefix('/me/invitations')
-        ->controller(RegistrationInvitationController::class)
         ->group(function () {
-            Route::get('/', 'getAll');
-            Route::get('/{invitation}', 'get');
-            Route::delete('/{invitation}', 'destroy');
-            Route::post('/invite', 'invite');
+            Route::post('/', CreateRegistrationInvitation::class);
+            Route::get('/', ListRegistrationInvitations::class);
+            Route::get('/{invitation}', GetRegistrationInvitation::class);
+            Route::delete('/{invitation}', DestroyRegistrationInvitation::class);
         });
 
     Route::prefix('/me/friends')
-        ->controller(FriendController::class)
         ->group(function () {
-            Route::get('/', 'getAll');
+            Route::get('/', ListFriends::class);
         });
 
     Route::prefix('/push-subscriptions')
-        ->controller(PushSubscriptionController::class)
         ->group(function () {
-            Route::post('/', 'store');
+            Route::post('/', UpsertPushSubscription::class);
         });
 
-    Route::get('/day-summary/{year}', [DaySummaryController::class, 'get']);
+    Route::get('/day-summary/{year}', GetDaySummary::class);
 });
 
 if (app()->isLocal()) {

@@ -5,28 +5,30 @@
 
     import { view } from "../model/view";
 
+    import type { CategoryData } from "$/entities/todo";
+
     type Props = {
-        list: string[];
-        selected: string | null;
-        onSelect?: (name: string | null) => void;
+        list: { id: number; name: string }[];
+        selectedId: number | null;
+        onSelect?: (category: CategoryData | null) => void;
     };
 
-    const { list, selected, onSelect }: Props = $props();
+    const { list, selectedId, onSelect }: Props = $props();
 </script>
 
 <div class="grow">
-    {#each list as name (name)}
+    {#each list as { id, name } (id)}
         <div
             class="relative flex h-13.75 items-center border-cream-300 not-first:border-t"
         >
             <Checkbox
                 label={name}
-                checked={selected == name}
+                checked={selectedId == id}
                 onclick={() => {
-                    if (selected == name) {
+                    if (selectedId == id) {
                         onSelect?.(null);
                     } else {
-                        onSelect?.(name);
+                        onSelect?.({ id, name });
                     }
                 }}
                 class="absolute inset-0 py-0 ps-2 pe-9 text-lg"
@@ -40,7 +42,7 @@
                             ...view.meta,
                             [DISABLE_SHEET_DRAGGING]: true,
                             __selectcategory: { isOpen: true },
-                            __categorytodelete: name
+                            __categorytodelete: { id, name }
                         }
                     });
                 }}

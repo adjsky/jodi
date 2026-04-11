@@ -2,7 +2,7 @@
     import { page } from "@inertiajs/svelte";
     import { Calendar } from "@lucide/svelte";
     import { User } from "$/entities/user";
-    import { update } from "$/generated/actions/App/Http/Controllers/CurrentUserController";
+    import UpdateUser from "$/generated/actions/App/Domain/Identity/Actions/UpdateUser";
     import { m } from "$/paraglide/messages";
     import FloatingView from "$/shared/ui/FloatingView.svelte";
 
@@ -17,7 +17,7 @@
     <User.Info.Block class="py-5">
         {#each days as day (day)}
             <User.Info.SelectRow
-                href={update()}
+                href={UpdateUser()}
                 data={{ preferences: { weekStartOn: day } }}
                 selected={day == user.preferences.weekStartOn}
             >

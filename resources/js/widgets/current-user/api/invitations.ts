@@ -1,29 +1,28 @@
-import {
-    get,
-    getAll
-} from "$/generated/actions/App/Http/Controllers/RegistrationInvitationController";
+import GetRegistrationInvitation from "$/generated/actions/App/Domain/Identity/Actions/GetRegistrationInvitation";
+import ListRegistrationInvitations from "$/generated/actions/App/Domain/Identity/Actions/ListRegistrationInvitations";
 
+import type { RegistrationInvitationData } from "$/entities/user/model/types";
 import type { ResourceFetcher } from "runed";
 
 export class NotFoundResourceError extends Error {}
 
 export const fetchInvitations: ResourceFetcher<
     unknown,
-    App.Data.RegistrationInvitationDto[]
+    RegistrationInvitationData[]
 > = async function (_, __, { signal }) {
-    const { url, method } = getAll();
+    const { url, method } = ListRegistrationInvitations();
 
     const response = await fetch(url, { method, signal });
     const json = await response.json();
 
-    return json as App.Data.RegistrationInvitationDto[];
+    return json;
 };
 
 export const fetchInvitation: ResourceFetcher<
     string,
-    App.Data.RegistrationInvitationDto
+    RegistrationInvitationData
 > = async function (id, __, { signal }) {
-    const { url, method } = get(id);
+    const { url, method } = GetRegistrationInvitation(id);
 
     const response = await fetch(url, { method, signal });
 
@@ -33,5 +32,5 @@ export const fetchInvitation: ResourceFetcher<
 
     const json = await response.json();
 
-    return json as App.Data.RegistrationInvitationDto;
+    return json;
 };

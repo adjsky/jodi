@@ -1,32 +1,50 @@
 import { router } from "@inertiajs/svelte";
 import { parseAbsolute, toCalendarDate } from "@internationalized/date";
-import { reorder } from "$/generated/actions/App/Http/Controllers/TodoController";
+import ReorderTodos from "$/generated/actions/App/Domain/Todo/Actions/ReorderTodos";
 import { TIMEZONE } from "$/shared/cfg/constants";
-import { useDebounce } from "runed";
+import { extract, useDebounce } from "runed";
 
 import { UNGROUPED_KEY } from "../cfg/constants";
+
+import type { TodoData } from "$/entities/todo";
+import type { Getter } from "runed";
 
 type Options = {
     onError?: VoidFunction;
     onSuccess?: VoidFunction;
 };
 
-type TodoBatches = Record<string, App.Data.TodoDto[]>;
+type TodoBatches = Record<string, TodoData[]>;
 
-export function useReorder(options?: Options) {
+export function useReorder(todos: Getter<TodoData[]>, options?: Options) {
     const { onError, onSuccess } = options ?? {};
 
     let isMutating = $state(false);
     const todoBatches: TodoBatches = {};
 
-    function mutate(group: string, todos: App.Data.TodoDto[]) {
+    const categoryIdByName = $derived(
+        extract(todos).reduce(
+            (acc, t) => {
+                if (!t.category) {
+                    return acc;
+                }
+
+                acc[t.category.name] = t.category.id;
+
+                return acc;
+            },
+            {} as Record<string, number>
+        )
+    );
+
+    function mutate(group: string, todos: TodoData[]) {
         todoBatches[group] = todos;
         isMutating = true;
         void _mutate({ ...todoBatches });
     }
 
     const _mutate = useDebounce((batches: TodoBatches) => {
-        void router.visit(reorder(), {
+        void router.visit(ReorderTodos(), {
             async: false,
             data: {
                 todos: Object.entries(batches)
@@ -35,7 +53,10 @@ export function useReorder(options?: Options) {
                             id: t.id,
                             name: t.title,
                             position: idx + 1,
-                            category: group == UNGROUPED_KEY ? null : group,
+                            categoryId:
+                                group == UNGROUPED_KEY
+                                    ? null
+                                    : categoryIdByName[group],
                             date: toCalendarDate(
                                 parseAbsolute(t.scheduledAt, TIMEZONE)
                             ).toString()

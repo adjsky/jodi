@@ -1,7 +1,7 @@
 import { FirebaseMessaging } from "@capacitor-firebase/messaging";
 import { Device } from "@capacitor/device";
 import { page, progress, router } from "@inertiajs/svelte";
-import { store as _store } from "$/generated/actions/App/Http/Controllers/PushSubscriptionController";
+import UpsertPushSubscription from "$/generated/actions/App/Domain/Identity/Actions/UpsertPushSubscription";
 import { m } from "$/paraglide/messages";
 import { get } from "svelte/store";
 
@@ -154,7 +154,7 @@ type StoreOptions = {
 };
 
 async function store(token: string, deviceId: string, options?: StoreOptions) {
-    await router.visit(_store(), {
+    await router.visit(UpsertPushSubscription(), {
         data: {
             fcm_token: token,
             platform: PLATFORM,

@@ -44,9 +44,9 @@ return Application::configure(basePath: dirname(__DIR__))
                 $status = $response->getStatusCode();
 
                 if ($status == 419) {
-                    return back()->with([
-                        'error' => __('The page expired. Please, try again.'),
-                    ]);
+                    $request->setFlash('error', __('The page expired. Please, try again.'));
+
+                    return back();
                 }
 
                 $isInertia = $request->header('X-Inertia') == 'true';

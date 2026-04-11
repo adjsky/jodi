@@ -8,9 +8,12 @@
     import { EventList } from "$/widgets/event-list/";
     import { TodoList } from "$/widgets/todo-list";
 
+    import type { EventData } from "$/entities/event/model/types";
+    import type { TodoData } from "$/entities/todo";
+
     type Props = {
-        todos: App.Data.TodoDto[];
-        events: App.Data.EventDto[];
+        todos: TodoData[];
+        events: EventData[];
     };
 
     const { todos, events }: Props = $props();

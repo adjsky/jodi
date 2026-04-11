@@ -1,6 +1,12 @@
 <?php
 
 declare(strict_types=1);
+use Carbon\CarbonImmutable;
+use Carbon\CarbonInterface;
+use Spatie\LaravelData\Support\TypeScriptTransformer\DataTypeScriptTransformer;
+use Spatie\LaravelTypeScriptTransformer\Transformers\DtoTransformer;
+use Spatie\TypeScriptTransformer\Collectors\DefaultCollector;
+use Spatie\TypeScriptTransformer\Writers\TypeDefinitionWriter;
 
 return [
     /*
@@ -9,7 +15,7 @@ return [
      */
 
     'auto_discover_types' => [
-        app_path(),
+        app_path('Domain'),
     ],
 
     /*
@@ -19,7 +25,7 @@ return [
      */
 
     'collectors' => [
-        Spatie\TypeScriptTransformer\Collectors\DefaultCollector::class,
+        DefaultCollector::class,
     ],
 
     /*
@@ -28,8 +34,8 @@ return [
      */
 
     'transformers' => [
-        Spatie\LaravelData\Support\TypeScriptTransformer\DataTypeScriptTransformer::class,
-        Spatie\LaravelTypeScriptTransformer\Transformers\DtoTransformer::class,
+        DataTypeScriptTransformer::class,
+        DtoTransformer::class,
     ],
 
     /*
@@ -41,8 +47,8 @@ return [
     'default_type_replacements' => [
         DateTime::class => 'string',
         DateTimeImmutable::class => 'string',
-        Carbon\CarbonInterface::class => 'string',
-        Carbon\CarbonImmutable::class => 'string',
+        CarbonInterface::class => 'string',
+        CarbonImmutable::class => 'string',
         Carbon\Carbon::class => 'string',
     ],
 
@@ -58,7 +64,7 @@ return [
      * But you can also use the `ModuleWriter` or implement your own.
      */
 
-    'writer' => Spatie\TypeScriptTransformer\Writers\TypeDefinitionWriter::class,
+    'writer' => TypeDefinitionWriter::class,
 
     /*
      * The generated TypeScript file can be formatted. We ship a Prettier formatter

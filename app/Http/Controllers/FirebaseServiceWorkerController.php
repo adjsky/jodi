@@ -6,7 +6,7 @@ namespace App\Http\Controllers;
 
 class FirebaseServiceWorkerController
 {
-    public function serve()
+    public function __invoke()
     {
         $config = config('services.firebase');
 

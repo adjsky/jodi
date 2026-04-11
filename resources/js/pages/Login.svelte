@@ -3,11 +3,11 @@
     import { Mail } from "@lucide/svelte";
     import Intro from "$/app/ui/auth/Intro.svelte";
     import AuthLayout from "$/app/ui/layouts/AuthLayout.svelte";
+    import AuthenticateUser from "$/generated/actions/App/Domain/Identity/Actions/AuthenticateUser";
     import { m } from "$/paraglide/messages";
     import Cat from "$/shared/assets/cat.svg";
     import Button from "$/shared/ui/Button.svelte";
     import TextField from "$/shared/ui/TextField.svelte";
-    import { login } from "$actions/LoginController";
 </script>
 
 <AuthLayout>
@@ -17,7 +17,12 @@
         {/snippet}
     </Intro>
 
-    <Form action={login()} class="mt-13 space-y-4" let:processing let:errors>
+    <Form
+        action={AuthenticateUser()}
+        class="mt-13 space-y-4"
+        let:processing
+        let:errors
+    >
         <TextField
             type="email"
             name="email"

@@ -10,10 +10,11 @@
     import { editView } from "../model/view";
     import EditSheet from "./EditSheet.svelte";
 
+    import type { EventData } from "$/entities/event/model/types";
     import type { SvelteHTMLElements } from "svelte/elements";
 
     type Props = SvelteHTMLElements["section"] & {
-        events: App.Data.EventDto[];
+        events: EventData[];
     };
 
     const { events, ...rest }: Props = $props();

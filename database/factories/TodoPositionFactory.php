@@ -4,11 +4,11 @@ declare(strict_types=1);
 
 namespace Database\Factories;
 
-use App\Models\Position;
+use App\Domain\Todo\Models\TodoPosition;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
- * @extends Factory<Position>
+ * @extends Factory<TodoPosition>
  */
 class TodoPositionFactory extends Factory
 {

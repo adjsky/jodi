@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Console\Commands;
 
-use App\Models\PushSubscription;
+use App\Domain\Identity\Models\PushSubscription;
 use Illuminate\Console\Command;
 
 class PrunePushSubscriptionsCommand extends Command

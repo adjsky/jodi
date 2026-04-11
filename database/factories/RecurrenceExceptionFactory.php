@@ -4,10 +4,11 @@ declare(strict_types=1);
 
 namespace Database\Factories;
 
+use App\Domain\Recurrence\Models\RecurrenceException;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
- * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\RecurrenceException>
+ * @extends Factory<RecurrenceException>
  */
 class RecurrenceExceptionFactory extends Factory
 {

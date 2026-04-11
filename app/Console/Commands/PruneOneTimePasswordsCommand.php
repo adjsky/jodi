@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Console\Commands;
 
-use App\Models\UserOneTimePasswords;
+use App\Domain\Identity\Models\UserOneTimePasswords;
 use Illuminate\Console\Command;
 
 class PruneOneTimePasswordsCommand extends Command
