@@ -27,11 +27,11 @@ class ReorderTodos extends Action
                 update: ['position']
             );
 
-            foreach ($data->todos as $t) {
+            $data->todos->groupBy('categoryId')->each(function ($todos, $categoryId) {
                 $this->user()->todos()
-                    ->where('id', $t->id)
-                    ->update(['category_id' => $t->categoryId]);
-            }
+                    ->whereIn('id', $todos->pluck('id'))
+                    ->update(['category_id' => $categoryId ?: null]);
+            });
         });
     }
 
