@@ -59,11 +59,11 @@ class UpdateTodo extends Action
         if (isset($overrides['scheduled_at'])) {
             $isScheduledAtSameDay = Carbon::parse($overrides['scheduled_at'])->isSameDay($existingException->overrides['scheduled_at'] ?? $data->occursAt);
         } else {
-            $isScheduledAtSameDay = false;
+            $isScheduledAtSameDay = true;
         }
 
         if (isset($overrides['category_id']) || ! $isScheduledAtSameDay) {
-            $date = Carbon::parse($data->scheduledAt, $timezone)->toDateString();
+            $date = Carbon::parse($data->occursAt, $timezone)->toDateString();
             $todo->positions()->where('date', $date)->delete();
         }
     }
@@ -88,7 +88,7 @@ class UpdateTodo extends Action
 
     private function syncNotificationStatus(Todo $todo, UpdateTodoData $data, array &$attributes): void
     {
-        if ($todo->notify_at == Carbon::make($data->notifyAt)) {
+        if ($todo->notify_at?->toISOString() === Carbon::make($data->notifyAt)?->toISOString()) {
             return;
         }
 

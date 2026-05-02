@@ -17,9 +17,7 @@ class UpdateUser extends Action
         if ($data->preferences instanceof Optional) {
             $preferenceOverrides = [];
         } else {
-            $preferenceOverrides = collect($data->preferences)
-                ->reject(fn ($value) => $value instanceof Optional)
-                ->toArray();
+            $preferenceOverrides = $data->preferences->toArray();
         }
 
         $preferences = $this->user()->preferences->merge($preferenceOverrides);

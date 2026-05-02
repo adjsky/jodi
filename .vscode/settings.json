@@ -10,5 +10,6 @@
     "[php]": {
         "editor.defaultFormatter": "laravel.vscode-laravel"
     },
-    "Laravel.eloquent.modelPaths": ["app/Domain/*/Models"]
+    "Laravel.eloquent.modelPaths": ["app/Domain/*/Models"],
+    "intelephense.diagnostics.argumentCount": "declared"
 }
