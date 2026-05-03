@@ -5,15 +5,16 @@ declare(strict_types=1);
 namespace App\Domain\Event\Actions;
 
 use App\Domain\Event\Data\Input\CreateEventData;
+use App\Domain\Identity\Models\User;
 use App\Support\Actions\JodiAction;
 use App\Support\Http\JodiRequest;
 use Illuminate\Http\RedirectResponse;
 
 class CreateEvent extends JodiAction
 {
-    public function handle(CreateEventData $data): void
+    public function handle(User $user, CreateEventData $data): void
     {
-        $this->user()->events()->create([
+        $user->events()->create([
             ...$data->toArray(),
             'notify_status' => 'waiting',
         ]);
@@ -21,7 +22,7 @@ class CreateEvent extends JodiAction
 
     public function asController(JodiRequest $request): RedirectResponse
     {
-        $this->handle(CreateEventData::from($request));
+        $this->handle($this->user(), CreateEventData::from($request));
 
         return back();
     }

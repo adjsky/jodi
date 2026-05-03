@@ -5,16 +5,17 @@ declare(strict_types=1);
 namespace App\Domain\Event\Actions;
 
 use App\Domain\Event\Models\Event;
+use App\Domain\Identity\Models\User;
 use App\Support\Actions\JodiAction;
 use Carbon\Carbon;
 use Illuminate\Support\Collection;
 
 class ListEvents extends JodiAction
 {
-    public function handle(Carbon $start, Carbon $end): Collection
+    public function handle(User $user, Carbon $start, Carbon $end): Collection
     {
-        /** @var Collection<int, Event> */
-        $events = $this->user()->events()
+        $events = Event::query()
+            ->forUser($user)
             ->withPossibleOccurrencesBetween($start, $end)
             ->get();
 

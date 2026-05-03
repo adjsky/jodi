@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Domain\Todo\Actions;
 
+use App\Domain\Identity\Models\User;
 use App\Domain\Todo\Data\Output\TodoData;
 use App\Domain\Todo\Models\Todo;
 use App\Support\Actions\JodiAction;
@@ -12,10 +13,10 @@ use Illuminate\Support\Collection;
 
 class ListTodos extends JodiAction
 {
-    public function handle(string $date, Carbon $start, Carbon $end): Collection
+    public function handle(User $user, string $date, Carbon $start, Carbon $end): Collection
     {
-        /** @var Collection<int, Todo> */
-        $todos = $this->user()->todos()
+        $todos = Todo::query()
+            ->forUser($user)
             ->with([
                 'category',
                 'positions' => fn ($q) => $q->where('date', $date),

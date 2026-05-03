@@ -24,8 +24,8 @@ class HomeController extends Controller
         $endUtc = Carbon::parse($date, $timezone)->endOfDay()->utc();
 
         return inertia('Home', [
-            'todos' => ListTodos::make()->handle($date, $startUtc, $endUtc),
-            'events' => ListEvents::make()->handle($startUtc, $endUtc),
+            'todos' => ListTodos::make()->handle($this->user(), $date, $startUtc, $endUtc),
+            'events' => ListEvents::make()->handle($this->user(), $startUtc, $endUtc),
             'me' => [
                 'nInvitations' => $this->user()->invitations->count(),
                 'nFriends' => $this->user()->friends->count(),

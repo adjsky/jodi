@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Domain\Reminder\Actions;
 
 use App\Domain\Event\Models\Event;
+use App\Domain\Recurrence\Builders\RecurrenceBuilder;
 use App\Domain\Todo\Models\Todo;
 use App\Support\Actions\JodiAction;
 
@@ -16,12 +17,15 @@ class Remind extends JodiAction
      * @param  class-string<TModel>  $model
      * @param  class-string  $notification
      */
-    public function handle($model, string $notification): void
+    public function handle($model, $notification): void
     {
         $start = now();
         $end = $start->copy()->addDays(config('jodi.reminders.window.days'));
 
-        $models = $model::query()
+        /** @var RecurrenceBuilder<TModel> */
+        $query = $model::query();
+
+        $models = $query
             ->withPossibleOccurrencesBetween($start, $end)
             ->with('user')
             ->where('notify_status', '=', 'waiting')

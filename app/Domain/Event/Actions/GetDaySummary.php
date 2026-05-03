@@ -7,6 +7,7 @@ namespace App\Domain\Event\Actions;
 use App\Domain\Event\Data\Output\DaySummaryData;
 use App\Domain\Event\Data\Output\DaySummaryEventData;
 use App\Domain\Event\Models\Event;
+use App\Domain\Identity\Models\User;
 use App\Support\Actions\JodiAction;
 use App\Support\Http\JodiRequest;
 use Carbon\CarbonImmutable;
@@ -15,7 +16,7 @@ use Illuminate\Support\Collection;
 
 class GetDaySummary extends JodiAction
 {
-    public function handle(int $year, array $months, string $timezone): Collection
+    public function handle(User $user, int $year, array $months, string $timezone): Collection
     {
         $ranges = collect($months)->map(function ($month) use ($year, $timezone) {
             $date = CarbonImmutable::createFromDate($year, (int) $month, 1, $timezone);
@@ -29,8 +30,8 @@ class GetDaySummary extends JodiAction
         $overallStart = $ranges->min('start');
         $overallEnd = $ranges->max('end');
 
-        /** @var Collection<int, Event> */
-        $events = $this->user()->events()
+        $events = Event::query()
+            ->forUser($user)
             ->withPossibleOccurrencesBetween($overallStart, $overallEnd)
             ->get(['id', 'title', 'color', 'starts_at', 'rrule'])
             ->flatMap(
@@ -53,7 +54,7 @@ class GetDaySummary extends JodiAction
         $months = explode(',', $request->query('m', ''));
         $timezone = $request->timezone('UTC');
 
-        $summary = $this->handle($year, $months, $timezone);
+        $summary = $this->handle($this->user(), $year, $months, $timezone);
 
         return response()->json($summary);
     }

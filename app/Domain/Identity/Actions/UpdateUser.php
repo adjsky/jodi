@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Domain\Identity\Actions;
 
 use App\Domain\Identity\Data\Input\UpdateUserData;
+use App\Domain\Identity\Models\User;
 use App\Support\Actions\JodiAction;
 use App\Support\Http\JodiRequest;
 use Illuminate\Http\RedirectResponse;
@@ -12,7 +13,7 @@ use Spatie\LaravelData\Optional;
 
 class UpdateUser extends JodiAction
 {
-    public function handle(UpdateUserData $data): void
+    public function handle(User $user, UpdateUserData $data): void
     {
         if ($data->preferences instanceof Optional) {
             $preferenceOverrides = [];
@@ -20,9 +21,9 @@ class UpdateUser extends JodiAction
             $preferenceOverrides = $data->preferences->toArray();
         }
 
-        $preferences = $this->user()->preferences->merge($preferenceOverrides);
+        $preferences = $user->preferences->merge($preferenceOverrides);
 
-        $this->user()->update([
+        $user->update([
             ...$data->toArray(),
             'preferences' => $preferences,
         ]);
@@ -30,7 +31,7 @@ class UpdateUser extends JodiAction
 
     public function asController(JodiRequest $request): RedirectResponse
     {
-        $this->handle(UpdateUserData::from($request));
+        $this->handle($this->user(), UpdateUserData::from($request));
 
         return back();
     }

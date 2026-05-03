@@ -5,16 +5,16 @@ declare(strict_types=1);
 namespace App\Domain\Recurrence\Builders;
 
 use App\Domain\Recurrence\Contracts\Recurrable;
+use App\Support\Builders\JodiBuilder;
 use Carbon\CarbonInterface;
-use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 
 /**
  * @template TModel of Model&Recurrable
  *
- * @extends Builder<TModel>
+ * @extends JodiBuilder<TModel>
  */
-class RecurrenceBuilder extends Builder
+class RecurrenceBuilder extends JodiBuilder
 {
     public function withPossibleOccurrencesBetween(CarbonInterface $viewStart, CarbonInterface $viewEnd): static
     {

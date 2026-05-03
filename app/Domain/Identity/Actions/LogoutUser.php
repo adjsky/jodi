@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Domain\Identity\Actions;
 
+use App\Domain\Identity\Models\User;
 use App\Support\Actions\JodiAction;
 use App\Support\Http\JodiRequest;
 use Illuminate\Http\RedirectResponse;
@@ -12,16 +13,16 @@ use Inertia\Inertia;
 
 class LogoutUser extends JodiAction
 {
-    public function handle(string $deviceId): void
+    public function handle(User $user, string $deviceId): void
     {
-        $this->user()->pushSubscriptions()
+        $user->pushSubscriptions()
             ->where('device_id', $deviceId)
             ->delete();
     }
 
     public function asController(JodiRequest $request): RedirectResponse
     {
-        $this->handle($request->deviceId());
+        $this->handle($this->user(), $request->deviceId());
 
         Auth::logout();
 

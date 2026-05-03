@@ -41,6 +41,7 @@ use Illuminate\Support\Carbon;
  * @property-read User $user
  *
  * @method static \Database\Factories\EventFactory factory($count = null, $state = [])
+ * @method static EventBuilder<static>|Event forUser(\App\Domain\Identity\Models\User $user)
  * @method static EventBuilder<static>|Event newModelQuery()
  * @method static EventBuilder<static>|Event newQuery()
  * @method static EventBuilder<static>|Event query()

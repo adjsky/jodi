@@ -43,6 +43,7 @@ use Illuminate\Support\Carbon;
  * @property-read User $user
  *
  * @method static \Database\Factories\TodoFactory factory($count = null, $state = [])
+ * @method static TodoBuilder<static>|Todo forUser(\App\Domain\Identity\Models\User $user)
  * @method static TodoBuilder<static>|Todo newModelQuery()
  * @method static TodoBuilder<static>|Todo newQuery()
  * @method static TodoBuilder<static>|Todo query()
