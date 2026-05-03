@@ -6,12 +6,12 @@ namespace App\Domain\Event\Actions;
 
 use App\Domain\Event\Data\Input\DestroyEventData;
 use App\Domain\Event\Models\Event;
-use App\Support\Actions\Action;
+use App\Support\Actions\JodiAction;
 use App\Support\Http\JodiRequest;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\DB;
 
-class DestroyEvent extends Action
+class DestroyEvent extends JodiAction
 {
     public function handle(Event $event, DestroyEventData $data): void
     {

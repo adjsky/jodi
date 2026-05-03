@@ -6,14 +6,14 @@ namespace App\Domain\Identity\Actions;
 
 use App\Domain\Identity\Data\Input\CreateRegistrationInvitationData;
 use App\Domain\Identity\Mail\InviteToJodi;
-use App\Support\Actions\Action;
+use App\Support\Actions\JodiAction;
 use App\Support\Http\JodiRequest;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\URL;
 use Illuminate\Support\Str;
 
-class CreateRegistrationInvitation extends Action
+class CreateRegistrationInvitation extends JodiAction
 {
     public function handle(CreateRegistrationInvitationData $data): void
     {

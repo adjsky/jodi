@@ -5,11 +5,11 @@ declare(strict_types=1);
 namespace App\Domain\Identity\Actions;
 
 use App\Domain\Identity\Data\Output\RegistrationInvitationData;
-use App\Support\Actions\Action;
+use App\Support\Actions\JodiAction;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Collection;
 
-class ListRegistrationInvitations extends Action
+class ListRegistrationInvitations extends JodiAction
 {
     public function handle(): Collection
     {

@@ -4,25 +4,26 @@ declare(strict_types=1);
 
 namespace App\Console\Commands;
 
-use Illuminate\Console\Command;
-use Illuminate\Support\Facades\Artisan;
+use App\Support\Commands\JodiCommand;
 use Illuminate\Support\Facades\File;
 
-class SetupCommand extends Command
+class SetupCommand extends JodiCommand
 {
+    protected $signature = 'jodi:setup
+                            {--no-keygen : Skip application key generation.}
+                            {--no-seed : Skip the seed task.}
+                            {--no-ide-helpers : Skip IDE helpers generation.}
+                            {--recreate : Overwrite existing files.}';
+
+    protected $description = 'Setup application before running it.';
+
     const DOTENV_PATH = '.env';
 
     const EXAMPLE_DOTENV_PATH = '.env.example';
 
-    protected $signature = 'jodi:setup
-                            {--no-key : Whether to skip application key generation.}
-                            {--seed : Indicates if the seed task should be re-run.}
-                            {--recreate : Whether to overwrite existing files.}';
-
-    protected $description = 'Setup application before running it.';
-
     public function handle(): int
     {
+        $this->newLine();
         $this->info('Starting project setup...');
         $this->newLine();
 
@@ -33,14 +34,13 @@ class SetupCommand extends Command
                 return self::FAILURE;
             }
 
-            $withKey = ! $this->option('no-key');
-
-            if ($withKey && ! $this->generateApplicationKey()) {
+            if (! $this->option('no-keygen') && ! $this->generateApplicationKey()) {
                 return self::FAILURE;
             }
 
             $this->newLine();
             $this->info('Project setup successfully completed!');
+            $this->newLine();
         } catch (\Throwable $ex) {
             $this->newLine();
             $this->line('Sorry, something went wrong :(');
@@ -80,47 +80,23 @@ class SetupCommand extends Command
 
         return $this->runArtisan(
             'migrate',
-            label: 'database setup',
-            params: ['--seed' => $this->option('seed')]
+            label: 'Database setup',
+            params: ['--force' => true, '--seed' => ! $this->option('no-seed')]
         );
     }
 
     protected function generateApplicationKey(): bool
     {
         if (config('app.key') && ! $this->option('recreate')) {
-            $this->comment('! application key already exists.');
+            $this->comment('! Application key already exists.');
 
             return true;
         }
 
         return $this->runArtisan(
             'key:generate',
-            label: 'application key generation'
+            label: 'Application key generation',
+            params: ['--force' => true]
         );
-    }
-
-    /**
-     * Run a provided artisan command silently and gracefully handle errors.
-     *
-     * @param  ?array<string, mixed>  $params
-     */
-    protected function runArtisan(string $command, string $label, ?array $params = []): bool
-    {
-        $exitCode = Artisan::call($command, [
-            ...$params ?? [],
-            '--ansi' => true,
-            '--force' => true,
-        ]);
-
-        if ($exitCode != 0) {
-            $this->error("✘ {$label} failed.");
-            $this->line(trim(Artisan::output()));
-
-            return false;
-        }
-
-        $this->info("✔ {$label} completed.");
-
-        return true;
     }
 }

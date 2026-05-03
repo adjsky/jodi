@@ -7,13 +7,13 @@ namespace App\Domain\Event\Actions;
 use App\Domain\Event\Data\Input\UpdateEventData;
 use App\Domain\Event\Data\Internal\SingleOccurrenceUpdateData;
 use App\Domain\Event\Models\Event;
-use App\Support\Actions\Action;
+use App\Support\Actions\JodiAction;
 use App\Support\Http\JodiRequest;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\DB;
 
-class UpdateEvent extends Action
+class UpdateEvent extends JodiAction
 {
     public function handle(Event $event, UpdateEventData $data): void
     {

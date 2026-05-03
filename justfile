@@ -4,7 +4,7 @@ default:
     just --list --unsorted
 
 init:
-    php artisan jodi:setup --seed
+    php artisan jodi:setup
 
 # -------------------------------- DEVELOPMENT ---------------------------------
 

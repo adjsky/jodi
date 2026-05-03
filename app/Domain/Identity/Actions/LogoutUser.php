@@ -4,13 +4,13 @@ declare(strict_types=1);
 
 namespace App\Domain\Identity\Actions;
 
-use App\Support\Actions\Action;
+use App\Support\Actions\JodiAction;
 use App\Support\Http\JodiRequest;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\Auth;
 use Inertia\Inertia;
 
-class LogoutUser extends Action
+class LogoutUser extends JodiAction
 {
     public function handle(string $deviceId): void
     {

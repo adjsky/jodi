@@ -8,14 +8,14 @@ use App\Domain\Identity\Data\Input\RegisterUserData;
 use App\Domain\Identity\Models\RegistrationInvitation;
 use App\Domain\Identity\Models\User;
 use App\Domain\Identity\ValueObjects\UserPreferences;
-use App\Support\Actions\Action;
+use App\Support\Actions\JodiAction;
 use App\Support\Http\JodiRequest;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Inertia\Inertia;
 
-class RegisterUser extends Action
+class RegisterUser extends JodiAction
 {
     public function handle(RegisterUserData $data, string $code, ?string $timezone): User
     {

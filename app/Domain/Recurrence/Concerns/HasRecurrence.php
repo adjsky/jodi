@@ -7,8 +7,6 @@ namespace App\Domain\Recurrence\Concerns;
 use App\Domain\Recurrence\Models\RecurrenceException;
 use Carbon\Carbon;
 use Carbon\CarbonInterface;
-use Illuminate\Database\Eloquent\Attributes\Scope;
-use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Collection;
 use RRule\RRule;
@@ -19,28 +17,6 @@ use RRule\RRule;
  */
 trait HasRecurrence
 {
-    abstract protected function rkstart(): string;
-
-    #[Scope]
-    protected function withPossibleOccurrencesBetween(Builder $query, CarbonInterface $viewStart, CarbonInterface $viewEnd): void
-    {
-        $query
-            ->with('recurrenceExceptions')
-            ->where(function ($query) use ($viewStart, $viewEnd) {
-                $query
-                    ->whereNull('rrule')
-                    ->whereBetween($this->rkstart(), [$viewStart, $viewEnd]);
-            })
-            ->orWhere(function ($query) use ($viewEnd) {
-                $query
-                    ->whereNotNull('rrule')
-                    ->where($this->rkstart(), '<=', $viewEnd);
-            });
-    }
-
-    /**
-     * @return Collection<int, static>
-     */
     public function occurrencesBetween(CarbonInterface $viewStart, CarbonInterface $viewEnd): Collection
     {
         if (is_null($this->rrule)) {
@@ -53,8 +29,8 @@ trait HasRecurrence
         $exceptions = $this->recurrenceExceptions->keyBy(
             fn ($e) => $e->occurs_at->toDateString()
         );
-        $rkstart = $this->rkstart();
-        $dtstart = $this->getAttribute($rkstart);
+        $recurrenceStartKey = $this->recurrenceStartKey();
+        $dtstart = $this->getAttribute($recurrenceStartKey);
 
         $rrule = new RRule($this->rrule, $dtstart);
 
@@ -69,11 +45,11 @@ trait HasRecurrence
                 continue;
             }
 
-            if (! isset($exception->overrides[$rkstart])) {
+            if (! isset($exception->overrides[$recurrenceStartKey])) {
                 continue;
             }
 
-            $start = Carbon::parse($exception->overrides[$rkstart]);
+            $start = Carbon::parse($exception->overrides[$recurrenceStartKey]);
 
             if ($start->between($viewStart, $viewEnd)) {
                 $occurrences->put($datestr, Carbon::parse($datestr));
@@ -153,7 +129,7 @@ trait HasRecurrence
     {
         $overrides = [];
         $dateKeys = $this->listDateAttributes();
-        $dtstart = $this->getAttribute($this->rkstart());
+        $dtstart = $this->getAttribute($this->recurrenceStartKey());
 
         foreach ($attributes as $key => $value) {
             if (in_array($key, $dateKeys)) {
@@ -199,8 +175,8 @@ trait HasRecurrence
 
     public function normalizeRecurringDataForUpdate(array &$data, string $occursAt): void
     {
-        if (Carbon::parse($data[$this->rkstart()])->isSameDay($occursAt)) {
-            $start = $this->getAttribute($this->rkstart());
+        if (Carbon::parse($data[$this->recurrenceStartKey()])->isSameDay($occursAt)) {
+            $start = $this->getAttribute($this->recurrenceStartKey());
 
             foreach ($this->listDateAttributes() as $key) {
                 if (isset($data[$key])) {
@@ -210,54 +186,6 @@ trait HasRecurrence
         }
     }
 
-    /**
-     * @param  class-string  $notification
-     */
-    public static function remind(string $notification): void
-    {
-        $start = now();
-        $end = $start->copy()->addDays(config('jodi.reminders.window.days'));
-
-        /** @var Collection<int, static> */
-        $models = static::with('user')
-            ->withPossibleOccurrencesBetween($start, $end)
-            ->where('notify_status', '=', 'waiting')
-            ->get();
-
-        foreach ($models as $model) {
-            foreach ($model->occurrencesBetween($start, $end) as $occurrence) {
-                if (is_null($model->user)) {
-                    continue;
-                }
-
-                $notifyAt = $occurrence->getAttribute('notify_at');
-                $startsAt = $occurrence->getAttribute($occurrence->rkstart());
-
-                if ($notifyAt->gt($start) || $startsAt->lte($start)) {
-                    continue;
-                }
-                if ($occurrence->notify_status != 'waiting') {
-                    continue;
-                }
-
-                $model->user->notify(new $notification($occurrence, $occurrence->occurs_at));
-
-                if ($occurrence->occurs_at) {
-                    $model->applyException(
-                        $occurrence->occurs_at,
-                        ['notify_status' => 'processing'],
-                        $model->findException($occurrence->occurs_at)
-                    );
-                } else {
-                    $model->update(['notify_status' => 'processing']);
-                }
-            }
-        }
-    }
-
-    /**
-     * @return string[]
-     */
     protected function listDateAttributes(): array
     {
         return collect($this->getCasts())

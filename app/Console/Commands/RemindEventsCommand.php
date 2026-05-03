@@ -5,10 +5,11 @@ declare(strict_types=1);
 namespace App\Console\Commands;
 
 use App\Domain\Event\Models\Event;
+use App\Domain\Reminder\Actions\Remind;
 use App\Domain\Reminder\Notifications\EventReminder;
-use Illuminate\Console\Command;
+use App\Support\Commands\JodiCommand;
 
-class RemindEventsCommand extends Command
+class RemindEventsCommand extends JodiCommand
 {
     protected $signature = 'jodi:remind:events';
 
@@ -16,6 +17,6 @@ class RemindEventsCommand extends Command
 
     public function handle(): void
     {
-        Event::remind(EventReminder::class);
+        Remind::make()->handle(Event::class, EventReminder::class);
     }
 }

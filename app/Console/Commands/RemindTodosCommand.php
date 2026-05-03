@@ -4,11 +4,12 @@ declare(strict_types=1);
 
 namespace App\Console\Commands;
 
+use App\Domain\Reminder\Actions\Remind;
 use App\Domain\Reminder\Notifications\TodoReminder;
 use App\Domain\Todo\Models\Todo;
-use Illuminate\Console\Command;
+use App\Support\Commands\JodiCommand;
 
-class RemindTodosCommand extends Command
+class RemindTodosCommand extends JodiCommand
 {
     protected $signature = 'jodi:remind:todos';
 
@@ -16,6 +17,6 @@ class RemindTodosCommand extends Command
 
     public function handle(): void
     {
-        Todo::remind(TodoReminder::class);
+        Remind::make()->handle(Todo::class, TodoReminder::class);
     }
 }

@@ -5,12 +5,12 @@ declare(strict_types=1);
 namespace App\Domain\Identity\Actions;
 
 use App\Domain\Identity\Data\Input\UpdateUserData;
-use App\Support\Actions\Action;
+use App\Support\Actions\JodiAction;
 use App\Support\Http\JodiRequest;
 use Illuminate\Http\RedirectResponse;
 use Spatie\LaravelData\Optional;
 
-class UpdateUser extends Action
+class UpdateUser extends JodiAction
 {
     public function handle(UpdateUserData $data): void
     {

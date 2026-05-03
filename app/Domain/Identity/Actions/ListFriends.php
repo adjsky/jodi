@@ -5,11 +5,11 @@ declare(strict_types=1);
 namespace App\Domain\Identity\Actions;
 
 use App\Domain\Identity\Data\Output\FriendData;
-use App\Support\Actions\Action;
+use App\Support\Actions\JodiAction;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Collection;
 
-class ListFriends extends Action
+class ListFriends extends JodiAction
 {
     public function handle(): Collection
     {

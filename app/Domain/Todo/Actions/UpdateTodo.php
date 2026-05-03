@@ -8,14 +8,14 @@ use App\Domain\Recurrence\Models\RecurrenceException;
 use App\Domain\Todo\Data\Input\UpdateTodoData;
 use App\Domain\Todo\Data\Internal\SingleOccurrenceUpdateData;
 use App\Domain\Todo\Models\Todo;
-use App\Support\Actions\Action;
+use App\Support\Actions\JodiAction;
 use App\Support\Http\JodiRequest;
 use Carbon\Carbon;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\DB;
 
-class UpdateTodo extends Action
+class UpdateTodo extends JodiAction
 {
     public function handle(Todo $todo, UpdateTodoData $data, ?string $timezone): void
     {

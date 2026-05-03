@@ -5,11 +5,11 @@ declare(strict_types=1);
 namespace App\Domain\Identity\Actions;
 
 use App\Domain\Identity\Data\Input\UpsertPushSubscriptionData;
-use App\Support\Actions\Action;
+use App\Support\Actions\JodiAction;
 use App\Support\Http\JodiRequest;
 use Illuminate\Http\RedirectResponse;
 
-class UpsertPushSubscription extends Action
+class UpsertPushSubscription extends JodiAction
 {
     public function handle(UpsertPushSubscriptionData $data): void
     {

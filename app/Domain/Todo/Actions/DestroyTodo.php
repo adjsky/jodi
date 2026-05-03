@@ -6,12 +6,12 @@ namespace App\Domain\Todo\Actions;
 
 use App\Domain\Todo\Data\Input\DestroyTodoData;
 use App\Domain\Todo\Models\Todo;
-use App\Support\Actions\Action;
+use App\Support\Actions\JodiAction;
 use App\Support\Http\JodiRequest;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\DB;
 
-class DestroyTodo extends Action
+class DestroyTodo extends JodiAction
 {
     public function handle(Todo $todo, DestroyTodoData $data): void
     {

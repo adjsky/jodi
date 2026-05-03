@@ -12,14 +12,14 @@ use App\Domain\Identity\Exceptions\OtpExpiredException;
 use App\Domain\Identity\Models\User;
 use App\Domain\Identity\Services\OtpService;
 use App\Domain\Identity\Services\ThrottleService;
-use App\Support\Actions\Action;
+use App\Support\Actions\JodiAction;
 use App\Support\Http\JodiRequest;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Validation\ValidationException;
 use Inertia\Inertia;
 
-class CompleteTwoFactorChallenge extends Action
+class CompleteTwoFactorChallenge extends JodiAction
 {
     public function __construct(
         private OtpService $otpService,

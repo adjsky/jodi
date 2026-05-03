@@ -9,11 +9,11 @@ use App\Domain\Identity\Models\User;
 use App\Domain\Identity\Notifications;
 use App\Domain\Identity\Services\OtpService;
 use App\Domain\Identity\Services\ThrottleService;
-use App\Support\Actions\Action;
+use App\Support\Actions\JodiAction;
 use App\Support\Http\JodiRequest;
 use Illuminate\Http\RedirectResponse;
 
-class ResendTwoFactorChallengeCode extends Action
+class ResendTwoFactorChallengeCode extends JodiAction
 {
     public function __construct(
         private OtpService $otpService,

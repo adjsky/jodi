@@ -5,11 +5,11 @@ declare(strict_types=1);
 namespace App\Domain\Todo\Actions;
 
 use App\Domain\Todo\Data\Input\CreateCategoryData;
-use App\Support\Actions\Action;
+use App\Support\Actions\JodiAction;
 use App\Support\Http\JodiRequest;
 use Illuminate\Http\RedirectResponse;
 
-class CreateCategory extends Action
+class CreateCategory extends JodiAction
 {
     public function handle(CreateCategoryData $data): int
     {

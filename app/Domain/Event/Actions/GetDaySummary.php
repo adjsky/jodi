@@ -7,13 +7,13 @@ namespace App\Domain\Event\Actions;
 use App\Domain\Event\Data\Output\DaySummaryData;
 use App\Domain\Event\Data\Output\DaySummaryEventData;
 use App\Domain\Event\Models\Event;
-use App\Support\Actions\Action;
+use App\Support\Actions\JodiAction;
 use App\Support\Http\JodiRequest;
 use Carbon\CarbonImmutable;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Collection;
 
-class GetDaySummary extends Action
+class GetDaySummary extends JodiAction
 {
     public function handle(int $year, array $months, string $timezone): Collection
     {

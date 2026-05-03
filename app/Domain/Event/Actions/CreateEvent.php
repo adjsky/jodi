@@ -5,11 +5,11 @@ declare(strict_types=1);
 namespace App\Domain\Event\Actions;
 
 use App\Domain\Event\Data\Input\CreateEventData;
-use App\Support\Actions\Action;
+use App\Support\Actions\JodiAction;
 use App\Support\Http\JodiRequest;
 use Illuminate\Http\RedirectResponse;
 
-class CreateEvent extends Action
+class CreateEvent extends JodiAction
 {
     public function handle(CreateEventData $data): void
     {

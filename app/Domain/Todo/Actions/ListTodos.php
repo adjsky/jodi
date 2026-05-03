@@ -6,11 +6,11 @@ namespace App\Domain\Todo\Actions;
 
 use App\Domain\Todo\Data\Output\TodoData;
 use App\Domain\Todo\Models\Todo;
-use App\Support\Actions\Action;
+use App\Support\Actions\JodiAction;
 use Carbon\Carbon;
 use Illuminate\Support\Collection;
 
-class ListTodos extends Action
+class ListTodos extends JodiAction
 {
     public function handle(string $date, Carbon $start, Carbon $end): Collection
     {

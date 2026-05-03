@@ -5,9 +5,9 @@ declare(strict_types=1);
 namespace App\Console\Commands;
 
 use App\Domain\Identity\Models\UserOneTimePasswords;
-use Illuminate\Console\Command;
+use App\Support\Commands\JodiCommand;
 
-class PruneOneTimePasswordsCommand extends Command
+class PruneOneTimePasswordsCommand extends JodiCommand
 {
     protected $signature = 'jodi:prune:otp';
 

@@ -5,10 +5,10 @@ declare(strict_types=1);
 namespace App\Console\Commands;
 
 use App\Domain\Identity\Models\User;
-use Illuminate\Console\Command;
+use App\Support\Commands\JodiCommand;
 use Illuminate\Contracts\Console\PromptsForMissingInput;
 
-class MakeUserCommand extends Command implements PromptsForMissingInput
+class MakeUserCommand extends JodiCommand implements PromptsForMissingInput
 {
     protected $signature = 'jodi:make:user {email} {--name=John Doe}';
 

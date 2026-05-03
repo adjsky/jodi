@@ -7,12 +7,12 @@ namespace App\Domain\Todo\Actions;
 use App\Domain\Todo\Data\Input\ReorderTodosData;
 use App\Domain\Todo\Models\Todo;
 use App\Domain\Todo\Models\TodoPosition;
-use App\Support\Actions\Action;
+use App\Support\Actions\JodiAction;
 use App\Support\Http\JodiRequest;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\DB;
 
-class ReorderTodos extends Action
+class ReorderTodos extends JodiAction
 {
     public function handle(ReorderTodosData $data): void
     {
