@@ -38,6 +38,10 @@ class SetupCommand extends JodiCommand
                 return self::FAILURE;
             }
 
+            if (! $this->option('no-ide-helpers') && ! $this->generateIdeHelpers()) {
+                return self::FAILURE;
+            }
+
             $this->newLine();
             $this->info('Project setup successfully completed!');
             $this->newLine();
@@ -97,6 +101,14 @@ class SetupCommand extends JodiCommand
             'key:generate',
             label: 'Application key generation',
             params: ['--force' => true]
+        );
+    }
+
+    protected function generateIdeHelpers(): bool
+    {
+        return $this->runArtisan(
+            'jodi:ide-helper',
+            label: 'IDE helpers generation'
         );
     }
 }
