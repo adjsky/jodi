@@ -32,6 +32,8 @@ class DisplayException extends JodiException
             );
         }
 
-        return back()->with('error', $this->getMessage());
+        $request->setFlash('error', $this->getMessage());
+
+        return back();
     }
 }

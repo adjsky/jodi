@@ -5,3 +5,5 @@ export const Todo = {
     Row,
     Fields
 };
+
+export * from "./model/types";

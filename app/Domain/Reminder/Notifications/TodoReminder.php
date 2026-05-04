@@ -4,9 +4,10 @@ declare(strict_types=1);
 
 namespace App\Domain\Reminder\Notifications;
 
+use App\Domain\Identity\Enums\NotificationChannel;
+use App\Domain\Identity\Models\User;
 use App\Domain\Reminder\Support\Carbon\CalendarFormatter;
-use App\Models\Todo;
-use App\Models\User;
+use App\Domain\Todo\Models\Todo;
 use Carbon\Carbon;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
@@ -24,14 +25,15 @@ class TodoReminder extends Notification implements ShouldQueue
 
     public function via(User $user): array
     {
-        return $user->preferences['notifications'] == 'push'
-            ? [FcmChannel::class]
-            : ['mail'];
+        return match ($user->preferences->notificationChannel) {
+            NotificationChannel::Push => [FcmChannel::class],
+            NotificationChannel::Mail => ['mail']
+        };
     }
 
     public function toFcm(User $user): FcmMessage
     {
-        $scheduledAt = $this->scheduledAt($user->preferences['timezone']);
+        $scheduledAt = $this->scheduledAt($user->preferences->timezone);
 
         return new FcmMessage(notification: new FcmNotification(
             title: $this->model->title,
@@ -57,7 +59,7 @@ class TodoReminder extends Notification implements ShouldQueue
 
     public function toMail(User $user): MailMessage
     {
-        $scheduledAt = $this->scheduledAt($user->preferences['timezone']);
+        $scheduledAt = $this->scheduledAt($user->preferences->timezone);
 
         return (new MailMessage)
             ->subject(__('mail.todo_reminder.subject', ['title' => $this->model->title]))

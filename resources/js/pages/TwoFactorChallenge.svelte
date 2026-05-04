@@ -2,6 +2,8 @@
     import { Form } from "@inertiajs/svelte";
     import Intro from "$/app/ui/auth/Intro.svelte";
     import AuthLayout from "$/app/ui/layouts/AuthLayout.svelte";
+    import CompleteTwoFactorChallenge from "$/generated/actions/App/Domain/Identity/Actions/CompleteTwoFactorChallenge";
+    import ResendTwoFactorChallengeCode from "$/generated/actions/App/Domain/Identity/Actions/ResendTwoFactorChallengeCode";
     import { m } from "$/paraglide/messages";
     import Froggy from "$/shared/assets/froggy.svg";
     import { HistoryView } from "$/shared/inertia/history-view.svelte";
@@ -11,12 +13,15 @@
     import { createActionBanner } from "$/shared/ui/ActionBanner.svelte";
     import Button from "$/shared/ui/Button.svelte";
     import OneTimePasswordInput from "$/shared/ui/OneTimePasswordInput.svelte";
-    import { consume, resend } from "$actions/TwoFactorChallengeController";
 
     const id = $props.id();
 
-    const resendTimer = useActionRateLimit(resend.definition);
-    const consumeTimer = useActionRateLimit(consume.definition);
+    const resendTimer = useActionRateLimit(
+        ResendTwoFactorChallengeCode.definition
+    );
+    const consumeTimer = useActionRateLimit(
+        CompleteTwoFactorChallenge.definition
+    );
 
     const view = new HistoryView(null, { viewTransition: true });
 
@@ -42,10 +47,11 @@
         {/snippet}
     </Intro>
 
-    <Form action={resend()} id="{id}-resend-form" hidden></Form>
+    <Form action={ResendTwoFactorChallengeCode()} id="{id}-resend-form" hidden
+    ></Form>
 
     <Form
-        action={consume()}
+        action={CompleteTwoFactorChallenge()}
         class="mt-13 space-y-3.5"
         onError={(error) => {
             if (error.password) {

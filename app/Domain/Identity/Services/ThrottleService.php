@@ -1,0 +1,35 @@
+<?php
+
+declare(strict_types=1);
+
+namespace App\Domain\Identity\Services;
+
+use Illuminate\Http\Exceptions\ThrottleRequestsException;
+use Illuminate\Support\Carbon;
+use Illuminate\Support\Facades\RateLimiter;
+
+class ThrottleService
+{
+    public function throttle(
+        string $action,
+        int $attempts,
+        int $decaySeconds,
+        string $email
+    ): void {
+        $key = '2fa'.'|'.$action.'|'.str($email)->lower()->transliterate();
+
+        $hits = RateLimiter::hit($key, $decaySeconds);
+
+        if ($hits <= $attempts) {
+            return;
+        }
+
+        $retryAfter = RateLimiter::availableIn($key);
+        $resetAt = Carbon::now()->addSeconds($retryAfter)->getTimestamp();
+
+        throw new ThrottleRequestsException(
+            __('Too many attempts.'),
+            headers: ['retry-after' => $retryAfter, 'x-ratelimit-reset' => $resetAt]
+        );
+    }
+}

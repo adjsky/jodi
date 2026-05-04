@@ -2,7 +2,7 @@
     import { Clipboard } from "@ark-ui/svelte";
     import { router } from "@inertiajs/svelte";
     import { CheckIcon, ClipboardCopyIcon } from "@lucide/svelte";
-    import { destroy } from "$/generated/actions/App/Http/Controllers/RegistrationInvitationController";
+    import DestroyRegistrationInvitation from "$/generated/actions/App/Domain/Identity/Actions/DestroyRegistrationInvitation";
     import { m } from "$/paraglide/messages";
     import { HistoryView } from "$/shared/inertia/history-view.svelte";
     import { toaster } from "$/shared/lib/toaster";
@@ -84,16 +84,19 @@
                 }
                 title={m["current-user.invitations.delete-ahtung"]()}
                 onConfirm={async () => {
-                    await router.visit(destroy(invitation.current!.id), {
-                        replace: true,
-                        preserveUrl: true,
-                        preserveState: true,
-                        only: ["flash", "me"],
-                        onSuccess: () => {
-                            void view.back();
-                            onDelete?.(invitation.current!.id);
+                    await router.visit(
+                        DestroyRegistrationInvitation(invitation.current!.id),
+                        {
+                            replace: true,
+                            preserveUrl: true,
+                            preserveState: true,
+                            only: ["flash", "me"],
+                            onSuccess: () => {
+                                void view.back();
+                                onDelete?.(invitation.current!.id);
+                            }
                         }
-                    });
+                    );
                     return true;
                 }}
             >

@@ -1,0 +1,29 @@
+<?php
+
+declare(strict_types=1);
+
+namespace App\Domain\Identity\Actions;
+
+use App\Domain\Identity\Data\Input\UpsertPushSubscriptionData;
+use App\Domain\Identity\Models\User;
+use App\Support\Actions\JodiAction;
+use App\Support\Http\JodiRequest;
+use Illuminate\Http\RedirectResponse;
+
+class UpsertPushSubscription extends JodiAction
+{
+    public function handle(User $user, UpsertPushSubscriptionData $data): void
+    {
+        $user->pushSubscriptions()->updateOrCreate(
+            ['device_id' => $data->device_id],
+            $data->toArray(),
+        );
+    }
+
+    public function asController(JodiRequest $request): RedirectResponse
+    {
+        $this->handle($this->user(), UpsertPushSubscriptionData::from($request));
+
+        return back();
+    }
+}

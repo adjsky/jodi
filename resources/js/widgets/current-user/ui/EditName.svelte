@@ -1,7 +1,7 @@
 <script lang="ts">
     import { Form, page } from "@inertiajs/svelte";
     import { AtSign } from "@lucide/svelte";
-    import { update } from "$/generated/actions/App/Http/Controllers/CurrentUserController";
+    import UpdateUser from "$/generated/actions/App/Domain/Identity/Actions/UpdateUser";
     import { m } from "$/paraglide/messages";
     import Button from "$/shared/ui/Button.svelte";
     import FloatingView from "$/shared/ui/FloatingView.svelte";
@@ -15,7 +15,7 @@
 
 <FloatingView {back} title={m["current-user.account.name"]()}>
     <Form
-        action={update()}
+        action={UpdateUser()}
         class="flex grow flex-col justify-between py-5"
         options={{ replace: true, preserveUrl: true, only: ["auth"] }}
         onSuccess={() => view.back()}

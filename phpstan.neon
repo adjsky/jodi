@@ -6,7 +6,11 @@ includes:
 parameters:
     paths:
         - app/
+
     level: 8
+
+    parseModelCastsMethod: true
+
     ignoreErrors:
         -
             identifier: missingType.iterableValue

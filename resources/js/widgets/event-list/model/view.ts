@@ -1,3 +1,5 @@
 import { HistoryView } from "$/shared/inertia/history-view.svelte";
 
-export const editView = new HistoryView<App.Data.EventDto>("edit-event");
+import type { EventData } from "$/entities/event/model/types";
+
+export const editView = new HistoryView<EventData>("edit-event");

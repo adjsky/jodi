@@ -4,10 +4,11 @@ declare(strict_types=1);
 
 namespace Database\Factories;
 
+use App\Domain\Identity\Models\RegistrationInvitation;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
- * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\RegistrationInvitation>
+ * @extends Factory<RegistrationInvitation>
  */
 class RegistrationInvitationFactory extends Factory
 {

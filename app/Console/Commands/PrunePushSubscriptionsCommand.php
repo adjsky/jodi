@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 namespace App\Console\Commands;
 
-use App\Models\PushSubscription;
-use Illuminate\Console\Command;
+use App\Domain\Identity\Models\PushSubscription;
+use App\Support\Commands\JodiCommand;
 
-class PrunePushSubscriptionsCommand extends Command
+class PrunePushSubscriptionsCommand extends JodiCommand
 {
     protected $signature = 'jodi:prune:push-subscriptions';
 

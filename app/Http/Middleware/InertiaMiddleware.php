@@ -54,11 +54,7 @@ class InertiaMiddleware extends Middleware
                     ->where('device_id', $request->deviceId())
                     ->first(['fcm_token as token']),
             ],
-            'flash' => [
-                'message' => fn () => $request->session()->get('message'),
-                'error' => fn () => $request->session()->get('error'),
-                'success' => fn () => $request->session()->get('success'),
-            ],
+            'flash' => $request->getFlash(),
             'config' => [
                 'firebase' => Arr::mapWithKeys(
                     config('services.firebase'),

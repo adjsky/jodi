@@ -4,11 +4,11 @@ declare(strict_types=1);
 
 namespace App\Console\Commands;
 
-use App\Models\User;
-use Illuminate\Console\Command;
+use App\Domain\Identity\Models\User;
+use App\Support\Commands\JodiCommand;
 use Illuminate\Contracts\Console\PromptsForMissingInput;
 
-class MakeUserCommand extends Command implements PromptsForMissingInput
+class MakeUserCommand extends JodiCommand implements PromptsForMissingInput
 {
     protected $signature = 'jodi:make:user {email} {--name=John Doe}';
 
@@ -20,8 +20,8 @@ class MakeUserCommand extends Command implements PromptsForMissingInput
             'email' => $this->argument('email'),
             'name' => $this->option('name'),
             'preferences' => [
-                'locale' => config('app.locale'),
                 ...config('jodi.preferences'),
+                'locale' => config('app.locale'),
             ],
         ]);
     }

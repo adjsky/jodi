@@ -2,7 +2,7 @@
     import { Check, GripVertical } from "@lucide/svelte";
     import { Todo } from "$/entities/todo";
     import Checkbox from "$/features/complete-todo/ui/Checkbox.svelte";
-    import { complete } from "$/generated/actions/App/Http/Controllers/TodoController";
+    import CompleteTodo from "$/generated/actions/App/Domain/Todo/Actions/CompleteTodo";
     import { m } from "$/paraglide/messages";
     import PencilNote from "$/shared/assets/pencil-note.svg";
     import { useSearchParams } from "$/shared/inertia/use-search-params.svelte";
@@ -10,6 +10,7 @@
     import { formatToHHMM } from "$/shared/lib/date";
     import { tw } from "$/shared/lib/styles";
     import { toaster } from "$/shared/lib/toaster";
+    import { untrack } from "svelte";
     import { dragHandle, dragHandleZone } from "svelte-dnd-action";
 
     import { useReorder } from "../api/reorder.svelte";
@@ -20,15 +21,16 @@
     import { editView } from "../model/view";
     import EditSheet from "./EditSheet.svelte";
 
+    import type { TodoData } from "$/entities/todo";
     import type { SvelteHTMLElements } from "svelte/elements";
 
     type Props = SvelteHTMLElements["section"] & {
-        todos: App.Data.TodoDto[];
+        todos: TodoData[];
     };
 
     const { todos, ...rest }: Props = $props();
 
-    const reorder = useReorder({
+    const reorder = useReorder(() => todos, {
         onError() {
             isDragging = false;
             toaster.error(m["todos.errors.reorder"]());
@@ -52,8 +54,7 @@
         });
     });
 
-    // svelte-ignore state_referenced_locally
-    let groups = $state(groupTodos(todos));
+    let groups = $state(untrack(() => groupTodos(todos)));
     let isDragging = $state(false);
 
     $effect(() => {
@@ -62,12 +63,12 @@
         }
     });
 
-    function consider(group: string, todos: App.Data.TodoDto[]) {
+    function consider(group: string, todos: TodoData[]) {
         isDragging = true;
         groups = { ...groups, [group]: todos };
     }
 
-    function finalize(group: string, todos: App.Data.TodoDto[]) {
+    function finalize(group: string, todos: TodoData[]) {
         isDragging = false;
         groups = { ...groups, [group]: todos };
         reorder.mutate(group, todos);
@@ -125,7 +126,7 @@
     />
 </section>
 
-{#snippet list(group: string, todos: App.Data.TodoDto[])}
+{#snippet list(group: string, todos: TodoData[])}
     <div
         use:dragHandleZone={{
             items: todos,
@@ -140,7 +141,7 @@
                     <Checkbox
                         {...visitOptions}
                         {...optimistic.complete(todo)}
-                        href={complete(todo.id)}
+                        href={CompleteTodo(todo.id)}
                         completedAt={todo.completedAt}
                         occursAt={todo.occursAt}
                     />
@@ -170,7 +171,7 @@
                     </button>
                 {/snippet}
                 {#snippet grip()}
-                    <button use:dragHandle aria-label="lorem" class="shrink-0">
+                    <button use:dragHandle aria-label="Drag" class="shrink-0">
                         <GripVertical class="text-2xl text-cream-400" />
                     </button>
                 {/snippet}

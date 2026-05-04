@@ -12,10 +12,8 @@
     import { Color } from "$/features/select-color";
     import { Recurrence } from "$/features/select-recurrence";
     import { Reminder } from "$/features/select-reminder";
-    import {
-        destroy as _destroy,
-        update
-    } from "$/generated/actions/App/Http/Controllers/EventController";
+    import DestroyEvent from "$/generated/actions/App/Domain/Event/Actions/DestroyEvent";
+    import UpdateEvent from "$/generated/actions/App/Domain/Event/Actions/UpdateEvent";
     import { m } from "$/paraglide/messages";
     import { normalizeIsoString, timediff } from "$/shared/lib/date";
     import { announce } from "$/shared/lib/form";
@@ -25,10 +23,11 @@
 
     import { optimistic, visitOptions } from "../cfg/inertia";
 
+    import type { EventData } from "$/entities/event/model/types";
     import type { Scope } from "$/shared/lib/types";
 
     type Props = {
-        event: App.Data.EventDto | null;
+        event: EventData | null;
         onClose?: VoidFunction;
     };
 
@@ -39,9 +38,7 @@
     let lastKnownEvent = $state(untrack(() => props.event));
     let scope: Scope = $state("this");
 
-    const event = $derived(
-        props.event ?? (lastKnownEvent as App.Data.EventDto)
-    );
+    const event = $derived(props.event ?? (lastKnownEvent as EventData));
 
     const draft = $state(
         untrack(() => ({
@@ -66,7 +63,7 @@
 
 <Form
     {...optimistic.edit(event, draft)}
-    action={update(event.id, {
+    action={UpdateEvent(event.id, {
         query: { scope: isRRuleDirty ? "all" : scope }
     })}
     options={visitOptions}
@@ -141,7 +138,7 @@
             <DeleteItem
                 {...visitOptions}
                 {...optimistic.delete(event)}
-                href={_destroy(event.id)}
+                href={DestroyEvent(event.id)}
                 title={{
                     recurring: m["events.recurrence-action.delete-title"](),
                     general: m["events.delete-ahtung"]()

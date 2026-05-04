@@ -75,7 +75,8 @@ ENV APP_DEBUG=false
 
 RUN php artisan event:cache && \
     php artisan route:cache && \
-    php artisan view:cache
+    php artisan view:cache && \
+    php artisan data:cache-structures
 
 ENTRYPOINT ["scripts/entrypoint.sh"]
 CMD [ \

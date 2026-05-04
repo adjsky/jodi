@@ -4,10 +4,11 @@ declare(strict_types=1);
 
 namespace Database\Factories;
 
+use App\Domain\Event\Models\EventAttendee;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
- * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\EventAttendee>
+ * @extends Factory<EventAttendee>
  */
 class EventAttendeeFactory extends Factory
 {

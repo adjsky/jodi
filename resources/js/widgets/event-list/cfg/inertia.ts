@@ -8,6 +8,7 @@ import { editView } from "../model/view";
 
 import type { VisitOptions } from "@inertiajs/core";
 import type { ZonedDateTime } from "@internationalized/date";
+import type { EventData } from "$/entities/event/model/types";
 
 export const visitOptions: VisitOptions = {
     only: ["events"],
@@ -19,12 +20,12 @@ export const visitOptions: VisitOptions = {
 
 export const optimistic = {
     edit: (
-        event: App.Data.EventDto,
+        event: EventData,
         draft: { startsAt: ZonedDateTime; endsAt: ZonedDateTime }
     ) =>
         _optimistic(
             (prev, data) => ({
-                events: prev.events.map((e: App.Data.EventDto) =>
+                events: prev.events.map((e: EventData) =>
                     id(e) === id(event) ? { ...e, ...data } : e
                 )
             }),
@@ -42,11 +43,11 @@ export const optimistic = {
                 }
             }
         ),
-    delete: (event: App.Data.EventDto) =>
+    delete: (event: EventData) =>
         _optimistic(
             (prev) => ({
                 events: prev.events.filter(
-                    (e: App.Data.EventDto) => id(e) !== id(event)
+                    (e: EventData) => id(e) !== id(event)
                 )
             }),
             {

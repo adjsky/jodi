@@ -5,13 +5,11 @@ declare(strict_types=1);
 namespace App\Http\Middleware;
 
 use App\Support\Http\JodiRequest;
-use Closure;
-use Illuminate\Support\Arr;
 use Symfony\Component\HttpFoundation\Response;
 
 class TimezoneMiddleware
 {
-    public function handle(JodiRequest $request, Closure $next): Response
+    public function handle(JodiRequest $request, \Closure $next): Response
     {
         $user = $request->user();
         $tz = $request->timezone();
@@ -20,8 +18,8 @@ class TimezoneMiddleware
             return $next($request);
         }
 
-        if (Arr::get($user->preferences, 'timezone') !== $tz) {
-            $user->preferences = [...$user->preferences, 'timezone' => $tz];
+        if ($user->preferences->timezone !== $tz) {
+            $user->preferences = $user->preferences->merge(['timezone' => $tz]);
             $user->save();
         }
 
