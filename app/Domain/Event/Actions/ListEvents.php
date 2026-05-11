@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Domain\Event\Actions;
 
+use App\Domain\Event\Data\Output\EventData;
 use App\Domain\Event\Models\Event;
 use App\Domain\Identity\Models\User;
 use App\Support\Actions\JodiAction;
@@ -19,9 +20,11 @@ class ListEvents extends JodiAction
             ->withPossibleOccurrencesBetween($start, $end)
             ->get();
 
-        return $events
-            ->flatMap(fn ($e) => $e->occurrencesBetween($start, $end))
-            ->sortBy('starts_at')
-            ->values();
+        return EventData::collect(
+            $events
+                ->flatMap(fn ($e) => $e->occurrencesBetween($start, $end))
+                ->sortBy('starts_at')
+                ->values()
+        );
     }
 }

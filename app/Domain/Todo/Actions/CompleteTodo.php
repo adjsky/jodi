@@ -16,7 +16,7 @@ class CompleteTodo extends JodiAction
     public function handle(Todo $todo, CompleteTodoData $data): void
     {
         DB::transaction(function () use ($todo, $data) {
-            if (! is_null($todo->rrule) && ! is_null($data->occursAt)) {
+            if ($todo->rrule && $data->occursAt) {
                 $existingException = $todo->findException($data->occursAt);
 
                 $overrides = [];

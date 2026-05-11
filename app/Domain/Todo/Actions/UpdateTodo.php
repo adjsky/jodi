@@ -14,6 +14,8 @@ use Carbon\Carbon;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Str;
+use RRule\RRule;
 
 class UpdateTodo extends JodiAction
 {
@@ -32,7 +34,7 @@ class UpdateTodo extends JodiAction
 
     private function isSingleOccurrenceUpdate(Todo $todo, UpdateTodoData $data): bool
     {
-        return $data->scope == 'this' && ! is_null($todo->rrule);
+        return $data->scope == 'this' && $todo->rrule != null;
     }
 
     private function updateSingleOccurrence(Todo $todo, SingleOccurrenceUpdateData $data, ?string $timezone): void
@@ -41,7 +43,7 @@ class UpdateTodo extends JodiAction
 
         $overrides = $todo->computeOccurrenceOverrides(
             $data->occursAt,
-            $data->only('title', 'description', 'color', 'categoryId', 'scheduledAt', 'hasTime', 'notifyAt')->toArray(),
+            $data->only(...Arr::map(Todo::OVERRIDABLE_ATTRIBUTES, Str::camel(...)))->toArray(),
             $existingException
         );
 
@@ -70,41 +72,85 @@ class UpdateTodo extends JodiAction
 
     private function updateTodo(Todo $todo, UpdateTodoData $data): void
     {
-        $attributes = $data->toArray();
+        $attributes = $data->except('rrule', 'occursAt', 'scope')->toArray();
+        $occursAt = $data->occursAt;
 
-        if ($data->scope == 'all' && ! is_null($todo->rrule) && ! is_null($data->occursAt)) {
-            $todo->deleteExceptions();
-            $todo->normalizeRecurringDataForUpdate($attributes, $data->occursAt);
+        if ($data->scope == 'all' && $todo->rrule != null && $occursAt != null) {
+            $todo->resetExceptions(Todo::OVERRIDABLE_ATTRIBUTES);
+            $todo->normalizeRecurringDataForUpdate($attributes, $occursAt);
+
+            $this->splitRecurringTodo($todo, $data, $attributes);
         }
 
-        $this->syncNotificationStatus($todo, $data, $attributes);
+        $this->syncNotificationStatus($todo, $attributes);
+        $this->resetPositions($todo, $data);
 
-        $todo->fill($attributes);
-
-        $this->resetPositions($todo);
-
-        $todo->save();
+        $todo->update($attributes);
     }
 
-    private function syncNotificationStatus(Todo $todo, UpdateTodoData $data, array &$attributes): void
+    private function splitRecurringTodo(Todo $todo, UpdateTodoData $data, array &$attributes): void
     {
-        if ($todo->notify_at?->toISOString() === Carbon::make($data->notifyAt)?->toISOString()) {
+        if (! $data->occursAt || ! $data->rrule || ! $todo->rrule || rrules_match($todo->rrule, $data->rrule)) {
             return;
         }
 
-        if (is_null($data->notifyAt)) {
-            $attributes['notify_status'] = null;
-        } else {
+        $until = Carbon::parse($data->scheduledAt)->subDay()->endOfDay();
+
+        $attributes['rrule'] = new RRule(
+            [
+                ...new RRule($todo->rrule)->getRule(),
+                'UNTIL' => $until->toIso8601String(),
+            ]
+        )->rfcString();
+
+        $newTodo = $todo->replicate();
+        $newTodo->fill($data->except('occursAt', 'scope')->toArray());
+        $newTodo->save();
+
+        $this->transferExceptions($todo, $until, $newTodo->id);
+        $this->transferPositions($todo, $until, $newTodo->id);
+
+        $this->resetPositions($newTodo, $data);
+    }
+
+    private function transferPositions(Todo $todo, Carbon $date, int $newId): void
+    {
+        $todo->positions()
+            ->where('date', '>=', $date)
+            ->update(['todo_id' => $newId]);
+    }
+
+    private function transferExceptions(Todo $todo, Carbon $date, int $newId): void
+    {
+        $todo->recurrenceExceptions()
+            ->where('occurs_at', '>=', $date)
+            ->update(['recurrenceable_id' => $newId]);
+    }
+
+    private function syncNotificationStatus(Todo $todo, array &$attributes): void
+    {
+        if ($todo->notify_at?->toISOString() === Carbon::make($attributes['notify_at'])?->toISOString()) {
+            return;
+        }
+
+        if ($attributes['notify_at']) {
             $attributes['notify_status'] = 'waiting';
+        } else {
+            $attributes['notify_status'] = null;
         }
     }
 
-    private function resetPositions(Todo $todo): void
+    private function resetPositions(Todo $todo, UpdateTodoData $data): void
     {
-        $isCategoryChanged = $todo->isDirty('category_id');
-        $isScheduledAtSameDay = $todo->scheduled_at->isSameDay($todo->getOriginal('scheduled_at'));
+        $isCategoryChanged = $todo->category_id != $data->categoryId;
 
-        if ($isCategoryChanged || ! $isScheduledAtSameDay) {
+        if ($data->occursAt != null) {
+            $isRescheduled = ! Carbon::parse($data->scheduledAt)->isSameDay($data->occursAt);
+        } else {
+            $isRescheduled = ! $todo->scheduled_at->isSameDay($data->scheduledAt);
+        }
+
+        if ($isCategoryChanged || $isRescheduled) {
             $todo->positions()->delete();
         }
     }

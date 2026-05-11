@@ -28,19 +28,19 @@
         { label: m["recurrence.never"](), rule: NEVER_TRIGGER_VALUE },
         {
             label: m["recurrence.day"](),
-            rule: "RRULE:FREQ=DAILY;INTERVAL=1"
+            rule: "FREQ=DAILY"
         },
         {
             label: m["recurrence.week"](),
-            rule: "RRULE:FREQ=WEEKLY;INTERVAL=1"
+            rule: "FREQ=WEEKLY"
         },
         {
             label: m["recurrence.month"](),
-            rule: "RRULE:FREQ=MONTHLY;INTERVAL=1"
+            rule: "FREQ=MONTHLY"
         },
         {
             label: m["recurrence.year"](),
-            rule: "RRULE:FREQ=YEARLY;INTERVAL=1"
+            rule: "FREQ=YEARLY"
         },
         {
             label: m["recurrence.custom.trigger"](),

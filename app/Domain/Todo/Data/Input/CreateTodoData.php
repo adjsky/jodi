@@ -4,13 +4,15 @@ declare(strict_types=1);
 
 namespace App\Domain\Todo\Data\Input;
 
-use App\Support\Rules\RRule;
+use App\Support\Data\CastAndTransformers\RRuleCastAndTransformer;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Validation\Rules\Exists;
+use RRule\RRule;
 use Spatie\LaravelData\Attributes\MapOutputName;
 use Spatie\LaravelData\Attributes\MergeValidationRules;
 use Spatie\LaravelData\Attributes\Validation\Date;
 use Spatie\LaravelData\Attributes\Validation\Rule;
+use Spatie\LaravelData\Attributes\WithCastAndTransformer;
 use Spatie\LaravelData\Data;
 use Spatie\LaravelData\Mappers\SnakeCaseMapper;
 
@@ -35,8 +37,8 @@ class CreateTodoData extends Data
     #[Date]
     public ?string $notifyAt;
 
-    #[Rule(new RRule)]
-    public ?string $rrule;
+    #[WithCastAndTransformer(RRuleCastAndTransformer::class)]
+    public ?RRule $rrule;
 
     public static function rules(): array
     {

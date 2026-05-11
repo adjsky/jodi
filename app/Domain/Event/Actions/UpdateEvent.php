@@ -9,9 +9,12 @@ use App\Domain\Event\Data\Internal\SingleOccurrenceUpdateData;
 use App\Domain\Event\Models\Event;
 use App\Support\Actions\JodiAction;
 use App\Support\Http\JodiRequest;
+use Carbon\Carbon;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Str;
+use RRule\RRule;
 
 class UpdateEvent extends JodiAction
 {
@@ -30,7 +33,7 @@ class UpdateEvent extends JodiAction
 
     private function isSingleOccurrenceUpdate(Event $event, UpdateEventData $data): bool
     {
-        return $data->scope == 'this' && ! is_null($event->rrule);
+        return $data->scope == 'this' && $event->rrule != null;
     }
 
     private function updateSingleOccurrence(Event $event, SingleOccurrenceUpdateData $data): void
@@ -39,7 +42,7 @@ class UpdateEvent extends JodiAction
 
         $overrides = $event->computeOccurrenceOverrides(
             $data->occursAt,
-            $data->only('title', 'description', 'color', 'startsAt', 'endsAt', 'notifyAt')->toArray(),
+            $data->only(...Arr::map(Event::OVERRIDABLE_ATTRIBUTES, Str::camel(...)))->toArray(),
             $existingException
         );
 
@@ -52,21 +55,53 @@ class UpdateEvent extends JodiAction
 
     private function updateEvent(Event $event, UpdateEventData $data): void
     {
-        $attributes = $data->toArray();
+        $attributes = $data->except('rrule', 'occursAt', 'scope')->toArray();
+        $occursAt = $data->occursAt;
 
-        if ($data->scope == 'all' && ! is_null($event->rrule) && ! is_null($data->occursAt)) {
-            $event->deleteExceptions();
-            $event->normalizeRecurringDataForUpdate($attributes, $data->occursAt);
+        if ($data->scope == 'all' && $event->rrule != null && $occursAt != null) {
+            $event->resetExceptions(Event::OVERRIDABLE_ATTRIBUTES);
+            $event->normalizeRecurringDataForUpdate($attributes, $occursAt);
+
+            $this->splitRecurringEvent($event, $data, $attributes);
         }
 
-        $this->syncNotificationStatus($event, $data, $attributes);
+        $this->syncNotificationStatus($event, $attributes);
 
         $event->update($attributes);
     }
 
-    private function syncNotificationStatus(Event $event, UpdateEventData $data, array &$attributes): void
+    private function splitRecurringEvent(Event $event, UpdateEventData $data, array &$attributes): void
     {
-        if ($event->notify_at->eq($data->notifyAt)) {
+        if (! $data->rrule || ! $event->rrule || rrules_match($event->rrule, $data->rrule)) {
+            return;
+        }
+
+        $until = Carbon::parse($data->startsAt)->subDay()->endOfDay();
+
+        $attributes['rrule'] = new RRule(
+            [
+                ...new RRule($event->rrule)->getRule(),
+                'UNTIL' => $until->toIso8601String(),
+            ]
+        )->rfcString();
+
+        $newEvent = $event->replicate();
+        $newEvent->fill($data->except('occursAt', 'scope')->toArray());
+        $newEvent->save();
+
+        $this->transferExceptions($event, $until, $newEvent->id);
+    }
+
+    private function transferExceptions(Event $event, Carbon $date, int $newId): void
+    {
+        $event->recurrenceExceptions()
+            ->where('occurs_at', '>=', $date)
+            ->update(['recurrenceable_id' => $newId]);
+    }
+
+    private function syncNotificationStatus(Event $event, array &$attributes): void
+    {
+        if ($event->notify_at->eq($attributes['notify_at'])) {
             return;
         }
 

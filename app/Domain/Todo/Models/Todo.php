@@ -71,6 +71,16 @@ class Todo extends Model implements Recurrable
 {
     use HasFactory, HasRecurrence;
 
+    const OVERRIDABLE_ATTRIBUTES = [
+        'title',
+        'description',
+        'color',
+        'category_id',
+        'scheduled_at',
+        'has_time',
+        'notify_at',
+    ];
+
     protected $fillable = [
         'title',
         'description',

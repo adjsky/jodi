@@ -16,10 +16,8 @@ class DestroyEvent extends JodiAction
     public function handle(Event $event, DestroyEventData $data): void
     {
         DB::transaction(function () use ($event, $data) {
-            if ($data->scope == 'this' && ! is_null($event->rrule)) {
-                if (is_null($data->occursAt)) {
-                    throw new \LogicException('$data->occursAt must be non-nullable.');
-                }
+            if ($data->scope == 'this' && $event->rrule != null) {
+                throw_unless($data->occursAt, new \LogicException('$data->occursAt must be non-nullable.'));
                 $event->cancelOccurrence($data->occursAt);
             } else {
                 $event->deleteExceptions();

@@ -71,7 +71,7 @@ class EventReminder extends Notification implements ShouldQueue
     {
         $startsAt = $this->model->starts_at->copy();
 
-        if (! is_null($this->occursAt)) {
+        if ($this->occursAt) {
             $startsAt->setDateFrom($this->occursAt);
         }
 

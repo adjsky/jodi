@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Domain\Todo\Data\Internal;
 
 use App\Domain\Todo\Data\Input\UpdateTodoData;
+use RRule\RRule;
 use Spatie\LaravelData\Attributes\MapOutputName;
 use Spatie\LaravelData\Data;
 use Spatie\LaravelData\Mappers\SnakeCaseMapper;
@@ -20,16 +21,14 @@ class SingleOccurrenceUpdateData extends Data
         public string $scheduledAt,
         public bool $hasTime,
         public ?string $notifyAt,
-        public ?string $rrule,
+        public ?RRule $rrule,
         public string $occursAt,
         public string $scope
     ) {}
 
     public static function fromUpdateTodoData(UpdateTodoData $data): self
     {
-        if (is_null($data->occursAt)) {
-            throw new \LogicException('$data->occursAt must be non-nullable.');
-        }
+        throw_unless($data->occursAt, new \LogicException('$data->occursAt must be non-nullable.'));
 
         return new self(
             $data->title,

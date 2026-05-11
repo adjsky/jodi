@@ -68,6 +68,16 @@ class Event extends Model implements Recurrable
 {
     use HasFactory, HasRecurrence;
 
+    const OVERRIDABLE_ATTRIBUTES = [
+        'title',
+        'description',
+        'location',
+        'color',
+        'starts_at',
+        'ends_at',
+        'notify_at',
+    ];
+
     protected $fillable = [
         'title',
         'description',

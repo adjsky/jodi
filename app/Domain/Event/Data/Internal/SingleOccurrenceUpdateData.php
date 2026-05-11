@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Domain\Event\Data\Internal;
 
 use App\Domain\Event\Data\Input\UpdateEventData;
+use RRule\RRule;
 use Spatie\LaravelData\Attributes\MapOutputName;
 use Spatie\LaravelData\Data;
 use Spatie\LaravelData\Mappers\SnakeCaseMapper;
@@ -19,16 +20,14 @@ class SingleOccurrenceUpdateData extends Data
         public string $startsAt,
         public string $endsAt,
         public string $notifyAt,
-        public ?string $rrule,
+        public ?RRule $rrule,
         public string $occursAt,
         public string $scope
     ) {}
 
     public static function fromUpdateEventData(UpdateEventData $data): self
     {
-        if (is_null($data->occursAt)) {
-            throw new \LogicException('$data->occursAt must be non-nullable.');
-        }
+        throw_unless($data->occursAt, new \LogicException('$data->occursAt must be non-nullable.'));
 
         return new self(
             $data->title,

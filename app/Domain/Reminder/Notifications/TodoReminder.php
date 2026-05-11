@@ -70,7 +70,7 @@ class TodoReminder extends Notification implements ShouldQueue
     {
         $scheduledAt = $this->model->scheduled_at->copy();
 
-        if (! is_null($this->occursAt)) {
+        if ($this->occursAt) {
             $scheduledAt->setDateFrom($this->occursAt);
         }
 
