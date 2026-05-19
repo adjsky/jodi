@@ -8,6 +8,7 @@ use Database\Factories\RecurrenceExceptionFactory;
 use Illuminate\Database\Eloquent\Attributes\UseFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\MorphTo;
 use Illuminate\Support\Carbon;
 
 /**
@@ -55,5 +56,10 @@ class RecurrenceException extends Model
             'is_cancelled' => 'boolean',
             'overrides' => 'array',
         ];
+    }
+
+    public function recurrenceable(): MorphTo
+    {
+        return $this->morphTo();
     }
 }

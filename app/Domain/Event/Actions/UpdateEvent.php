@@ -55,7 +55,7 @@ class UpdateEvent extends JodiAction
 
     private function updateEvent(Event $event, UpdateEventData $data): void
     {
-        $attributes = $data->except('rrule', 'occursAt', 'scope')->toArray();
+        $attributes = $data->except('occursAt', 'scope')->toArray();
         $occursAt = $data->occursAt;
 
         if ($data->scope == 'all' && $event->rrule != null && $occursAt != null) {
@@ -89,14 +89,18 @@ class UpdateEvent extends JodiAction
         $newEvent->fill($data->except('occursAt', 'scope')->toArray());
         $newEvent->save();
 
-        $this->transferExceptions($event, $until, $newEvent->id);
+        $this->transferExceptions($event, $newEvent, $until);
     }
 
-    private function transferExceptions(Event $event, Carbon $date, int $newId): void
+    private function transferExceptions(Event $oldEvent, Event $newEvent, Carbon $date): void
     {
-        $event->recurrenceExceptions()
-            ->where('occurs_at', '>=', $date)
-            ->update(['recurrenceable_id' => $newId]);
+        $query = $oldEvent->recurrenceExceptions()->where('occurs_at', '>=', $date);
+
+        if ($newEvent->rrule == null) {
+            $query->delete();
+        } else {
+            $query->update(['recurrenceable_id' => $newEvent->id]);
+        }
     }
 
     private function syncNotificationStatus(Event $event, array &$attributes): void

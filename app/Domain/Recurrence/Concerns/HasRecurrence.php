@@ -79,7 +79,7 @@ trait HasRecurrence
                     }
 
                     $offset = $dtstart->diffInDays($attribute);
-                    $model->setAttribute($key, $date->copy()->addDays($offset)->setTimeFrom($attribute));
+                    $model->setAttribute($key, $date->clone()->addDays($offset)->setTimeFrom($attribute));
                 }
 
                 if ($exception) {
@@ -116,13 +116,13 @@ trait HasRecurrence
 
     public function deleteExceptions(?string $occursAt = null): void
     {
-        $qb = $this->recurrenceExceptions();
+        $query = $this->recurrenceExceptions();
 
         if ($occursAt) {
-            $qb = $qb->where('occurs_at', $occursAt);
+            $query = $query->where('occurs_at', $occursAt);
         }
 
-        $qb->delete();
+        $query->delete();
     }
 
     public function resetExceptions(array $attributes): void
@@ -149,7 +149,9 @@ trait HasRecurrence
                 $attribute = $this->getAttribute($key);
 
                 if ($attribute == null) {
-                    $overrides[$key] = $value;
+                    if ($attribute !== $value) {
+                        $overrides[$key] = $value;
+                    }
 
                     continue;
                 }

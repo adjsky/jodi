@@ -72,7 +72,7 @@ class UpdateTodo extends JodiAction
 
     private function updateTodo(Todo $todo, UpdateTodoData $data): void
     {
-        $attributes = $data->except('rrule', 'occursAt', 'scope')->toArray();
+        $attributes = $data->except('occursAt', 'scope')->toArray();
         $occursAt = $data->occursAt;
 
         if ($data->scope == 'all' && $todo->rrule != null && $occursAt != null) {
@@ -107,24 +107,28 @@ class UpdateTodo extends JodiAction
         $newTodo->fill($data->except('occursAt', 'scope')->toArray());
         $newTodo->save();
 
-        $this->transferExceptions($todo, $until, $newTodo->id);
-        $this->transferPositions($todo, $until, $newTodo->id);
+        $this->transferExceptions($todo, $newTodo, $until);
+        $this->transferPositions($todo, $newTodo, $until);
 
         $this->resetPositions($newTodo, $data);
     }
 
-    private function transferPositions(Todo $todo, Carbon $date, int $newId): void
+    private function transferPositions(Todo $oldTodo, Todo $newTodo, Carbon $date): void
     {
-        $todo->positions()
+        $oldTodo->positions()
             ->where('date', '>=', $date)
-            ->update(['todo_id' => $newId]);
+            ->update(['todo_id' => $newTodo->id]);
     }
 
-    private function transferExceptions(Todo $todo, Carbon $date, int $newId): void
+    private function transferExceptions(Todo $oldTodo, Todo $newTodo, Carbon $date): void
     {
-        $todo->recurrenceExceptions()
-            ->where('occurs_at', '>=', $date)
-            ->update(['recurrenceable_id' => $newId]);
+        $query = $oldTodo->recurrenceExceptions()->where('occurs_at', '>=', $date);
+
+        if ($newTodo->rrule == null) {
+            $query->delete();
+        } else {
+            $query->update(['recurrenceable_id' => $newTodo->id]);
+        }
     }
 
     private function syncNotificationStatus(Todo $todo, array &$attributes): void

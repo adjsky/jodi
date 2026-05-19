@@ -20,7 +20,8 @@ class RecurrenceExceptionFactory extends Factory
     public function definition(): array
     {
         return [
-            //
+            'is_cancelled' => false,
+            'overrides' => [],
         ];
     }
 }
