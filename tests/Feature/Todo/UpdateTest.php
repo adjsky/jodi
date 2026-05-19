@@ -237,6 +237,51 @@ test('event splits when changing rrule', function () {
     ]);
 });
 
+test('completion is preserved after splitting', function () {
+    $user = User::factory()->create();
+
+    $rrule = 'FREQ=DAILY';
+    $todo = Todo::factory()->for($user)->create([
+        'scheduled_at' => '2026-01-01T12:34:56Z',
+        'rrule' => $rrule,
+    ]);
+
+    RecurrenceException::factory()->for($todo, 'recurrenceable')->create([
+        'occurs_at' => '2026-01-02',
+        'overrides' => ['completed_at' => '2026-01-02:11:22:33Z'],
+    ]);
+    RecurrenceException::factory()->for($todo, 'recurrenceable')->create([
+        'occurs_at' => '2026-01-05',
+        'overrides' => ['completed_at' => '2026-01-05:11:22:33Z'],
+    ]);
+
+    $data = UpdateTodoDataFactory::make([
+        'rrule' => 'FREQ=WEEKLY',
+        'scheduledAt' => '2026-01-05T12:34:56Z',
+        'occursAt' => '2026-01-05',
+        'scope' => 'all',
+    ]);
+
+    UpdateTodo::make()->handle($todo, $data, 'Europe/Moscow');
+
+    assertDatabaseHas('recurrence_exceptions', [
+        'recurrenceable_type' => 'todo',
+        'recurrenceable_id' => $todo->id,
+        'occurs_at' => '2026-01-02',
+        'overrides' => json_encode([
+            'completed_at' => '2026-01-02:11:22:33Z',
+        ]),
+    ]);
+    assertDatabaseHas('recurrence_exceptions', [
+        'recurrenceable_type' => 'todo',
+        'recurrenceable_id' => $todo->id + 1,
+        'occurs_at' => '2026-01-05',
+        'overrides' => json_encode([
+            'completed_at' => '2026-01-05:11:22:33Z',
+        ]),
+    ]);
+});
+
 test('exceptions are transferred and reset when changing rrule', function () {
     $user = User::factory()->create();
 
