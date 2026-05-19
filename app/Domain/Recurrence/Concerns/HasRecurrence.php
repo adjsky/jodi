@@ -130,7 +130,7 @@ trait HasRecurrence
         $this->recurrenceExceptions()->each(function ($exception) use ($attributes) {
             $exception->overrides = Arr::except($exception->overrides, $attributes);
 
-            if (count($exception->overrides) === 0) {
+            if (count($exception->overrides) === 0 && ! $exception->is_cancelled) {
                 $exception->delete();
             } else {
                 $exception->save();
