@@ -9,12 +9,12 @@
 
     import CustomConfiguratorBlock from "./CustomConfiguratorBlock.svelte";
 
-    import type { ZonedDateTime } from "@internationalized/date";
+    import type { CalendarDate, ZonedDateTime } from "@internationalized/date";
 
     type Props = {
         day: ZonedDateTime;
         limit: "never" | "until" | "count";
-        until: Date;
+        until: CalendarDate;
         count: string;
     };
 
@@ -46,7 +46,7 @@
                     selected={toCalendarDate(day)}
                     id="recurrence-until-calendar"
                     onSelect={(date) => {
-                        until = date.toDate("UTC");
+                        until = date;
                     }}
                 >
                     {#snippet children(props)}
@@ -59,7 +59,7 @@
                                 year: "numeric",
                                 month: "short",
                                 weekday: "short"
-                            }).format(until ?? day.add({ months: 1 }).toDate())}
+                            }).format(until.toDate("UTC"))}
                         </div>
                     {/snippet}
                 </YearCalendarDialog>

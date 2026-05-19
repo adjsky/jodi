@@ -22,9 +22,7 @@ abstract class JodiAction
     {
         $user = Auth::user();
 
-        if (! $user) {
-            throw new AuthenticationException('Unauthenticated.');
-        }
+        throw_unless($user, new AuthenticationException('Unauthenticated.'));
 
         return $user;
     }

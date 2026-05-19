@@ -19,7 +19,7 @@ trait HasRecurrence
 {
     public function occurrencesBetween(CarbonInterface $viewStart, CarbonInterface $viewEnd): Collection
     {
-        if (is_null($this->rrule)) {
+        if ($this->rrule == null) {
             $model = $this->replicate();
             $model->id = $this->id;
 
@@ -74,12 +74,12 @@ trait HasRecurrence
 
                     $attribute = $this->getAttribute($key);
 
-                    if (is_null($attribute)) {
+                    if ($attribute == null) {
                         continue;
                     }
 
                     $offset = $dtstart->diffInDays($attribute);
-                    $model->setAttribute($key, $date->copy()->addDays($offset)->setTimeFrom($attribute));
+                    $model->setAttribute($key, $date->clone()->addDays($offset)->setTimeFrom($attribute));
                 }
 
                 if ($exception) {
@@ -95,14 +95,14 @@ trait HasRecurrence
 
     public function applyException(string $occursAt, array $overrides, ?RecurrenceException $existingException): void
     {
-        if (is_null($existingException)) {
+        if ($existingException != null) {
+            $existingException->update([
+                'overrides' => [...$existingException->overrides, ...$overrides],
+            ]);
+        } else {
             $this->recurrenceExceptions()->create(
                 ['occurs_at' => $occursAt, 'is_cancelled' => false, 'overrides' => $overrides]
             );
-        } else {
-            $this->recurrenceExceptions()
-                ->where('occurs_at', $occursAt)
-                ->update(['overrides' => [...$existingException->overrides, ...$overrides]]);
         }
     }
 
@@ -116,13 +116,26 @@ trait HasRecurrence
 
     public function deleteExceptions(?string $occursAt = null): void
     {
-        $qb = $this->recurrenceExceptions();
+        $query = $this->recurrenceExceptions();
 
-        if (! is_null($occursAt)) {
-            $qb = $qb->where('occurs_at', $occursAt);
+        if ($occursAt) {
+            $query = $query->where('occurs_at', $occursAt);
         }
 
-        $qb->delete();
+        $query->delete();
+    }
+
+    public function resetExceptions(array $attributes): void
+    {
+        $this->recurrenceExceptions()->each(function ($exception) use ($attributes) {
+            $exception->overrides = Arr::except($exception->overrides, $attributes);
+
+            if (count($exception->overrides) === 0 && ! $exception->is_cancelled) {
+                $exception->delete();
+            } else {
+                $exception->save();
+            }
+        });
     }
 
     public function computeOccurrenceOverrides(string $occursAt, array $attributes, ?RecurrenceException $exception): array
@@ -135,8 +148,10 @@ trait HasRecurrence
             if (in_array($key, $dateKeys)) {
                 $attribute = $this->getAttribute($key);
 
-                if (is_null($attribute)) {
-                    $overrides[$key] = $value;
+                if ($attribute == null) {
+                    if ($attribute !== $value) {
+                        $overrides[$key] = $value;
+                    }
 
                     continue;
                 }

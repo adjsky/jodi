@@ -18,6 +18,7 @@ pre-push:
       glob: "*.php"
     - run: "npm run check -- --fail-on-warnings"
       glob: "*.{js,ts,svelte}"
+    - run: "composer test --parallel"
 
 commit-msg:
   jobs:

@@ -12,14 +12,14 @@ class TimezoneMiddleware
     public function handle(JodiRequest $request, \Closure $next): Response
     {
         $user = $request->user();
-        $tz = $request->timezone();
+        $timezone = $request->timezone();
 
-        if (is_null($user) || is_null($tz)) {
+        if (! $user || ! $timezone) {
             return $next($request);
         }
 
-        if ($user->preferences->timezone !== $tz) {
-            $user->preferences = $user->preferences->merge(['timezone' => $tz]);
+        if ($user->preferences->timezone !== $timezone) {
+            $user->preferences = $user->preferences->merge(['timezone' => $timezone]);
             $user->save();
         }
 

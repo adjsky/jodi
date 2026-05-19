@@ -8,6 +8,7 @@ use Database\Factories\TodoPositionFactory;
 use Illuminate\Database\Eloquent\Attributes\UseFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Support\Carbon;
 
 /**
@@ -37,7 +38,7 @@ class TodoPosition extends Model
     use HasFactory;
 
     protected $fillable = [
-        'occurs_at',
+        'date',
         'position',
     ];
 
@@ -46,7 +47,13 @@ class TodoPosition extends Model
     protected function casts(): array
     {
         return [
-            'occurs_at' => 'date:Y-m-d',
+            'date' => 'date:Y-m-d',
         ];
+    }
+
+    /** @return BelongsTo<Todo,$this> */
+    public function todo(): BelongsTo
+    {
+        return $this->belongsTo(Todo::class);
     }
 }

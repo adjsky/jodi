@@ -1,5 +1,10 @@
 <script lang="ts">
-    import { toCalendarDate } from "@internationalized/date";
+    import {
+        fromDate,
+        Time,
+        toCalendarDate,
+        toCalendarDateTime
+    } from "@internationalized/date";
     import { m } from "$/paraglide/messages";
     import Button from "$/shared/ui/Button.svelte";
     import SheetDialog from "$/shared/ui/SheetDialog.svelte";
@@ -25,41 +30,32 @@
     const DEFAULT_FREQ = Frequency.WEEKLY;
     const DEFAULT_BYWEEKDAY = $derived([dateToWeekday(day.toDate())]);
     const DEFAULT_COUNT = "1";
-    const DEFAULT_UNTIL = $derived(
-        toCalendarDate(day).add({ months: 1 }).toDate("UTC")
-    );
+    const DEFAULT_UNTIL = $derived(toCalendarDate(day).add({ months: 1 }));
 
-    const rule = $derived(rrule ? rrulestr(rrule) : null);
+    let rule = $derived(rrule ? rrulestr(rrule) : null);
 
-    let interval = $derived(
-        rule?.options.interval.toString() ?? DEFAULT_INTERVAL
-    );
-    let freq = $derived(rule?.options.freq ?? DEFAULT_FREQ);
-    let byweekday = $derived(rule?.options.byweekday ?? DEFAULT_BYWEEKDAY);
-    let count = $derived(rule?.options.count?.toString() ?? DEFAULT_COUNT);
-    let until = $derived(rule?.options.until ?? DEFAULT_UNTIL);
-
-    let limit = $derived.by(() => {
-        if (rule?.options.count) {
-            return "count" as const;
-        }
-
-        if (rule?.options.until) {
-            return "until" as const;
-        }
-
-        return "never" as const;
-    });
+    let { interval, freq, byweekday, count, until, limit } =
+        $derived(getParts());
 
     function reset() {
-        //
-        // TODO: think about simplifying the init/reset logic
-        //
-        interval = rule?.options.interval.toString() ?? DEFAULT_INTERVAL;
-        freq = rule?.options.freq ?? DEFAULT_FREQ;
-        byweekday = rule?.options.byweekday ?? DEFAULT_BYWEEKDAY;
-        count = rule?.options.count?.toString() ?? DEFAULT_COUNT;
-        until = rule?.options.until ?? DEFAULT_UNTIL;
+        ({ interval, freq, byweekday, count, until, limit } = getParts());
+    }
+
+    function getParts() {
+        return {
+            interval: rule?.options.interval.toString() ?? DEFAULT_INTERVAL,
+            freq: rule?.options.freq ?? DEFAULT_FREQ,
+            byweekday: rule?.options.byweekday ?? DEFAULT_BYWEEKDAY,
+            count: rule?.options.count?.toString() ?? DEFAULT_COUNT,
+            until: rule?.options.until
+                ? toCalendarDate(fromDate(rule.options.until, "UTC"))
+                : DEFAULT_UNTIL,
+            limit: rule?.options.count
+                ? ("count" as const)
+                : rule?.options.until
+                  ? ("until" as const)
+                  : ("never" as const)
+        };
     }
 
     function onApply() {
@@ -69,7 +65,10 @@
                 interval: Number(interval),
                 ...(freq == Frequency.WEEKLY && { byweekday }),
                 ...(limit == "until" && {
-                    until: new Date(until.setHours(23, 59, 59))
+                    until: toCalendarDateTime(
+                        until,
+                        new Time(23, 59, 59)
+                    ).toDate("UTC")
                 }),
                 ...(limit == "count" && { count: Number(count) })
             }).toString()

@@ -9,7 +9,7 @@ use Database\Factories\CategoryFactory;
 use Illuminate\Database\Eloquent\Attributes\UseFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\HasOne;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Support\Carbon;
 
 /**
@@ -48,9 +48,9 @@ class Category extends Model
         return [];
     }
 
-    /** @return HasOne<User,$this> */
-    public function user(): HasOne
+    /** @return BelongsTo<User,$this> */
+    public function user(): BelongsTo
     {
-        return $this->hasOne(User::class);
+        return $this->belongsTo(User::class);
     }
 }

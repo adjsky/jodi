@@ -68,9 +68,9 @@ class TodoReminder extends Notification implements ShouldQueue
 
     private function scheduledAt(string $timezone): Carbon
     {
-        $scheduledAt = $this->model->scheduled_at->copy();
+        $scheduledAt = $this->model->scheduled_at->clone();
 
-        if (! is_null($this->occursAt)) {
+        if ($this->occursAt) {
             $scheduledAt->setDateFrom($this->occursAt);
         }
 

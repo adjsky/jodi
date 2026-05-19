@@ -69,9 +69,9 @@ class EventReminder extends Notification implements ShouldQueue
 
     private function startsAt(string $timezone): Carbon
     {
-        $startsAt = $this->model->starts_at->copy();
+        $startsAt = $this->model->starts_at->clone();
 
-        if (! is_null($this->occursAt)) {
+        if ($this->occursAt) {
             $startsAt->setDateFrom($this->occursAt);
         }
 
