@@ -73,11 +73,10 @@ class UpdateTodo extends JodiAction
     private function updateTodo(Todo $todo, UpdateTodoData $data): void
     {
         $attributes = $data->except('occursAt', 'scope')->toArray();
-        $occursAt = $data->occursAt;
 
-        if ($data->scope == 'all' && $todo->rrule != null && $occursAt != null) {
+        if ($data->scope == 'all' && $todo->rrule != null && $data->occursAt != null) {
             $todo->resetExceptions(Todo::OVERRIDABLE_ATTRIBUTES);
-            $todo->normalizeRecurringDataForUpdate($attributes, $occursAt);
+            $todo->normalizeRecurringDataForUpdate($attributes, $data->occursAt);
 
             $this->splitRecurringTodo($todo, $data, $attributes);
         }
@@ -90,7 +89,9 @@ class UpdateTodo extends JodiAction
 
     private function splitRecurringTodo(Todo $todo, UpdateTodoData $data, array &$attributes): void
     {
-        if (! $data->occursAt || ! $data->rrule || ! $todo->rrule || rrules_match($todo->rrule, $data->rrule)) {
+        throw_unless($todo->rrule && $data->occursAt, new \LogicException('Event can\'t be splitted without $todo->rrule and $data->occursAt defined.'));
+
+        if ($data->rrule && rrules_match($todo->rrule, $data->rrule)) {
             return;
         }
 

@@ -9,6 +9,7 @@ use App\Domain\Recurrence\Models\RecurrenceException;
 use Carbon\Carbon;
 use Tests\Factory\Data\UpdateEventDataFactory;
 
+use function Pest\Laravel\assertDatabaseCount;
 use function Pest\Laravel\assertDatabaseHas;
 use function Pest\Laravel\assertDatabaseMissing;
 
@@ -240,6 +241,38 @@ test('event splits when changing rrule', function () {
         'starts_at' => $startsAt->toDateTimeString(),
         'rrule' => 'FREQ=WEEKLY',
     ]);
+});
+
+test('event splits when resetting rrule', function () {
+    $user = User::factory()->create();
+    $event = Event::factory()->for($user)->create(['rrule' => 'FREQ=DAILY']);
+
+    $data = UpdateEventDataFactory::make([
+        'rrule' => null,
+        'occursAt' => $event->starts_at->clone()->addDays(4),
+        'scope' => 'all',
+    ]);
+
+    UpdateEvent::make()->handle($event, $data);
+
+    assertDatabaseCount('events', 2);
+});
+
+test('event does not split when rrule is the same', function () {
+    $user = User::factory()->create();
+
+    $rrule = 'FREQ=DAILY';
+    $event = Event::factory()->for($user)->create(['rrule' => $rrule]);
+
+    $data = UpdateEventDataFactory::make([
+        'rrule' => $rrule,
+        'occursAt' => $event->starts_at->clone()->addDays(4),
+        'scope' => 'all',
+    ]);
+
+    UpdateEvent::make()->handle($event, $data);
+
+    assertDatabaseCount('events', 1);
 });
 
 test('exceptions are transferred and reset when changing rrule', function () {

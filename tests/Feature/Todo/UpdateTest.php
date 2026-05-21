@@ -11,6 +11,7 @@ use App\Domain\Todo\Models\TodoPosition;
 use Carbon\Carbon;
 use Tests\Factory\Data\UpdateTodoDataFactory;
 
+use function Pest\Laravel\assertDatabaseCount;
 use function Pest\Laravel\assertDatabaseHas;
 use function Pest\Laravel\assertDatabaseMissing;
 
@@ -208,7 +209,7 @@ test('recurring global update resets existing exceptions', function () {
     ]);
 });
 
-test('event splits when changing rrule', function () {
+test('todo splits when changing rrule', function () {
     $user = User::factory()->create();
 
     $rrule = 'FREQ=DAILY';
@@ -235,6 +236,38 @@ test('event splits when changing rrule', function () {
         'scheduled_at' => $scheduledAt->toDateTimeString(),
         'rrule' => 'FREQ=WEEKLY',
     ]);
+});
+
+test('todo splits when resetting rrule', function () {
+    $user = User::factory()->create();
+    $todo = Todo::factory()->for($user)->create(['rrule' => 'FREQ=DAILY']);
+
+    $data = UpdateTodoDataFactory::make([
+        'rrule' => null,
+        'occursAt' => $todo->scheduled_at->clone()->addDays(4),
+        'scope' => 'all',
+    ]);
+
+    UpdateTodo::make()->handle($todo, $data, 'Europe/Moscow');
+
+    assertDatabaseCount('todos', 2);
+});
+
+test('todo does not split when rrule is the same', function () {
+    $user = User::factory()->create();
+
+    $rrule = 'FREQ=DAILY';
+    $todo = Todo::factory()->for($user)->create(['rrule' => $rrule]);
+
+    $data = UpdateTodoDataFactory::make([
+        'rrule' => $rrule,
+        'occursAt' => $todo->scheduled_at->clone()->addDays(4),
+        'scope' => 'all',
+    ]);
+
+    UpdateTodo::make()->handle($todo, $data, 'Europe/Moscow');
+
+    assertDatabaseCount('todos', 1);
 });
 
 test('completion is preserved after splitting', function () {
