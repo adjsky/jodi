@@ -60,17 +60,5 @@ export const optimistic = {
                     return editView.updateMeta(updatedTodo);
                 }
             }
-        ),
-    delete: (todo: TodoData) =>
-        _optimistic(
-            (prev) => ({
-                todos: prev.todos.filter((t: TodoData) => id(t) !== id(todo))
-            }),
-            {
-                error: m["todos.errors.delete"](),
-                onSuccess() {
-                    void editView.back();
-                }
-            }
         )
 };

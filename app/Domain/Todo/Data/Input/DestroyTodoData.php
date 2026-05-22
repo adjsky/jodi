@@ -17,17 +17,31 @@ class DestroyTodoData extends Data
     #[DateFormat('Y-m-d')]
     public ?string $occursAt;
 
-    #[RequiredIf('scope', 'this')]
+    #[RequiredIf('scope', 'this', 'following')]
     #[DateFormat('Y-m-d')]
     public ?string $date;
 
-    #[In('this', 'all')]
+    #[In('this', 'following', 'all')]
     public string $scope;
 
     public static function rules(JodiRequest $request): array
     {
         return [
-            'occursAt' => [$request->todo->rrule ? 'required_if:scope,this' : 'nullable'],
+            'occursAt' => [$request->todo->rrule ? 'required_if:scope,this,following' : 'nullable'],
         ];
+    }
+
+    public function getOccursAtOrFail(): string
+    {
+        return $this->occursAt ?? throw new \LogicException(
+            '$this->occursAt must not be null when scope is "this" or "following".'
+        );
+    }
+
+    public function getDateOrFail(): string
+    {
+        return $this->date ?? throw new \LogicException(
+            '$this->date must not be null when scope is "this" or "following".'
+        );
     }
 }

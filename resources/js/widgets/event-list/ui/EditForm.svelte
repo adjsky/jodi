@@ -137,7 +137,6 @@
         {#snippet destroy()}
             <DeleteItem
                 {...visitOptions}
-                {...optimistic.delete(event)}
                 href={DestroyEvent(event.id)}
                 title={{
                     recurring: m["events.recurrence-action.delete-title"](),
@@ -146,8 +145,10 @@
                 tooltip={m["events.tooltips.delete"]()}
                 recurring={event.rrule != null}
                 occursAt={event.occursAt}
+                date={event.startsAt}
                 scopeLabels={{
                     this: m["events.recurrence-action.this"](),
+                    following: m["events.recurrence-action.following"](),
                     all: m["events.recurrence-action.all"]()
                 }}
             />

@@ -8,7 +8,7 @@
 
     type Props = {
         title?: string;
-        scopeLabels?: { this: string; all: string };
+        scopeLabels?: { this: string; following?: string; all: string };
         open?: boolean;
         portal?: boolean;
         fallback?: boolean;
@@ -42,6 +42,9 @@
         {onAbort}
         bind:open
         onConfirm={() => onConfirm?.(selectedScope)}
+        onExitComplete={() => {
+            selectedScope = "this";
+        }}
     >
         {#snippet trigger(props)}
             {@render trigger?.(props)}
@@ -49,12 +52,15 @@
         {#snippet content()}
             {#if !fallback}
                 <div class="mt-2">
-                    {#each ["this", "all"] as const as scope (scope)}
-                        <Checkbox
-                            label={scopeLabels?.[scope]}
-                            checked={selectedScope == scope}
-                            onclick={() => (selectedScope = scope)}
-                        />
+                    {#each ["this", "following", "all"] as const as scope (scope)}
+                        {@const label = scopeLabels?.[scope]}
+                        {#if label}
+                            <Checkbox
+                                {label}
+                                checked={selectedScope == scope}
+                                onclick={() => (selectedScope = scope)}
+                            />
+                        {/if}
                     {/each}
                 </div>
             {/if}

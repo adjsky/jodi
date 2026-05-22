@@ -75,7 +75,7 @@ test('recurring local update applies an exception instead of modifying the origi
     $event = Event::factory()->for($user)->create([
         'rrule' => $rrule,
     ]);
-    $occursAt = $event->starts_at->clone()->addWeek()->format('Y-m-d');
+    $occursAt = $event->starts_at->clone()->addWeek()->toDateString();
 
     $data = UpdateEventDataFactory::make([
         'rrule' => $rrule,
@@ -124,8 +124,8 @@ test('recurring global update modifies the original event', function () {
 
     $data = UpdateEventDataFactory::make([
         'rrule' => $rrule,
-        'startsAt' => $occursAt->clone()->addDay()->format('Y-m-d'),
-        'occursAt' => $occursAt->format('Y-m-d'),
+        'startsAt' => $occursAt->clone()->addDay()->toDateString(),
+        'occursAt' => $occursAt->toDateString(),
         'scope' => 'all',
     ]);
 
@@ -163,7 +163,7 @@ test('recurring global update preserves original dates', function () {
     $data = UpdateEventDataFactory::make([
         'rrule' => $rrule,
         'startsAt' => $occursAt->toISOString(),
-        'occursAt' => $occursAt->format('Y-m-d'),
+        'occursAt' => $occursAt->toDateString(),
         'scope' => 'all',
     ]);
 
@@ -185,16 +185,16 @@ test('recurring global update resets existing exceptions', function () {
     $occursAt = $event->starts_at->clone()->addWeek();
 
     RecurrenceException::factory()->for($event, 'recurrenceable')->create([
-        'occurs_at' => $occursAt->format('Y-m-d'),
+        'occurs_at' => $occursAt->toDateString(),
         'overrides' => ['notify_status' => 'sent'],
     ]);
     RecurrenceException::factory()->for($event, 'recurrenceable')->create([
-        'occurs_at' => $occursAt->clone()->addWeek()->format('Y-m-d'),
+        'occurs_at' => $occursAt->clone()->addWeek()->toDateString(),
     ]);
 
     $data = UpdateEventDataFactory::make([
         'rrule' => $rrule,
-        'occursAt' => $occursAt->format('Y-m-d'),
+        'occursAt' => $occursAt->toDateString(),
         'scope' => 'all',
     ]);
 
@@ -203,13 +203,13 @@ test('recurring global update resets existing exceptions', function () {
     assertDatabaseMissing('recurrence_exceptions', [
         'recurrenceable_type' => 'event',
         'recurrenceable_id' => $event->id,
-        'occurs_at' => $occursAt->clone()->addWeek()->format('Y-m-d'),
+        'occurs_at' => $occursAt->clone()->addWeek()->toDateString(),
     ]);
 
     assertDatabaseHas('recurrence_exceptions', [
         'recurrenceable_type' => 'event',
         'recurrenceable_id' => $event->id,
-        'occurs_at' => $occursAt->format('Y-m-d'),
+        'occurs_at' => $occursAt->toDateString(),
         'overrides' => json_encode(['notify_status' => 'sent']),
     ]);
 });
@@ -229,7 +229,7 @@ test('event splits when changing rrule', function () {
     UpdateEvent::make()->handle($event, $data);
 
     $startsAt = Carbon::parse($data->startsAt);
-    $until = $startsAt->clone()->subDay()->endOfDay()->format('Ymd\THisT');
+    $until = $startsAt->clone()->subDay()->endOfDay()->format('Ymd\THis\Z');
 
     assertDatabaseHas('events', [
         'id' => $event->id,
@@ -283,11 +283,11 @@ test('exceptions are transferred and reset when changing rrule', function () {
     $occursAt = $event->starts_at->clone()->addDays(4);
 
     RecurrenceException::factory()->for($event, 'recurrenceable')->create([
-        'occurs_at' => $occursAt->format('Y-m-d'),
+        'occurs_at' => $occursAt->toDateString(),
         'overrides' => ['notify_status' => 'sent'],
     ]);
     RecurrenceException::factory()->for($event, 'recurrenceable')->create([
-        'occurs_at' => $occursAt->clone()->subDays(2)->format('Y-m-d'),
+        'occurs_at' => $occursAt->clone()->subDays(2)->toDateString(),
     ]);
 
     $data = UpdateEventDataFactory::make([
@@ -295,7 +295,7 @@ test('exceptions are transferred and reset when changing rrule', function () {
         'endsAt' => $occursAt->clone()->setTime(15, 1, 0)->toISOString(),
         'notifyAt' => $occursAt->clone()->subHour()->toISOString(),
         'rrule' => 'FREQ=WEEKLY',
-        'occursAt' => $occursAt->format('Y-m-d'),
+        'occursAt' => $occursAt->toDateString(),
         'scope' => 'all',
     ]);
 

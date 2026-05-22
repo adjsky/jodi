@@ -167,7 +167,6 @@
         {#snippet destroy()}
             <DeleteItem
                 {...visitOptions}
-                {...optimistic.delete(todo)}
                 href={DestroyTodo(todo.id)}
                 title={{
                     recurring: m["todos.recurrence-action.delete-title"](),
@@ -179,6 +178,7 @@
                 date={todo.scheduledAt}
                 scopeLabels={{
                     this: m["todos.recurrence-action.this"](),
+                    following: m["todos.recurrence-action.following"](),
                     all: m["todos.recurrence-action.all"]()
                 }}
             />

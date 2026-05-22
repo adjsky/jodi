@@ -6,10 +6,11 @@
     import Button from "./Button.svelte";
 
     import type { MaybePromise } from "../lib/types";
+    import type { DialogRootProps } from "@ark-ui/svelte/dialog";
     import type { Snippet } from "svelte";
     import type { HTMLAttributes } from "svelte/elements";
 
-    type Props = {
+    type Props = Pick<DialogRootProps, "onExitComplete"> & {
         title: string;
         open?: boolean;
         portal?: boolean;
@@ -26,11 +27,12 @@
         trigger,
         content,
         onConfirm,
-        onAbort
+        onAbort,
+        ...dialogRootProps
     }: Props = $props();
 </script>
 
-<Dialog.Root bind:open role="alertdialog">
+<Dialog.Root bind:open role="alertdialog" {...dialogRootProps}>
     {#if trigger}
         <Dialog.Trigger>
             {#snippet asChild(props)}{@render trigger(props)}{/snippet}
