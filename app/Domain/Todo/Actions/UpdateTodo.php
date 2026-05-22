@@ -89,9 +89,7 @@ class UpdateTodo extends JodiAction
 
     private function splitRecurringTodo(Todo $todo, UpdateTodoData $data, array &$attributes): void
     {
-        throw_unless($todo->rrule && $data->occursAt, new \LogicException('Event can\'t be splitted without $todo->rrule and $data->occursAt defined.'));
-
-        if ($data->rrule && rrules_match($todo->rrule, $data->rrule)) {
+        if ($todo->rrule && $data->rrule && rrules_match($todo->rrule, $data->rrule)) {
             return;
         }
 

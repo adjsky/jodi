@@ -56,11 +56,10 @@ class UpdateEvent extends JodiAction
     private function updateEvent(Event $event, UpdateEventData $data): void
     {
         $attributes = $data->except('occursAt', 'scope')->toArray();
-        $occursAt = $data->occursAt;
 
-        if ($data->scope == 'all' && $event->rrule != null && $occursAt != null) {
+        if ($data->scope == 'all' && $event->rrule != null && $data->occursAt != null) {
             $event->resetExceptions(Event::OVERRIDABLE_ATTRIBUTES);
-            $event->normalizeRecurringDataForUpdate($attributes, $occursAt);
+            $event->normalizeRecurringDataForUpdate($attributes, $data->occursAt);
 
             $this->splitRecurringEvent($event, $data, $attributes);
         }
@@ -72,9 +71,7 @@ class UpdateEvent extends JodiAction
 
     private function splitRecurringEvent(Event $event, UpdateEventData $data, array &$attributes): void
     {
-        throw_unless($event->rrule && $data->occursAt, new \LogicException('Todo can\'t be splitted without $todo->rrule and $data->occursAt defined.'));
-
-        if ($data->rrule && rrules_match($event->rrule, $data->rrule)) {
+        if ($event->rrule && $data->rrule && rrules_match($event->rrule, $data->rrule)) {
             return;
         }
 
