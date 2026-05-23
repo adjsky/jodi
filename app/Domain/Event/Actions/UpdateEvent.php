@@ -80,6 +80,7 @@ class UpdateEvent extends JodiAction
         $attributes['rrule'] = new RRule(
             [
                 ...new RRule($event->rrule)->getRule(),
+                'COUNT' => null,
                 'UNTIL' => $until->toIso8601String(),
             ]
         )->rfcString();

@@ -19,24 +19,26 @@ class DestroyTodo extends JodiAction
     {
         DB::transaction(function () use ($todo, $data) {
             switch (true) {
-                case $data->scope == 'following':
+                case $data->scope == 'following' && $todo->rrule != null:
                     $until = Carbon::parse($data->getDateOrFail())->subDay()->endOfDay();
 
                     $todo->update([
                         'rrule' => new RRule(
                             [
                                 ...new RRule($todo->rrule)->getRule(),
+                                'COUNT' => null,
                                 'UNTIL' => $until->toIso8601String(),
                             ]
                         )->rfcString(),
                     ]);
 
-                    $todo->cancelOccurrence($data->getOccursAtOrFail());
+                    $todo->recurrenceExceptions()
+                        ->where('occurs_at', '>=', $data->getDateOrFail())
+                        ->delete();
+
                     $todo->positions()->where('date', '>=', $data->getDateOrFail())->delete();
 
-                    $todo->recurrenceExceptions()
-                        ->where('occurs_at', '>', $data->getDateOrFail())
-                        ->delete();
+                    $todo->cancelOccurrence($data->getOccursAtOrFail());
 
                     break;
 

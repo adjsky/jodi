@@ -19,23 +19,24 @@ class DestroyEvent extends JodiAction
     {
         DB::transaction(function () use ($event, $data) {
             switch (true) {
-                case $data->scope == 'following':
+                case $data->scope == 'following' && $event->rrule != null:
                     $until = Carbon::parse($data->getDateOrFail())->subDay()->endOfDay();
 
                     $event->update([
                         'rrule' => new RRule(
                             [
                                 ...new RRule($event->rrule)->getRule(),
+                                'COUNT' => null,
                                 'UNTIL' => $until->toIso8601String(),
                             ]
                         )->rfcString(),
                     ]);
 
-                    $event->cancelOccurrence($data->getOccursAtOrFail());
-
                     $event->recurrenceExceptions()
-                        ->where('occurs_at', '>', $data->getDateOrFail())
+                        ->where('occurs_at', '>=', $data->getDateOrFail())
                         ->delete();
+
+                    $event->cancelOccurrence($data->getOccursAtOrFail());
 
                     break;
 

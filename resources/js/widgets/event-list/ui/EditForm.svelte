@@ -22,6 +22,7 @@
     import { tick, untrack } from "svelte";
 
     import { optimistic, visitOptions } from "../cfg/inertia";
+    import { editView } from "../model/view";
 
     import type { EventData } from "$/entities/event/model/types";
     import type { Scope } from "$/shared/lib/types";
@@ -151,6 +152,7 @@
                     following: m["events.recurrence-action.following"](),
                     all: m["events.recurrence-action.all"]()
                 }}
+                onSuccess={() => editView.back()}
             />
         {/snippet}
         {#snippet repeat()}
