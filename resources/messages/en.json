@@ -154,7 +154,6 @@
         "errors": {
             "complete": "Failed to complete task. Try again later.",
             "edit": "Failed to update task. Try again later.",
-            "delete": "Failed to delete task. Try again later.",
             "category": "Failed to delete category. Try again later.",
             "reorder": "Failed to reorder tasks. Try again later."
         },
@@ -166,6 +165,7 @@
             "delete-title": "Delete recurrable task?",
             "edit-title": "Save recurrable task",
             "this": "This task",
+            "following": "This and following tasks",
             "all": "All tasks"
         }
     },
@@ -185,8 +185,7 @@
             "more": "More"
         },
         "errors": {
-            "edit": "Failed to update event. Try again later.",
-            "delete": "Failed to delete event. Try again later."
+            "edit": "Failed to update event. Try again later."
         },
         "placeholders": {
             "title": "Event",
@@ -196,6 +195,7 @@
             "delete-title": "Delete recurrable event?",
             "edit-title": "Save recurrable event",
             "this": "This event",
+            "following": "This and following events",
             "all": "All events"
         }
     },

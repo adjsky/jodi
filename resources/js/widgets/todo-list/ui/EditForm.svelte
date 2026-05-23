@@ -28,6 +28,7 @@
     import { tick, untrack } from "svelte";
 
     import { optimistic, visitOptions } from "../cfg/inertia";
+    import { editView } from "../model/view";
 
     import type { TodoData } from "$/entities/todo";
     import type { Scope } from "$/shared/lib/types";
@@ -167,7 +168,6 @@
         {#snippet destroy()}
             <DeleteItem
                 {...visitOptions}
-                {...optimistic.delete(todo)}
                 href={DestroyTodo(todo.id)}
                 title={{
                     recurring: m["todos.recurrence-action.delete-title"](),
@@ -179,8 +179,10 @@
                 date={todo.scheduledAt}
                 scopeLabels={{
                     this: m["todos.recurrence-action.this"](),
+                    following: m["todos.recurrence-action.following"](),
                     all: m["todos.recurrence-action.all"]()
                 }}
+                onSuccess={() => editView.back()}
             />
         {/snippet}
         {#snippet repeat()}

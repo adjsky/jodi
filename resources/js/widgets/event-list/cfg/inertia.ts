@@ -42,19 +42,5 @@ export const optimistic = {
                     void editView.back();
                 }
             }
-        ),
-    delete: (event: EventData) =>
-        _optimistic(
-            (prev) => ({
-                events: prev.events.filter(
-                    (e: EventData) => id(e) !== id(event)
-                )
-            }),
-            {
-                error: m["events.errors.delete"](),
-                onSuccess() {
-                    void editView.back();
-                }
-            }
         )
 };

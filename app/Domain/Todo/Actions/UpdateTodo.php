@@ -98,6 +98,7 @@ class UpdateTodo extends JodiAction
         $attributes['rrule'] = new RRule(
             [
                 ...new RRule($todo->rrule)->getRule(),
+                'COUNT' => null,
                 'UNTIL' => $until->toIso8601String(),
             ]
         )->rfcString();

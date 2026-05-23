@@ -27,7 +27,7 @@ class SingleOccurrenceUpdateData extends Data
 
     public static function fromUpdateEventData(UpdateEventData $data): self
     {
-        throw_unless($data->occursAt, new \LogicException('$data->occursAt must be non-nullable.'));
+        throw_unless($data->occursAt, new \LogicException('$data->occursAt must not be null when updating a single occurence.'));
 
         return new self(
             $data->title,

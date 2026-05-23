@@ -19,7 +19,7 @@
         recurring: boolean;
         occursAt: string | null;
         date?: string;
-        scopeLabels: { this: string; all: string };
+        scopeLabels: { this: string; following: string; all: string };
     };
 
     const {
@@ -52,8 +52,8 @@
     }
     title={recurring ? title.recurring : title.general}
     fallback={!recurring}
-    onConfirm={(scope) => {
-        void router.visit(href, {
+    onConfirm={async (scope) => {
+        await router.visit(href, {
             ...options,
             data: {
                 scope,
@@ -62,7 +62,7 @@
                     ? toCalendarDate(parseAbsolute(date, TIMEZONE)).toString()
                     : null
             },
-            showProgress: false
+            showProgress: true
         });
         return true;
     }}

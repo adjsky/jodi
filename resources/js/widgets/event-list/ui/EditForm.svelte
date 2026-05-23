@@ -22,6 +22,7 @@
     import { tick, untrack } from "svelte";
 
     import { optimistic, visitOptions } from "../cfg/inertia";
+    import { editView } from "../model/view";
 
     import type { EventData } from "$/entities/event/model/types";
     import type { Scope } from "$/shared/lib/types";
@@ -137,7 +138,6 @@
         {#snippet destroy()}
             <DeleteItem
                 {...visitOptions}
-                {...optimistic.delete(event)}
                 href={DestroyEvent(event.id)}
                 title={{
                     recurring: m["events.recurrence-action.delete-title"](),
@@ -146,10 +146,13 @@
                 tooltip={m["events.tooltips.delete"]()}
                 recurring={event.rrule != null}
                 occursAt={event.occursAt}
+                date={event.startsAt}
                 scopeLabels={{
                     this: m["events.recurrence-action.this"](),
+                    following: m["events.recurrence-action.following"](),
                     all: m["events.recurrence-action.all"]()
                 }}
+                onSuccess={() => editView.back()}
             />
         {/snippet}
         {#snippet repeat()}
