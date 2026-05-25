@@ -1,5 +1,16 @@
 # Releases
 
+## 0.20.0 (2026-05-25)
+
+### Feat
+
+- delete current and following events/todos (#123)
+
+### Fix
+
+- handle todo/event split when new rrule is null
+- handle rrule changes (#120)
+
 ## 0.19.12 (2026-04-07)
 
 ### Fix
