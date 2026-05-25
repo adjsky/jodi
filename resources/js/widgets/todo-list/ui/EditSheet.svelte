@@ -1,5 +1,6 @@
 <script lang="ts">
     import Sheet from "$/shared/ui/Sheet.svelte";
+    import { untrack } from "svelte";
 
     import EditForm from "./EditForm.svelte";
 
@@ -10,16 +11,20 @@
         todo: TodoData | null;
     };
 
-    let { open = $bindable(), todo }: Props = $props();
+    let { open = $bindable(), ...props }: Props = $props();
+
+    let lastTodo = $state(untrack(() => props.todo));
+
+    $effect(() => {
+        if (!props.todo) return;
+        lastTodo = props.todo;
+    });
+
+    const todo = $derived(props.todo ?? lastTodo);
 </script>
 
-<Sheet
-    bind:open
-    maxHeight={0.9}
-    snapPoints={[0.6]}
-    startingSnapPoint={0.6}
-    background="var(--color-white)"
-    grip="var(--color-cream-300)"
->
-    <EditForm {todo} onClose={() => (open = false)} />
+<Sheet bind:open maxHeight={0.9} snapPoints={[0.6, 1]} defaultSnapPoint={0.6}>
+    {#if todo}
+        <EditForm {todo} onClose={() => (open = false)} />
+    {/if}
 </Sheet>

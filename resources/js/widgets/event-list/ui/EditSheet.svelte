@@ -1,5 +1,6 @@
 <script lang="ts">
     import Sheet from "$/shared/ui/Sheet.svelte";
+    import { untrack } from "svelte";
 
     import EditForm from "./EditForm.svelte";
 
@@ -10,16 +11,28 @@
         event: EventData | null;
     };
 
-    let { open = $bindable(), event }: Props = $props();
+    let { open = $bindable(), ...props }: Props = $props();
+
+    let lastEvent = $state(untrack(() => props.event));
+
+    $effect(() => {
+        if (!props.event) return;
+        lastEvent = props.event;
+    });
+
+    const event = $derived(props.event ?? lastEvent);
 </script>
 
 <Sheet
     bind:open
     maxHeight={0.9}
-    snapPoints={[0.6]}
-    startingSnapPoint={0.6}
-    background="var(--color-white)"
-    grip="var(--color-cream-300)"
+    snapPoints={[0.6, 1]}
+    defaultSnapPoint={0.6}
+    onExitComplete={() => {
+        lastEvent = null;
+    }}
 >
-    <EditForm {event} onClose={() => (open = false)} />
+    {#if event}
+        <EditForm {event} onClose={() => (open = false)} />
+    {/if}
 </Sheet>
