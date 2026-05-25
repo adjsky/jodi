@@ -24,7 +24,6 @@
     import { announce } from "$/shared/lib/form";
     import { toaster } from "$/shared/lib/toaster";
     import SaveOrClose from "$/shared/ui/SaveOrClose.svelte";
-    import { watch } from "runed";
     import { tick, untrack } from "svelte";
 
     import { optimistic, visitOptions } from "../cfg/inertia";
@@ -34,17 +33,14 @@
     import type { Scope } from "$/shared/lib/types";
 
     type Props = {
-        todo: TodoData | null;
+        todo: TodoData;
         onClose?: VoidFunction;
     };
 
-    const { onClose, ...props }: Props = $props();
+    const { todo, onClose }: Props = $props();
 
     let dateAnnouncerInput: HTMLInputElement | null = $state(null);
-    let lastKnownTodo = $state(untrack(() => props.todo));
     let scope: Scope = $state("this");
-
-    let todo = $derived(props.todo ?? (lastKnownTodo as TodoData));
 
     const draft = $state(
         untrack(() => ({
@@ -59,14 +55,6 @@
     );
 
     const isRRuleDirty = $derived(todo.rrule != draft.rrule);
-
-    watch(
-        () => [props.todo],
-        () => {
-            if (!props.todo) return;
-            lastKnownTodo = props.todo;
-        }
-    );
 </script>
 
 <Form

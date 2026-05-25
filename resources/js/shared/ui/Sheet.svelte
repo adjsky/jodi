@@ -14,28 +14,24 @@
 
     type Props = {
         open?: boolean;
-        background: string;
-        grip?: string;
         maxHeight: number;
         snapPoints: number[];
-        startingSnapPoint: number;
+        defaultSnapPoint: number;
         class?: ClassName;
         children: Snippet;
         trigger?: Snippet;
-        onCloseComplete?: VoidFunction;
+        onExitComplete?: VoidFunction;
     };
 
     let {
         open = $bindable(false),
-        background,
-        grip,
         maxHeight,
         snapPoints,
-        startingSnapPoint,
+        defaultSnapPoint,
         class: classname,
         children,
         trigger,
-        onCloseComplete
+        onExitComplete
     }: Props = $props();
 
     let sheet = $state<ReturnType<typeof BottomSheet> | null>(null);
@@ -49,10 +45,10 @@
     settings={{
         maxHeight,
         snapPoints,
-        startingSnapPoint,
+        startingSnapPoint: defaultSnapPoint,
         disableDragging: Boolean(view.meta?.[DISABLE_SHEET_DRAGGING])
     }}
-    onclosecomplete={onCloseComplete}
+    onclosecomplete={onExitComplete}
 >
     {#if trigger}
         <BottomSheet.Trigger>
@@ -60,15 +56,10 @@
         </BottomSheet.Trigger>
     {/if}
     <BottomSheet.Overlay>
-        <BottomSheet.Sheet
-            style="background: {background};"
-            class="flex flex-col"
-        >
-            {#if grip}
-                <BottomSheet.Handle style="background: {background};">
-                    <BottomSheet.Grip style="background: {grip};" />
-                </BottomSheet.Handle>
-            {/if}
+        <BottomSheet.Sheet class="flex flex-col bg-white!">
+            <BottomSheet.Handle class="bg-white!">
+                <BottomSheet.Grip class="bg-cream-300!" />
+            </BottomSheet.Handle>
             <BottomSheet.Content
                 class={tw(
                     "relative flex! h-full w-full flex-col pt-2! px-safe-offset-4! pb-safe-offset-2!",

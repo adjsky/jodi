@@ -18,7 +18,6 @@
     import { normalizeIsoString, timediff } from "$/shared/lib/date";
     import { announce } from "$/shared/lib/form";
     import SaveOrClose from "$/shared/ui/SaveOrClose.svelte";
-    import { watch } from "runed";
     import { tick, untrack } from "svelte";
 
     import { optimistic, visitOptions } from "../cfg/inertia";
@@ -28,18 +27,15 @@
     import type { Scope } from "$/shared/lib/types";
 
     type Props = {
-        event: EventData | null;
+        event: EventData;
         onClose?: VoidFunction;
     };
 
-    const { onClose, ...props }: Props = $props();
+    const { event, onClose }: Props = $props();
 
     let startsAtAnnouncerInput: HTMLInputElement | null = $state(null);
     let endsAtAnnouncerInput: HTMLInputElement | null = $state(null);
-    let lastKnownEvent = $state(untrack(() => props.event));
     let scope: Scope = $state("this");
-
-    const event = $derived(props.event ?? (lastKnownEvent as EventData));
 
     const draft = $state(
         untrack(() => ({
@@ -52,14 +48,6 @@
     );
 
     const isRRuleDirty = $derived(event.rrule != draft.rrule);
-
-    watch(
-        () => [props.event],
-        () => {
-            if (!props.event) return;
-            lastKnownEvent = props.event;
-        }
-    );
 </script>
 
 <Form
