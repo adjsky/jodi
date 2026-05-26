@@ -23,7 +23,15 @@
     const todo = $derived(props.todo ?? lastTodo);
 </script>
 
-<Sheet bind:open maxHeight={0.9} snapPoints={[0.6, 1]} defaultSnapPoint={0.6}>
+<Sheet
+    bind:open
+    maxHeight={0.9}
+    snapPoints={[0.6, 1]}
+    defaultSnapPoint={0.6}
+    onExitComplete={() => {
+        lastTodo = null;
+    }}
+>
     {#if todo}
         <EditForm {todo} onClose={() => (open = false)} />
     {/if}

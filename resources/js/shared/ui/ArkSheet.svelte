@@ -2,7 +2,6 @@
     import { Drawer, useDrawer } from "@ark-ui/svelte";
     import { Capacitor } from "@capacitor/core";
 
-    import type { ClassName } from "../lib/styles";
     import type { Snippet } from "svelte";
 
     type Props = {
@@ -10,9 +9,7 @@
         maxHeight: number;
         snapPoints: number[];
         defaultSnapPoint: number;
-        class?: ClassName;
         children: Snippet;
-        trigger?: Snippet;
         onExitComplete?: VoidFunction;
     };
 
