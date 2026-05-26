@@ -4,7 +4,7 @@
     import { DISABLE_SHEET_DRAGGING } from "$/shared/ui/Sheet.svelte";
     import SheetDialog from "$/shared/ui/SheetDialog.svelte";
 
-    import YearCalendar from "./YearCalendar.svelte";
+    import YearCalendarView from "./YearCalendarView.svelte";
 
     import type { CalendarDate } from "@internationalized/date";
     import type { Snippet } from "svelte";
@@ -52,7 +52,7 @@
         {/if}
     {/snippet}
 
-    <YearCalendar
+    <YearCalendarView
         {selected}
         {min}
         portal={false}

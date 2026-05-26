@@ -6,8 +6,8 @@
         toCalendarDate
     } from "@internationalized/date";
     import { Event } from "$/entities/event";
+    import { YearCalendarDialog } from "$/features/choose-date";
     import { DeleteItem } from "$/features/delete-item";
-    import { YearCalendarDialog } from "$/features/filter-by-date";
     import { RescheduleItem } from "$/features/reschedule-item";
     import { Color } from "$/features/select-color";
     import { Recurrence } from "$/features/select-recurrence";

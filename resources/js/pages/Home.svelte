@@ -2,7 +2,7 @@
     import { m } from "$/paraglide/messages";
     import CalendarCat from "$/shared/assets/calendar-cat.svg";
     import ActionBanner from "$/shared/ui/ActionBanner.svelte";
-    import { CalendarPreview } from "$/widgets/calendar";
+    import { MobileCalendarPreview } from "$/widgets/calendar";
     import { CreateEntryFab } from "$/widgets/create-entry-fab";
     import { CurrentUser } from "$/widgets/current-user";
     import { EventList } from "$/widgets/event-list/";
@@ -26,9 +26,9 @@
 <ActionBanner />
 
 <main class="pb-20">
-    <CalendarPreview>
+    <MobileCalendarPreview>
         <CurrentUser />
-    </CalendarPreview>
+    </MobileCalendarPreview>
 
     {#if hasNoEventsAndTodos}
         <img

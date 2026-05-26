@@ -15,6 +15,14 @@ class HomeController extends Controller
 {
     public function __invoke(JodiRequest $request)
     {
+        if (config('jodi.features.redirect_desktop_users')) {
+            $device = detect_device();
+
+            if (! $device->isMobile()) {
+                return redirect()->route('calendar');
+            }
+        }
+
         $search = $request->validate(['d' => 'nullable|date_format:Y-m-d']);
         $timezone = $request->timezone();
 

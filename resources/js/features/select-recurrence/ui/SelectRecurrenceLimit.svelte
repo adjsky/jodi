@@ -1,7 +1,7 @@
 <script lang="ts">
     import { ParaglideMessage } from "@inlang/paraglide-js-svelte";
     import { DateFormatter, toCalendarDate } from "@internationalized/date";
-    import { YearCalendarDialog } from "$/features/filter-by-date";
+    import { YearCalendarDialog } from "$/features/choose-date";
     import { m } from "$/paraglide/messages";
     import { getLocale } from "$/paraglide/runtime";
     import Checkbox from "$/shared/ui/Checkbox.svelte";
