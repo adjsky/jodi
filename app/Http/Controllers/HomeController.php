@@ -16,7 +16,7 @@ class HomeController extends Controller
     public function __invoke(JodiRequest $request)
     {
         if (config('jodi.features.redirect_desktop_users')) {
-            $device = detect_device($request->userAgent());
+            $device = detect_device();
 
             if (! $device->isMobile()) {
                 return redirect()->route('calendar');

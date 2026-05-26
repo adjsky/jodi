@@ -15,9 +15,11 @@ function rrules_match(string|RRule $rrule1, string|RRule $rrule2): bool
     return $rrule1->rfcString() === $rrule2->rfcString();
 }
 
-function detect_device(?string $userAgent): DeviceDetector
+function detect_device(): DeviceDetector
 {
-    $dd = new DeviceDetector($userAgent ?? '', ClientHints::factory($_SERVER));
+    $request = request();
+
+    $dd = new DeviceDetector($request->userAgent() ?? '', ClientHints::factory($request->server()));
     $dd->setCache(new LaravelCache);
     $dd->parse();
 
