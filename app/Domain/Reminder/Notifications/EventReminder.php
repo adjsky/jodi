@@ -72,7 +72,7 @@ class EventReminder extends Notification implements ShouldQueue
         $startsAt = $this->model->starts_at;
 
         if ($this->occursAt) {
-            $startsAt->setDateFrom($this->occursAt);
+            $startsAt = $startsAt->setDateFrom($this->occursAt);
         }
 
         return $startsAt->timezone($timezone);

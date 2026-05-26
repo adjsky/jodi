@@ -71,7 +71,7 @@ class TodoReminder extends Notification implements ShouldQueue
         $scheduledAt = $this->model->scheduled_at;
 
         if ($this->occursAt) {
-            $scheduledAt->setDateFrom($this->occursAt);
+            $scheduledAt = $scheduledAt->setDateFrom($this->occursAt);
         }
 
         return $scheduledAt->timezone($timezone);
