@@ -77,7 +77,7 @@ test('recurring local update applies an exception instead of modifying the origi
     $todo = Todo::factory()->for($user)->create([
         'rrule' => $rrule,
     ]);
-    $occursAt = $todo->scheduled_at->clone()->addWeek()->toDateString();
+    $occursAt = $todo->scheduled_at->addWeek()->toDateString();
 
     $data = UpdateTodoDataFactory::make([
         'rrule' => $rrule,
@@ -118,11 +118,11 @@ test('recurring global update modifies the original todo', function () {
     $todo = Todo::factory()->for($user)->create([
         'rrule' => $rrule,
     ]);
-    $occursAt = $todo->scheduled_at->clone()->addWeek();
+    $occursAt = $todo->scheduled_at->addWeek();
 
     $data = UpdateTodoDataFactory::make([
         'rrule' => $rrule,
-        'scheduledAt' => $occursAt->clone()->addDay()->toDateString(),
+        'scheduledAt' => $occursAt->addDay()->toDateString(),
         'occursAt' => $occursAt->toDateString(),
         'scope' => 'all',
     ]);
@@ -154,7 +154,7 @@ test('recurring global update preserves original dates', function () {
     $todo = Todo::factory()->for($user)->create([
         'rrule' => $rrule,
     ]);
-    $occursAt = $todo->scheduled_at->clone()->addWeek();
+    $occursAt = $todo->scheduled_at->addWeek();
 
     $data = UpdateTodoDataFactory::make([
         'rrule' => $rrule,
@@ -177,14 +177,14 @@ test('recurring global update resets existing exceptions', function () {
 
     $rrule = 'FREQ=WEEKLY';
     $todo = Todo::factory()->for($user)->create(['rrule' => $rrule]);
-    $occursAt = $todo->scheduled_at->clone()->addWeek();
+    $occursAt = $todo->scheduled_at->addWeek();
 
     RecurrenceException::factory()->for($todo, 'recurrenceable')->create([
         'occurs_at' => $occursAt->toDateString(),
         'overrides' => ['notify_status' => 'sent'],
     ]);
     RecurrenceException::factory()->for($todo, 'recurrenceable')->create([
-        'occurs_at' => $occursAt->clone()->addWeek()->toDateString(),
+        'occurs_at' => $occursAt->addWeek()->toDateString(),
     ]);
 
     $data = UpdateTodoDataFactory::make([
@@ -198,7 +198,7 @@ test('recurring global update resets existing exceptions', function () {
     assertDatabaseMissing('recurrence_exceptions', [
         'recurrenceable_type' => 'todo',
         'recurrenceable_id' => $todo->id,
-        'occurs_at' => $occursAt->clone()->addWeek()->toDateString(),
+        'occurs_at' => $occursAt->addWeek()->toDateString(),
     ]);
 
     assertDatabaseHas('recurrence_exceptions', [
@@ -217,7 +217,7 @@ test('todo splits when changing rrule', function () {
 
     $data = UpdateTodoDataFactory::make([
         'rrule' => 'FREQ=WEEKLY',
-        'occursAt' => $todo->scheduled_at->clone()->addDays(4),
+        'occursAt' => $todo->scheduled_at->addDays(4),
         'scope' => 'all',
     ]);
 
@@ -244,7 +244,7 @@ test('todo splits when resetting rrule', function () {
 
     $data = UpdateTodoDataFactory::make([
         'rrule' => null,
-        'occursAt' => $todo->scheduled_at->clone()->addDays(4),
+        'occursAt' => $todo->scheduled_at->addDays(4),
         'scope' => 'all',
     ]);
 
@@ -261,7 +261,7 @@ test('todo does not split when rrule is the same', function () {
 
     $data = UpdateTodoDataFactory::make([
         'rrule' => $rrule,
-        'occursAt' => $todo->scheduled_at->clone()->addDays(4),
+        'occursAt' => $todo->scheduled_at->addDays(4),
         'scope' => 'all',
     ]);
 
@@ -320,19 +320,19 @@ test('exceptions are transferred and reset when changing rrule', function () {
 
     $rrule = 'FREQ=DAILY';
     $todo = Todo::factory()->for($user)->create(['rrule' => $rrule]);
-    $occursAt = $todo->scheduled_at->clone()->addDays(4);
+    $occursAt = $todo->scheduled_at->addDays(4);
 
     RecurrenceException::factory()->for($todo, 'recurrenceable')->create([
         'occurs_at' => $occursAt->toDateString(),
         'overrides' => ['notify_status' => 'sent'],
     ]);
     RecurrenceException::factory()->for($todo, 'recurrenceable')->create([
-        'occurs_at' => $occursAt->clone()->subDays(2)->toDateString(),
+        'occurs_at' => $occursAt->subDays(2)->toDateString(),
     ]);
 
     $data = UpdateTodoDataFactory::make([
         'scheduledAt' => $occursAt->toISOString(),
-        'notifyAt' => $occursAt->clone()->subHour()->toISOString(),
+        'notifyAt' => $occursAt->subHour()->toISOString(),
         'rrule' => 'FREQ=WEEKLY',
         'occursAt' => $occursAt->toDateString(),
         'scope' => 'all',

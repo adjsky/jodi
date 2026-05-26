@@ -8,7 +8,7 @@ use App\Domain\Identity\Enums\NotificationChannel;
 use App\Domain\Identity\Models\User;
 use App\Domain\Reminder\Support\Carbon\CalendarFormatter;
 use App\Domain\Todo\Models\Todo;
-use Carbon\Carbon;
+use Carbon\CarbonInterface;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\MailMessage;
@@ -66,9 +66,9 @@ class TodoReminder extends Notification implements ShouldQueue
             ->markdown('mail.todo-reminder', ['todo' => $this->model, 'time' => mb_lcfirst(CalendarFormatter::format($scheduledAt))]);
     }
 
-    private function scheduledAt(string $timezone): Carbon
+    private function scheduledAt(string $timezone): CarbonInterface
     {
-        $scheduledAt = $this->model->scheduled_at->clone();
+        $scheduledAt = $this->model->scheduled_at;
 
         if ($this->occursAt) {
             $scheduledAt->setDateFrom($this->occursAt);

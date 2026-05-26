@@ -5,19 +5,19 @@ declare(strict_types=1);
 namespace App\Domain\Event\Models;
 
 use App\Domain\Identity\Models\User;
+use Carbon\CarbonImmutable;
 use Database\Factories\EventAttendeeFactory;
 use Illuminate\Database\Eloquent\Attributes\UseFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasOne;
-use Illuminate\Support\Carbon;
 
 /**
  * @property int $id
  * @property int $event_id
  * @property int $user_id
- * @property Carbon|null $created_at
- * @property Carbon|null $updated_at
+ * @property CarbonImmutable|null $created_at
+ * @property CarbonImmutable|null $updated_at
  * @property-read User|null $user
  *
  * @method static \Database\Factories\EventAttendeeFactory factory($count = null, $state = [])

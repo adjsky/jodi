@@ -8,7 +8,7 @@ use App\Domain\Event\Models\Event;
 use App\Domain\Identity\Enums\NotificationChannel;
 use App\Domain\Identity\Models\User;
 use App\Domain\Reminder\Support\Carbon\CalendarFormatter;
-use Carbon\Carbon;
+use Carbon\CarbonInterface;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\MailMessage;
@@ -67,9 +67,9 @@ class EventReminder extends Notification implements ShouldQueue
             ->markdown('mail.event-reminder', ['event' => $this->model, 'time' => $time]);
     }
 
-    private function startsAt(string $timezone): Carbon
+    private function startsAt(string $timezone): CarbonInterface
     {
-        $startsAt = $this->model->starts_at->clone();
+        $startsAt = $this->model->starts_at;
 
         if ($this->occursAt) {
             $startsAt->setDateFrom($this->occursAt);

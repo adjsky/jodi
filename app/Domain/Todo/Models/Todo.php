@@ -9,6 +9,7 @@ use App\Domain\Recurrence\Concerns\HasRecurrence;
 use App\Domain\Recurrence\Contracts\Recurrable;
 use App\Domain\Recurrence\Models\RecurrenceException;
 use App\Domain\Todo\Builders\TodoBuilder;
+use Carbon\CarbonImmutable;
 use Database\Factories\TodoFactory;
 use Illuminate\Database\Eloquent\Attributes\UseEloquentBuilder;
 use Illuminate\Database\Eloquent\Attributes\UseFactory;
@@ -18,7 +19,6 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
-use Illuminate\Support\Carbon;
 
 /**
  * @property int $id
@@ -26,14 +26,14 @@ use Illuminate\Support\Carbon;
  * @property string $title
  * @property string|null $description
  * @property int|null $category_id
- * @property Carbon $scheduled_at
+ * @property CarbonImmutable $scheduled_at
  * @property bool $has_time
  * @property string|null $color
- * @property Carbon|null $completed_at
- * @property Carbon|null $notify_at
+ * @property CarbonImmutable|null $completed_at
+ * @property CarbonImmutable|null $notify_at
  * @property string|null $notify_status
- * @property Carbon|null $created_at
- * @property Carbon|null $updated_at
+ * @property CarbonImmutable|null $created_at
+ * @property CarbonImmutable|null $updated_at
  * @property string|null $rrule
  * @property-read Category|null $category
  * @property-read Collection<int, TodoPosition> $positions

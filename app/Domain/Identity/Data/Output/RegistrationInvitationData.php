@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace App\Domain\Identity\Data\Output;
 
 use App\Domain\Identity\Models\RegistrationInvitation;
-use Carbon\Carbon;
+use Carbon\CarbonInterface;
 use Illuminate\Support\Facades\URL;
 use Spatie\LaravelData\Data;
 use Spatie\TypeScriptTransformer\Attributes\TypeScript;
@@ -16,7 +16,7 @@ class RegistrationInvitationData extends Data
     public function __construct(
         public string $id,
         public string $email,
-        public ?Carbon $registeredAt,
+        public ?CarbonInterface $registeredAt,
         public string $shareUrl
     ) {}
 

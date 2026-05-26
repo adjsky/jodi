@@ -8,10 +8,12 @@ use App\Domain\Event\Models\Event;
 use App\Domain\Identity\Models\User;
 use App\Domain\Todo\Models\Todo;
 use App\Support\Http\JodiRequest;
+use Carbon\CarbonImmutable;
 use Illuminate\Cookie\Middleware\EncryptCookies;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Http\Request as LaravelRequest;
+use Illuminate\Support\Facades\Date;
 use Illuminate\Support\ServiceProvider;
 
 class AppServiceProvider extends ServiceProvider
@@ -30,6 +32,7 @@ class AppServiceProvider extends ServiceProvider
     public function boot(): void
     {
         Model::preventLazyLoading(! $this->app->environment('production'));
+        Date::use(CarbonImmutable::class);
 
         EncryptCookies::except([
             config('constants.cookies.locale'),

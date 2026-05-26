@@ -4,20 +4,21 @@ declare(strict_types=1);
 
 namespace App\Domain\Todo\Models;
 
+use Carbon\CarbonImmutable;
 use Database\Factories\TodoPositionFactory;
 use Illuminate\Database\Eloquent\Attributes\UseFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Support\Carbon;
 
 /**
  * @property int $id
  * @property int $todo_id
- * @property string $date
+ * @property CarbonImmutable $date
  * @property int $position
- * @property Carbon|null $created_at
- * @property Carbon|null $updated_at
+ * @property CarbonImmutable|null $created_at
+ * @property CarbonImmutable|null $updated_at
+ * @property-read Todo $todo
  *
  * @method static \Database\Factories\TodoPositionFactory factory($count = null, $state = [])
  * @method static \Illuminate\Database\Eloquent\Builder<static>|TodoPosition newModelQuery()
