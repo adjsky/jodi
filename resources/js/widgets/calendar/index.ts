@@ -1,1 +1,1 @@
-export { default as CalendarPreview } from "./ui/Preview.svelte";
+export { default as MobileCalendarPreview } from "./ui/MobilePreview.svelte";

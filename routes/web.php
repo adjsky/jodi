@@ -31,6 +31,7 @@ use App\Domain\Todo\Actions\DestroyTodo;
 use App\Domain\Todo\Actions\ReorderTodos;
 use App\Domain\Todo\Actions\UpdateTodo;
 use App\Domain\Todo\Models\Todo;
+use App\Http\Controllers\CalendarController;
 use App\Http\Controllers\FirebaseServiceWorkerController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\LoginController;
@@ -64,6 +65,8 @@ Route::middleware('guest')->group(function () {
 
 Route::middleware('auth')->group(function () {
     Route::get('/', HomeController::class)->name('home');
+    Route::get('/calendar', CalendarController::class)->name('calendar');
+
     Route::post('/logout', LogoutUser::class);
 
     Route::prefix('/categories')

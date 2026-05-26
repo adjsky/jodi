@@ -2,7 +2,7 @@
     import { inertia, page } from "@inertiajs/svelte";
     import { DateFormatter, parseDate, today } from "@internationalized/date";
     import { Calendar } from "@lucide/svelte";
-    import { WeekCarousel, YearCalendar } from "$/features/filter-by-date";
+    import { WeekCarousel, YearCalendarView } from "$/features/choose-date";
     import { getLocale } from "$/paraglide/runtime";
     import { TIMEZONE } from "$/shared/cfg/constants";
     import { HistoryView } from "$/shared/inertia/history-view.svelte";
@@ -60,7 +60,7 @@
 />
 
 {#if view.isOpen()}
-    <YearCalendar
+    <YearCalendarView
         {selected}
         start={user.preferences.weekStartOn}
         getDateAttachment={(date) =>

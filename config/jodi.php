@@ -41,4 +41,15 @@ return [
             'minutes' => (int) env('MAX_REMINDER_WINDOW_MINUTES', 600),
         ],
     ],
+
+    /*
+    |--------------------------------------------------------------------------
+    | Feature toggles
+    |--------------------------------------------------------------------------
+    |
+    */
+
+    'features' => [
+        'redirect_desktop_users' => (bool) env('REDIRECT_DESKTOP_USERS', false),
+    ],
 ];
