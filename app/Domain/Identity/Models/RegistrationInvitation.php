@@ -5,22 +5,22 @@ declare(strict_types=1);
 namespace App\Domain\Identity\Models;
 
 use App\Support\Concerns\HasSqid;
+use Carbon\CarbonImmutable;
 use Database\Factories\RegistrationInvitationFactory;
 use Illuminate\Database\Eloquent\Attributes\UseFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Support\Carbon;
 
 /**
  * @property int $id
  * @property int $inviter_user_id
  * @property string $email
  * @property string $code
- * @property Carbon $expires_at
+ * @property CarbonImmutable $expires_at
  * @property int|null $registered_user_id
- * @property Carbon|null $registered_at
- * @property Carbon|null $created_at
- * @property Carbon|null $updated_at
+ * @property CarbonImmutable|null $registered_at
+ * @property CarbonImmutable|null $created_at
+ * @property CarbonImmutable|null $updated_at
  * @property-read mixed $sqid
  *
  * @method static \Database\Factories\RegistrationInvitationFactory factory($count = null, $state = [])

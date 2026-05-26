@@ -12,6 +12,7 @@ use App\Domain\MoodTracker\Models\MoodTrackerEntry;
 use App\Domain\Todo\Models\Category;
 use App\Domain\Todo\Models\Todo;
 use App\Support\Concerns\HasSqid;
+use Carbon\CarbonImmutable;
 use Database\Factories\UserFactory;
 use Illuminate\Contracts\Translation\HasLocalePreference;
 use Illuminate\Database\Eloquent\Attributes\UseFactory;
@@ -23,7 +24,6 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\DatabaseNotification;
 use Illuminate\Notifications\DatabaseNotificationCollection;
 use Illuminate\Notifications\Notifiable;
-use Illuminate\Support\Carbon;
 
 /**
  * @property int $id
@@ -32,8 +32,8 @@ use Illuminate\Support\Carbon;
  * @property string|null $avatar_url
  * @property UserPreferences $preferences
  * @property string|null $remember_token
- * @property Carbon|null $created_at
- * @property Carbon|null $updated_at
+ * @property CarbonImmutable|null $created_at
+ * @property CarbonImmutable|null $updated_at
  * @property-read Collection<int, Category> $categories
  * @property-read int|null $categories_count
  * @property-read Collection<int, Event> $events

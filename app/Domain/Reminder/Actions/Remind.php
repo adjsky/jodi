@@ -20,7 +20,7 @@ class Remind extends JodiAction
     public function handle($model, $notification): void
     {
         $start = now();
-        $end = $start->clone()->addDays(config('jodi.reminders.window.days'));
+        $end = $start->addDays(config('jodi.reminders.window.days'));
 
         /** @var RecurrenceBuilder<TModel> */
         $query = $model::query();

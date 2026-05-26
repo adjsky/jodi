@@ -9,6 +9,7 @@ use App\Domain\Identity\Models\User;
 use App\Domain\Recurrence\Concerns\HasRecurrence;
 use App\Domain\Recurrence\Contracts\Recurrable;
 use App\Domain\Recurrence\Models\RecurrenceException;
+use Carbon\CarbonImmutable;
 use Database\Factories\EventFactory;
 use Illuminate\Database\Eloquent\Attributes\UseEloquentBuilder;
 use Illuminate\Database\Eloquent\Attributes\UseFactory;
@@ -18,7 +19,6 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
-use Illuminate\Support\Carbon;
 
 /**
  * @property int $id
@@ -27,12 +27,12 @@ use Illuminate\Support\Carbon;
  * @property string|null $description
  * @property string|null $location
  * @property string|null $color
- * @property Carbon $starts_at
- * @property Carbon $ends_at
- * @property Carbon $notify_at
+ * @property CarbonImmutable $starts_at
+ * @property CarbonImmutable $ends_at
+ * @property CarbonImmutable $notify_at
  * @property string $notify_status
- * @property Carbon|null $created_at
- * @property Carbon|null $updated_at
+ * @property CarbonImmutable|null $created_at
+ * @property CarbonImmutable|null $updated_at
  * @property string|null $rrule
  * @property-read Collection<int, EventAttendee> $attendees
  * @property-read int|null $attendees_count

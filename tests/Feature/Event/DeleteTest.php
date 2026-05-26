@@ -27,7 +27,7 @@ test('delete non-recurring event', function () {
 test('delete single recurring event', function () {
     $user = User::factory()->create();
     $event = Event::factory()->for($user)->create(['rrule' => 'FREQ=WEEKLY']);
-    $occursAt = $event->starts_at->clone()->addWeek()->toDateString();
+    $occursAt = $event->starts_at->addWeek()->toDateString();
 
     $data = DestroyEventDataFactory::make([
         'occursAt' => $occursAt,
@@ -51,7 +51,7 @@ test('delete all recurring events', function () {
     $event = Event::factory()->for($user)->create(['rrule' => 'FREQ=WEEKLY']);
 
     $exception = RecurrenceException::factory()->for($event, 'recurrenceable')->create([
-        'occurs_at' => $event->starts_at->clone()->addWeek()->toDateString(),
+        'occurs_at' => $event->starts_at->addWeek()->toDateString(),
         'overrides' => [],
     ]);
 
@@ -67,22 +67,22 @@ test('delete current and future events', function () {
     $user = User::factory()->create();
     $event = Event::factory()->for($user)->create(['rrule' => 'FREQ=DAILY']);
 
-    $occursAt = $event->starts_at->clone()->addWeek();
+    $occursAt = $event->starts_at->addWeek();
 
     $exception = RecurrenceException::factory()->for($event, 'recurrenceable')->create([
-        'occurs_at' => $occursAt->clone()->addDays(2)->toDateString(),
+        'occurs_at' => $occursAt->addDays(2)->toDateString(),
         'overrides' => [],
     ]);
 
     $data = DestroyEventDataFactory::make([
-        'date' => $occursAt->clone()->addDay()->toDateString(),
+        'date' => $occursAt->addDay()->toDateString(),
         'occursAt' => $occursAt->toDateString(),
         'scope' => 'following',
     ]);
 
     DestroyEvent::make()->handle($event, $data);
 
-    $until = $occursAt->clone()->endOfDay()->format('Ymd\THis\Z');
+    $until = $occursAt->endOfDay()->format('Ymd\THis\Z');
 
     assertDatabaseHas('events', [
         'id' => $event->id,

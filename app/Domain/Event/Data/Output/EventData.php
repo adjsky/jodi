@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace App\Domain\Event\Data\Output;
 
 use App\Domain\Event\Models\Event;
-use Carbon\Carbon;
+use Carbon\CarbonInterface;
 use Spatie\LaravelData\Data;
 use Spatie\TypeScriptTransformer\Attributes\TypeScript;
 
@@ -21,10 +21,10 @@ class EventData extends Data
         public ?string $rrule,
         public ?string $recurringSince,
         public ?string $occursAt,
-        public Carbon $startsAt,
-        public Carbon $endsAt,
-        public Carbon $notifyAt,
-        public ?Carbon $createdAt,
+        public CarbonInterface $startsAt,
+        public CarbonInterface $endsAt,
+        public CarbonInterface $notifyAt,
+        public ?CarbonInterface $createdAt,
     ) {}
 
     public static function fromModel(Event $event): self

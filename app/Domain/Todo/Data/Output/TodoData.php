@@ -6,7 +6,7 @@ namespace App\Domain\Todo\Data\Output;
 
 use App\Domain\Todo\Models\Category;
 use App\Domain\Todo\Models\Todo;
-use Carbon\Carbon;
+use Carbon\CarbonInterface;
 use Spatie\LaravelData\Data;
 use Spatie\TypeScriptTransformer\Attributes\TypeScript;
 
@@ -22,11 +22,11 @@ class TodoData extends Data
         public ?string $rrule,
         public ?string $recurringSince,
         public ?string $occursAt,
-        public Carbon $scheduledAt,
+        public CarbonInterface $scheduledAt,
         public bool $hasTime,
-        public ?Carbon $notifyAt,
-        public ?Carbon $completedAt,
-        public ?Carbon $createdAt,
+        public ?CarbonInterface $notifyAt,
+        public ?CarbonInterface $completedAt,
+        public ?CarbonInterface $createdAt,
     ) {}
 
     public static function fromModel(Todo $todo): self

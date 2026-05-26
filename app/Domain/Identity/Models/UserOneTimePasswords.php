@@ -4,17 +4,17 @@ declare(strict_types=1);
 
 namespace App\Domain\Identity\Models;
 
+use Carbon\CarbonImmutable;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Support\Carbon;
 
 /**
  * @property int $id
  * @property int $user_id
  * @property string $purpose
  * @property string $password
- * @property Carbon $expires_at
- * @property Carbon|null $created_at
- * @property Carbon|null $updated_at
+ * @property CarbonImmutable $expires_at
+ * @property CarbonImmutable|null $created_at
+ * @property CarbonImmutable|null $updated_at
  *
  * @method static \Illuminate\Database\Eloquent\Builder<static>|UserOneTimePasswords newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|UserOneTimePasswords newQuery()

@@ -28,7 +28,7 @@ test('delete non-recurring todo', function () {
 test('delete single recurring todo', function () {
     $user = User::factory()->create();
     $todo = Todo::factory()->for($user)->create(['rrule' => 'FREQ=WEEKLY']);
-    $occursAt = $todo->scheduled_at->clone()->addWeek()->toDateString();
+    $occursAt = $todo->scheduled_at->addWeek()->toDateString();
 
     $data = DestroyTodoDataFactory::make([
         'occursAt' => $occursAt,
@@ -53,7 +53,7 @@ test('delete all recurring todos', function () {
     $todo = Todo::factory()->for($user)->create(['rrule' => 'FREQ=WEEKLY']);
 
     RecurrenceException::factory()->for($todo, 'recurrenceable')->create([
-        'occurs_at' => $todo->scheduled_at->clone()->addWeek()->toDateString(),
+        'occurs_at' => $todo->scheduled_at->addWeek()->toDateString(),
         'overrides' => [],
     ]);
 
@@ -72,31 +72,31 @@ test('delete current and future todos', function () {
     $user = User::factory()->create();
     $todo = Todo::factory()->for($user)->create(['rrule' => 'FREQ=DAILY']);
 
-    $occursAt = $todo->scheduled_at->clone()->addWeek();
+    $occursAt = $todo->scheduled_at->addWeek();
 
     $exception = RecurrenceException::factory()->for($todo, 'recurrenceable')->create([
-        'occurs_at' => $occursAt->clone()->addDays(2)->toDateString(),
+        'occurs_at' => $occursAt->addDays(2)->toDateString(),
         'overrides' => [],
     ]);
 
     TodoPosition::factory()->for($todo)->create([
-        'date' => $occursAt->clone()->addDays(2)->toDateString(),
+        'date' => $occursAt->addDays(2)->toDateString(),
         'position' => 1,
     ]);
     TodoPosition::factory()->for($todo)->create([
-        'date' => $occursAt->clone()->addDays(3)->toDateString(),
+        'date' => $occursAt->addDays(3)->toDateString(),
         'position' => 1,
     ]);
 
     $data = DestroyTodoDataFactory::make([
-        'date' => $occursAt->clone()->addDay()->toDateString(),
+        'date' => $occursAt->addDay()->toDateString(),
         'occursAt' => $occursAt->toDateString(),
         'scope' => 'following',
     ]);
 
     DestroyTodo::make()->handle($todo, $data);
 
-    $until = $occursAt->clone()->endOfDay()->format('Ymd\THis\Z');
+    $until = $occursAt->endOfDay()->format('Ymd\THis\Z');
 
     assertDatabaseHas('todos', [
         'id' => $todo->id,

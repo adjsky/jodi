@@ -4,12 +4,12 @@ declare(strict_types=1);
 
 namespace App\Domain\Identity\Models;
 
+use Carbon\CarbonImmutable;
 use Database\Factories\PushSubscriptionFactory;
 use Illuminate\Database\Eloquent\Attributes\UseFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Support\Carbon;
 
 /**
  * @property int $id
@@ -17,8 +17,8 @@ use Illuminate\Support\Carbon;
  * @property string $fcm_token
  * @property string $platform
  * @property string $device_id
- * @property Carbon|null $created_at
- * @property Carbon|null $updated_at
+ * @property CarbonImmutable|null $created_at
+ * @property CarbonImmutable|null $updated_at
  * @property-read User $user
  *
  * @method static \Database\Factories\PushSubscriptionFactory factory($count = null, $state = [])

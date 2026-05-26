@@ -75,7 +75,7 @@ test('recurring local update applies an exception instead of modifying the origi
     $event = Event::factory()->for($user)->create([
         'rrule' => $rrule,
     ]);
-    $occursAt = $event->starts_at->clone()->addWeek()->toDateString();
+    $occursAt = $event->starts_at->addWeek()->toDateString();
 
     $data = UpdateEventDataFactory::make([
         'rrule' => $rrule,
@@ -120,11 +120,11 @@ test('recurring global update modifies the original event', function () {
     $event = Event::factory()->for($user)->create([
         'rrule' => $rrule,
     ]);
-    $occursAt = $event->starts_at->clone()->addWeek();
+    $occursAt = $event->starts_at->addWeek();
 
     $data = UpdateEventDataFactory::make([
         'rrule' => $rrule,
-        'startsAt' => $occursAt->clone()->addDay()->toDateString(),
+        'startsAt' => $occursAt->addDay()->toDateString(),
         'occursAt' => $occursAt->toDateString(),
         'scope' => 'all',
     ]);
@@ -158,7 +158,7 @@ test('recurring global update preserves original dates', function () {
     $event = Event::factory()->for($user)->create([
         'rrule' => $rrule,
     ]);
-    $occursAt = $event->starts_at->clone()->addWeek();
+    $occursAt = $event->starts_at->addWeek();
 
     $data = UpdateEventDataFactory::make([
         'rrule' => $rrule,
@@ -182,14 +182,14 @@ test('recurring global update resets existing exceptions', function () {
 
     $rrule = 'FREQ=WEEKLY';
     $event = Event::factory()->for($user)->create(['rrule' => $rrule]);
-    $occursAt = $event->starts_at->clone()->addWeek();
+    $occursAt = $event->starts_at->addWeek();
 
     RecurrenceException::factory()->for($event, 'recurrenceable')->create([
         'occurs_at' => $occursAt->toDateString(),
         'overrides' => ['notify_status' => 'sent'],
     ]);
     RecurrenceException::factory()->for($event, 'recurrenceable')->create([
-        'occurs_at' => $occursAt->clone()->addWeek()->toDateString(),
+        'occurs_at' => $occursAt->addWeek()->toDateString(),
     ]);
 
     $data = UpdateEventDataFactory::make([
@@ -203,7 +203,7 @@ test('recurring global update resets existing exceptions', function () {
     assertDatabaseMissing('recurrence_exceptions', [
         'recurrenceable_type' => 'event',
         'recurrenceable_id' => $event->id,
-        'occurs_at' => $occursAt->clone()->addWeek()->toDateString(),
+        'occurs_at' => $occursAt->addWeek()->toDateString(),
     ]);
 
     assertDatabaseHas('recurrence_exceptions', [
@@ -222,7 +222,7 @@ test('event splits when changing rrule', function () {
 
     $data = UpdateEventDataFactory::make([
         'rrule' => 'FREQ=WEEKLY',
-        'occursAt' => $event->starts_at->clone()->addDays(4),
+        'occursAt' => $event->starts_at->addDays(4),
         'scope' => 'all',
     ]);
 
@@ -249,7 +249,7 @@ test('event splits when resetting rrule', function () {
 
     $data = UpdateEventDataFactory::make([
         'rrule' => null,
-        'occursAt' => $event->starts_at->clone()->addDays(4),
+        'occursAt' => $event->starts_at->addDays(4),
         'scope' => 'all',
     ]);
 
@@ -266,7 +266,7 @@ test('event does not split when rrule is the same', function () {
 
     $data = UpdateEventDataFactory::make([
         'rrule' => $rrule,
-        'occursAt' => $event->starts_at->clone()->addDays(4),
+        'occursAt' => $event->starts_at->addDays(4),
         'scope' => 'all',
     ]);
 
@@ -280,20 +280,20 @@ test('exceptions are transferred and reset when changing rrule', function () {
 
     $rrule = 'FREQ=DAILY';
     $event = Event::factory()->for($user)->create(['rrule' => $rrule]);
-    $occursAt = $event->starts_at->clone()->addDays(4);
+    $occursAt = $event->starts_at->addDays(4);
 
     RecurrenceException::factory()->for($event, 'recurrenceable')->create([
         'occurs_at' => $occursAt->toDateString(),
         'overrides' => ['notify_status' => 'sent'],
     ]);
     RecurrenceException::factory()->for($event, 'recurrenceable')->create([
-        'occurs_at' => $occursAt->clone()->subDays(2)->toDateString(),
+        'occurs_at' => $occursAt->subDays(2)->toDateString(),
     ]);
 
     $data = UpdateEventDataFactory::make([
         'startsAt' => $occursAt->toISOString(),
-        'endsAt' => $occursAt->clone()->setTime(15, 1, 0)->toISOString(),
-        'notifyAt' => $occursAt->clone()->subHour()->toISOString(),
+        'endsAt' => $occursAt->setTime(15, 1, 0)->toISOString(),
+        'notifyAt' => $occursAt->subHour()->toISOString(),
         'rrule' => 'FREQ=WEEKLY',
         'occursAt' => $occursAt->toDateString(),
         'scope' => 'all',
