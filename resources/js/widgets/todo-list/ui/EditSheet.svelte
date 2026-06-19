@@ -1,6 +1,6 @@
 <script lang="ts">
+    import { useLastDefined } from "$/shared/lib/hooks.svelte";
     import Sheet from "$/shared/ui/Sheet.svelte";
-    import { untrack } from "svelte";
 
     import EditForm from "./EditForm.svelte";
 
@@ -13,14 +13,7 @@
 
     let { open = $bindable(), ...props }: Props = $props();
 
-    let lastTodo = $state(untrack(() => props.todo));
-
-    $effect(() => {
-        if (!props.todo) return;
-        lastTodo = props.todo;
-    });
-
-    const todo = $derived(props.todo ?? lastTodo);
+    const todo = useLastDefined(() => props.todo);
 </script>
 
 <Sheet
@@ -29,10 +22,10 @@
     snapPoints={[0.6, 1]}
     defaultSnapPoint={0.6}
     onExitComplete={() => {
-        lastTodo = null;
+        todo.reset();
     }}
 >
-    {#if todo}
-        <EditForm {todo} onClose={() => (open = false)} />
+    {#if todo.current}
+        <EditForm todo={todo.current} onClose={() => (open = false)} />
     {/if}
 </Sheet>

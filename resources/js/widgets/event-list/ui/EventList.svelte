@@ -53,6 +53,7 @@
                 <Event.Row
                     onclick={() => editView.push({ meta: event })}
                     color={event.color}
+                    disabled={editView.isOpen()}
                 >
                     {#snippet time()}
                         <time

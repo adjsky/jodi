@@ -6,8 +6,8 @@
     import { TIMEZONE } from "$/shared/cfg/constants";
     import { HistoryView } from "$/shared/inertia/history-view.svelte";
     import { useSearchParams } from "$/shared/inertia/use-search-params.svelte";
+    import { useLastDefined } from "$/shared/lib/hooks.svelte";
     import Sheet from "$/shared/ui/Sheet.svelte";
-    import { untrack } from "svelte";
 
     import ActionButton from "./ActionButton.svelte";
     import ActionRow from "./ActionRow.svelte";
@@ -17,12 +17,7 @@
     const view = new HistoryView<{ isCalendarOpen: boolean }>();
     const searchParams = useSearchParams({ showProgress: true });
 
-    let lastViewName = $state(untrack(() => view.name));
-
-    $effect(() => {
-        if (!view.name) return;
-        lastViewName = view.name;
-    });
+    const lastViewName = useLastDefined(() => view.name);
 
     let day = $derived(getCurrentDay());
 
@@ -103,11 +98,12 @@
     defaultSnapPoint={1}
     onExitComplete={() => {
         day = getCurrentDay();
+        lastViewName.reset();
     }}
 >
-    {#if lastViewName == "add-todo"}
+    {#if lastViewName.current == "add-todo"}
         <TodoForm bind:day onClose={() => void view.back()} />
-    {:else if lastViewName == "add-event"}
+    {:else if lastViewName.current == "add-event"}
         <EventForm bind:day onClose={() => void view.back()} />
     {/if}
 </Sheet>

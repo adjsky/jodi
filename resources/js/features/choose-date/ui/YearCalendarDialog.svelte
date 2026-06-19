@@ -44,6 +44,7 @@
         }
     }
     height={90}
+    portal
     lazyMount
 >
     {#snippet trigger(props)}

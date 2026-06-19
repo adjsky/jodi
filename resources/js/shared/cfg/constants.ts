@@ -1,8 +1,5 @@
 import { Capacitor } from "@capacitor/core";
 
-import type { WeekStart } from "../lib/types";
-import type { DayOfWeek } from "@internationalized/date";
-
 export const LOCALE_COOKIE = "jodi-locale";
 export const TIMEZONE_COOKIE = "jodi-timezone";
 export const DEVICE_ID_COOKIE = "jodi-device-id";
@@ -13,7 +10,7 @@ export const NOTIFICATION_DEFAULT_SUBHOURS = 1;
 
 export const PLATFORM = Capacitor.getPlatform();
 
-export const WEEK_START_PREFERENCE_MAP: { [D in WeekStart]: DayOfWeek } = {
+export const WEEK_START_PREFERENCE_MAP = {
     monday: "mon",
     sunday: "sun"
-};
+} as const;

@@ -37,14 +37,14 @@
     <Portal disabled={!portal}>
         <Dialog.Backdrop
             class={[
-                "fixed inset-0 z-[calc(100+var(--layer-index))] bg-cream-950/60 duration-300",
+                "fixed inset-0 z-[calc(100+var(--layer-index,0))] bg-cream-950/60 duration-300",
                 "data-[state=closed]:animate-out data-[state=closed]:fade-out",
                 "data-[state=open]:animate-in data-[state=open]:fade-in"
             ]}
         />
         <Dialog.Content
             class={[
-                "fixed top-1/2 left-1/2 z-[calc(100+var(--layer-index))] w-80 -translate-1/2 rounded-4xl bg-white px-6 py-4 duration-300",
+                "fixed top-1/2 left-1/2 z-[calc(100+var(--layer-index,0))] w-80 -translate-1/2 rounded-4xl bg-white px-6 py-4 duration-300",
                 "data-[state=closed]:animate-out data-[state=closed]:fade-out data-[state=closed]:slide-out-to-bottom",
                 "data-[state=open]:animate-in data-[state=open]:fade-in data-[state=open]:slide-in-from-bottom"
             ]}
