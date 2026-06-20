@@ -71,7 +71,7 @@
             <div
                 data-scope="drawer"
                 data-part="user-content"
-                class="relative flex pt-2 px-safe-offset-4 pb-safe-offset-2"
+                class="relative flex flex-col pt-2 px-safe-offset-4 pb-safe-offset-2"
             >
                 {@render children()}
             </div>

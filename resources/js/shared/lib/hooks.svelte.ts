@@ -8,7 +8,7 @@ export function useLastDefined<T>(value: Getter<T | null>) {
     $effect(() => {
         const newValue = extract(value);
 
-        if (!newValue) return;
+        if (newValue === null) return;
 
         lastValue = newValue;
     });
