@@ -1,0 +1,14 @@
+diff --git a/node_modules/@zag-js/drawer/dist/drawer.machine.mjs b/node_modules/@zag-js/drawer/dist/drawer.machine.mjs
+index 4353b22..4124e73 100644
+--- a/node_modules/@zag-js/drawer/dist/drawer.machine.mjs
++++ b/node_modules/@zag-js/drawer/dist/drawer.machine.mjs
+@@ -463,7 +463,8 @@ var machine = createMachine({
+         if (!backdropEl) return;
+         backdropEl.style.setProperty("animation", "none", "important");
+       },
+-      clearSwipeOpenAnimation({ scope }) {
++      clearSwipeOpenAnimation({ scope, event, prop }) {
++        if (prop("onOpenChange") != null && event.type != "CONTROLLED.CLOSE") return;
+         const contentEl = dom.getContentEl(scope);
+         const backdropEl = dom.getBackdropEl(scope);
+         if (contentEl) contentEl.style.removeProperty("animation");
