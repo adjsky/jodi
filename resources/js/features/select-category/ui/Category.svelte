@@ -5,7 +5,6 @@
     import { m } from "$/paraglide/messages";
     import Jelly from "$/shared/assets/jelly.svg";
     import { announce } from "$/shared/lib/form";
-    import { DISABLE_SHEET_DRAGGING } from "$/shared/ui/Sheet.svelte";
     import SheetDialog from "$/shared/ui/SheetDialog.svelte";
     import { tick, untrack } from "svelte";
 
@@ -70,7 +69,6 @@
                 void view.push(view.name, {
                     meta: {
                         ...view.meta,
-                        [DISABLE_SHEET_DRAGGING]: true,
                         __selectcategory: { isOpen: true }
                     }
                 });

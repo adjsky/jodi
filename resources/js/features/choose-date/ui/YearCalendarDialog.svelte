@@ -1,7 +1,6 @@
 <script lang="ts">
     import { page } from "@inertiajs/svelte";
     import { HistoryView } from "$/shared/inertia/history-view.svelte";
-    import { DISABLE_SHEET_DRAGGING } from "$/shared/ui/Sheet.svelte";
     import SheetDialog from "$/shared/ui/SheetDialog.svelte";
 
     import YearCalendarView from "./YearCalendarView.svelte";
@@ -21,7 +20,6 @@
     let { id = "general", selected, min, children, onSelect }: Props = $props();
 
     const view = new HistoryView<{
-        [DISABLE_SHEET_DRAGGING]: boolean;
         __yearcalendardialog: { isOpen: string };
     }>();
 </script>
@@ -34,7 +32,6 @@
                 void view.push(view.name, {
                     meta: {
                         ...view.meta,
-                        [DISABLE_SHEET_DRAGGING]: true,
                         __yearcalendardialog: { isOpen: id }
                     }
                 });
@@ -44,6 +41,7 @@
         }
     }
     height={90}
+    portal
     lazyMount
 >
     {#snippet trigger(props)}

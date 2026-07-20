@@ -82,6 +82,7 @@
     onExitComplete={reset}
     height={90}
     title={m["recurrence.custom.title"]()}
+    portal
 >
     <SelectFrequency {day} bind:freq bind:interval bind:byweekday />
 

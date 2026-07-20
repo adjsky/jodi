@@ -35,19 +35,19 @@
         </Dialog.Trigger>
     {/if}
 
-    <Dialog.Backdrop
-        class={[
-            "fixed inset-0 z-[calc(100+var(--layer-index))] bg-cream-950/60 duration-300",
-            "data-[state=closed]:animate-out data-[state=closed]:fade-out",
-            "data-[state=open]:animate-in data-[state=open]:fade-in"
-        ]}
-    />
     <Portal disabled={!portal}>
+        <Dialog.Backdrop
+            class={[
+                "fixed inset-0 z-[calc(100+var(--layer-index,0))] bg-cream-950/60",
+                "duration-500 ease-in-out data-[state=closed]:animate-out data-[state=closed]:fade-out",
+                "duration-300 ease-[cubic-bezier(0.32,0.72,0,1)] data-[state=open]:animate-in data-[state=open]:fade-in"
+            ]}
+        />
         <Dialog.Content
             class={[
-                "fixed inset-x-0 bottom-0 z-[calc(100+var(--layer-index))] flex flex-col rounded-t-2xl bg-white px-4 py-3 duration-300",
-                "data-[state=closed]:animate-out data-[state=closed]:slide-out-to-bottom",
-                "data-[state=open]:animate-in data-[state=open]:slide-in-from-bottom"
+                "fixed inset-x-0 bottom-0 z-[calc(100+var(--layer-index,0))] flex flex-col rounded-t-2xl bg-white px-4 py-3",
+                "duration-300 ease-in-out data-[state=closed]:animate-out data-[state=closed]:slide-out-to-bottom",
+                "duration-500 ease-[cubic-bezier(0.32,0.72,0,1)] data-[state=open]:animate-in data-[state=open]:slide-in-from-bottom"
             ]}
             style="height: {height}%;"
         >

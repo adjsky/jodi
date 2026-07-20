@@ -154,6 +154,7 @@
                         class="relative w-full min-w-0 text-start text-lg font-medium"
                         data-part="edit"
                         onclick={() => editView.push({ meta: todo })}
+                        disabled={editView.isOpen()}
                     >
                         <span
                             class={[

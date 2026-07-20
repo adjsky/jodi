@@ -1,7 +1,6 @@
 <script lang="ts">
     import { HistoryView } from "../inertia/history-view.svelte";
     import { tw } from "../lib/styles";
-    import { DISABLE_SHEET_DRAGGING } from "./Sheet.svelte";
     import TimePickerClock from "./TimePickerClock.svelte";
 
     import type { ClassName } from "../lib/styles";
@@ -27,7 +26,6 @@
     }: Props = $props();
 
     const view = new HistoryView<{
-        [DISABLE_SHEET_DRAGGING]: boolean;
         __timepickerinput: { isPickerOpen: string };
     }>();
 
@@ -42,7 +40,6 @@
         void view.push(view.name, {
             meta: {
                 ...view.meta,
-                [DISABLE_SHEET_DRAGGING]: true,
                 __timepickerinput: { isPickerOpen: id }
             }
         });

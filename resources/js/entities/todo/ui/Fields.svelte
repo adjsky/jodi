@@ -78,12 +78,13 @@
 <textarea
     name="description"
     placeholder={m["todos.placeholders.description"]()}
-    class="mt-3 form-input field-sizing-content w-full grow overflow-y-scroll border-none bg-transparent p-0 text-lg font-semibold text-cream-950 placeholder:text-cream-600 focus:ring-0"
+    class="mt-3 form-input w-full grow resize-none overflow-y-scroll border-none bg-transparent p-0 text-lg font-semibold text-cream-950 placeholder:text-cream-600 focus:ring-0"
     defaultValue={description ?? ""}
     data-expand-sheet
 ></textarea>
 
 <div
+    data-no-drag
     class="absolute inset-x-0 bottom-0 flex items-end justify-between bg-white px-4 pb-safe-offset-6"
 >
     {@render destroy()}
