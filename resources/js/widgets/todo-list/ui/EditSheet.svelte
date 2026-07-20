@@ -1,5 +1,5 @@
 <script lang="ts">
-    import { useLastDefined } from "$/shared/lib/hooks.svelte";
+    import { useLastMatching } from "$/shared/lib/hooks.svelte";
     import Sheet from "$/shared/ui/Sheet.svelte";
 
     import EditForm from "./EditForm.svelte";
@@ -13,7 +13,10 @@
 
     let { open = $bindable(), ...props }: Props = $props();
 
-    const todo = useLastDefined(() => props.todo);
+    const todo = useLastMatching(
+        () => props.todo,
+        (todo) => todo != null
+    );
 </script>
 
 <Sheet

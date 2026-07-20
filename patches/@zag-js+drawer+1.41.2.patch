@@ -1,14 +1,65 @@
+diff --git a/node_modules/@zag-js/drawer/dist/drawer.connect.mjs b/node_modules/@zag-js/drawer/dist/drawer.connect.mjs
+index 5471a59..79d72ff 100644
+--- a/node_modules/@zag-js/drawer/dist/drawer.connect.mjs
++++ b/node_modules/@zag-js/drawer/dist/drawer.connect.mjs
+@@ -188,6 +188,7 @@ function connect(service, normalize) {
+       });
+     },
+     getBackdropProps() {
++      const suppressAnimation = context.get("suppressBackdropAnimation");
+       return normalize.element({
+         ...parts.backdrop.attrs,
+         id: dom.getBackdropId(scope),
+@@ -197,6 +198,7 @@ function connect(service, normalize) {
+         style: {
+           willChange: "opacity",
+           pointerEvents: closing ? "none" : void 0,
++          animation: suppressAnimation ? "none !important" : void 0,
+           "--drawer-swipe-progress": `${swipeProgress}`,
+           "--drawer-swipe-strength": `${swipeStrength}`
+         }
 diff --git a/node_modules/@zag-js/drawer/dist/drawer.machine.mjs b/node_modules/@zag-js/drawer/dist/drawer.machine.mjs
-index 4353b22..4124e73 100644
+index 4353b22..e262077 100644
 --- a/node_modules/@zag-js/drawer/dist/drawer.machine.mjs
 +++ b/node_modules/@zag-js/drawer/dist/drawer.machine.mjs
-@@ -463,7 +463,8 @@ var machine = createMachine({
-         if (!backdropEl) return;
-         backdropEl.style.setProperty("animation", "none", "important");
+@@ -99,6 +99,9 @@ var machine = createMachine({
+       nestedMetrics: bindable(() => ({
+         defaultValue: { count: 0, height: 0, frontmostHeight: 0, open: false, swiping: false },
+         isEqual
++      })),
++      suppressBackdropAnimation: bindable(() => ({
++        defaultValue: false
+       }))
+     };
+   },
+@@ -450,24 +453,21 @@ var machine = createMachine({
+         const dragOffset = context.get("dragOffset");
+         if (dragOffset === null) return;
+         const contentEl = dom.getContentEl(scope);
+-        const backdropEl = dom.getBackdropEl(scope);
+         if (contentEl) contentEl.style.setProperty("animation", "none", "important");
+-        if (backdropEl) backdropEl.style.setProperty("animation", "none", "important");
++        context.set("suppressBackdropAnimation", true);
+         raf(() => {
+           refs.get("swipeSession").resetDragOffset();
+           context.set("dragOffset", null);
+         });
+       },
+-      suppressBackdropAnimation({ scope }) {
+-        const backdropEl = dom.getBackdropEl(scope);
+-        if (!backdropEl) return;
+-        backdropEl.style.setProperty("animation", "none", "important");
++      suppressBackdropAnimation({ context }) {
++        context.set("suppressBackdropAnimation", true);
        },
 -      clearSwipeOpenAnimation({ scope }) {
-+      clearSwipeOpenAnimation({ scope, event, prop }) {
++      clearSwipeOpenAnimation({ context, event, prop, scope }) {
 +        if (prop("onOpenChange") != null && event.type != "CONTROLLED.CLOSE") return;
++        context.set("suppressBackdropAnimation", false);
          const contentEl = dom.getContentEl(scope);
-         const backdropEl = dom.getBackdropEl(scope);
+-        const backdropEl = dom.getBackdropEl(scope);
          if (contentEl) contentEl.style.removeProperty("animation");
+-        if (backdropEl) backdropEl.style.removeProperty("animation");
+       },
+       setTriggerValue({ context, event }) {
+         if (event.value === void 0) return;

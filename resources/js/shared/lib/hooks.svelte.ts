@@ -2,23 +2,27 @@ import { extract } from "runed";
 
 import type { Getter } from "runed";
 
-export function useLastDefined<T>(value: Getter<T | null>) {
-    let lastValue = $state(extract(value));
+export function useLastMatching<T>(
+    value: Getter<T>,
+    matcher: (value: T) => boolean
+) {
+    const initialValue = extract(value);
+
+    let lastMatch: T | null = $state(
+        matcher(initialValue) ? initialValue : null
+    );
 
     $effect(() => {
         const newValue = extract(value);
-
-        if (newValue === null) return;
-
-        lastValue = newValue;
+        if (matcher(newValue)) lastMatch = newValue;
     });
 
     return {
         get current() {
-            return extract(value) ?? lastValue;
+            return lastMatch;
         },
         reset() {
-            lastValue = null;
+            lastMatch = null;
         }
     };
 }

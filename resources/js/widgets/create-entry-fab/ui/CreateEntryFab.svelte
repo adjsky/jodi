@@ -6,7 +6,7 @@
     import { TIMEZONE } from "$/shared/cfg/constants";
     import { HistoryView } from "$/shared/inertia/history-view.svelte";
     import { useSearchParams } from "$/shared/inertia/use-search-params.svelte";
-    import { useLastDefined } from "$/shared/lib/hooks.svelte";
+    import { useLastMatching } from "$/shared/lib/hooks.svelte";
     import Sheet from "$/shared/ui/Sheet.svelte";
 
     import ActionButton from "./ActionButton.svelte";
@@ -17,7 +17,10 @@
     const view = new HistoryView<{ isCalendarOpen: boolean }>();
     const searchParams = useSearchParams({ showProgress: true });
 
-    const lastViewName = useLastDefined(() => view.name);
+    const lastViewName = useLastMatching(
+        () => view.name,
+        (name) => name != ""
+    );
 
     let day = $derived(getCurrentDay());
 

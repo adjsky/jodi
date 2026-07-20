@@ -1,6 +1,6 @@
 <script lang="ts">
-    import { useLastDefined } from "$/shared/lib/hooks.svelte";
-    import ArkSheet from "$/shared/ui/ArkSheet.svelte";
+    import { useLastMatching } from "$/shared/lib/hooks.svelte";
+    import Sheet from "$/shared/ui/Sheet.svelte";
 
     import EditForm from "./EditForm.svelte";
 
@@ -13,10 +13,13 @@
 
     let { open = $bindable(), ...props }: Props = $props();
 
-    const event = useLastDefined(() => props.event);
+    const event = useLastMatching(
+        () => props.event,
+        (event) => event != null
+    );
 </script>
 
-<ArkSheet
+<Sheet
     bind:open
     maxHeight={0.9}
     snapPoints={[0.6, 1]}
@@ -28,4 +31,4 @@
     {#if event.current}
         <EditForm event={event.current} onClose={() => (open = false)} />
     {/if}
-</ArkSheet>
+</Sheet>

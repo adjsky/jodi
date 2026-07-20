@@ -2,7 +2,6 @@
     import { HistoryView } from "$/shared/inertia/history-view.svelte";
     import { normalizeIsoString } from "$/shared/lib/date";
     import { announce } from "$/shared/lib/form";
-    import { DISABLE_SHEET_DRAGGING } from "$/shared/ui/Sheet.svelte";
     import { tick } from "svelte";
 
     import { durationToZonedDT } from "../helpers/duration";
@@ -28,7 +27,6 @@
     }: Props = $props();
 
     const customPickerView = new HistoryView<{
-        [DISABLE_SHEET_DRAGGING]: boolean;
         __selectreminder: { isOpen: boolean };
     }>();
 
@@ -59,7 +57,6 @@
         void customPickerView.push(customPickerView.name, {
             meta: {
                 ...customPickerView.meta,
-                [DISABLE_SHEET_DRAGGING]: true,
                 __selectreminder: { isOpen: true }
             }
         });
