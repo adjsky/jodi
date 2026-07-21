@@ -105,19 +105,19 @@ class Event extends Model implements Recurrable
         return 'starts_at';
     }
 
-    /** @return BelongsTo<User,$this> */
+    /** @return BelongsTo<User, $this> */
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
     }
 
-    /** @return HasMany<EventAttendee,$this> */
+    /** @return HasMany<EventAttendee, $this> */
     public function attendees(): HasMany
     {
         return $this->hasMany(EventAttendee::class);
     }
 
-    /** @return MorphMany<RecurrenceException,$this> */
+    /** @return MorphMany<RecurrenceException, $this> */
     public function recurrenceExceptions(): MorphMany
     {
         return $this->morphMany(RecurrenceException::class, 'recurrenceable');

@@ -106,55 +106,55 @@ class User extends Authenticatable implements HasLocalePreference
         return $this->pushSubscriptions->pluck('fcm_token')->toArray();
     }
 
-    /** @return BelongsToMany<User,$this> */
+    /** @return BelongsToMany<User, $this> */
     public function friends(): BelongsToMany
     {
         return $this->belongsToMany(User::class, 'user_friends', 'user_id', 'friend_id');
     }
 
-    /** @return HasMany<RegistrationInvitation,$this> */
+    /** @return HasMany<RegistrationInvitation, $this> */
     public function invitations(): HasMany
     {
         return $this->hasMany(RegistrationInvitation::class, 'inviter_user_id', 'id');
     }
 
-    /** @return HasMany<UserOneTimePasswords,$this> */
+    /** @return HasMany<UserOneTimePasswords, $this> */
     public function oneTimePasswords(): HasMany
     {
         return $this->hasMany(UserOneTimePasswords::class);
     }
 
-    /** @return HasMany<Category,$this> */
+    /** @return HasMany<Category, $this> */
     public function categories(): HasMany
     {
         return $this->hasMany(Category::class);
     }
 
-    /** @return HasMany<Todo,$this> */
+    /** @return HasMany<Todo, $this> */
     public function todos(): HasMany
     {
         return $this->hasMany(Todo::class);
     }
 
-    /** @return HasMany<Event,$this> */
+    /** @return HasMany<Event, $this> */
     public function events(): HasMany
     {
         return $this->hasMany(Event::class);
     }
 
-    /** @return HasMany<JournalEntry,$this> */
+    /** @return HasMany<JournalEntry, $this> */
     public function journalEntries(): HasMany
     {
         return $this->hasMany(JournalEntry::class);
     }
 
-    /** @return HasMany<MoodTrackerEntry,$this> */
+    /** @return HasMany<MoodTrackerEntry, $this> */
     public function moodTrackerEntries(): HasMany
     {
         return $this->hasMany(MoodTrackerEntry::class);
     }
 
-    /** @return HasMany<PushSubscription,$this> */
+    /** @return HasMany<PushSubscription, $this> */
     public function pushSubscriptions(): HasMany
     {
         return $this->hasMany(PushSubscription::class);

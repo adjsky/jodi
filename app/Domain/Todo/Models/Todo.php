@@ -110,25 +110,25 @@ class Todo extends Model implements Recurrable
         return 'scheduled_at';
     }
 
-    /** @return BelongsTo<User,$this> */
+    /** @return BelongsTo<User, $this> */
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
     }
 
-    /** @return BelongsTo<Category,$this> */
+    /** @return BelongsTo<Category, $this> */
     public function category(): BelongsTo
     {
         return $this->belongsTo(Category::class);
     }
 
-    /** @return HasMany<TodoPosition,$this> */
+    /** @return HasMany<TodoPosition, $this> */
     public function positions(): HasMany
     {
         return $this->hasMany(TodoPosition::class);
     }
 
-    /** @return MorphMany<RecurrenceException,$this> */
+    /** @return MorphMany<RecurrenceException, $this> */
     public function recurrenceExceptions(): MorphMany
     {
         return $this->morphMany(RecurrenceException::class, 'recurrenceable');
