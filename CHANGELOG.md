@@ -1,5 +1,11 @@
 # Releases
 
+## 0.21.1 (2026-07-21)
+
+### Fix
+
+- finish tweaking sheet (#136)
+
 ## 0.21.0 (2026-07-20)
 
 ### Feat
