@@ -48,6 +48,7 @@
                     onSelect={(date) => {
                         until = date;
                     }}
+                    deferHistoryViewFrames={2}
                 >
                     {#snippet children(props)}
                         <div

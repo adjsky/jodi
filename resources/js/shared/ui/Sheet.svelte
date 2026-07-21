@@ -1,16 +1,18 @@
 <script lang="ts">
     import { Drawer, useDrawer } from "@ark-ui/svelte";
-    import { Capacitor } from "@capacitor/core";
 
+    import { DEFER_FRAMES } from "../cfg/constants";
+    import { useDeferUntilNextFrame } from "../lib/hooks.svelte";
+
+    import type { DrawerRootProps } from "@ark-ui/svelte";
     import type { Snippet } from "svelte";
 
-    type Props = {
+    type Props = Pick<DrawerRootProps, "onExitComplete"> & {
         open?: boolean;
         maxHeight: number;
         snapPoints: number[];
         defaultSnapPoint: number;
         children: Snippet;
-        onExitComplete?: VoidFunction;
     };
 
     const id = $props.id();
@@ -23,12 +25,19 @@
         ...drawerRootProps
     }: Props = $props();
 
+    let contentRef: HTMLElement | null = $state(null);
+
+    // Defer opening the drawer on page load until the next available frame so
+    // that Zag can calculate content height properly, otherwise the content
+    // will be rendered according to the largest available snap point.
+    const deferred = useDeferUntilNextFrame(DEFER_FRAMES.SHEET);
+
     const drawer = useDrawer({
         get id() {
             return id;
         },
         get open() {
-            return open;
+            return deferred.ready && open;
         },
         onOpenChange(details) {
             open = details.open;
@@ -38,6 +47,9 @@
         },
         get snapPoints() {
             return snapPoints;
+        },
+        initialFocusEl() {
+            return contentRef;
         }
     });
 </script>
@@ -50,16 +62,9 @@
         class="fixed inset-0 z-[calc(100+var(--layer-index,0))] flex items-end justify-center"
     >
         <Drawer.Content
+            bind:ref={contentRef}
             class="relative flex size-full flex-col rounded-t-2xl bg-white shadow-none outline-none"
             style="max-height: {maxHeight * 100}svh"
-            onfocusin={(e) => {
-                if (!Capacitor.isNativePlatform()) return;
-
-                const target = e.target as HTMLElement;
-                if (target.matches("[data-expand-sheet]")) {
-                    drawer().setSnapPoint(1);
-                }
-            }}
         >
             <Drawer.Grabber
                 class="flex h-(--grabber-height) w-full shrink-0 touch-none items-center justify-center select-none"
@@ -72,6 +77,7 @@
                 data-scope="drawer"
                 data-part="user-content"
                 class="relative flex flex-col pt-2 px-safe-offset-4 pb-safe-offset-2"
+                data-no-drag
             >
                 {@render children()}
             </div>

@@ -3,8 +3,8 @@
     import { Calendar, Clock } from "@lucide/svelte";
     import { m } from "$/paraglide/messages";
     import { getLocale } from "$/paraglide/runtime";
+    import { DEFER_FRAMES } from "$/shared/cfg/constants";
     import TimeRangePicker from "$/shared/ui/TimeRangePicker.svelte";
-    import { boolAttr } from "runed";
 
     import type { Time, ZonedDateTime } from "@internationalized/date";
     import type { Snippet } from "svelte";
@@ -69,8 +69,6 @@
     name="title"
     defaultValue={title ?? ""}
     required
-    data-autofocus={boolAttr(!title)}
-    data-expand-sheet
 />
 
 <TimeRangePicker
@@ -81,6 +79,7 @@
     {onStartsAtChange}
     {onEndsAtChange}
     class="mt-4"
+    deferHistoryViewFrames={DEFER_FRAMES.SHEET + 1}
 >
     {#snippet label()}
         <Clock class="text-2xl" />
@@ -93,11 +92,9 @@
     placeholder={m["events.placeholders.description"]()}
     class="mt-3 form-input w-full grow resize-none overflow-y-scroll border-none bg-transparent p-0 text-lg font-semibold text-cream-950 placeholder:text-cream-600 focus:ring-0"
     defaultValue={description ?? ""}
-    data-expand-sheet
 ></textarea>
 
 <div
-    data-no-drag
     class="absolute inset-x-0 bottom-0 flex items-end justify-between rounded-t-2xl bg-white px-4 pb-safe-offset-6"
 >
     {@render destroy()}

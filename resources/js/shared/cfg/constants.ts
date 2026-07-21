@@ -14,3 +14,7 @@ export const WEEK_START_PREFERENCE_MAP = {
     monday: "mon",
     sunday: "sun"
 } as const;
+
+export enum DEFER_FRAMES {
+    SHEET = 1
+}

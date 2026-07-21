@@ -4,7 +4,7 @@
     import type { DialogRootProps } from "@ark-ui/svelte";
     import type { Snippet } from "svelte";
 
-    type Props = Pick<DialogRootProps, "onExitComplete"> & {
+    type Props = Pick<DialogRootProps, "onExitComplete" | "lazyMount"> & {
         open?: boolean;
         title: string;
         portal?: boolean;

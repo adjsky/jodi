@@ -1,5 +1,6 @@
 <script lang="ts">
     import { HistoryView } from "../inertia/history-view.svelte";
+    import { useDeferUntilNextFrame } from "../lib/hooks.svelte";
     import { tw } from "../lib/styles";
     import TimePickerClock from "./TimePickerClock.svelte";
 
@@ -11,6 +12,7 @@
     type Props = {
         class?: ClassName;
         value: Time;
+        deferHistoryViewFrames?: number;
         trigger?: Snippet<[HTMLButtonAttributes]>;
         onAbort?: VoidFunction;
         onConfirm?: (time: Time) => void;
@@ -20,6 +22,7 @@
     let {
         class: classname,
         value = $bindable(),
+        deferHistoryViewFrames = 0,
         trigger,
         onAbort,
         onConfirm
@@ -28,6 +31,7 @@
     const view = new HistoryView<{
         __timepickerinput: { isPickerOpen: string };
     }>();
+    const deferredView = useDeferUntilNextFrame(() => deferHistoryViewFrames);
 
     const visibleValue = $derived.by(() => {
         const hours = value.hour.toString().padStart(2, "0");
@@ -66,7 +70,9 @@
 <TimePickerClock
     bind:value
     bind:open={
-        () => view.meta?.__timepickerinput?.isPickerOpen == id,
+        () =>
+            deferredView.ready &&
+            view.meta?.__timepickerinput?.isPickerOpen == id,
         (v) => {
             if (v) {
                 showPicker();

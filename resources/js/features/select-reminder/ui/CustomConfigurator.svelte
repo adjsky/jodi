@@ -71,6 +71,8 @@
     onExitComplete={() => {
         [selectedIdx, amount] = getNotifyOffset();
     }}
+    portal
+    lazyMount
 >
     <NumericInput
         bind:value={amount}

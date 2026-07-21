@@ -83,6 +83,7 @@
     height={90}
     title={m["recurrence.custom.title"]()}
     portal
+    lazyMount
 >
     <SelectFrequency {day} bind:freq bind:interval bind:byweekday />
 

@@ -12,7 +12,10 @@
     import Reminder from "$/features/select-reminder/ui/Reminder.svelte";
     import CreateTodo from "$/generated/actions/App/Domain/Todo/Actions/CreateTodo";
     import { m } from "$/paraglide/messages";
-    import { NOTIFICATION_DEFAULT_SUBHOURS } from "$/shared/cfg/constants";
+    import {
+        DEFER_FRAMES,
+        NOTIFICATION_DEFAULT_SUBHOURS
+    } from "$/shared/cfg/constants";
     import { normalizeIsoString, timediff } from "$/shared/lib/date";
     import * as PushSubscription from "$/shared/lib/push-subscription.svelte";
     import { toaster } from "$/shared/lib/toaster";
@@ -61,6 +64,7 @@
         {#snippet calendar(trigger)}
             <YearCalendarDialog
                 selected={toCalendarDate(scheduledAt)}
+                deferHistoryViewFrames={DEFER_FRAMES.SHEET + 1}
                 onSelect={(d) => {
                     if (notifyAt) {
                         notifyAt = notifyAt.set(d);
@@ -77,12 +81,17 @@
             <SaveOrClose variant="save" disabled={processing} />
         {/snippet}
         {#snippet category()}
-            <Category name="categoryId" current={null} />
+            <Category
+                name="categoryId"
+                current={null}
+                deferHistoryViewFrames={DEFER_FRAMES.SHEET + 1}
+            />
         {/snippet}
         {#snippet time()}
             <TodoTime
                 {scheduledAt}
                 bind:hasTime
+                deferHistoryViewFrames={DEFER_FRAMES.SHEET + 1}
                 onChange={(time, hasTime) => {
                     if (!hasTime) {
                         notifyAt = null;
@@ -115,6 +124,7 @@
                 day={scheduledAt}
                 name="rrule"
                 tooltip={m["todos.tooltips.repeat"]()}
+                deferHistoryViewFrames={DEFER_FRAMES.SHEET + 1}
             />
         {/snippet}
         {#snippet color()}
@@ -132,6 +142,7 @@
                         return false;
                     }
                 }}
+                deferHistoryViewFrames={DEFER_FRAMES.SHEET + 1}
             />
         {/snippet}
         {#snippet more()}

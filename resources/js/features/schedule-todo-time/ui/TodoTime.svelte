@@ -10,12 +10,14 @@
     type Props = {
         scheduledAt: ZonedDateTime;
         hasTime: boolean;
+        deferHistoryViewFrames?: number;
         onChange?: (time: Time, hasTime: boolean) => void;
     };
 
     let {
         scheduledAt = $bindable(),
         hasTime = $bindable(),
+        deferHistoryViewFrames = 0,
         onChange
     }: Props = $props();
 </script>
@@ -33,6 +35,7 @@
         </button>
     {/snippet}
     <TimePickerInput
+        {deferHistoryViewFrames}
         bind:value={
             () => (hasTime ? toTime(scheduledAt) : new Time(12, 0)),
             (time) => (scheduledAt = scheduledAt.set(time))
