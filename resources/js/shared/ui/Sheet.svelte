@@ -26,6 +26,7 @@
     }: Props = $props();
 
     let contentRef: HTMLElement | null = $state(null);
+    let isAnimating = $state(false);
 
     // Defer opening the drawer on page load until the next available frame so
     // that Zag can calculate content height properly, otherwise the content
@@ -50,6 +51,9 @@
         },
         initialFocusEl() {
             return contentRef;
+        },
+        get closeOnInteractOutside() {
+            return !isAnimating;
         }
     });
 </script>
@@ -57,6 +61,12 @@
 <Drawer.RootProvider value={drawer} {...drawerRootProps}>
     <Drawer.Backdrop
         class="fixed inset-0 z-[calc(100+var(--layer-index,0))] bg-cream-950/60"
+        onanimationstart={() => {
+            isAnimating = true;
+        }}
+        onanimationend={() => {
+            isAnimating = false;
+        }}
     />
     <Drawer.Positioner
         class="fixed inset-0 z-[calc(100+var(--layer-index,0))] flex items-end justify-center"
