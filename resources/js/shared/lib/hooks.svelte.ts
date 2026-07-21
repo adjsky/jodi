@@ -37,9 +37,11 @@ export function useDeferUntilNextFrame(frames: MaybeGetter<number>) {
         let cancel: VoidFunction | null = null;
 
         function next() {
+            if (frame >= extract(frames)) return;
+
             cancel = raf(() => {
                 frame += 1;
-                if (frame < extract(frames)) next();
+                next();
             });
         }
 
