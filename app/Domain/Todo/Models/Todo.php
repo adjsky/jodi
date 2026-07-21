@@ -110,6 +110,11 @@ class Todo extends Model implements Recurrable
         return 'scheduled_at';
     }
 
+    public function recurrenceEndKey(): ?string
+    {
+        return null;
+    }
+
     /** @return BelongsTo<User, $this> */
     public function user(): BelongsTo
     {

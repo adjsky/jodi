@@ -13,6 +13,9 @@ use Illuminate\Support\Collection;
 
 class ListEvents extends JodiAction
 {
+    /**
+     * @return Collection<int, EventData>
+     */
     public function handle(User $user, Carbon $start, Carbon $end): Collection
     {
         $events = Event::query()

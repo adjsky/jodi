@@ -105,6 +105,11 @@ class Event extends Model implements Recurrable
         return 'starts_at';
     }
 
+    public function recurrenceEndKey(): ?string
+    {
+        return 'ends_at';
+    }
+
     /** @return BelongsTo<User, $this> */
     public function user(): BelongsTo
     {
