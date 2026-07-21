@@ -1,6 +1,9 @@
 import { extract } from "runed";
+import { onMount } from "svelte";
 
-import type { Getter } from "runed";
+import { raf } from "./dom";
+
+import type { Getter, MaybeGetter } from "runed";
 
 export function useLastMatching<T>(
     value: Getter<T>,
@@ -23,6 +26,34 @@ export function useLastMatching<T>(
         },
         reset() {
             lastMatch = null;
+        }
+    };
+}
+
+export function useDeferUntilNextFrame(frames: MaybeGetter<number>) {
+    let frame = $state(0);
+
+    onMount(() => {
+        let cancel: VoidFunction | null = null;
+
+        function next() {
+            cancel = raf(() => {
+                frame += 1;
+                if (frame < extract(frames)) next();
+            });
+        }
+
+        next();
+
+        return () => cancel?.();
+    });
+
+    return {
+        get frame() {
+            return frame;
+        },
+        get ready() {
+            return frame >= extract(frames);
         }
     };
 }

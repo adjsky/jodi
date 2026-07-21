@@ -2,6 +2,7 @@
     import { HistoryView } from "$/shared/inertia/history-view.svelte";
     import { normalizeIsoString } from "$/shared/lib/date";
     import { announce } from "$/shared/lib/form";
+    import { useDeferUntilNextFrame } from "$/shared/lib/hooks.svelte";
     import { tick } from "svelte";
 
     import { durationToZonedDT } from "../helpers/duration";
@@ -15,6 +16,7 @@
         notifyAt: ZonedDateTime | null;
         startsAt: ZonedDateTime;
         name: string;
+        deferHistoryViewFrames?: number;
         beforeOpen?: () => void | boolean;
     };
 
@@ -23,12 +25,14 @@
         notifyAt = $bindable(),
         startsAt,
         name,
+        deferHistoryViewFrames = 0,
         beforeOpen
     }: Props = $props();
 
     const customPickerView = new HistoryView<{
         __selectreminder: { isOpen: boolean };
     }>();
+    const deferredView = useDeferUntilNextFrame(() => deferHistoryViewFrames);
 
     let announcerInput = $state<HTMLInputElement | null>(null);
     let isMenuOpen = $state(false);
@@ -68,7 +72,9 @@
     {startsAt}
     {onSelect}
     bind:open={
-        () => customPickerView.meta?.__selectreminder?.isOpen ?? false,
+        () =>
+            deferredView.ready &&
+            (customPickerView.meta?.__selectreminder?.isOpen ?? false),
         (v) => {
             if (!v) {
                 void customPickerView.back();

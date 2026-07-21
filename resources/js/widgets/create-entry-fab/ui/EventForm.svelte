@@ -10,7 +10,10 @@
     import { Reminder } from "$/features/select-reminder";
     import CreateEvent from "$/generated/actions/App/Domain/Event/Actions/CreateEvent";
     import { m } from "$/paraglide/messages";
-    import { NOTIFICATION_DEFAULT_SUBHOURS } from "$/shared/cfg/constants";
+    import {
+        DEFER_FRAMES,
+        NOTIFICATION_DEFAULT_SUBHOURS
+    } from "$/shared/cfg/constants";
     import { timediff } from "$/shared/lib/date";
     import * as PushSubscription from "$/shared/lib/push-subscription.svelte";
     import { toaster } from "$/shared/lib/toaster";
@@ -78,6 +81,7 @@
         {#snippet calendar(trigger)}
             <YearCalendarDialog
                 selected={toCalendarDate(startsAt)}
+                deferHistoryViewFrames={DEFER_FRAMES.SHEET + 1}
                 onSelect={(d) => {
                     notifyAt = notifyAt.set(d);
                     startsAt = startsAt.set(d);
@@ -105,6 +109,7 @@
                 day={startsAt}
                 name="rrule"
                 tooltip={m["events.tooltips.repeat"]()}
+                deferHistoryViewFrames={DEFER_FRAMES.SHEET + 1}
             />
         {/snippet}
         {#snippet color()}
@@ -116,6 +121,7 @@
                 bind:notifyAt
                 name="notifyAt"
                 tooltip={m["todos.tooltips.notification"]()}
+                deferHistoryViewFrames={DEFER_FRAMES.SHEET + 1}
             />
         {/snippet}
         {#snippet more()}

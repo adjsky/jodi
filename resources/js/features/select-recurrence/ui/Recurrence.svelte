@@ -1,6 +1,7 @@
 <script lang="ts">
     import { HistoryView } from "$/shared/inertia/history-view.svelte";
     import { announce } from "$/shared/lib/form";
+    import { useDeferUntilNextFrame } from "$/shared/lib/hooks.svelte";
     import { tick } from "svelte";
 
     import BasicMenu from "./BasicMenu.svelte";
@@ -13,13 +14,21 @@
         day: ZonedDateTime;
         rrule?: string | null;
         name: string;
+        deferHistoryViewFrames?: number;
     };
 
-    let { tooltip, day, rrule = $bindable(), name }: Props = $props();
+    let {
+        tooltip,
+        day,
+        rrule = $bindable(),
+        name,
+        deferHistoryViewFrames = 0
+    }: Props = $props();
 
     const customPickerView = new HistoryView<{
         __selectrecurrence: { isOpen: boolean };
     }>();
+    const deferredView = useDeferUntilNextFrame(() => deferHistoryViewFrames);
 
     let rruleAnnouncer = $state<HTMLInputElement | null>(null);
     let isMenuOpen = $state(false);
@@ -52,7 +61,9 @@
     {rrule}
     {onSelect}
     bind:open={
-        () => customPickerView.meta?.__selectrecurrence?.isOpen ?? false,
+        () =>
+            deferredView.ready &&
+            (customPickerView.meta?.__selectrecurrence?.isOpen ?? false),
         (v) => {
             if (!v) {
                 void customPickerView.back();

@@ -14,6 +14,7 @@
         class?: ClassName;
         startsAt: Time;
         endsAt: Time;
+        deferHistoryViewFrames?: number;
         onStartsAtChange?: (time: Time) => void;
         onEndsAtChange?: (time: Time) => void;
     };
@@ -23,6 +24,7 @@
         class: classname,
         startsAt = $bindable(),
         endsAt = $bindable(),
+        deferHistoryViewFrames = 0,
         onStartsAtChange,
         onEndsAtChange
     }: Props = $props();
@@ -41,6 +43,7 @@
         ]}
     >
         <TimePickerInput
+            {deferHistoryViewFrames}
             bind:value={startsAt}
             onConfirm={(time) => {
                 if (time.hour == 23) {
@@ -61,7 +64,11 @@
         >
             {m["common.to"]()}
         </div>
-        <TimePickerInput bind:value={endsAt} onConfirm={onEndsAtChange} />
+        <TimePickerInput
+            {deferHistoryViewFrames}
+            bind:value={endsAt}
+            onConfirm={onEndsAtChange}
+        />
         {#if !isValid}
             <TriangleAlert class="ml-2 text-2xl text-red" />
         {/if}

@@ -57,7 +57,6 @@
                         class="p-2"
                         type="button"
                         onclick={() => (open = false)}
-                        data-autofocus
                     >
                         <ChevronLeft class="text-4xl" />
                     </button>

@@ -5,6 +5,7 @@
     import { m } from "$/paraglide/messages";
     import Jelly from "$/shared/assets/jelly.svg";
     import { announce } from "$/shared/lib/form";
+    import { useDeferUntilNextFrame } from "$/shared/lib/hooks.svelte";
     import SheetDialog from "$/shared/ui/SheetDialog.svelte";
     import { tick, untrack } from "svelte";
 
@@ -18,9 +19,12 @@
     type Props = {
         name: string;
         current: CategoryData | null;
+        deferHistoryViewFrames?: number;
     };
 
-    let { name, current }: Props = $props();
+    let { name, current, deferHistoryViewFrames = 0 }: Props = $props();
+
+    const deferredView = useDeferUntilNextFrame(() => deferHistoryViewFrames);
 
     const filters = useFilter({ sensitivity: "base" });
 
@@ -63,7 +67,9 @@
 
 <SheetDialog
     bind:open={
-        () => view.meta?.__selectcategory?.isOpen ?? false,
+        () =>
+            deferredView.ready &&
+            (view.meta?.__selectcategory?.isOpen ?? false),
         (v) => {
             if (v) {
                 void view.push(view.name, {
@@ -82,6 +88,7 @@
     onExitComplete={() => {
         search = "";
     }}
+    portal
     lazyMount
 >
     {#snippet trigger(props)}

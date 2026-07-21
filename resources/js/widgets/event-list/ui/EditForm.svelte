@@ -15,6 +15,7 @@
     import DestroyEvent from "$/generated/actions/App/Domain/Event/Actions/DestroyEvent";
     import UpdateEvent from "$/generated/actions/App/Domain/Event/Actions/UpdateEvent";
     import { m } from "$/paraglide/messages";
+    import { DEFER_FRAMES } from "$/shared/cfg/constants";
     import { normalizeIsoString, timediff } from "$/shared/lib/date";
     import { announce } from "$/shared/lib/form";
     import SaveOrClose from "$/shared/ui/SaveOrClose.svelte";
@@ -93,6 +94,7 @@
                 min={event.recurringSince
                     ? parseDate(event.recurringSince)
                     : null}
+                deferHistoryViewFrames={DEFER_FRAMES.SHEET + 1}
                 onSelect={async (d) => {
                     draft.notifyAt = draft.notifyAt.set(d);
                     draft.startsAt = draft.startsAt.set(d);
@@ -140,6 +142,7 @@
                     following: m["events.recurrence-action.following"](),
                     all: m["events.recurrence-action.all"]()
                 }}
+                deferHistoryViewFrames={DEFER_FRAMES.SHEET + 1}
                 onSuccess={() => editView.back()}
             />
         {/snippet}
@@ -149,6 +152,7 @@
                 day={draft.startsAt}
                 name="rrule"
                 tooltip={m["events.tooltips.repeat"]()}
+                deferHistoryViewFrames={DEFER_FRAMES.SHEET + 1}
             />
         {/snippet}
         {#snippet color()}
@@ -164,6 +168,7 @@
                 startsAt={draft.startsAt}
                 name="notifyAt"
                 tooltip={m["events.tooltips.notification"]()}
+                deferHistoryViewFrames={DEFER_FRAMES.SHEET + 1}
             />
         {/snippet}
         {#snippet more()}

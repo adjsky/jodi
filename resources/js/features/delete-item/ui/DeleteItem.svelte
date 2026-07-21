@@ -4,6 +4,7 @@
     import { Trash } from "@lucide/svelte";
     import { TIMEZONE } from "$/shared/cfg/constants";
     import { HistoryView } from "$/shared/inertia/history-view.svelte";
+    import { useDeferUntilNextFrame } from "$/shared/lib/hooks.svelte";
     import RecurrenceActionDialog from "$/shared/ui/RecurrenceActionDialog.svelte";
     import ToolbarAction from "$/shared/ui/ToolbarAction.svelte";
 
@@ -20,6 +21,7 @@
         occursAt: string | null;
         date?: string;
         scopeLabels: { this: string; following: string; all: string };
+        deferHistoryViewFrames?: number;
     };
 
     const {
@@ -30,16 +32,18 @@
         occursAt,
         date,
         scopeLabels,
+        deferHistoryViewFrames = 0,
         ...options
     }: Props = $props();
 
     const view = new HistoryView<{ __deleteitem: { isOpen: boolean } }>();
+    const deferredView = useDeferUntilNextFrame(() => deferHistoryViewFrames);
 </script>
 
 <RecurrenceActionDialog
     {scopeLabels}
     bind:open={
-        () => view.meta?.__deleteitem?.isOpen ?? false,
+        () => deferredView.ready && (view.meta?.__deleteitem?.isOpen ?? false),
         (v) => {
             if (v) {
                 void view.push(view.name, {

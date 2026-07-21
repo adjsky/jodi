@@ -19,7 +19,10 @@
     import DestroyTodo from "$/generated/actions/App/Domain/Todo/Actions/DestroyTodo";
     import UpdateTodo from "$/generated/actions/App/Domain/Todo/Actions/UpdateTodo";
     import { m } from "$/paraglide/messages";
-    import { NOTIFICATION_DEFAULT_SUBHOURS } from "$/shared/cfg/constants";
+    import {
+        DEFER_FRAMES,
+        NOTIFICATION_DEFAULT_SUBHOURS
+    } from "$/shared/cfg/constants";
     import { normalizeIsoString, timediff } from "$/shared/lib/date";
     import { announce } from "$/shared/lib/form";
     import { toaster } from "$/shared/lib/toaster";
@@ -85,6 +88,7 @@
                 min={todo.recurringSince
                     ? parseDate(todo.recurringSince)
                     : null}
+                deferHistoryViewFrames={DEFER_FRAMES.SHEET + 1}
                 onSelect={async (d) => {
                     if (draft.notifyAt) {
                         draft.notifyAt = draft.notifyAt.set(d);
@@ -117,7 +121,11 @@
             />
         {/snippet}
         {#snippet category()}
-            <Category name="categoryId" current={todo.category} />
+            <Category
+                name="categoryId"
+                current={todo.category}
+                deferHistoryViewFrames={DEFER_FRAMES.SHEET + 1}
+            />
         {/snippet}
         {#snippet checkbox()}
             <Checkbox
@@ -133,6 +141,7 @@
             <TodoTime
                 bind:hasTime={draft.hasTime}
                 scheduledAt={draft.scheduledAt}
+                deferHistoryViewFrames={DEFER_FRAMES.SHEET + 1}
                 onChange={async (time, hasTime) => {
                     if (!hasTime) {
                         draft.notifyAt = null;
@@ -170,6 +179,7 @@
                     following: m["todos.recurrence-action.following"](),
                     all: m["todos.recurrence-action.all"]()
                 }}
+                deferHistoryViewFrames={DEFER_FRAMES.SHEET + 1}
                 onSuccess={() => editView.back()}
             />
         {/snippet}
@@ -179,6 +189,7 @@
                 day={draft.scheduledAt}
                 name="rrule"
                 tooltip={m["todos.tooltips.repeat"]()}
+                deferHistoryViewFrames={DEFER_FRAMES.SHEET + 1}
             />
         {/snippet}
         {#snippet color()}
@@ -200,6 +211,7 @@
                         return false;
                     }
                 }}
+                deferHistoryViewFrames={DEFER_FRAMES.SHEET + 1}
             />
         {/snippet}
         {#snippet more()}

@@ -4,7 +4,6 @@
     import { m } from "$/paraglide/messages";
     import { getLocale } from "$/paraglide/runtime";
     import { tw } from "$/shared/lib/styles";
-    import { boolAttr } from "runed";
 
     import type { ZonedDateTime } from "@internationalized/date";
     import type { Snippet } from "svelte";
@@ -80,12 +79,10 @@
     placeholder={m["todos.placeholders.description"]()}
     class="mt-3 form-input w-full grow resize-none overflow-y-scroll border-none bg-transparent p-0 text-lg font-semibold text-cream-950 placeholder:text-cream-600 focus:ring-0"
     defaultValue={description ?? ""}
-    data-expand-sheet
 ></textarea>
 
 <div
-    data-no-drag
-    class="absolute inset-x-0 bottom-0 flex items-end justify-between bg-white px-4 pb-safe-offset-6"
+    class="absolute inset-x-0 bottom-0 flex items-end justify-between rounded-t-2xl bg-white px-4 pb-safe-offset-6"
 >
     {@render destroy()}
     {@render repeat()}
@@ -103,8 +100,6 @@
         )}
         placeholder={m["todos.placeholders.title"]()}
         defaultValue={title ?? ""}
-        data-autofocus={boolAttr(!title)}
-        data-expand-sheet
         required
     />
 {/snippet}
