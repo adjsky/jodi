@@ -5,11 +5,11 @@
     import { m } from "$/paraglide/messages";
     import Dino from "$/shared/assets/dino.svg";
     import SadCat from "$/shared/assets/sad-cat.svg";
-    import { toaster } from "$/shared/lib/toaster";
     import Button from "$/shared/ui/Button.svelte";
     import FloatingView from "$/shared/ui/FloatingView.svelte";
     import Skeleton from "$/shared/ui/Skeleton.svelte";
     import TextField from "$/shared/ui/TextField.svelte";
+    import { toaster } from "$/shared/ui/toaster";
     import { resource } from "runed";
 
     import { fetchInvitations } from "../api/invitations";

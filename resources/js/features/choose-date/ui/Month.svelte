@@ -1,5 +1,5 @@
 <script module>
-    const daySummary = useDaySummary({
+    const calendarEvents = useCalendarEvents({
         onError() {
             toaster.error(m["day-summary.request-error"]());
         }
@@ -9,14 +9,14 @@
 <script lang="ts">
     import { Circle } from "@lucide/svelte";
     import { m } from "$/paraglide/messages";
-    import { toaster } from "$/shared/lib/toaster";
+    import { toaster } from "$/shared/ui/toaster";
     import { boolAttr, useIntersectionObserver } from "runed";
 
-    import { useDaySummary } from "../api/day-summary.svelte";
+    import { useCalendarEvents } from "../api/calendar-events.svelte";
     import { compareDates } from "../helpers/date";
 
-    import type { Year } from "../model/year.svelte";
     import type { CalendarDate } from "@internationalized/date";
+    import type { Year } from "$/shared/lib/date/year.svelte";
     import type { Attachment } from "svelte/attachments";
 
     type Props = {
@@ -47,7 +47,7 @@
         () => table,
         (entries) => {
             if (entries[0]?.isIntersecting) {
-                void daySummary.request(date);
+                void calendarEvents.request(date);
             }
         },
         { root: () => container, threshold: 0, rootMargin: "100px 0px" }
@@ -70,7 +70,7 @@
 </table>
 
 {#snippet day(date: CalendarDate, isWithinMonth: boolean)}
-    {@const summary = daySummary.cache.get(date.year)?.get(date.toString())}
+    <!-- {@const summary = daySummary.cache.get(date.year)?.get(date.toString())} -->
     {@const disabled = min ? min.compare(date) > 0 : false}
     <td class:invisible={!isWithinMonth}>
         <button
@@ -89,7 +89,7 @@
             >
                 {date.day}
             </span>
-            {#if summary?.events}
+            <!-- {#if summary?.events}
                 {#each summary.events as event (event)}
                     <span
                         class="mt-0.5 inline-flex gap-1 rounded-full px-0.5 py-px text-2xs font-bold"
@@ -108,7 +108,7 @@
                 >
                     +{summary.nMore}
                 </span>
-            {/if}
+            {/if} -->
         </button>
     </td>
 {/snippet}

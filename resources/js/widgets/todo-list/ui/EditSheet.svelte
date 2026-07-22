@@ -1,5 +1,5 @@
 <script lang="ts">
-    import { useLastMatching } from "$/shared/lib/hooks.svelte";
+    import { useLastMatching } from "$/shared/lib/hooks/use-last-matching.svelte";
     import Sheet from "$/shared/ui/Sheet.svelte";
 
     import EditForm from "./EditForm.svelte";

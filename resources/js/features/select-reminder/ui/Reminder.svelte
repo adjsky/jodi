@@ -1,8 +1,8 @@
 <script lang="ts">
     import { HistoryView } from "$/shared/inertia/history-view.svelte";
-    import { normalizeIsoString } from "$/shared/lib/date";
-    import { announce } from "$/shared/lib/form";
-    import { useDeferUntilNextFrame } from "$/shared/lib/hooks.svelte";
+    import { normalizeIsoString } from "$/shared/lib/date/normalize-iso-string";
+    import { announce } from "$/shared/lib/dom/announce";
+    import { useDeferUntilNextFrame } from "$/shared/lib/hooks/use-defer-until-next-frame.svelte";
     import { tick } from "svelte";
 
     import { durationToZonedDT } from "../helpers/duration";

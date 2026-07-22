@@ -14,10 +14,10 @@
         DEFER_FRAMES,
         NOTIFICATION_DEFAULT_SUBHOURS
     } from "$/shared/cfg/constants";
-    import { timediff } from "$/shared/lib/date";
-    import * as PushSubscription from "$/shared/lib/push-subscription.svelte";
-    import { toaster } from "$/shared/lib/toaster";
+    import { timediff } from "$/shared/lib/date/timediff";
+    import { pushSubscription } from "$/shared/lib/push/subscription.svelte";
     import SaveOrClose from "$/shared/ui/SaveOrClose.svelte";
+    import { toaster } from "$/shared/ui/toaster";
     import ToolbarAction from "$/shared/ui/ToolbarAction.svelte";
 
     import type { ZonedDateTime } from "@internationalized/date";
@@ -58,7 +58,7 @@
         }
     }}
     onSuccess={() => {
-        PushSubscription.ahtung(m["events.reminder-ahtung"]());
+        pushSubscription.ahtung(m["events.reminder-ahtung"]());
         onClose();
     }}
     class="flex grow flex-col pb-18"

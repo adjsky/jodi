@@ -16,10 +16,11 @@
         DEFER_FRAMES,
         NOTIFICATION_DEFAULT_SUBHOURS
     } from "$/shared/cfg/constants";
-    import { normalizeIsoString, timediff } from "$/shared/lib/date";
-    import * as PushSubscription from "$/shared/lib/push-subscription.svelte";
-    import { toaster } from "$/shared/lib/toaster";
+    import { normalizeIsoString } from "$/shared/lib/date/normalize-iso-string";
+    import { timediff } from "$/shared/lib/date/timediff";
+    import { pushSubscription } from "$/shared/lib/push/subscription.svelte";
     import SaveOrClose from "$/shared/ui/SaveOrClose.svelte";
+    import { toaster } from "$/shared/ui/toaster";
     import ToolbarAction from "$/shared/ui/ToolbarAction.svelte";
 
     import type { ZonedDateTime } from "@internationalized/date";
@@ -53,7 +54,7 @@
     })}
     onSuccess={() => {
         if (notifyAt) {
-            PushSubscription.ahtung(m["todos.reminder-ahtung"]());
+            pushSubscription.ahtung(m["todos.reminder-ahtung"]());
         }
         onClose();
     }}

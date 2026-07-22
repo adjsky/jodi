@@ -1,7 +1,7 @@
 <script lang="ts">
     import { page } from "@inertiajs/svelte";
     import { HistoryView } from "$/shared/inertia/history-view.svelte";
-    import { useDeferUntilNextFrame } from "$/shared/lib/hooks.svelte";
+    import { useDeferUntilNextFrame } from "$/shared/lib/hooks/use-defer-until-next-frame.svelte";
     import SheetDialog from "$/shared/ui/SheetDialog.svelte";
 
     import YearCalendarView from "./YearCalendarView.svelte";

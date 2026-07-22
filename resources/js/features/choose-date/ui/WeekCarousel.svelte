@@ -4,10 +4,10 @@
     import { ChevronLeft, ChevronRight } from "@lucide/svelte";
     import { getLocale } from "$/paraglide/runtime";
     import { TIMEZONE } from "$/shared/cfg/constants";
+    import { Week } from "$/shared/lib/date/week.svelte";
     import { boolAttr } from "runed";
 
     import { compareDates } from "../helpers/date";
-    import { Week } from "../model/week.svelte";
 
     import type { CalendarDate } from "@internationalized/date";
     import type { WeekStart } from "$/shared/lib/types";

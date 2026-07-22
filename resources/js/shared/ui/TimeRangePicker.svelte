@@ -2,10 +2,10 @@
     import { TriangleAlert } from "@lucide/svelte";
     import { m } from "$/paraglide/messages";
 
-    import { tw } from "../lib/styles";
+    import { tw } from "../lib/css/tw";
     import TimePickerInput from "./TimePickerInput.svelte";
 
-    import type { ClassName } from "../lib/styles";
+    import type { ClassName } from "../lib/css/tw";
     import type { Time } from "@internationalized/date";
     import type { Snippet } from "svelte";
 

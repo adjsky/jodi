@@ -1,7 +1,7 @@
 <script lang="ts">
     import { Popover } from "@ark-ui/svelte";
     import { Circle } from "@lucide/svelte";
-    import { announce } from "$/shared/lib/form";
+    import { announce } from "$/shared/lib/dom/announce";
     import ToolbarAction from "$/shared/ui/ToolbarAction.svelte";
     import { tick } from "svelte";
 

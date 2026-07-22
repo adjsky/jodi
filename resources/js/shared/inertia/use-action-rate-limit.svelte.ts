@@ -1,7 +1,7 @@
 import { router } from "@inertiajs/svelte";
 import { m } from "$/paraglide/messages";
 
-import { toaster } from "../lib/toaster";
+import { toaster } from "../ui/toaster";
 
 import type { RouteDefinition } from "$/generated/wayfinder";
 

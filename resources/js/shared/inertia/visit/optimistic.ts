@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
 import { router } from "@inertiajs/svelte";
-import { toaster } from "$/shared/lib/toaster";
+import { toaster } from "$/shared/ui/toaster";
 
 import type { PageProps, VisitCallbacks } from "@inertiajs/core";
 import type { MaybePromise } from "$/shared/lib/types";

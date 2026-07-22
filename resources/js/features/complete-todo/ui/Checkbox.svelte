@@ -1,11 +1,11 @@
 <script lang="ts">
     import { inertia } from "@inertiajs/svelte";
     import { Check } from "@lucide/svelte";
-    import { tw } from "$/shared/lib/styles";
+    import { tw } from "$/shared/lib/css/tw";
     import { boolAttr } from "runed";
 
     import type { UrlMethodPair, VisitOptions } from "@inertiajs/core";
-    import type { ClassName } from "$/shared/lib/styles";
+    import type { ClassName } from "$/shared/lib/css/tw";
 
     type Props = VisitOptions & {
         href: string | UrlMethodPair;

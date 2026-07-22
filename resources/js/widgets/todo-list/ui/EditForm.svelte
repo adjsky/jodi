@@ -23,17 +23,18 @@
         DEFER_FRAMES,
         NOTIFICATION_DEFAULT_SUBHOURS
     } from "$/shared/cfg/constants";
-    import { normalizeIsoString, timediff } from "$/shared/lib/date";
-    import { announce } from "$/shared/lib/form";
-    import { toaster } from "$/shared/lib/toaster";
+    import { normalizeIsoString } from "$/shared/lib/date/normalize-iso-string";
+    import { timediff } from "$/shared/lib/date/timediff";
+    import { announce } from "$/shared/lib/dom/announce";
     import SaveOrClose from "$/shared/ui/SaveOrClose.svelte";
+    import { toaster } from "$/shared/ui/toaster";
     import { tick, untrack } from "svelte";
 
     import { optimistic, visitOptions } from "../cfg/inertia";
     import { editView } from "../model/view";
 
     import type { TodoData } from "$/entities/todo";
-    import type { Scope } from "$/shared/lib/types";
+    import type { RecurrenceScope } from "$/shared/lib/types";
 
     type Props = {
         todo: TodoData;
@@ -43,7 +44,7 @@
     const { todo, onClose }: Props = $props();
 
     let dateAnnouncerInput: HTMLInputElement | null = $state(null);
-    let scope: Scope = $state("this");
+    let scope: RecurrenceScope = $state("this");
 
     const draft = $state(
         untrack(() => ({

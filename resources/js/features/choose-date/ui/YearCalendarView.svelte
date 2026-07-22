@@ -1,10 +1,10 @@
 <script lang="ts">
     import { ChevronLeft, ChevronRight } from "@lucide/svelte";
-    import { tw } from "$/shared/lib/styles";
+    import { tw } from "$/shared/lib/css/tw";
+    import { Year } from "$/shared/lib/date/year.svelte";
     import Button from "$/shared/ui/Button.svelte";
     import FloatingView from "$/shared/ui/FloatingView.svelte";
 
-    import { Year } from "../model/year.svelte";
     import Month from "./Month.svelte";
 
     import type { CalendarDate } from "@internationalized/date";

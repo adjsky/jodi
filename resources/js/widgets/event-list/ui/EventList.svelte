@@ -3,8 +3,8 @@
     import { Event } from "$/entities/event";
     import { m } from "$/paraglide/messages";
     import { useSearchParams } from "$/shared/inertia/use-search-params.svelte";
-    import { formatToHHMM } from "$/shared/lib/date";
-    import { tw } from "$/shared/lib/styles";
+    import { tw } from "$/shared/lib/css/tw";
+    import { formatToHHMM } from "$/shared/lib/date/format-to-hh-mm";
 
     import { id } from "../helpers/id";
     import { editView } from "../model/view";

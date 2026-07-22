@@ -1,34 +1,9 @@
 import { extract } from "runed";
 import { onMount } from "svelte";
 
-import { raf } from "./dom";
+import { raf } from "../dom/raf";
 
-import type { Getter, MaybeGetter } from "runed";
-
-export function useLastMatching<T>(
-    value: Getter<T>,
-    matcher: (value: T) => boolean
-) {
-    const initialValue = extract(value);
-
-    let lastMatch: T | null = $state(
-        matcher(initialValue) ? initialValue : null
-    );
-
-    $effect(() => {
-        const newValue = extract(value);
-        if (matcher(newValue)) lastMatch = newValue;
-    });
-
-    return {
-        get current() {
-            return lastMatch;
-        },
-        reset() {
-            lastMatch = null;
-        }
-    };
-}
+import type { MaybeGetter } from "runed";
 
 export function useDeferUntilNextFrame(frames: MaybeGetter<number>) {
     let frame = $state(0);

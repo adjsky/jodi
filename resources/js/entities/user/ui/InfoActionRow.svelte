@@ -1,6 +1,6 @@
 <script lang="ts">
     import { Link } from "@inertiajs/svelte";
-    import { tw } from "$/shared/lib/styles";
+    import { tw } from "$/shared/lib/css/tw";
 
     import type { ComponentProps, Snippet } from "svelte";
 

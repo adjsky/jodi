@@ -1,4 +1,5 @@
 <script lang="ts">
+    import { page } from "@inertiajs/svelte";
     import { m } from "$/paraglide/messages";
     import CalendarCat from "$/shared/assets/calendar-cat.svg";
     import ActionBanner from "$/shared/ui/ActionBanner.svelte";
@@ -21,6 +22,8 @@
     const hasNoEventsAndTodos = $derived(
         todos?.length === 0 && events?.length === 0
     );
+
+    $inspect($page.props.auth.fcm);
 </script>
 
 <ActionBanner />

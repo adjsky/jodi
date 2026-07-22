@@ -16,8 +16,9 @@
     import UpdateEvent from "$/generated/actions/App/Domain/Event/Actions/UpdateEvent";
     import { m } from "$/paraglide/messages";
     import { DEFER_FRAMES } from "$/shared/cfg/constants";
-    import { normalizeIsoString, timediff } from "$/shared/lib/date";
-    import { announce } from "$/shared/lib/form";
+    import { normalizeIsoString } from "$/shared/lib/date/normalize-iso-string";
+    import { timediff } from "$/shared/lib/date/timediff";
+    import { announce } from "$/shared/lib/dom/announce";
     import SaveOrClose from "$/shared/ui/SaveOrClose.svelte";
     import { tick, untrack } from "svelte";
 
@@ -25,7 +26,7 @@
     import { editView } from "../model/view";
 
     import type { EventData } from "$/entities/event/model/types";
-    import type { Scope } from "$/shared/lib/types";
+    import type { RecurrenceScope } from "$/shared/lib/types";
 
     type Props = {
         event: EventData;
@@ -36,7 +37,7 @@
 
     let startsAtAnnouncerInput: HTMLInputElement | null = $state(null);
     let endsAtAnnouncerInput: HTMLInputElement | null = $state(null);
-    let scope: Scope = $state("this");
+    let scope: RecurrenceScope = $state("this");
 
     const draft = $state(
         untrack(() => ({

@@ -1,7 +1,7 @@
 <script lang="ts">
     import { HistoryView } from "$/shared/inertia/history-view.svelte";
-    import { announce } from "$/shared/lib/form";
-    import { useDeferUntilNextFrame } from "$/shared/lib/hooks.svelte";
+    import { announce } from "$/shared/lib/dom/announce";
+    import { useDeferUntilNextFrame } from "$/shared/lib/hooks/use-defer-until-next-frame.svelte";
     import { tick } from "svelte";
 
     import BasicMenu from "./BasicMenu.svelte";

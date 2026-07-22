@@ -10,6 +10,11 @@ export const NOTIFICATION_DEFAULT_SUBHOURS = 1;
 
 export const PLATFORM = Capacitor.getPlatform();
 
+export const LANGUAGES = {
+    en: "English",
+    ru: "Русский"
+} as const;
+
 export const WEEK_START_PREFERENCE_MAP = {
     monday: "mon",
     sunday: "sun"

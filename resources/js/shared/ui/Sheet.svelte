@@ -2,7 +2,7 @@
     import { Drawer, useDrawer } from "@ark-ui/svelte";
 
     import { DEFER_FRAMES } from "../cfg/constants";
-    import { useDeferUntilNextFrame } from "../lib/hooks.svelte";
+    import { useDeferUntilNextFrame } from "../lib/hooks/use-defer-until-next-frame.svelte";
 
     import type { DrawerRootProps } from "@ark-ui/svelte";
     import type { Snippet } from "svelte";

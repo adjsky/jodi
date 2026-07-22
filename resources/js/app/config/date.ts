@@ -1,9 +1,9 @@
 import { TIMEZONE, TIMEZONE_COOKIE } from "$/shared/cfg/constants";
-import * as Cookie from "$/shared/lib/cookie";
+import Cookies from "js-cookie";
 
-if (Cookie.get(TIMEZONE_COOKIE) != TIMEZONE) {
-    Cookie.set(TIMEZONE_COOKIE, TIMEZONE, {
-        maxAge: 34560000,
-        sameSite: "lax"
+if (Cookies.get(TIMEZONE_COOKIE) != TIMEZONE) {
+    Cookies.set(TIMEZONE_COOKIE, TIMEZONE, {
+        sameSite: "lax",
+        expires: 365
     });
 }

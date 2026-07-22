@@ -5,8 +5,8 @@
     import LogoutUser from "$/generated/actions/App/Domain/Identity/Actions/LogoutUser";
     import { m } from "$/paraglide/messages";
     import { getLocale } from "$/paraglide/runtime";
-    import { LANGUAGES } from "$/shared/lib/language";
-    import * as PushSubscription from "$/shared/lib/push-subscription.svelte";
+    import { LANGUAGES } from "$/shared/cfg/constants";
+    import { pushSubscription } from "$/shared/lib/push/subscription.svelte";
     import FloatingView from "$/shared/ui/FloatingView.svelte";
 
     import { buildViewName, view } from "../model/view";
@@ -67,7 +67,7 @@
                 `current-user.notifications.${user.preferences.notifications}`
             ](),
             component: SelectNotification,
-            warning: PushSubscription.warnings.needsConfiguration
+            warning: pushSubscription.warnings.needsConfiguration
         }
     ] as const);
 
@@ -137,7 +137,7 @@
                 onBefore={async () => {
                     progress.reveal(true);
                     progress.start();
-                    await PushSubscription.unsubscribe();
+                    await pushSubscription.unsubscribe();
                 }}
                 onInvalid={() => {
                     progress.remove();

@@ -4,7 +4,7 @@
     import UpdateUser from "$/generated/actions/App/Domain/Identity/Actions/UpdateUser";
     import { m } from "$/paraglide/messages";
     import { getLocale } from "$/paraglide/runtime";
-    import { LANGUAGES } from "$/shared/lib/language";
+    import { LANGUAGES } from "$/shared/cfg/constants";
     import FloatingView from "$/shared/ui/FloatingView.svelte";
 
     import { back } from "./Back.svelte";

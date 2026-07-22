@@ -3,7 +3,7 @@ import { getLocale } from "$/paraglide/runtime";
 import { WEEK_START_PREFERENCE_MAP } from "$/shared/cfg/constants";
 import { extract } from "runed";
 
-import { getWeekDays } from "../helpers/date";
+import { getWeekDays } from "./get-week-days";
 
 import type { CalendarDate } from "@internationalized/date";
 import type { WeekStart } from "$/shared/lib/types";

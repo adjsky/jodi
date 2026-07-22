@@ -3,7 +3,7 @@
     import DestroyCategory from "$/generated/actions/App/Domain/Todo/Actions/DestroyCategory";
     import { m } from "$/paraglide/messages";
     import { optimistic } from "$/shared/inertia/visit/optimistic";
-    import { raise } from "$/shared/lib/exceptions";
+    import { raise } from "$/shared/lib/exceptions/raise";
     import Confirmable from "$/shared/ui/Confirmable.svelte";
 
     import { view } from "../model/view";
