@@ -36,18 +36,26 @@
     </button>
     <button
         class="absolute left-1/2 flex -translate-x-1/2 flex-col"
-        onclick={() => searchParams.update({ d: today(TIMEZONE).toString() })}
+        onclick={() => {
+            const date = today(TIMEZONE);
+
+            if (date.compare(selected) == 0) {
+                cursor = date;
+            } else {
+                void searchParams.update({ d: date.toString() });
+            }
+        }}
     >
         <span class="text-center text-xl font-bold">
             {new DateFormatter(getLocale(), { weekday: "long" }).format(
-                cursor.toDate(TIMEZONE)
+                selected.toDate(TIMEZONE)
             )}
         </span>
         <span class="text-center text-sm text-cream-600">
             {new DateFormatter(getLocale(), {
                 year: "numeric",
                 month: "long"
-            }).format(cursor.toDate(TIMEZONE))}
+            }).format(selected.toDate(TIMEZONE))}
         </span>
     </button>
     {@render children()}
@@ -56,13 +64,13 @@
 <WeekCarousel
     bind:selected={() => selected, (v) => (searchParams["d"] = v.toString())}
     bind:cursor
-    start={user.preferences.weekStartOn}
+    weekStart={user.preferences.weekStartOn}
 />
 
 {#if view.isOpen()}
     <YearCalendarView
         {selected}
-        start={user.preferences.weekStartOn}
+        weekStart={user.preferences.weekStartOn}
         getDateAttachment={(date) =>
             fromAction(inertia, () => ({
                 href: `?d=${date.toString()}`,

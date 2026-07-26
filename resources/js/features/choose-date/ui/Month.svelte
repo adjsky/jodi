@@ -1,21 +1,11 @@
-<script module>
-    const calendarEvents = useCalendarEvents({
-        onError() {
-            toaster.error(m["day-summary.request-error"]());
-        }
-    });
-</script>
-
 <script lang="ts">
-    import { Circle } from "@lucide/svelte";
+    import { today } from "@internationalized/date";
     import { m } from "$/paraglide/messages";
-    import { toaster } from "$/shared/ui/toaster";
+    import { TIMEZONE } from "$/shared/cfg/constants";
     import { boolAttr, useIntersectionObserver } from "runed";
 
-    import { useCalendarEvents } from "../api/calendar-events.svelte";
-    import { compareDates } from "../helpers/date";
-
     import type { CalendarDate } from "@internationalized/date";
+    import type { YearCalendar } from "$/entities/event/model/year-calendar.svelte";
     import type { Year } from "$/shared/lib/date/year.svelte";
     import type { Attachment } from "svelte/attachments";
 
@@ -26,8 +16,10 @@
         min?: CalendarDate | null;
         name: string;
         container: HTMLElement;
+        calendar: YearCalendar;
         attachment?: (date: CalendarDate) => Attachment<HTMLButtonElement>;
         onSelect?: (date: CalendarDate) => void;
+        onEventsRequest?: (date: CalendarDate) => void;
     };
 
     const {
@@ -37,8 +29,10 @@
         min,
         name,
         container,
+        calendar,
         attachment,
-        onSelect
+        onSelect,
+        onEventsRequest
     }: Props = $props();
 
     let table = $state<HTMLTableElement | null>(null);
@@ -47,7 +41,7 @@
         () => table,
         (entries) => {
             if (entries[0]?.isIntersecting) {
-                void calendarEvents.request(date);
+                void onEventsRequest?.(date);
             }
         },
         { root: () => container, threshold: 0, rootMargin: "100px 0px" }
@@ -59,66 +53,92 @@
         {name}
     </caption>
     <tbody>
-        {#each year.weeks(date) as week, idx (idx)}
-            <tr class="grid grid-cols-7 border-t border-cream-200">
+        {#each year.weeks(date) as week, weekIdx (weekIdx)}
+            <tr class="relative grid grid-cols-7 border-t border-cream-200">
                 {#each week as { date, isWithinMonth } (date.day)}
                     {@render day(date, isWithinMonth)}
                 {/each}
+                {@render events(
+                    week.map(({ date }) => date),
+                    weekIdx
+                )}
             </tr>
         {/each}
     </tbody>
 </table>
 
+{#snippet events(week: CalendarDate[], weekIdx: number)}
+    {@const segments = calendar.visibleSegments(
+        date.year,
+        date.month,
+        weekIdx + 1
+    )}
+    <td
+        class="pointer-events-none absolute inset-x-0 top-11 grid grid-cols-7 gap-y-0.5"
+    >
+        {#each segments as segment (segment.eventId)}
+            {@const color = segment.color ?? "var(--color-brand)"}
+            <div
+                class={[
+                    "h-4 truncate px-1 text-2xs leading-4 font-bold text-cream-950",
+                    "data-ends-in-week:mr-1.5 data-ends-in-week:rounded-r-full data-starts-in-week:border-l-4"
+                ]}
+                style:grid-column="{segment.column} / span {segment.span}"
+                style:grid-row={segment.lane + 1}
+                style:background-color="color-mix(in srgb, {color} 15%, transparent)"
+                style:border-color={color}
+                data-starts-in-week={boolAttr(segment.startsInWeek)}
+                data-ends-in-week={boolAttr(segment.endsInWeek)}
+            >
+                {segment.title}
+            </div>
+        {/each}
+        {#each week as date, columnIdx (date.day)}
+            {@const count = calendar.overflow(
+                date.year,
+                date.month,
+                weekIdx + 1,
+                columnIdx + 1
+            )}
+            {#if count > 0}
+                <span
+                    class="text-center text-2xs font-bold text-cream-500"
+                    style:grid-column={columnIdx + 1}
+                >
+                    {m["calendar.more"]({ count })}
+                </span>
+            {/if}
+        {/each}
+    </td>
+{/snippet}
+
 {#snippet day(date: CalendarDate, isWithinMonth: boolean)}
-    <!-- {@const summary = daySummary.cache.get(date.year)?.get(date.toString())} -->
     {@const disabled = min ? min.compare(date) > 0 : false}
-    <td class:invisible={!isWithinMonth}>
+    {@const isToday = today(TIMEZONE).compare(date) == 0}
+    {@const isSelected = selected.compare(date) == 0}
+    <td>
         <button
             {@attach attachment?.(date)}
             {disabled}
             type="button"
-            class="group flex h-22 w-full flex-col items-center pt-1 text-lg disabled:cursor-not-allowed disabled:line-through disabled:opacity-40"
-            data-selected={boolAttr(compareDates(selected, date) == "selected")}
+            class="group flex h-25 w-full flex-col items-center pt-1 text-lg disabled:cursor-not-allowed disabled:line-through disabled:opacity-40 data-outside-month:opacity-40"
+            data-highlight={isToday
+                ? "today"
+                : isSelected
+                  ? "selected"
+                  : undefined}
+            data-outside-month={boolAttr(!isWithinMonth)}
             onclick={() => onSelect?.(date)}
         >
             <span
                 class={[
-                    "relative inline-flex size-9 shrink-0 items-center justify-center rounded-full",
-                    "group-data-selected:bg-brand group-data-selected:font-bold group-data-selected:text-white"
+                    "relative inline-flex size-9 shrink-0 items-center justify-center rounded-full border-cream-950",
+                    "group-data-[highlight=selected]:border group-data-[highlight=selected]:font-bold",
+                    "group-data-[highlight=today]:bg-brand group-data-[highlight=today]:font-bold group-data-[highlight=today]:text-white"
                 ]}
             >
                 {date.day}
             </span>
-            <!-- {#if summary?.events}
-                {#each summary.events as event (event)}
-                    <span
-                        class="mt-0.5 inline-flex gap-1 rounded-full px-0.5 py-px text-2xs font-bold"
-                        style="background: {event.color ?? 'transparent'}"
-                    >
-                        <Circle class="fill-[white]" />
-                        <span class="leading-none" data-part="event-title">
-                            {event.title.slice(0, 5)}
-                        </span>
-                    </span>
-                {/each}
-            {/if}
-            {#if summary?.nMore}
-                <span
-                    class="mt-0.5 text-2xs leading-3 font-bold text-cream-500"
-                >
-                    +{summary.nMore}
-                </span>
-            {/if} -->
         </button>
     </td>
 {/snippet}
-
-<style>
-    [data-part="event-title"] {
-        mask-image: linear-gradient(
-            to right,
-            var(--color-cream-950) 80%,
-            transparent 100%
-        );
-    }
-</style>

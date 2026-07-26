@@ -55,7 +55,10 @@
 
     $effect(() => {
         const categories = $page.props["categories"];
-        if (categories) set(categories);
+        if (categories) {
+            set(categories);
+            untrack(() => filter(search));
+        }
     });
 
     $effect(() => {

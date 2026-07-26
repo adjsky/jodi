@@ -9,7 +9,8 @@
         "lint": "eslint",
         "format": "prettier",
         "check": "svelte-check",
-        "postinstall": "patch-package"
+        "postinstall": "patch-package",
+        "test": "TZ=UTC vitest"
     },
     "devDependencies": {
         "@ark-ui/svelte": "^5.22.1",
@@ -70,6 +71,7 @@
         "typescript-eslint": "^8.44.0",
         "vite": "^7.1.5",
         "vite-plugin-pwa": "^1.2.0",
-        "vite-tsconfig-paths": "^5.1.4"
+        "vite-tsconfig-paths": "^5.1.4",
+        "vitest": "^4.1.8"
     }
 }

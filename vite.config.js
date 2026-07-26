@@ -3,9 +3,10 @@ import { wayfinder } from "@laravel/vite-plugin-wayfinder";
 import { svelte } from "@sveltejs/vite-plugin-svelte";
 import tailwindcss from "@tailwindcss/vite";
 import laravel from "laravel-vite-plugin";
-import { defineConfig, loadEnv } from "vite";
+import { loadEnv } from "vite";
 import { VitePWA } from "vite-plugin-pwa";
 import tsconfigPaths from "vite-tsconfig-paths";
+import { defineConfig } from "vitest/config";
 
 import { dto } from "./resources/vite/dto/plugin";
 import { googleServices } from "./resources/vite/google-services/plugin";
@@ -16,9 +17,7 @@ export default defineConfig(({ mode }) => {
     return {
         plugins: [
             dto(),
-            wayfinder({
-                path: "resources/js/generated"
-            }),
+            wayfinder({ path: "resources/js/generated" }),
             paraglideVitePlugin({
                 project: "./project.inlang",
                 outdir: "./resources/js/paraglide",
@@ -35,11 +34,9 @@ export default defineConfig(({ mode }) => {
             VitePWA({
                 registerType: "prompt",
                 injectRegister: false,
-
                 buildBase: "/build/",
                 scope: "/",
                 base: "/",
-
                 manifest: {
                     name: "Jodi",
                     short_name: "Jodi",
@@ -104,7 +101,6 @@ export default defineConfig(({ mode }) => {
                         }
                     ]
                 },
-
                 workbox: {
                     globPatterns: [
                         "**/*.{js,css,html,ico,jpg,png,svg,woff,woff2,ttf,eot}"
@@ -125,10 +121,13 @@ export default defineConfig(({ mode }) => {
         ...(env.CAPACITOR_SERVER_URL && {
             server: {
                 cors: true,
-                hmr: {
-                    host: new URL(env.CAPACITOR_SERVER_URL).hostname
-                }
+                hmr: { host: new URL(env.CAPACITOR_SERVER_URL).hostname }
             }
-        })
+        }),
+        resolve: process.env.VITEST
+            ? {
+                  conditions: ["browser"]
+              }
+            : undefined
     };
 });

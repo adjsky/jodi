@@ -1,9 +1,14 @@
 <script lang="ts">
     import { ChevronLeft, ChevronRight } from "@lucide/svelte";
+    import { CalendarEvents } from "$/entities/event/api/calendar-events.svelte";
+    import { YearCalendar } from "$/entities/event/model/year-calendar.svelte";
+    import { m } from "$/paraglide/messages";
+    import { getLocale } from "$/paraglide/runtime";
     import { tw } from "$/shared/lib/css/tw";
     import { Year } from "$/shared/lib/date/year.svelte";
     import Button from "$/shared/ui/Button.svelte";
     import FloatingView from "$/shared/ui/FloatingView.svelte";
+    import { toaster } from "$/shared/ui/toaster";
 
     import Month from "./Month.svelte";
 
@@ -16,7 +21,7 @@
     type Props = Except<SvelteHTMLElements["div"], "children" | "title"> & {
         portal?: boolean;
         selected: CalendarDate;
-        start: WeekStart;
+        weekStart: WeekStart;
         min?: CalendarDate | null;
         getDateAttachment?: (
             date: CalendarDate
@@ -27,7 +32,7 @@
 
     const {
         selected,
-        start,
+        weekStart,
         min,
         getDateAttachment,
         onClose,
@@ -38,11 +43,30 @@
     let monthsNode = $state<HTMLElement | null>(null);
 
     $effect(() => {
-        const selected = monthsNode?.querySelector("button[data-selected]");
+        const selected =
+            monthsNode?.querySelector('button[data-highlight="selected"]') ??
+            monthsNode?.querySelector('button[data-highlight="today"]');
         selected?.scrollIntoView({ block: "center" });
     });
 
-    let year = $derived(new Year(selected, () => start));
+    const year = new Year(
+        () => selected,
+        () => ({ weekStart, locale: getLocale() })
+    );
+
+    const calendar = new YearCalendar(() => ({
+        weekStart,
+        locale: getLocale()
+    }));
+
+    const events = new CalendarEvents({
+        onSuccess(year, months, events) {
+            calendar.prepare(year, months, events);
+        },
+        onError() {
+            toaster.error(m["calendar.request-error"]());
+        }
+    });
 
     function gotoYear(direction: "next" | "previous") {
         year[direction]();
@@ -105,9 +129,11 @@
                 {year}
                 {selected}
                 {min}
+                {calendar}
                 {onSelect}
                 container={monthsNode}
                 attachment={getDateAttachment}
+                onEventsRequest={(date) => events.request(date)}
             />
         {/each}
     </div>

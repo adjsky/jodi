@@ -3,10 +3,7 @@
     import { DateFormatter, now, startOfWeek } from "@internationalized/date";
     import { m } from "$/paraglide/messages";
     import { getLocale } from "$/paraglide/runtime";
-    import {
-        TIMEZONE,
-        WEEK_START_PREFERENCE_MAP
-    } from "$/shared/cfg/constants";
+    import { TIMEZONE, WEEK_START_MAP } from "$/shared/cfg/constants";
     import { boolAttr } from "runed";
 
     import { getOrderedWeekdays } from "../helpers/weekday";
@@ -23,7 +20,7 @@
         startOfWeek(
             now(TIMEZONE),
             getLocale(),
-            WEEK_START_PREFERENCE_MAP[user.preferences.weekStartOn]
+            WEEK_START_MAP[user.preferences.weekStartOn]
         )
     );
 </script>

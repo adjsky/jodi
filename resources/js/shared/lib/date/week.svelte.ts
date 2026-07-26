@@ -1,21 +1,26 @@
 import { startOfWeek } from "@internationalized/date";
-import { getLocale } from "$/paraglide/runtime";
-import { WEEK_START_PREFERENCE_MAP } from "$/shared/cfg/constants";
+import { WEEK_START_MAP } from "$/shared/cfg/constants";
 import { extract } from "runed";
 
 import { getWeekDays } from "./get-week-days";
 
 import type { CalendarDate } from "@internationalized/date";
+import type { Locale } from "$/paraglide/runtime";
 import type { WeekStart } from "$/shared/lib/types";
-import type { Getter } from "runed";
+import type { Getter, MaybeGetter } from "runed";
+
+type Options = {
+    weekStart: WeekStart;
+    locale: Locale;
+};
 
 export class Week {
     #cursor: Getter<CalendarDate>;
-    #start: Getter<WeekStart>;
+    #options: MaybeGetter<Options>;
 
-    constructor(cursor: Getter<CalendarDate>, start: Getter<WeekStart>) {
+    constructor(cursor: Getter<CalendarDate>, options: MaybeGetter<Options>) {
         this.#cursor = cursor;
-        this.#start = start;
+        this.#options = options;
     }
 
     get days() {
@@ -33,8 +38,8 @@ export class Week {
     #startOfWeek(date: CalendarDate) {
         return startOfWeek(
             date,
-            getLocale(),
-            WEEK_START_PREFERENCE_MAP[extract(this.#start)]
+            extract(this.#options).locale,
+            WEEK_START_MAP[extract(this.#options).weekStart]
         );
     }
 }

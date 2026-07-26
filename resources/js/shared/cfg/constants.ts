@@ -15,7 +15,7 @@ export const LANGUAGES = {
     ru: "Русский"
 } as const;
 
-export const WEEK_START_PREFERENCE_MAP = {
+export const WEEK_START_MAP = {
     monday: "mon",
     sunday: "sun"
 } as const;

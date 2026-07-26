@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 use App\Domain\Event\Actions\CreateEvent;
 use App\Domain\Event\Actions\DestroyEvent;
-use App\Domain\Event\Actions\GetDaySummary;
+use App\Domain\Event\Actions\ListCalendarEvents;
 use App\Domain\Event\Actions\UpdateEvent;
 use App\Domain\Event\Models\Event;
 use App\Domain\Identity\Actions\AuthenticateUser;
@@ -89,6 +89,7 @@ Route::middleware('auth')->group(function () {
             Route::post('/', CreateEvent::class);
             Route::put('/{event}', UpdateEvent::class);
             Route::delete('/{event}', DestroyEvent::class);
+            Route::get('/calendar/{year}', ListCalendarEvents::class);
         });
 
     Route::prefix('/me')
@@ -113,8 +114,6 @@ Route::middleware('auth')->group(function () {
         ->group(function () {
             Route::post('/', UpsertPushSubscription::class);
         });
-
-    Route::get('/day-summary/{year}', GetDaySummary::class);
 });
 
 if (app()->isLocal()) {

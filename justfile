@@ -19,6 +19,12 @@ gen-assets:
     npx pwa-assets-generator
     npx capacitor-assets generate --android --assetPath=public --iconBackgroundColor="#fdf3e2" --splashBackgroundColor="#fdf3e2" --splashBackgroundColorDark="#fdf3e2"
 
+test-php:
+    composer test
+
+test-js:
+    npm test watch
+
 # ---------------------------------- SERVICES ----------------------------------
 
 php-serve args="":
