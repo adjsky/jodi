@@ -6,7 +6,7 @@
         toCalendarDate
     } from "@internationalized/date";
     import { Todo } from "$/entities/todo";
-    import { YearCalendarDialog } from "$/features/choose-date";
+    import { CalendarDialog } from "$/features/choose-date";
     import { Checkbox } from "$/features/complete-todo";
     import { DeleteItem } from "$/features/delete-item";
     import { RescheduleItem } from "$/features/reschedule-item";
@@ -84,7 +84,7 @@
         isCompleted={todo.completedAt != null}
     >
         {#snippet calendar(trigger)}
-            <YearCalendarDialog
+            <CalendarDialog
                 selected={toCalendarDate(draft.scheduledAt)}
                 min={todo.recurringSince
                     ? parseDate(todo.recurringSince)
@@ -102,7 +102,7 @@
                 {#snippet children(props)}
                     {@render trigger(props())}
                 {/snippet}
-            </YearCalendarDialog>
+            </CalendarDialog>
         {/snippet}
         {#snippet close()}
             <SaveOrClose

@@ -10,7 +10,7 @@
     import FloatingView from "$/shared/ui/FloatingView.svelte";
     import { toaster } from "$/shared/ui/toaster";
 
-    import Month from "./Month.svelte";
+    import CalendarMonth from "./CalendarMonth.svelte";
 
     import type { CalendarDate } from "@internationalized/date";
     import type { WeekStart } from "$/shared/lib/types";
@@ -124,7 +124,7 @@
 
     <div bind:this={monthsNode} class="mt-2 overflow-y-scroll">
         {#each year.months() as month (`${month.name}-${year.current}`)}
-            <Month
+            <CalendarMonth
                 {...month}
                 {year}
                 {selected}

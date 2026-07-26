@@ -6,7 +6,7 @@
         toCalendarDate
     } from "@internationalized/date";
     import { Event } from "$/entities/event";
-    import { YearCalendarDialog } from "$/features/choose-date";
+    import { CalendarDialog } from "$/features/choose-date";
     import { DeleteItem } from "$/features/delete-item";
     import { RescheduleItem } from "$/features/reschedule-item";
     import { Color } from "$/features/select-color";
@@ -90,7 +90,7 @@
         }}
     >
         {#snippet calendar(trigger)}
-            <YearCalendarDialog
+            <CalendarDialog
                 selected={toCalendarDate(draft.startsAt)}
                 min={event.recurringSince
                     ? parseDate(event.recurringSince)
@@ -107,7 +107,7 @@
                 {#snippet children(props)}
                     {@render trigger(props())}
                 {/snippet}
-            </YearCalendarDialog>
+            </CalendarDialog>
         {/snippet}
         {#snippet close()}
             <SaveOrClose

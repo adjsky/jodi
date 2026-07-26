@@ -4,7 +4,7 @@
     import { useDeferUntilNextFrame } from "$/shared/lib/hooks/use-defer-until-next-frame.svelte";
     import SheetDialog from "$/shared/ui/SheetDialog.svelte";
 
-    import YearCalendarView from "./YearCalendarView.svelte";
+    import Calendar from "./Calendar.svelte";
 
     import type { CalendarDate } from "@internationalized/date";
     import type { Snippet } from "svelte";
@@ -61,7 +61,7 @@
         {/if}
     {/snippet}
 
-    <YearCalendarView
+    <Calendar
         {selected}
         {min}
         portal={false}

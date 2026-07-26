@@ -3,7 +3,7 @@
     import { toCalendarDate } from "@internationalized/date";
     import { Trash } from "@lucide/svelte";
     import { Todo } from "$/entities/todo";
-    import { YearCalendarDialog } from "$/features/choose-date";
+    import { CalendarDialog } from "$/features/choose-date";
     import { RescheduleItem } from "$/features/reschedule-item";
     import { TodoTime } from "$/features/schedule-todo-time";
     import { Category } from "$/features/select-category";
@@ -63,7 +63,7 @@
 >
     <Todo.Fields {scheduledAt}>
         {#snippet calendar(trigger)}
-            <YearCalendarDialog
+            <CalendarDialog
                 selected={toCalendarDate(scheduledAt)}
                 deferHistoryViewFrames={DEFER_FRAMES.SHEET + 1}
                 onSelect={(d) => {
@@ -76,7 +76,7 @@
                 {#snippet children(props)}
                     {@render trigger(props())}
                 {/snippet}
-            </YearCalendarDialog>
+            </CalendarDialog>
         {/snippet}
         {#snippet close()}
             <SaveOrClose variant="save" disabled={processing} />

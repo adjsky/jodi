@@ -1,8 +1,8 @@
 <script lang="ts">
     import { inertia, page } from "@inertiajs/svelte";
     import { DateFormatter, parseDate, today } from "@internationalized/date";
-    import { Calendar } from "@lucide/svelte";
-    import { WeekCarousel, YearCalendarView } from "$/features/choose-date";
+    import { Calendar as CalendarIcon } from "@lucide/svelte";
+    import { Calendar, WeekCarousel } from "$/features/choose-date";
     import { getLocale } from "$/paraglide/runtime";
     import { TIMEZONE } from "$/shared/cfg/constants";
     import { HistoryView } from "$/shared/inertia/history-view.svelte";
@@ -32,7 +32,7 @@
     class="sticky top-0 z-10 flex items-center justify-between bg-cream-50 py-2 pr-6 pl-3"
 >
     <button class="p-2.5" onclick={() => view.push()}>
-        <Calendar class="text-3xl" />
+        <CalendarIcon class="text-3xl" />
     </button>
     <button
         class="absolute left-1/2 flex -translate-x-1/2 flex-col"
@@ -68,7 +68,7 @@
 />
 
 {#if view.isOpen()}
-    <YearCalendarView
+    <Calendar
         {selected}
         weekStart={user.preferences.weekStartOn}
         getDateAttachment={(date) =>

@@ -3,7 +3,7 @@
     import { toCalendarDate } from "@internationalized/date";
     import { Trash } from "@lucide/svelte";
     import { Event } from "$/entities/event";
-    import { YearCalendarDialog } from "$/features/choose-date";
+    import { CalendarDialog } from "$/features/choose-date";
     import { RescheduleItem } from "$/features/reschedule-item";
     import { Color } from "$/features/select-color";
     import { Recurrence } from "$/features/select-recurrence";
@@ -79,7 +79,7 @@
         }}
     >
         {#snippet calendar(trigger)}
-            <YearCalendarDialog
+            <CalendarDialog
                 selected={toCalendarDate(startsAt)}
                 deferHistoryViewFrames={DEFER_FRAMES.SHEET + 1}
                 onSelect={(d) => {
@@ -91,7 +91,7 @@
                 {#snippet children(props)}
                     {@render trigger(props())}
                 {/snippet}
-            </YearCalendarDialog>
+            </CalendarDialog>
         {/snippet}
         {#snippet close()}
             <SaveOrClose variant="save" disabled={processing} />
