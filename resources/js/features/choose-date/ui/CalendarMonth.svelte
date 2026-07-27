@@ -58,19 +58,25 @@
         } else {
             const [from, to] = selected;
 
-            const diffFrom = from.compare(date);
-            const diffTo = to?.compare(date);
+            if (!to || from.compare(to) == 0) {
+                if (from.compare(date) == 0) {
+                    return "selected";
+                }
+            } else {
+                const diffFrom = from.compare(date);
+                const diffTo = to.compare(date);
 
-            if (diffFrom == 0) {
-                return "range-start";
-            }
+                if (diffFrom == 0) {
+                    return "range-start";
+                }
 
-            if (diffTo == 0) {
-                return "range-end";
-            }
+                if (diffTo == 0) {
+                    return "range-end";
+                }
 
-            if (diffTo > 0 && diffFrom < 0) {
-                return "range-middle";
+                if (diffTo > 0 && diffFrom < 0) {
+                    return "range-middle";
+                }
             }
         }
 

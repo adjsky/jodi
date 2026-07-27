@@ -111,10 +111,9 @@
         }
 
         if (from && !to) {
-            const diff = from.compare(date);
-            if (diff > 0) {
+            if (from.compare(date) > 0) {
                 draftSelected = [date, from];
-            } else if (diff < 0) {
+            } else {
                 draftSelected = [from, date];
             }
         }
@@ -189,16 +188,17 @@
     </div>
 
     {#if mode == "range"}
+        {@const [from, to] = selected}
         <Button
             class="my-4 mb-5 shrink-0"
             onclick={() => {
                 onSelect?.(draftSelected);
             }}
         >
-            {format(draftSelected[0])}
+            {format(from)}
 
-            {#if draftSelected[1]}
-                - {format(draftSelected[1])}
+            {#if to && from.compare(to) != 0}
+                - {format(to)}
             {/if}
         </Button>
     {/if}
