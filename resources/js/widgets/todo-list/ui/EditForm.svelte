@@ -85,12 +85,13 @@
     >
         {#snippet calendar(trigger)}
             <CalendarDialog
-                selected={toCalendarDate(draft.scheduledAt)}
+                mode="single"
+                selected={[toCalendarDate(draft.scheduledAt)]}
                 min={todo.recurringSince
                     ? parseDate(todo.recurringSince)
                     : null}
                 deferHistoryViewFrames={DEFER_FRAMES.SHEET + 1}
-                onSelect={async (d) => {
+                onSelect={async ([d]) => {
                     if (draft.notifyAt) {
                         draft.notifyAt = draft.notifyAt.set(d);
                     }

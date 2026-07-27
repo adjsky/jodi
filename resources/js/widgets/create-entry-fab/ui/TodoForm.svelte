@@ -64,9 +64,10 @@
     <Todo.Fields {scheduledAt}>
         {#snippet calendar(trigger)}
             <CalendarDialog
-                selected={toCalendarDate(scheduledAt)}
+                mode="single"
+                selected={[toCalendarDate(scheduledAt)]}
                 deferHistoryViewFrames={DEFER_FRAMES.SHEET + 1}
-                onSelect={(d) => {
+                onSelect={([d]) => {
                     if (notifyAt) {
                         notifyAt = notifyAt.set(d);
                     }

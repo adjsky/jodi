@@ -80,9 +80,10 @@
     >
         {#snippet calendar(trigger)}
             <CalendarDialog
-                selected={toCalendarDate(startsAt)}
+                mode="range"
+                selected={[toCalendarDate(startsAt), toCalendarDate(endsAt)]}
                 deferHistoryViewFrames={DEFER_FRAMES.SHEET + 1}
-                onSelect={(d) => {
+                onSelect={([d]) => {
                     notifyAt = notifyAt.set(d);
                     startsAt = startsAt.set(d);
                     endsAt = endsAt.set(d);

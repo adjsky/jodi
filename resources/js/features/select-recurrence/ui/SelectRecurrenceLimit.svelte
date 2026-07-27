@@ -43,9 +43,10 @@
         >
             {#snippet label()}
                 <CalendarDialog
-                    selected={toCalendarDate(day)}
+                    mode="single"
+                    selected={[toCalendarDate(day)]}
                     id="recurrence-until-calendar"
-                    onSelect={(date) => {
+                    onSelect={([date]) => {
                         until = date;
                     }}
                     deferHistoryViewFrames={2}
