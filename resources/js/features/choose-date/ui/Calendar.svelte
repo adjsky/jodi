@@ -1,9 +1,11 @@
 <script lang="ts">
+    import { DateFormatter } from "@internationalized/date";
     import { ChevronLeft, ChevronRight } from "@lucide/svelte";
     import { CalendarEvents } from "$/entities/event/api/calendar-events.svelte";
     import { YearCalendar } from "$/entities/event/model/year-calendar.svelte";
     import { m } from "$/paraglide/messages";
     import { getLocale } from "$/paraglide/runtime";
+    import { TIMEZONE } from "$/shared/cfg/constants";
     import { tw } from "$/shared/lib/css/tw";
     import { Year } from "$/shared/lib/date/year.svelte";
     import Button from "$/shared/ui/Button.svelte";
@@ -12,6 +14,7 @@
 
     import CalendarMonth from "./CalendarMonth.svelte";
 
+    import type { CalendarMode } from "../model/types";
     import type { CalendarDate } from "@internationalized/date";
     import type { WeekStart } from "$/shared/lib/types";
     import type { Attachment } from "svelte/attachments";
@@ -20,17 +23,19 @@
 
     type Props = Except<SvelteHTMLElements["div"], "children" | "title"> & {
         portal?: boolean;
-        selected: CalendarDate;
+        mode: CalendarMode;
+        selected: CalendarDate[];
         weekStart: WeekStart;
         min?: CalendarDate | null;
         getDateAttachment?: (
             date: CalendarDate
         ) => Attachment<HTMLButtonElement>;
         onClose?: VoidFunction;
-        onSelect?: (date: CalendarDate) => void;
+        onSelect?: (date: CalendarDate[]) => void;
     };
 
     const {
+        mode,
         selected,
         weekStart,
         min,
@@ -43,14 +48,28 @@
     let monthsNode = $state<HTMLElement | null>(null);
 
     $effect(() => {
-        const selected =
-            monthsNode?.querySelector('button[data-highlight="selected"]') ??
-            monthsNode?.querySelector('button[data-highlight="today"]');
-        selected?.scrollIntoView({ block: "center" });
+        if (!monthsNode) return;
+
+        const selectors = [
+            'button[data-highlight="selected"]',
+            'button[data-highlight="range-start"]',
+            'button[data-highlight="today"]'
+        ];
+
+        for (const selector of selectors) {
+            const element = monthsNode.querySelector(selector);
+
+            if (element) {
+                element.scrollIntoView({ block: "center" });
+                break;
+            }
+        }
     });
 
+    let draftSelected = $derived(selected);
+
     const year = new Year(
-        () => selected,
+        () => selected[0],
         () => ({ weekStart, locale: getLocale() })
     );
 
@@ -76,6 +95,36 @@
     function gotoCurrentYear() {
         year.current = new Date().getFullYear();
         monthsNode?.scrollTo({ top: 0, left: 0, behavior: "smooth" });
+    }
+
+    function onMonthSelect(date: CalendarDate) {
+        if (mode == "single") {
+            onSelect?.([date]);
+            return;
+        }
+
+        const [from, to] = draftSelected;
+
+        if (from && to) {
+            draftSelected = [date];
+            return;
+        }
+
+        if (from && !to) {
+            const diff = from.compare(date);
+            if (diff > 0) {
+                draftSelected = [date, from];
+            } else if (diff < 0) {
+                draftSelected = [from, date];
+            }
+        }
+    }
+
+    function format(date: CalendarDate) {
+        return new DateFormatter(getLocale(), {
+            day: "numeric",
+            month: "short"
+        }).format(date.toDate(TIMEZONE));
     }
 </script>
 
@@ -127,14 +176,30 @@
             <CalendarMonth
                 {...month}
                 {year}
-                {selected}
+                {mode}
                 {min}
                 {calendar}
-                {onSelect}
+                selected={draftSelected}
+                onSelect={onMonthSelect}
                 container={monthsNode}
                 attachment={getDateAttachment}
                 onEventsRequest={(date) => events.request(date)}
             />
         {/each}
     </div>
+
+    {#if mode == "range"}
+        <Button
+            class="my-4 mb-5 shrink-0"
+            onclick={() => {
+                onSelect?.(draftSelected);
+            }}
+        >
+            {format(draftSelected[0])}
+
+            {#if draftSelected[1]}
+                - {format(draftSelected[1])}
+            {/if}
+        </Button>
+    {/if}
 </FloatingView>

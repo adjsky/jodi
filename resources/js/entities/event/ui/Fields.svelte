@@ -80,6 +80,7 @@
     {onEndsAtChange}
     class="mt-4"
     deferHistoryViewFrames={DEFER_FRAMES.SHEET + 1}
+    isValid={startsAt.compare(endsAt) < 0}
 >
     {#snippet label()}
         <Clock class="text-2xl" />

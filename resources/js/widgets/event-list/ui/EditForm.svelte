@@ -91,12 +91,16 @@
     >
         {#snippet calendar(trigger)}
             <CalendarDialog
-                selected={toCalendarDate(draft.startsAt)}
+                mode="range"
+                selected={[
+                    toCalendarDate(draft.startsAt),
+                    toCalendarDate(draft.endsAt)
+                ]}
                 min={event.recurringSince
                     ? parseDate(event.recurringSince)
                     : null}
                 deferHistoryViewFrames={DEFER_FRAMES.SHEET + 1}
-                onSelect={async (d) => {
+                onSelect={async ([d]) => {
                     draft.notifyAt = draft.notifyAt.set(d);
                     draft.startsAt = draft.startsAt.set(d);
                     draft.endsAt = draft.endsAt.set(d);

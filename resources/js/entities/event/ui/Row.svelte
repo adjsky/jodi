@@ -13,7 +13,7 @@
 
     const { time, title, color: providedColor, ...props }: Props = $props();
 
-    const color = $derived(providedColor || "var(--color-brand)");
+    const color = $derived(providedColor || "var(--color-tangerine)");
 </script>
 
 <button

@@ -6,21 +6,24 @@
 
     import Calendar from "./Calendar.svelte";
 
+    import type { CalendarMode } from "../model/types";
     import type { CalendarDate } from "@internationalized/date";
     import type { Snippet } from "svelte";
     import type { HTMLAttributes } from "svelte/elements";
 
     type Props = {
         id?: string;
-        selected: CalendarDate;
+        mode: CalendarMode;
+        selected: CalendarDate[];
         min?: CalendarDate | null;
         deferHistoryViewFrames?: number;
         children?: Snippet<[() => HTMLAttributes<HTMLElement>]>;
-        onSelect?: (date: CalendarDate) => void;
+        onSelect?: (date: CalendarDate[]) => void;
     };
 
     let {
         id = "general",
+        mode,
         selected,
         min,
         deferHistoryViewFrames = 0,
@@ -51,9 +54,10 @@
             }
         }
     }
-    height={90}
+    height={95}
     portal
     lazyMount
+    unmountOnExit
 >
     {#snippet trigger(props)}
         {#if children}
@@ -62,6 +66,7 @@
     {/snippet}
 
     <Calendar
+        {mode}
         {selected}
         {min}
         portal={false}

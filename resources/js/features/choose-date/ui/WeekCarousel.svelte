@@ -1,12 +1,14 @@
 <script lang="ts">
     import { inertia } from "@inertiajs/svelte";
-    import { DateFormatter, today } from "@internationalized/date";
+    import {
+        DateFormatter,
+        getDayOfWeek,
+        today
+    } from "@internationalized/date";
     import { ChevronLeft, ChevronRight } from "@lucide/svelte";
     import { getLocale } from "$/paraglide/runtime";
     import { TIMEZONE } from "$/shared/cfg/constants";
     import { Week } from "$/shared/lib/date/week.svelte";
-
-    import { compareDates } from "../helpers/date";
 
     import type { CalendarDate } from "@internationalized/date";
     import type { WeekStart } from "$/shared/lib/types";
@@ -27,6 +29,24 @@
         () => cursor,
         () => ({ weekStart, locale: getLocale() })
     );
+
+    function highlight(date: CalendarDate) {
+        if (selected.compare(date) == 0) {
+            return "selected";
+        }
+
+        if (today(TIMEZONE).compare(date) == 0) {
+            return "today";
+        }
+
+        const locale = getLocale();
+
+        if (getDayOfWeek(selected, locale) == getDayOfWeek(date, locale)) {
+            return "ghost";
+        }
+
+        return null;
+    }
 </script>
 
 <div class="border-b border-cream-300 p-3 pt-1 pb-5">
@@ -39,8 +59,6 @@
         </button>
         <div class="grid w-full grid-cols-7">
             {#each week.days as date (date.day)}
-                {@const highlight = compareDates(selected, date)}
-                {@const isToday = today(TIMEZONE).compare(date) == 0}
                 <button
                     use:inertia={{
                         href: `?d=${date.toString()}`,
@@ -48,7 +66,7 @@
                         showProgress: true
                     }}
                     class="group flex flex-col items-center justify-between"
-                    data-highlight={isToday ? "today" : highlight}
+                    data-highlight={highlight(date)}
                 >
                     <span
                         class="text-xs font-semibold text-cream-500"
@@ -93,28 +111,20 @@
     }
 
     button[data-highlight="today"] [data-part="day-number"] {
-        color: var(--color-white);
+        color: var(--color-brand);
         font-weight: var(--font-weight-bold);
 
         &::after {
-            background: var(--color-brand);
-        }
-    }
-
-    button[data-highlight="today"] [data-part="day-number"] {
-        color: var(--color-white);
-        font-weight: var(--font-weight-bold);
-
-        &::after {
-            background: var(--color-brand);
+            border: 1px solid var(--color-brand);
         }
     }
 
     button[data-highlight="selected"] [data-part="day-number"] {
+        color: var(--color-white);
         font-weight: var(--font-weight-bold);
 
         &::after {
-            border: 1px solid var(--color-cream-950);
+            background: var(--color-brand);
         }
     }
 

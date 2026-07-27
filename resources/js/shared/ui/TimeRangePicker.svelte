@@ -15,6 +15,7 @@
         startsAt: Time;
         endsAt: Time;
         deferHistoryViewFrames?: number;
+        isValid?: boolean;
         onStartsAtChange?: (time: Time) => void;
         onEndsAtChange?: (time: Time) => void;
     };
@@ -25,11 +26,10 @@
         startsAt = $bindable(),
         endsAt = $bindable(),
         deferHistoryViewFrames = 0,
+        isValid,
         onStartsAtChange,
         onEndsAtChange
     }: Props = $props();
-
-    const isValid = $derived(startsAt.compare(endsAt) < 0);
 </script>
 
 <div class={tw("group flex w-full items-center gap-4 text-lg", classname)}>

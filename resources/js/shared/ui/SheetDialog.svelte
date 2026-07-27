@@ -6,7 +6,10 @@
     import type { Snippet } from "svelte";
     import type { HTMLAttributes } from "svelte/elements";
 
-    type Props = Pick<DialogRootProps, "onExitComplete" | "lazyMount"> & {
+    type Props = Pick<
+        DialogRootProps,
+        "onExitComplete" | "lazyMount" | "unmountOnExit"
+    > & {
         open: boolean;
         title?: string;
         height: number;

@@ -4,13 +4,15 @@
     import { TIMEZONE } from "$/shared/cfg/constants";
     import { boolAttr, useIntersectionObserver } from "runed";
 
+    import type { CalendarMode } from "../model/types";
     import type { CalendarDate } from "@internationalized/date";
     import type { YearCalendar } from "$/entities/event/model/year-calendar.svelte";
     import type { Year } from "$/shared/lib/date/year.svelte";
     import type { Attachment } from "svelte/attachments";
 
     type Props = {
-        selected: CalendarDate;
+        mode: CalendarMode;
+        selected: CalendarDate[];
         year: Year;
         date: CalendarDate;
         min?: CalendarDate | null;
@@ -23,6 +25,7 @@
     };
 
     const {
+        mode,
         selected,
         year,
         date,
@@ -46,6 +49,37 @@
         },
         { root: () => container, threshold: 0, rootMargin: "100px 0px" }
     );
+
+    function highlight(date: CalendarDate) {
+        if (mode == "single") {
+            if (selected[0].compare(date) == 0) {
+                return "selected";
+            }
+        } else {
+            const [from, to] = selected;
+
+            const diffFrom = from.compare(date);
+            const diffTo = to?.compare(date);
+
+            if (diffFrom == 0) {
+                return "range-start";
+            }
+
+            if (diffTo == 0) {
+                return "range-end";
+            }
+
+            if (diffTo > 0 && diffFrom < 0) {
+                return "range-middle";
+            }
+        }
+
+        if (today(TIMEZONE).compare(date) == 0) {
+            return "today";
+        }
+
+        return null;
+    }
 </script>
 
 <table bind:this={table} class="w-full">
@@ -77,11 +111,11 @@
         class="pointer-events-none absolute inset-x-0 top-11 grid grid-cols-7 gap-y-0.5"
     >
         {#each segments as segment (segment.eventId)}
-            {@const color = segment.color ?? "var(--color-brand)"}
+            {@const color = segment.color ?? "var(--color-tangerine)"}
             <div
                 class={[
                     "h-4 truncate px-1 text-2xs leading-4 font-bold text-cream-950",
-                    "data-ends-in-week:mr-1.5 data-ends-in-week:rounded-r-full data-starts-in-week:border-l-4"
+                    "data-ends-in-week:mr-1.5 data-ends-in-week:rounded-e-full data-starts-in-week:border-s-4"
                 ]}
                 style:grid-column="{segment.column} / span {segment.span}"
                 style:grid-row={segment.lane + 1}
@@ -113,32 +147,39 @@
 {/snippet}
 
 {#snippet day(date: CalendarDate, isWithinMonth: boolean)}
-    {@const disabled = min ? min.compare(date) > 0 : false}
-    {@const isToday = today(TIMEZONE).compare(date) == 0}
-    {@const isSelected = selected.compare(date) == 0}
+    {@const highlighted = highlight(date)}
     <td>
         <button
             {@attach attachment?.(date)}
-            {disabled}
+            disabled={min ? min.compare(date) > 0 : false}
             type="button"
-            class="group flex h-25 w-full flex-col items-center pt-1 text-lg disabled:cursor-not-allowed disabled:line-through disabled:opacity-40 data-outside-month:opacity-40"
-            data-highlight={isToday
-                ? "today"
-                : isSelected
-                  ? "selected"
-                  : undefined}
+            class="group relative flex h-25 w-full flex-col items-center pt-1 text-lg disabled:cursor-not-allowed disabled:line-through disabled:opacity-40 data-outside-month:opacity-60"
+            data-highlight={highlighted}
             data-outside-month={boolAttr(!isWithinMonth)}
             onclick={() => onSelect?.(date)}
         >
             <span
                 class={[
-                    "relative inline-flex size-9 shrink-0 items-center justify-center rounded-full border-cream-950",
-                    "group-data-[highlight=selected]:border group-data-[highlight=selected]:font-bold",
-                    "group-data-[highlight=today]:bg-brand group-data-[highlight=today]:font-bold group-data-[highlight=today]:text-white"
+                    "inline-flex size-9 shrink-0 items-center justify-center rounded-full border-cream-950",
+                    "group-data-[highlight=selected]:bg-brand group-data-[highlight=selected]:font-bold group-data-[highlight=selected]:text-white",
+                    "group-data-[highlight=range-start]:bg-brand group-data-[highlight=range-start]:font-bold group-data-[highlight=range-start]:text-white",
+                    "group-data-[highlight=range-end]:bg-brand group-data-[highlight=range-end]:font-bold group-data-[highlight=range-end]:text-white",
+                    "group-data-[highlight=today]:border group-data-[highlight=today]:border-brand group-data-[highlight=today]:font-bold group-data-[highlight=today]:text-brand"
                 ]}
             >
                 {date.day}
             </span>
+            {#if highlighted == "range-start" || highlighted == "range-middle" || highlighted == "range-end"}
+                <span
+                    class={[
+                        "pointer-events-none absolute inset-x-0 top-0.5 h-10 border-y border-dashed border-brand",
+                        highlighted == "range-start" &&
+                            "left-1 rounded-s-full border-s",
+                        highlighted == "range-end" &&
+                            "right-1 rounded-e-full border-e"
+                    ]}
+                ></span>
+            {/if}
         </button>
     </td>
 {/snippet}
