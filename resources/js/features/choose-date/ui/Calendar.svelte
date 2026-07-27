@@ -119,11 +119,17 @@
         }
     }
 
-    function format(date: CalendarDate) {
-        return new DateFormatter(getLocale(), {
+    function formatSelected([from, to]: CalendarDate[]) {
+        const f = new DateFormatter(getLocale(), {
             day: "numeric",
             month: "short"
-        }).format(date.toDate(TIMEZONE));
+        });
+
+        if (to && from.compare(to) != 0) {
+            return `${f.format(from.toDate(TIMEZONE))} - ${f.format(to.toDate(TIMEZONE))}`;
+        }
+
+        return f.format(from.toDate(TIMEZONE));
     }
 </script>
 
@@ -188,18 +194,14 @@
     </div>
 
     {#if mode == "range"}
-        {@const [from, to] = selected}
         <Button
             class="my-4 mb-5 shrink-0"
             onclick={() => {
-                onSelect?.(draftSelected);
+                const [from, to] = draftSelected;
+                onSelect?.([from, to ?? from]);
             }}
         >
-            {format(from)}
-
-            {#if to && from.compare(to) != 0}
-                - {format(to)}
-            {/if}
+            {formatSelected(draftSelected)}
         </Button>
     {/if}
 </FloatingView>

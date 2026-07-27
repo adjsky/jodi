@@ -100,10 +100,10 @@
                     ? parseDate(event.recurringSince)
                     : null}
                 deferHistoryViewFrames={DEFER_FRAMES.SHEET + 1}
-                onSelect={async ([d]) => {
-                    draft.notifyAt = draft.notifyAt.set(d);
-                    draft.startsAt = draft.startsAt.set(d);
-                    draft.endsAt = draft.endsAt.set(d);
+                onSelect={async ([startsAt, endsAt]) => {
+                    draft.notifyAt = draft.notifyAt.set(startsAt);
+                    draft.startsAt = draft.startsAt.set(startsAt);
+                    draft.endsAt = draft.endsAt.set(endsAt);
                     await tick();
                     announce(startsAtAnnouncerInput);
                 }}
