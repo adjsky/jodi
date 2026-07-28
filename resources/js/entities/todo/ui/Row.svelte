@@ -1,5 +1,5 @@
 <script lang="ts">
-    import { tw } from "$/shared/lib/styles";
+    import { tw } from "$/shared/lib/css/tw";
 
     import type { Snippet } from "svelte";
     import type { SvelteHTMLElements } from "svelte/elements";

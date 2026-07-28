@@ -8,11 +8,11 @@
     import Froggy from "$/shared/assets/froggy.svg";
     import { HistoryView } from "$/shared/inertia/history-view.svelte";
     import { useActionRateLimit } from "$/shared/inertia/use-action-rate-limit.svelte";
-    import * as PushSubscription from "$/shared/lib/push-subscription.svelte";
-    import { toaster } from "$/shared/lib/toaster";
+    import { pushSubscription } from "$/shared/lib/push/subscription.svelte";
     import { createActionBanner } from "$/shared/ui/ActionBanner.svelte";
     import Button from "$/shared/ui/Button.svelte";
     import OneTimePasswordInput from "$/shared/ui/OneTimePasswordInput.svelte";
+    import { toaster } from "$/shared/ui/toaster";
 
     const id = $props.id();
 
@@ -26,9 +26,9 @@
     const view = new HistoryView(null, { viewTransition: true });
 
     async function handleSuccessfulLogin() {
-        await PushSubscription.synchronize();
+        await pushSubscription.synchronize();
 
-        if (PushSubscription.warnings.needsConfiguration) {
+        if (pushSubscription.warnings.needsConfiguration) {
             createActionBanner(m["push-notifications.configure.title"](), {
                 id: "configure-push-notifications",
                 action: m["push-notifications.configure.action"](),

@@ -1,13 +1,14 @@
 <script lang="ts">
     import { inertia } from "@inertiajs/svelte";
-    import { DateFormatter } from "@internationalized/date";
+    import {
+        DateFormatter,
+        getDayOfWeek,
+        today
+    } from "@internationalized/date";
     import { ChevronLeft, ChevronRight } from "@lucide/svelte";
     import { getLocale } from "$/paraglide/runtime";
     import { TIMEZONE } from "$/shared/cfg/constants";
-    import { boolAttr } from "runed";
-
-    import { compareDates } from "../helpers/date";
-    import { Week } from "../model/week.svelte";
+    import { Week } from "$/shared/lib/date/week.svelte";
 
     import type { CalendarDate } from "@internationalized/date";
     import type { WeekStart } from "$/shared/lib/types";
@@ -15,19 +16,37 @@
     type Props = {
         selected: CalendarDate;
         cursor: CalendarDate;
-        start: WeekStart;
+        weekStart: WeekStart;
     };
 
     let {
         selected = $bindable(),
         cursor = $bindable(),
-        start
+        weekStart
     }: Props = $props();
 
     const week = new Week(
         () => cursor,
-        () => start
+        () => ({ weekStart, locale: getLocale() })
     );
+
+    function highlight(date: CalendarDate) {
+        if (selected.compare(date) == 0) {
+            return "selected";
+        }
+
+        if (today(TIMEZONE).compare(date) == 0) {
+            return "today";
+        }
+
+        const locale = getLocale();
+
+        if (getDayOfWeek(selected, locale) == getDayOfWeek(date, locale)) {
+            return "ghost";
+        }
+
+        return null;
+    }
 </script>
 
 <div class="border-b border-cream-300 p-3 pt-1 pb-5">
@@ -40,7 +59,6 @@
         </button>
         <div class="grid w-full grid-cols-7">
             {#each week.days as date (date.day)}
-                {@const compare = compareDates(selected, date)}
                 <button
                     use:inertia={{
                         href: `?d=${date.toString()}`,
@@ -48,8 +66,7 @@
                         showProgress: true
                     }}
                     class="group flex flex-col items-center justify-between"
-                    data-selected={boolAttr(compare == "selected")}
-                    data-selected-ghost={boolAttr(compare == "ghost")}
+                    data-highlight={highlight(date)}
                 >
                     <span
                         class="text-xs font-semibold text-cream-500"
@@ -60,7 +77,7 @@
                         }).format(date.toDate(TIMEZONE))}
                     </span>
                     <span
-                        class="relative font-semibold text-cream-800 group-data-selected:text-lg group-data-selected:text-white"
+                        class="relative font-normal text-cream-800"
                         data-part="day-number"
                     >
                         {date.day}
@@ -78,8 +95,7 @@
 </div>
 
 <style>
-    button:is([data-selected], [data-selected-ghost])
-        [data-part="day-number"]::after {
+    button:is([data-highlight]) [data-part="day-number"]::after {
         content: "";
 
         position: absolute;
@@ -94,11 +110,25 @@
         z-index: -1;
     }
 
-    button[data-selected] [data-part="day-number"]::after {
-        background: var(--color-brand);
+    button[data-highlight="today"] [data-part="day-number"] {
+        color: var(--color-brand);
+        font-weight: var(--font-weight-bold);
+
+        &::after {
+            border: 1px solid var(--color-brand);
+        }
     }
 
-    button[data-selected-ghost] [data-part="day-number"]::after {
-        border: 1px dashed var(--color-cream-400);
+    button[data-highlight="selected"] [data-part="day-number"] {
+        color: var(--color-white);
+        font-weight: var(--font-weight-bold);
+
+        &::after {
+            background: var(--color-brand);
+        }
+    }
+
+    button[data-highlight="ghost"] [data-part="day-number"]::after {
+        border: 1px dashed var(--color-cream-800);
     }
 </style>

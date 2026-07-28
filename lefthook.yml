@@ -19,6 +19,7 @@ pre-push:
     - run: "npm run check -- --fail-on-warnings"
       glob: "*.{js,ts,svelte}"
     - run: "composer test --parallel"
+    - run: "npm test run"
 
 commit-msg:
   jobs:

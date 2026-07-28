@@ -1,6 +1,6 @@
 <script lang="ts">
     import { Field } from "@ark-ui/svelte/field";
-    import { tw } from "$/shared/lib/styles";
+    import { tw } from "$/shared/lib/css/tw";
 
     import type { Snippet } from "svelte";
     import type { HTMLInputAttributes } from "svelte/elements";

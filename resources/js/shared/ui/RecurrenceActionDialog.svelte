@@ -2,7 +2,7 @@
     import Checkbox from "./Checkbox.svelte";
     import Confirmable from "./Confirmable.svelte";
 
-    import type { MaybePromise, Scope } from "../lib/types";
+    import type { MaybePromise, RecurrenceScope } from "../lib/types";
     import type { Snippet } from "svelte";
     import type { HTMLAttributes } from "svelte/elements";
 
@@ -14,7 +14,7 @@
         fallback?: boolean;
         skip?: boolean;
         trigger?: Snippet<[() => HTMLAttributes<HTMLElement>]>;
-        onConfirm?: (scope: Scope) => MaybePromise<boolean | void>;
+        onConfirm?: (scope: RecurrenceScope) => MaybePromise<boolean | void>;
         onAbort?: VoidFunction;
     };
 
@@ -30,7 +30,7 @@
         onAbort
     }: Props = $props();
 
-    let selectedScope: Scope = $state("this");
+    let selectedScope: RecurrenceScope = $state("this");
 </script>
 
 {#if skip}

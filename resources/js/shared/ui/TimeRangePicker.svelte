@@ -2,10 +2,10 @@
     import { TriangleAlert } from "@lucide/svelte";
     import { m } from "$/paraglide/messages";
 
-    import { tw } from "../lib/styles";
+    import { tw } from "../lib/css/tw";
     import TimePickerInput from "./TimePickerInput.svelte";
 
-    import type { ClassName } from "../lib/styles";
+    import type { ClassName } from "../lib/css/tw";
     import type { Time } from "@internationalized/date";
     import type { Snippet } from "svelte";
 
@@ -15,6 +15,7 @@
         startsAt: Time;
         endsAt: Time;
         deferHistoryViewFrames?: number;
+        isValid?: boolean;
         onStartsAtChange?: (time: Time) => void;
         onEndsAtChange?: (time: Time) => void;
     };
@@ -25,11 +26,10 @@
         startsAt = $bindable(),
         endsAt = $bindable(),
         deferHistoryViewFrames = 0,
+        isValid,
         onStartsAtChange,
         onEndsAtChange
     }: Props = $props();
-
-    const isValid = $derived(startsAt.compare(endsAt) < 0);
 </script>
 
 <div class={tw("group flex w-full items-center gap-4 text-lg", classname)}>

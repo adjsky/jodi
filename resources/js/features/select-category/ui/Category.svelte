@@ -4,8 +4,8 @@
     import { Search, Tag, X } from "@lucide/svelte";
     import { m } from "$/paraglide/messages";
     import Jelly from "$/shared/assets/jelly.svg";
-    import { announce } from "$/shared/lib/form";
-    import { useDeferUntilNextFrame } from "$/shared/lib/hooks.svelte";
+    import { announce } from "$/shared/lib/dom/announce";
+    import { useDeferUntilNextFrame } from "$/shared/lib/hooks/use-defer-until-next-frame.svelte";
     import SheetDialog from "$/shared/ui/SheetDialog.svelte";
     import { tick, untrack } from "svelte";
 
@@ -55,7 +55,10 @@
 
     $effect(() => {
         const categories = $page.props["categories"];
-        if (categories) set(categories);
+        if (categories) {
+            set(categories);
+            untrack(() => filter(search));
+        }
     });
 
     $effect(() => {

@@ -1,10 +1,11 @@
 <script lang="ts">
-    import { DateFormatter, toTime } from "@internationalized/date";
+    import { toTime } from "@internationalized/date";
     import { Calendar, Clock } from "@lucide/svelte";
     import { m } from "$/paraglide/messages";
-    import { getLocale } from "$/paraglide/runtime";
     import { DEFER_FRAMES } from "$/shared/cfg/constants";
     import TimeRangePicker from "$/shared/ui/TimeRangePicker.svelte";
+
+    import { formatDateRange } from "../helpers/format-date-range";
 
     import type { Time, ZonedDateTime } from "@internationalized/date";
     import type { Snippet } from "svelte";
@@ -51,12 +52,7 @@
             type="button"
         >
             <Calendar />
-            {new DateFormatter(getLocale(), {
-                day: "2-digit",
-                year: "numeric",
-                month: "short",
-                weekday: "short"
-            }).format(startsAt.toDate())}
+            {formatDateRange(startsAt, endsAt)}
         </button>
     {/snippet}
     {@render calendar(trigger)}
@@ -80,6 +76,7 @@
     {onEndsAtChange}
     class="mt-4"
     deferHistoryViewFrames={DEFER_FRAMES.SHEET + 1}
+    isValid={startsAt.compare(endsAt) < 0}
 >
     {#snippet label()}
         <Clock class="text-2xl" />

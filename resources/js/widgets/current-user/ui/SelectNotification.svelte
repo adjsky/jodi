@@ -4,7 +4,7 @@
     import { User } from "$/entities/user";
     import UpdateUser from "$/generated/actions/App/Domain/Identity/Actions/UpdateUser";
     import { m } from "$/paraglide/messages";
-    import * as PushSubscription from "$/shared/lib/push-subscription.svelte";
+    import { pushSubscription } from "$/shared/lib/push/subscription.svelte";
     import Button from "$/shared/ui/Button.svelte";
     import FloatingView from "$/shared/ui/FloatingView.svelte";
 
@@ -37,11 +37,11 @@
         </User.Info.SelectRow>
     </User.Info.Block>
 
-    {#if PushSubscription.warnings.needsConfiguration}
+    {#if pushSubscription.warnings.needsConfiguration}
         <Button
             class="gap-2"
             onclick={() => {
-                void PushSubscription.subscribe();
+                void pushSubscription.subscribe();
             }}
         >
             <BellRing class="text-xl" />

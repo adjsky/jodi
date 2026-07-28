@@ -5,8 +5,8 @@ import { onMount } from "svelte";
 import { fromStore } from "svelte/store";
 import { useRegisterSW } from "virtual:pwa-register/svelte";
 
-import { createActionBanner } from "../ui/ActionBanner.svelte";
-import { handlePushAction } from "./push-actions";
+import { createActionBanner } from "../../ui/ActionBanner.svelte";
+import { handlePushAction } from "../push/action";
 
 export function useServiceWorker() {
     const { needRefresh: _needRefresh, updateServiceWorker } = useRegisterSW();

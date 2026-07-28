@@ -13,6 +13,9 @@ use Illuminate\Support\Collection;
 
 class ListTodos extends JodiAction
 {
+    /**
+     * @return Collection<int, TodoData>
+     */
     public function handle(User $user, string $date, Carbon $start, Carbon $end): Collection
     {
         $todos = Todo::query()

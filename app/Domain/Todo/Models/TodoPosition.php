@@ -52,7 +52,7 @@ class TodoPosition extends Model
         ];
     }
 
-    /** @return BelongsTo<Todo,$this> */
+    /** @return BelongsTo<Todo, $this> */
     public function todo(): BelongsTo
     {
         return $this->belongsTo(Todo::class);

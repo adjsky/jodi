@@ -1,7 +1,7 @@
 import { m } from "$/paraglide/messages";
 import { optimistic as _optimistic } from "$/shared/inertia/visit/optimistic";
-import * as PushSubscription from "$/shared/lib/push-subscription.svelte";
-import { toaster } from "$/shared/lib/toaster";
+import { pushSubscription } from "$/shared/lib/push/subscription.svelte";
+import { toaster } from "$/shared/ui/toaster";
 
 import { id } from "../helpers/id";
 import { editView } from "../model/view";
@@ -38,7 +38,7 @@ export const optimistic = {
                     }
                 },
                 onSuccess() {
-                    PushSubscription.ahtung(m["events.reminder-ahtung"]());
+                    pushSubscription.ahtung(m["events.reminder-ahtung"]());
                     void editView.back();
                 }
             }

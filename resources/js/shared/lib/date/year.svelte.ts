@@ -5,23 +5,36 @@ import {
     startOfYear,
     today
 } from "@internationalized/date";
-import { getLocale } from "$/paraglide/runtime";
-import { TIMEZONE, WEEK_START_PREFERENCE_MAP } from "$/shared/cfg/constants";
-import { extract } from "runed";
+import { TIMEZONE, WEEK_START_MAP } from "$/shared/cfg/constants";
+import { extract, watch } from "runed";
 
-import { getWeekDays } from "../helpers/date";
+import { getWeekDays } from "./get-week-days";
 
 import type { CalendarDate } from "@internationalized/date";
+import type { Locale } from "$/paraglide/runtime";
 import type { WeekStart } from "$/shared/lib/types";
-import type { Getter } from "runed";
+import type { Getter, MaybeGetter } from "runed";
+
+type Options = {
+    weekStart: WeekStart;
+    locale: Locale;
+};
 
 export class Year {
     #cursor: CalendarDate;
-    #start: Getter<WeekStart>;
+    #options: MaybeGetter<Options>;
 
-    constructor(selected: CalendarDate, start: Getter<WeekStart>) {
-        this.#cursor = $state(selected);
-        this.#start = start;
+    constructor(selected: Getter<CalendarDate>, options: MaybeGetter<Options>) {
+        this.#cursor = $state(extract(selected));
+        this.#options = options;
+
+        watch(
+            () => [extract(selected)],
+            () => {
+                this.#cursor = extract(selected);
+            },
+            { lazy: true }
+        );
     }
 
     get current() {
@@ -33,8 +46,10 @@ export class Year {
     }
 
     months() {
-        const start = startOfYear(extract(this.#cursor));
-        const formatter = new DateFormatter(getLocale(), { month: "long" });
+        const start = startOfYear(this.#cursor);
+        const formatter = new DateFormatter(extract(this.#options).locale, {
+            month: "long"
+        });
 
         return Array.from({ length: 12 }).map((_, idx) => {
             const date = start.add({ months: idx });
@@ -58,35 +73,36 @@ export class Year {
     }
 
     weekdays() {
-        const formatter = new DateFormatter(getLocale(), { weekday: "short" });
+        const formatter = new DateFormatter(extract(this.#options).locale, {
+            weekday: "short"
+        });
+
         return getWeekDays(this.#startOfWeek(today(TIMEZONE))).map((date) =>
             formatter.format(date.toDate(TIMEZONE))
         );
     }
 
     next() {
-        this.#cursor = startOfYear(extract(this.#cursor).add({ years: 1 }));
+        this.#cursor = startOfYear(this.#cursor.add({ years: 1 }));
     }
 
     previous() {
-        this.#cursor = startOfYear(
-            extract(this.#cursor).subtract({ years: 1 })
-        );
+        this.#cursor = startOfYear(this.#cursor.subtract({ years: 1 }));
     }
 
     #startOfWeek(date: CalendarDate) {
         return startOfWeek(
             date,
-            getLocale(),
-            WEEK_START_PREFERENCE_MAP[extract(this.#start)]
+            extract(this.#options).locale,
+            WEEK_START_MAP[extract(this.#options).weekStart]
         );
     }
 
     #weeksInMonth(date: CalendarDate) {
         return getWeeksInMonth(
             date,
-            getLocale(),
-            WEEK_START_PREFERENCE_MAP[extract(this.#start)]
+            extract(this.#options).locale,
+            WEEK_START_MAP[extract(this.#options).weekStart]
         );
     }
 }

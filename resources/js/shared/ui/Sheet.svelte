@@ -2,7 +2,7 @@
     import { Drawer, useDrawer } from "@ark-ui/svelte";
 
     import { DEFER_FRAMES } from "../cfg/constants";
-    import { useDeferUntilNextFrame } from "../lib/hooks.svelte";
+    import { useDeferUntilNextFrame } from "../lib/hooks/use-defer-until-next-frame.svelte";
 
     import type { DrawerRootProps } from "@ark-ui/svelte";
     import type { Snippet } from "svelte";
@@ -108,6 +108,7 @@
 
     :global([data-scope="drawer"][data-part="content"]) {
         --grabber-height: 2.25rem;
+        --user-content-transition-duration: 0.5s;
 
         transition: transform 0.5s cubic-bezier(0.32, 0.72, 0, 1);
 
@@ -144,14 +145,17 @@
         min-height: 0;
         flex-shrink: 0;
 
-        transition: height 0.5s cubic-bezier(0.32, 0.72, 0, 1);
+        transition: height var(--user-content-transition-duration)
+            cubic-bezier(0.32, 0.72, 0, 1);
     }
 
     @keyframes slide-in-bottom {
         from {
+            --user-content-transition-duration: 0s;
             transform: translate3d(0, 100%, 0);
         }
         to {
+            --user-content-transition-duration: 0s;
             transform: translate3d(
                 var(--drawer-translate-x, 0),
                 var(--drawer-translate-y, 0),

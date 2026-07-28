@@ -1,7 +1,7 @@
 <script lang="ts">
     import { ParaglideMessage } from "@inlang/paraglide-js-svelte";
     import { DateFormatter, toCalendarDate } from "@internationalized/date";
-    import { YearCalendarDialog } from "$/features/choose-date";
+    import { CalendarDialog } from "$/features/choose-date";
     import { m } from "$/paraglide/messages";
     import { getLocale } from "$/paraglide/runtime";
     import Checkbox from "$/shared/ui/Checkbox.svelte";
@@ -42,10 +42,11 @@
             }}
         >
             {#snippet label()}
-                <YearCalendarDialog
-                    selected={toCalendarDate(day)}
+                <CalendarDialog
+                    mode="single"
+                    selected={[toCalendarDate(day)]}
                     id="recurrence-until-calendar"
-                    onSelect={(date) => {
+                    onSelect={([date]) => {
                         until = date;
                     }}
                     deferHistoryViewFrames={2}
@@ -63,7 +64,7 @@
                             }).format(until.toDate("UTC"))}
                         </div>
                     {/snippet}
-                </YearCalendarDialog>
+                </CalendarDialog>
             {/snippet}
         </Checkbox>
         <div class="flex items-stretch">

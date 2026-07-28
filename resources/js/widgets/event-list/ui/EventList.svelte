@@ -1,11 +1,18 @@
 <script lang="ts">
+    import {
+        parseAbsoluteToLocal,
+        parseDate,
+        today
+    } from "@internationalized/date";
     import { CalendarClock } from "@lucide/svelte";
     import { Event } from "$/entities/event";
     import { m } from "$/paraglide/messages";
+    import { TIMEZONE } from "$/shared/cfg/constants";
     import { useSearchParams } from "$/shared/inertia/use-search-params.svelte";
-    import { formatToHHMM } from "$/shared/lib/date";
-    import { tw } from "$/shared/lib/styles";
+    import { tw } from "$/shared/lib/css/tw";
+    import { formatToHHMM } from "$/shared/lib/date/format-to-hh-mm";
 
+    import { getEventDayPosition } from "../helpers/get-event-day-position";
     import { id } from "../helpers/id";
     import { editView } from "../model/view";
     import EditSheet from "./EditSheet.svelte";
@@ -20,6 +27,10 @@
     const { events, ...rest }: Props = $props();
 
     const searchParams = useSearchParams();
+
+    const selectedDate = $derived(
+        searchParams["d"] ? parseDate(searchParams["d"]) : today(TIMEZONE)
+    );
 
     $effect(() => {
         if (searchParams["target"] !== "event") return;
@@ -50,18 +61,29 @@
             </p>
         {:else}
             {#each events as event (id(event))}
+                {@const { day, total } = getEventDayPosition(
+                    parseAbsoluteToLocal(event.startsAt),
+                    parseAbsoluteToLocal(event.endsAt),
+                    selectedDate
+                )}
                 <Event.Row
                     onclick={() => editView.push({ meta: event })}
                     color={event.color}
                     disabled={editView.isOpen()}
                 >
                     {#snippet time()}
-                        <time
-                            datetime={event?.startsAt}
-                            class="text-xl font-black text-brand"
-                        >
-                            {formatToHHMM(new Date(event.startsAt))}
-                        </time>
+                        {#if day == 1}
+                            <time
+                                datetime={event?.startsAt}
+                                class="text-xl font-bold text-cream-950"
+                            >
+                                {formatToHHMM(new Date(event.startsAt))}
+                            </time>
+                        {:else}
+                            <span class="text-xl font-bold text-cream-950">
+                                {m["events.day-of"]({ day, total })}
+                            </span>
+                        {/if}
                     {/snippet}
                     {#snippet title()}
                         <span class="truncate text-start font-medium">

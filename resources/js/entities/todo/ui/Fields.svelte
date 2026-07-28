@@ -3,7 +3,7 @@
     import { Clock } from "@lucide/svelte";
     import { m } from "$/paraglide/messages";
     import { getLocale } from "$/paraglide/runtime";
-    import { tw } from "$/shared/lib/styles";
+    import { tw } from "$/shared/lib/css/tw";
 
     import type { ZonedDateTime } from "@internationalized/date";
     import type { Snippet } from "svelte";

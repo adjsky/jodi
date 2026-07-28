@@ -5,10 +5,10 @@
     import DestroyRegistrationInvitation from "$/generated/actions/App/Domain/Identity/Actions/DestroyRegistrationInvitation";
     import { m } from "$/paraglide/messages";
     import { HistoryView } from "$/shared/inertia/history-view.svelte";
-    import { toaster } from "$/shared/lib/toaster";
     import Button from "$/shared/ui/Button.svelte";
     import Confirmable from "$/shared/ui/Confirmable.svelte";
     import FloatingView from "$/shared/ui/FloatingView.svelte";
+    import { toaster } from "$/shared/ui/toaster";
     import { resource } from "runed";
 
     import { fetchInvitation, NotFoundResourceError } from "../api/invitations";

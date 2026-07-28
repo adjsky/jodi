@@ -4,7 +4,7 @@
     import { Trash } from "@lucide/svelte";
     import { TIMEZONE } from "$/shared/cfg/constants";
     import { HistoryView } from "$/shared/inertia/history-view.svelte";
-    import { useDeferUntilNextFrame } from "$/shared/lib/hooks.svelte";
+    import { useDeferUntilNextFrame } from "$/shared/lib/hooks/use-defer-until-next-frame.svelte";
     import RecurrenceActionDialog from "$/shared/ui/RecurrenceActionDialog.svelte";
     import ToolbarAction from "$/shared/ui/ToolbarAction.svelte";
 

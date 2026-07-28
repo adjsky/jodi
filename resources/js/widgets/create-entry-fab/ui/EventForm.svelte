@@ -3,7 +3,7 @@
     import { toCalendarDate } from "@internationalized/date";
     import { Trash } from "@lucide/svelte";
     import { Event } from "$/entities/event";
-    import { YearCalendarDialog } from "$/features/choose-date";
+    import { CalendarDialog } from "$/features/choose-date";
     import { RescheduleItem } from "$/features/reschedule-item";
     import { Color } from "$/features/select-color";
     import { Recurrence } from "$/features/select-recurrence";
@@ -14,10 +14,10 @@
         DEFER_FRAMES,
         NOTIFICATION_DEFAULT_SUBHOURS
     } from "$/shared/cfg/constants";
-    import { timediff } from "$/shared/lib/date";
-    import * as PushSubscription from "$/shared/lib/push-subscription.svelte";
-    import { toaster } from "$/shared/lib/toaster";
+    import { timediff } from "$/shared/lib/date/timediff";
+    import { pushSubscription } from "$/shared/lib/push/subscription.svelte";
     import SaveOrClose from "$/shared/ui/SaveOrClose.svelte";
+    import { toaster } from "$/shared/ui/toaster";
     import ToolbarAction from "$/shared/ui/ToolbarAction.svelte";
 
     import type { ZonedDateTime } from "@internationalized/date";
@@ -58,7 +58,7 @@
         }
     }}
     onSuccess={() => {
-        PushSubscription.ahtung(m["events.reminder-ahtung"]());
+        pushSubscription.ahtung(m["events.reminder-ahtung"]());
         onClose();
     }}
     class="flex grow flex-col pb-18"
@@ -79,19 +79,20 @@
         }}
     >
         {#snippet calendar(trigger)}
-            <YearCalendarDialog
-                selected={toCalendarDate(startsAt)}
+            <CalendarDialog
+                mode="range"
+                selected={[toCalendarDate(startsAt), toCalendarDate(endsAt)]}
                 deferHistoryViewFrames={DEFER_FRAMES.SHEET + 1}
-                onSelect={(d) => {
-                    notifyAt = notifyAt.set(d);
-                    startsAt = startsAt.set(d);
-                    endsAt = endsAt.set(d);
+                onSelect={(date) => {
+                    notifyAt = notifyAt.set(date[0]);
+                    startsAt = startsAt.set(date[0]);
+                    endsAt = endsAt.set(date[1]);
                 }}
             >
                 {#snippet children(props)}
                     {@render trigger(props())}
                 {/snippet}
-            </YearCalendarDialog>
+            </CalendarDialog>
         {/snippet}
         {#snippet close()}
             <SaveOrClose variant="save" disabled={processing} />

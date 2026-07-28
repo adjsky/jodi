@@ -48,7 +48,7 @@ class Category extends Model
         return [];
     }
 
-    /** @return BelongsTo<User,$this> */
+    /** @return BelongsTo<User, $this> */
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);

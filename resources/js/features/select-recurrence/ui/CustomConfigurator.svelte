@@ -93,7 +93,7 @@
 
     <SelectRecurrenceLimit {day} bind:limit bind:until bind:count />
 
-    <div class="flex grow items-end pb-5">
+    <div class="flex grow items-end pb-2">
         <Button
             type="button"
             disabled={Number(interval) === 0 ||

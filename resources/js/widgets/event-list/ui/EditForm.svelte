@@ -6,7 +6,7 @@
         toCalendarDate
     } from "@internationalized/date";
     import { Event } from "$/entities/event";
-    import { YearCalendarDialog } from "$/features/choose-date";
+    import { CalendarDialog } from "$/features/choose-date";
     import { DeleteItem } from "$/features/delete-item";
     import { RescheduleItem } from "$/features/reschedule-item";
     import { Color } from "$/features/select-color";
@@ -16,8 +16,9 @@
     import UpdateEvent from "$/generated/actions/App/Domain/Event/Actions/UpdateEvent";
     import { m } from "$/paraglide/messages";
     import { DEFER_FRAMES } from "$/shared/cfg/constants";
-    import { normalizeIsoString, timediff } from "$/shared/lib/date";
-    import { announce } from "$/shared/lib/form";
+    import { normalizeIsoString } from "$/shared/lib/date/normalize-iso-string";
+    import { timediff } from "$/shared/lib/date/timediff";
+    import { announce } from "$/shared/lib/dom/announce";
     import SaveOrClose from "$/shared/ui/SaveOrClose.svelte";
     import { tick, untrack } from "svelte";
 
@@ -25,7 +26,7 @@
     import { editView } from "../model/view";
 
     import type { EventData } from "$/entities/event/model/types";
-    import type { Scope } from "$/shared/lib/types";
+    import type { RecurrenceScope } from "$/shared/lib/types";
 
     type Props = {
         event: EventData;
@@ -36,7 +37,7 @@
 
     let startsAtAnnouncerInput: HTMLInputElement | null = $state(null);
     let endsAtAnnouncerInput: HTMLInputElement | null = $state(null);
-    let scope: Scope = $state("this");
+    let scope: RecurrenceScope = $state("this");
 
     const draft = $state(
         untrack(() => ({
@@ -89,16 +90,20 @@
         }}
     >
         {#snippet calendar(trigger)}
-            <YearCalendarDialog
-                selected={toCalendarDate(draft.startsAt)}
+            <CalendarDialog
+                mode="range"
+                selected={[
+                    toCalendarDate(draft.startsAt),
+                    toCalendarDate(draft.endsAt)
+                ]}
                 min={event.recurringSince
                     ? parseDate(event.recurringSince)
                     : null}
                 deferHistoryViewFrames={DEFER_FRAMES.SHEET + 1}
-                onSelect={async (d) => {
-                    draft.notifyAt = draft.notifyAt.set(d);
-                    draft.startsAt = draft.startsAt.set(d);
-                    draft.endsAt = draft.endsAt.set(d);
+                onSelect={async (date) => {
+                    draft.notifyAt = draft.notifyAt.set(date[0]);
+                    draft.startsAt = draft.startsAt.set(date[0]);
+                    draft.endsAt = draft.endsAt.set(date[1]);
                     await tick();
                     announce(startsAtAnnouncerInput);
                 }}
@@ -106,7 +111,7 @@
                 {#snippet children(props)}
                     {@render trigger(props())}
                 {/snippet}
-            </YearCalendarDialog>
+            </CalendarDialog>
         {/snippet}
         {#snippet close()}
             <SaveOrClose

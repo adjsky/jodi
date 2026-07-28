@@ -1,5 +1,5 @@
 <script lang="ts" generics="T extends keyof SvelteHTMLElements = 'button'">
-    import { tw } from "$/shared/lib/styles";
+    import { tw } from "$/shared/lib/css/tw";
     import ExclamationMark from "$/shared/ui/Warning.svelte";
 
     import type { SvelteHTMLElements } from "svelte/elements";
@@ -17,7 +17,7 @@
     this={as ?? "button"}
     {...props}
     class={tw(
-        "relative flex size-9 items-center justify-center rounded-full bg-brand text-lg font-semibold text-white outline outline-cream-950",
+        "relative flex size-9 items-center justify-center rounded-full bg-brand text-lg font-semibold text-white",
         props.class
     )}
 >

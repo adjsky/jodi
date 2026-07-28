@@ -12,6 +12,8 @@ interface Recurrable
 {
     public function recurrenceStartKey(): string;
 
+    public function recurrenceEndKey(): ?string;
+
     /**
      * @return Collection<int, static>
      */

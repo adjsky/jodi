@@ -1,7 +1,7 @@
 <script lang="ts">
     import { Popover } from "@ark-ui/svelte";
     import { Circle } from "@lucide/svelte";
-    import { announce } from "$/shared/lib/form";
+    import { announce } from "$/shared/lib/dom/announce";
     import ToolbarAction from "$/shared/ui/ToolbarAction.svelte";
     import { tick } from "svelte";
 
@@ -18,12 +18,12 @@
 
     const colors = [
         "transparent",
-        "#CD2C54",
-        "#FDEF5D",
-        "#D85DFD",
-        "#22FFA1",
-        "#FFB022",
-        "#5167F4"
+        "#C85A54",
+        "#E07A5F",
+        "#528A66",
+        "#3B8EA5",
+        "#5B72A4",
+        "#9E5A9B"
     ];
 </script>
 

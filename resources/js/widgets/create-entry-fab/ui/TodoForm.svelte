@@ -3,7 +3,7 @@
     import { toCalendarDate } from "@internationalized/date";
     import { Trash } from "@lucide/svelte";
     import { Todo } from "$/entities/todo";
-    import { YearCalendarDialog } from "$/features/choose-date";
+    import { CalendarDialog } from "$/features/choose-date";
     import { RescheduleItem } from "$/features/reschedule-item";
     import { TodoTime } from "$/features/schedule-todo-time";
     import { Category } from "$/features/select-category";
@@ -16,10 +16,11 @@
         DEFER_FRAMES,
         NOTIFICATION_DEFAULT_SUBHOURS
     } from "$/shared/cfg/constants";
-    import { normalizeIsoString, timediff } from "$/shared/lib/date";
-    import * as PushSubscription from "$/shared/lib/push-subscription.svelte";
-    import { toaster } from "$/shared/lib/toaster";
+    import { normalizeIsoString } from "$/shared/lib/date/normalize-iso-string";
+    import { timediff } from "$/shared/lib/date/timediff";
+    import { pushSubscription } from "$/shared/lib/push/subscription.svelte";
     import SaveOrClose from "$/shared/ui/SaveOrClose.svelte";
+    import { toaster } from "$/shared/ui/toaster";
     import ToolbarAction from "$/shared/ui/ToolbarAction.svelte";
 
     import type { ZonedDateTime } from "@internationalized/date";
@@ -53,7 +54,7 @@
     })}
     onSuccess={() => {
         if (notifyAt) {
-            PushSubscription.ahtung(m["todos.reminder-ahtung"]());
+            pushSubscription.ahtung(m["todos.reminder-ahtung"]());
         }
         onClose();
     }}
@@ -62,10 +63,11 @@
 >
     <Todo.Fields {scheduledAt}>
         {#snippet calendar(trigger)}
-            <YearCalendarDialog
-                selected={toCalendarDate(scheduledAt)}
+            <CalendarDialog
+                mode="single"
+                selected={[toCalendarDate(scheduledAt)]}
                 deferHistoryViewFrames={DEFER_FRAMES.SHEET + 1}
-                onSelect={(d) => {
+                onSelect={([d]) => {
                     if (notifyAt) {
                         notifyAt = notifyAt.set(d);
                     }
@@ -75,7 +77,7 @@
                 {#snippet children(props)}
                     {@render trigger(props())}
                 {/snippet}
-            </YearCalendarDialog>
+            </CalendarDialog>
         {/snippet}
         {#snippet close()}
             <SaveOrClose variant="save" disabled={processing} />

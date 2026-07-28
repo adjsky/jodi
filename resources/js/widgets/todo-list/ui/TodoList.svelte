@@ -6,10 +6,10 @@
     import { m } from "$/paraglide/messages";
     import PencilNote from "$/shared/assets/pencil-note.svg";
     import { useSearchParams } from "$/shared/inertia/use-search-params.svelte";
-    import { prefersLightText } from "$/shared/lib/color";
-    import { formatToHHMM } from "$/shared/lib/date";
-    import { tw } from "$/shared/lib/styles";
-    import { toaster } from "$/shared/lib/toaster";
+    import { prefersLightText } from "$/shared/lib/color/prefers-light-text";
+    import { tw } from "$/shared/lib/css/tw";
+    import { formatToHHMM } from "$/shared/lib/date/format-to-hh-mm";
+    import { toaster } from "$/shared/ui/toaster";
     import { untrack } from "svelte";
     import { dragHandle, dragHandleZone } from "svelte-dnd-action";
 

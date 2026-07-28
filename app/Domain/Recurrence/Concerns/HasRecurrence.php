@@ -19,6 +19,21 @@ trait HasRecurrence
 {
     public function occurrencesBetween(CarbonInterface $viewStart, CarbonInterface $viewEnd): Collection
     {
+        $recurrStartKey = $this->recurrenceStartKey();
+        $recurrEndKey = $this->recurrenceEndKey();
+
+        $dtstart = $this->getAttribute($recurrStartKey);
+        $dtend = $recurrEndKey ? $this->getAttribute($recurrEndKey) : null;
+
+        if ($dtend) {
+            $endDayOffset = $dtstart
+                ->clone()
+                ->startOfDay()
+                ->diffInDays($dtend->clone()->startOfDay());
+        } else {
+            $endDayOffset = 0;
+        }
+
         if ($this->rrule == null) {
             $model = $this->replicate();
             $model->id = $this->id;
@@ -26,17 +41,23 @@ trait HasRecurrence
             return collect([$model]);
         }
 
+        $rrule = new RRule($this->rrule, $dtstart);
+
+        if ($dtend) {
+            $candidateViewStart = $viewStart
+                ->clone()
+                ->subDays($endDayOffset);
+        } else {
+            $candidateViewStart = $viewStart;
+        }
+
+        $occurrences = collect($rrule->getOccurrencesBetween($candidateViewStart, $viewEnd))
+            ->keyBy(fn ($dt) => Carbon::instance($dt)->toDateString())
+            ->map(fn ($dt) => Carbon::instance($dt));
+
         $exceptions = $this->recurrenceExceptions->keyBy(
             fn ($e) => $e->occurs_at->toDateString()
         );
-        $recurrenceStartKey = $this->recurrenceStartKey();
-        $dtstart = $this->getAttribute($recurrenceStartKey);
-
-        $rrule = new RRule($this->rrule, $dtstart);
-
-        $occurrences = collect($rrule->getOccurrencesBetween($viewStart, $viewEnd))
-            ->keyBy(fn ($dt) => Carbon::instance($dt)->toDateString())
-            ->map(fn ($dt) => Carbon::instance($dt));
 
         foreach ($exceptions as $datestr => $exception) {
             if ($exception->is_cancelled) {
@@ -45,14 +66,37 @@ trait HasRecurrence
                 continue;
             }
 
-            if (! isset($exception->overrides[$recurrenceStartKey])) {
+            $overrides = $exception->overrides;
+
+            $hasStartOverride = isset($overrides[$recurrStartKey]);
+            $hasEndOverride = $recurrEndKey && isset($overrides[$recurrEndKey]);
+
+            if (! $hasStartOverride && ! $hasEndOverride) {
                 continue;
             }
 
-            $start = Carbon::parse($exception->overrides[$recurrenceStartKey]);
+            $date = Carbon::parse($datestr);
 
-            if ($start->between($viewStart, $viewEnd)) {
-                $occurrences->put($datestr, Carbon::parse($datestr));
+            if ($hasStartOverride) {
+                $start = Carbon::parse($overrides[$recurrStartKey]);
+            } else {
+                $start = $date->clone()->setTimeFrom($dtstart);
+            }
+
+            if ($recurrEndKey) {
+                if ($hasEndOverride) {
+                    $end = Carbon::parse($overrides[$recurrEndKey]);
+                } else {
+                    $end = $date->clone()->addDays($endDayOffset)->setTimeFrom($dtend);
+                }
+
+                $overlaps = $start->lte($viewEnd) && $end->gt($viewStart);
+            } else {
+                $overlaps = $start->between($viewStart, $viewEnd);
+            }
+
+            if ($overlaps) {
+                $occurrences->put($datestr, $date);
             } else {
                 $occurrences->forget($datestr);
             }
@@ -89,6 +133,16 @@ trait HasRecurrence
                 }
 
                 return $model;
+            })
+            ->filter(function ($m) use ($recurrEndKey, $recurrStartKey, $viewStart, $viewEnd) {
+                if (! $recurrEndKey) {
+                    return true;
+                }
+
+                $dtstart = $m->getAttribute($recurrStartKey);
+                $dtend = $m->getAttribute($recurrEndKey);
+
+                return $dtstart->lte($viewEnd) && $dtend->gt($viewStart);
             })
             ->values();
     }

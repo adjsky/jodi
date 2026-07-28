@@ -6,7 +6,7 @@
         toCalendarDate
     } from "@internationalized/date";
     import { Todo } from "$/entities/todo";
-    import { YearCalendarDialog } from "$/features/choose-date";
+    import { CalendarDialog } from "$/features/choose-date";
     import { Checkbox } from "$/features/complete-todo";
     import { DeleteItem } from "$/features/delete-item";
     import { RescheduleItem } from "$/features/reschedule-item";
@@ -23,17 +23,18 @@
         DEFER_FRAMES,
         NOTIFICATION_DEFAULT_SUBHOURS
     } from "$/shared/cfg/constants";
-    import { normalizeIsoString, timediff } from "$/shared/lib/date";
-    import { announce } from "$/shared/lib/form";
-    import { toaster } from "$/shared/lib/toaster";
+    import { normalizeIsoString } from "$/shared/lib/date/normalize-iso-string";
+    import { timediff } from "$/shared/lib/date/timediff";
+    import { announce } from "$/shared/lib/dom/announce";
     import SaveOrClose from "$/shared/ui/SaveOrClose.svelte";
+    import { toaster } from "$/shared/ui/toaster";
     import { tick, untrack } from "svelte";
 
     import { optimistic, visitOptions } from "../cfg/inertia";
     import { editView } from "../model/view";
 
     import type { TodoData } from "$/entities/todo";
-    import type { Scope } from "$/shared/lib/types";
+    import type { RecurrenceScope } from "$/shared/lib/types";
 
     type Props = {
         todo: TodoData;
@@ -43,7 +44,7 @@
     const { todo, onClose }: Props = $props();
 
     let dateAnnouncerInput: HTMLInputElement | null = $state(null);
-    let scope: Scope = $state("this");
+    let scope: RecurrenceScope = $state("this");
 
     const draft = $state(
         untrack(() => ({
@@ -83,13 +84,14 @@
         isCompleted={todo.completedAt != null}
     >
         {#snippet calendar(trigger)}
-            <YearCalendarDialog
-                selected={toCalendarDate(draft.scheduledAt)}
+            <CalendarDialog
+                mode="single"
+                selected={[toCalendarDate(draft.scheduledAt)]}
                 min={todo.recurringSince
                     ? parseDate(todo.recurringSince)
                     : null}
                 deferHistoryViewFrames={DEFER_FRAMES.SHEET + 1}
-                onSelect={async (d) => {
+                onSelect={async ([d]) => {
                     if (draft.notifyAt) {
                         draft.notifyAt = draft.notifyAt.set(d);
                     }
@@ -101,7 +103,7 @@
                 {#snippet children(props)}
                     {@render trigger(props())}
                 {/snippet}
-            </YearCalendarDialog>
+            </CalendarDialog>
         {/snippet}
         {#snippet close()}
             <SaveOrClose

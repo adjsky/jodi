@@ -1,7 +1,7 @@
 import { m } from "$/paraglide/messages";
 import { optimistic as _optimistic } from "$/shared/inertia/visit/optimistic";
-import { normalizeIsoString } from "$/shared/lib/date";
-import * as PushSubscription from "$/shared/lib/push-subscription.svelte";
+import { normalizeIsoString } from "$/shared/lib/date/normalize-iso-string";
+import { pushSubscription } from "$/shared/lib/push/subscription.svelte";
 
 import { id } from "../helpers/id";
 import { editView } from "../model/view";
@@ -29,7 +29,7 @@ export const optimistic = {
                 error: m["todos.errors.edit"](),
                 onSuccess() {
                     if (withAhtungReminder) {
-                        PushSubscription.ahtung(m["todos.reminder-ahtung"]());
+                        pushSubscription.ahtung(m["todos.reminder-ahtung"]());
                     }
                     void editView.back();
                 }

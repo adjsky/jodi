@@ -1,7 +1,7 @@
 <script lang="ts">
     import { watch } from "runed";
 
-    import { tw } from "../lib/styles";
+    import { tw } from "../lib/css/tw";
 
     type Props = {
         value: string;

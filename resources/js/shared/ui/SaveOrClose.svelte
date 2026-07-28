@@ -2,10 +2,10 @@
     import { Check, X } from "@lucide/svelte";
 
     import { HistoryView } from "../inertia/history-view.svelte";
-    import { tw } from "../lib/styles";
+    import { tw } from "../lib/css/tw";
     import RecurrenceActionDialog from "./RecurrenceActionDialog.svelte";
 
-    import type { Scope } from "../lib/types";
+    import type { RecurrenceScope } from "../lib/types";
 
     type Props = {
         title?: string;
@@ -13,7 +13,7 @@
         disabled?: boolean;
         confirm?: boolean;
         scopeLabels?: { this: string; all: string };
-        onConfirm?: (scope: Scope) => void;
+        onConfirm?: (scope: RecurrenceScope) => void;
         onClose?: VoidFunction;
     };
 

@@ -1,5 +1,5 @@
 <script lang="ts">
-    import { tw } from "$/shared/lib/styles";
+    import { tw } from "$/shared/lib/css/tw";
 
     import type { Snippet } from "svelte";
     import type { SvelteHTMLElements } from "svelte/elements";
@@ -11,17 +11,19 @@
         color: string | null;
     };
 
-    const { time, title, color, ...props }: Props = $props();
+    const { time, title, color: providedColor, ...props }: Props = $props();
+
+    const color = $derived(providedColor || "var(--color-tangerine)");
 </script>
 
 <button
     {...props}
     class={tw(
-        "grid w-full grid-cols-[auto_1fr] items-center gap-2 rounded-xl border border-cream-200 px-2 py-2.25 text-lg",
-        !color && "bg-brand/10",
+        "grid w-full grid-cols-[auto_1fr] items-center gap-3 rounded-md border-l-6 px-3 py-2.75 text-lg text-cream-950",
         props.class
     )}
-    style={color ? `background: ${color}1a;` : null}
+    style:background-color="color-mix(in srgb, {color} 15%, transparent)"
+    style:border-color={color}
 >
     {@render time()}
     {@render title()}

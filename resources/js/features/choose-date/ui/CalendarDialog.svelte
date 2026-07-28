@@ -1,26 +1,29 @@
 <script lang="ts">
     import { page } from "@inertiajs/svelte";
     import { HistoryView } from "$/shared/inertia/history-view.svelte";
-    import { useDeferUntilNextFrame } from "$/shared/lib/hooks.svelte";
+    import { useDeferUntilNextFrame } from "$/shared/lib/hooks/use-defer-until-next-frame.svelte";
     import SheetDialog from "$/shared/ui/SheetDialog.svelte";
 
-    import YearCalendarView from "./YearCalendarView.svelte";
+    import Calendar from "./Calendar.svelte";
 
+    import type { CalendarMode } from "../model/types";
     import type { CalendarDate } from "@internationalized/date";
     import type { Snippet } from "svelte";
     import type { HTMLAttributes } from "svelte/elements";
 
     type Props = {
         id?: string;
-        selected: CalendarDate;
+        mode: CalendarMode;
+        selected: CalendarDate[];
         min?: CalendarDate | null;
         deferHistoryViewFrames?: number;
         children?: Snippet<[() => HTMLAttributes<HTMLElement>]>;
-        onSelect?: (date: CalendarDate) => void;
+        onSelect?: (date: CalendarDate[]) => void;
     };
 
     let {
         id = "general",
+        mode,
         selected,
         min,
         deferHistoryViewFrames = 0,
@@ -51,9 +54,10 @@
             }
         }
     }
-    height={90}
+    height={95}
     portal
     lazyMount
+    unmountOnExit
 >
     {#snippet trigger(props)}
         {#if children}
@@ -61,12 +65,13 @@
         {/if}
     {/snippet}
 
-    <YearCalendarView
+    <Calendar
+        {mode}
         {selected}
         {min}
         portal={false}
         class="absolute h-full rounded-t-2xl bg-white pt-3"
-        start={$page.props.auth.user.preferences.weekStartOn}
+        weekStart={$page.props.auth.user.preferences.weekStartOn}
         onSelect={async (date) => {
             await view.back();
             onSelect?.(date);
