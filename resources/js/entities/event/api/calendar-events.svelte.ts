@@ -14,6 +14,7 @@ type Options = {
 };
 
 type PendingRequests = {
+    version: number;
     year: number;
     months: Set<number>;
 };
@@ -22,24 +23,34 @@ export class CalendarEvents {
     #options: Options;
     #abortController: AbortController | null = null;
     #pendingRequests: PendingRequests | null = null;
+    #requestCounter = 0;
 
     constructor(options: Options) {
         this.#options = options;
     }
 
     request(date: DateValue) {
+        const version = ++this.#requestCounter;
+
         if (this.#pendingRequests && this.#pendingRequests.year == date.year) {
             this.#pendingRequests.months.add(date.month);
+            this.#pendingRequests.version = version;
         } else {
             this.#pendingRequests = {
+                version,
                 year: date.year,
                 months: new Set([date.month])
             };
         }
+
         void this.#request(structuredClone(this.#pendingRequests));
     }
 
     #request = useDebounce(async (requests: PendingRequests) => {
+        if (this.#pendingRequests?.version == requests.version) {
+            this.#pendingRequests = null;
+        }
+
         this.#abortController?.abort();
         this.#abortController = new AbortController();
 
@@ -55,7 +66,6 @@ export class CalendarEvents {
             });
             const events = (await response.json()) as CalendarEventData[];
 
-            this.#pendingRequests = null;
             this.#options.onSuccess?.(
                 requests.year,
                 Array.from(requests.months),
