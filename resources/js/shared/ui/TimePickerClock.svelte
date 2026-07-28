@@ -41,10 +41,10 @@
             : internalValue.minute * 6 - 90
     );
 
-    async function onpointerdown(e: PointerEvent) {
+    function onpointerdown(e: PointerEvent) {
         e.preventDefault();
         isDragging = true;
-        await Haptics.selectionStart();
+        void Haptics.selectionStart();
         handlePointer(e);
     }
 
