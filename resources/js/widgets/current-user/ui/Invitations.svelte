@@ -21,7 +21,7 @@
 
     let inviteInput = $state<HTMLInputElement | null>(null);
 
-    const invitationsResource = resource(() => [], fetchInvitations);
+    const invitations = resource(() => [], fetchInvitations);
 </script>
 
 <FloatingView {back} title={m["current-user.account.invitations"]()}>
@@ -31,13 +31,12 @@
         <div
             class={[
                 "flex grow flex-col overflow-y-scroll pb-5",
-                invitationsResource.current?.length === 0 ||
-                invitationsResource.error
+                invitations.current?.length === 0 || invitations.error
                     ? "justify-center"
                     : "gap-2"
             ]}
         >
-            {#if invitationsResource.error}
+            {#if invitations.error}
                 <img
                     src={SadCat}
                     width={82}
@@ -52,12 +51,12 @@
                 >
                     {m["current-user.invitations.error"]()}
                 </p>
-            {:else if invitationsResource.loading}
+            {:else if invitations.loading}
                 {#each Array.from({ length: 5 }) as _, idx (idx)}
                     {@render row()}
                 {/each}
             {:else}
-                {#each invitationsResource.current as friend (friend.id)}
+                {#each invitations.current as friend (friend.id)}
                     {@render row(friend)}
                 {:else}
                     <img
@@ -83,7 +82,7 @@
                 await view.push(buildViewName("invitations", "add"));
                 inviteInput?.focus();
             }}
-            disabled={!invitationsResource.current}
+            disabled={!invitations.current}
         >
             {m["current-user.invitations.add"]()}
         </Button>
@@ -104,7 +103,7 @@
                 try {
                     progress.reveal(true);
                     progress.start();
-                    await invitationsResource.refetch();
+                    await invitations.refetch();
                     progress.finish();
                     void view.back();
                 } catch (e) {
@@ -134,13 +133,11 @@
 {:else if /invitations\/.+$/.test(view.name)}
     <Invitation
         onDelete={(id) => {
-            if (!invitationsResource.current) {
+            if (!invitations.current) {
                 return;
             }
 
-            invitationsResource.mutate(
-                invitationsResource.current.filter((i) => i.id != id)
-            );
+            invitations.mutate(invitations.current.filter((i) => i.id != id));
         }}
     />
 {/if}
