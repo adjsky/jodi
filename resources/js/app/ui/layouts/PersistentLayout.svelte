@@ -22,23 +22,23 @@
 
     onMount(() => {
         async function synchronize() {
-            if (Cookies.get(DEVICE_ID_COOKIE) != null) return;
+            if (Cookies.get(DEVICE_ID_COOKIE) == null) {
+                const { identifier } = await Device.getId();
 
-            const { identifier } = await Device.getId();
+                Cookies.set(DEVICE_ID_COOKIE, identifier, {
+                    sameSite: "lax",
+                    expires: 365,
+                    secure: get(page).props.environment == "production"
+                });
 
-            Cookies.set(DEVICE_ID_COOKIE, identifier, {
-                sameSite: "lax",
-                expires: 365,
-                secure: get(page).props.environment == "production"
-            });
-
-            await router.reload({
-                async: true,
-                showProgress: false,
-                replace: true,
-                preserveUrl: true,
-                only: ["auth"]
-            });
+                await router.reload({
+                    async: true,
+                    showProgress: false,
+                    replace: true,
+                    preserveUrl: true,
+                    only: ["auth"]
+                });
+            }
 
             await pushSubscription.synchronize();
         }
