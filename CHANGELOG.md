@@ -1,5 +1,18 @@
 # Releases
 
+## 0.22.0 (2026-07-28)
+
+### Feat
+
+- haptics (#141)
+- support multi-day events (#140)
+
+### Fix
+
+- change CalendarDialog height to 90%
+- prevent closing the sheet while it is animating
+- prevent running raf when passing 0 frames to useDeferUntilNextFrame
+
 ## 0.21.1 (2026-07-21)
 
 ### Fix
