@@ -83,10 +83,10 @@
                 mode="range"
                 selected={[toCalendarDate(startsAt), toCalendarDate(endsAt)]}
                 deferHistoryViewFrames={DEFER_FRAMES.SHEET + 1}
-                onSelect={([d]) => {
-                    notifyAt = notifyAt.set(d);
-                    startsAt = startsAt.set(d);
-                    endsAt = endsAt.set(d);
+                onSelect={(date) => {
+                    notifyAt = notifyAt.set(date[0]);
+                    startsAt = startsAt.set(date[0]);
+                    endsAt = endsAt.set(date[1]);
                 }}
             >
                 {#snippet children(props)}
