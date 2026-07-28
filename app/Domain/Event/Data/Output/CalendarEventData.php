@@ -18,6 +18,7 @@ class CalendarEventData extends Data
         public ?string $color,
         public CarbonInterface $startsAt,
         public CarbonInterface $endsAt,
+        public ?string $occursAt
     ) {}
 
     public static function fromModel(Event $event): self
@@ -28,6 +29,7 @@ class CalendarEventData extends Data
             $event->color,
             $event->starts_at,
             $event->ends_at,
+            $event->occurs_at
         );
     }
 }

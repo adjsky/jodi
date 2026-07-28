@@ -20,14 +20,15 @@ it("positions a single-day event in its weekday column", () => {
                 title: "Dentist",
                 color: "#38bdf8",
                 startsAt: "2026-01-08T10:00:00Z",
-                endsAt: "2026-01-08T11:00:00Z"
+                endsAt: "2026-01-08T11:00:00Z",
+                occursAt: null
             }
         ]
     );
 
     expect(calendar.segments(2026, 1, 2)).toEqual([
         {
-            eventId: 1,
+            id: "1",
             title: "Dentist",
             color: "#38bdf8",
             column: 4,
@@ -51,14 +52,15 @@ it("positions a multi-day event in its weekday column", () => {
                 title: "Event",
                 color: "#38bdf8",
                 startsAt: "2026-01-08T10:00:00Z",
-                endsAt: "2026-01-10T11:00:00Z"
+                endsAt: "2026-01-10T11:00:00Z",
+                occursAt: null
             }
         ]
     );
 
     expect(calendar.segments(2026, 1, 2)).toEqual([
         {
-            eventId: 1,
+            id: "1",
             title: "Event",
             color: "#38bdf8",
             column: 4,
@@ -82,14 +84,15 @@ it("splits a cross-week event into separate segments", () => {
                 title: "Conference",
                 color: null,
                 startsAt: "2026-01-09T09:00:00Z",
-                endsAt: "2026-01-20T18:00:00Z"
+                endsAt: "2026-01-20T18:00:00Z",
+                occursAt: null
             }
         ]
     );
 
     expect(calendar.segments(2026, 1, 2)).toEqual([
         {
-            eventId: 1,
+            id: "1",
             title: "Conference",
             color: null,
             column: 5,
@@ -101,7 +104,7 @@ it("splits a cross-week event into separate segments", () => {
     ]);
     expect(calendar.segments(2026, 1, 3)).toEqual([
         {
-            eventId: 1,
+            id: "1",
             title: "Conference",
             color: null,
             column: 1,
@@ -113,7 +116,7 @@ it("splits a cross-week event into separate segments", () => {
     ]);
     expect(calendar.segments(2026, 1, 4)).toEqual([
         {
-            eventId: 1,
+            id: "1",
             title: "Conference",
             color: null,
             column: 1,
@@ -140,7 +143,8 @@ it("positions events when weeks start on Sunday", () => {
                 title: "Sunday-start meeting",
                 color: null,
                 startsAt: "2026-01-08T10:00:00Z",
-                endsAt: "2026-01-08T11:00:00Z"
+                endsAt: "2026-01-08T11:00:00Z",
+                occursAt: null
             }
         ]
     );
@@ -162,7 +166,8 @@ it("includes events from outside the month in its rendered week grid", () => {
                 title: "Year-end preparation",
                 color: null,
                 startsAt: "2025-12-30T09:00:00Z",
-                endsAt: "2025-12-31T10:00:00Z"
+                endsAt: "2025-12-31T10:00:00Z",
+                occursAt: null
             }
         ]
     );
@@ -189,7 +194,8 @@ it("renders a cross-month event when only its ending month is requested", () => 
                 title: "Holiday break",
                 color: null,
                 startsAt: "2025-12-30T09:00:00Z",
-                endsAt: "2026-01-05T10:00:00Z"
+                endsAt: "2026-01-05T10:00:00Z",
+                occursAt: null
             }
         ]
     );
@@ -214,7 +220,8 @@ it("renders a cross-month event when only its starting month is requested", () =
                 title: "Project rollout",
                 color: null,
                 startsAt: "2026-01-30T09:00:00Z",
-                endsAt: "2026-02-05T10:00:00Z"
+                endsAt: "2026-02-05T10:00:00Z",
+                occursAt: null
             }
         ]
     );
@@ -231,7 +238,8 @@ it("renders a cross-year event in both requested years", () => {
         title: "Winter vacation",
         color: null,
         startsAt: "2025-12-30T09:00:00Z",
-        endsAt: "2026-01-05T10:00:00Z"
+        endsAt: "2026-01-05T10:00:00Z",
+        occursAt: null
     };
 
     calendar.prepare(2025, [12], [crossYearEvent]);
@@ -260,7 +268,8 @@ it("handles events ending on the last day of a week", () => {
                 title: "Full-week retreat",
                 color: null,
                 startsAt: "2026-01-05T09:00:00Z",
-                endsAt: "2026-01-11T23:59:59Z"
+                endsAt: "2026-01-11T23:59:59Z",
+                occursAt: null
             }
         ]
     );
@@ -287,7 +296,8 @@ it("handles events crossing from the last day into the first day of a week", () 
                 title: "Weekend handoff",
                 color: null,
                 startsAt: "2026-01-11T09:00:00Z",
-                endsAt: "2026-01-12T10:00:00Z"
+                endsAt: "2026-01-12T10:00:00Z",
+                occursAt: null
             }
         ]
     );
@@ -312,7 +322,8 @@ it("excludes the day at an event's midnight end boundary", () => {
                 title: "Midnight deployment",
                 color: null,
                 startsAt: "2026-01-05T10:00:00Z",
-                endsAt: "2026-01-06T00:00:00Z"
+                endsAt: "2026-01-06T00:00:00Z",
+                occursAt: null
             }
         ]
     );
@@ -334,21 +345,24 @@ it("assigns lanes and replaces stale overflow values", () => {
                 title: "Design review",
                 color: null,
                 startsAt: "2026-01-05T09:00:00Z",
-                endsAt: "2026-01-07T10:00:00Z"
+                endsAt: "2026-01-07T10:00:00Z",
+                occursAt: null
             },
             {
                 id: 2,
                 title: "Engineering review",
                 color: null,
                 startsAt: "2026-01-05T09:00:00Z",
-                endsAt: "2026-01-07T10:00:00Z"
+                endsAt: "2026-01-07T10:00:00Z",
+                occursAt: null
             },
             {
                 id: 3,
                 title: "Product review",
                 color: null,
                 startsAt: "2026-01-05T09:00:00Z",
-                endsAt: "2026-01-07T10:00:00Z"
+                endsAt: "2026-01-07T10:00:00Z",
+                occursAt: null
             }
         ]
     );
@@ -372,7 +386,8 @@ it("assigns lanes and replaces stale overflow values", () => {
                 title: "Design review",
                 color: null,
                 startsAt: "2026-01-05T09:00:00Z",
-                endsAt: "2026-01-07T10:00:00Z"
+                endsAt: "2026-01-07T10:00:00Z",
+                occursAt: null
             }
         ]
     );
@@ -393,21 +408,24 @@ it("reuses a lane only when events do not share a day", () => {
                 title: "Early task",
                 color: null,
                 startsAt: "2026-01-05T09:00:00Z",
-                endsAt: "2026-01-07T10:00:00Z"
+                endsAt: "2026-01-07T10:00:00Z",
+                occursAt: null
             },
             {
                 id: 2,
                 title: "Follow-up task",
                 color: null,
                 startsAt: "2026-01-08T09:00:00Z",
-                endsAt: "2026-01-09T10:00:00Z"
+                endsAt: "2026-01-09T10:00:00Z",
+                occursAt: null
             },
             {
                 id: 3,
                 title: "Overlapping task",
                 color: null,
                 startsAt: "2026-01-09T12:00:00Z",
-                endsAt: "2026-01-10T10:00:00Z"
+                endsAt: "2026-01-10T10:00:00Z",
+                occursAt: null
             }
         ]
     );
@@ -431,7 +449,8 @@ it("clears an empty requested month and preserves other months", () => {
                 title: "January appointment",
                 color: null,
                 startsAt: "2026-01-12T09:00:00Z",
-                endsAt: "2026-01-12T10:00:00Z"
+                endsAt: "2026-01-12T10:00:00Z",
+                occursAt: null
             }
         ]
     );
@@ -444,7 +463,8 @@ it("clears an empty requested month and preserves other months", () => {
                 title: "February appointment",
                 color: null,
                 startsAt: "2026-02-10T09:00:00Z",
-                endsAt: "2026-02-10T10:00:00Z"
+                endsAt: "2026-02-10T10:00:00Z",
+                occursAt: null
             }
         ]
     );
@@ -467,7 +487,8 @@ it("replaces repeated and updated month data without duplicates", () => {
                 title: "Old title",
                 color: null,
                 startsAt: "2026-01-05T09:00:00Z",
-                endsAt: "2026-01-05T10:00:00Z"
+                endsAt: "2026-01-05T10:00:00Z",
+                occursAt: null
             }
         ]
     );
@@ -480,7 +501,8 @@ it("replaces repeated and updated month data without duplicates", () => {
                 title: "Old title",
                 color: null,
                 startsAt: "2026-01-05T09:00:00Z",
-                endsAt: "2026-01-05T10:00:00Z"
+                endsAt: "2026-01-05T10:00:00Z",
+                occursAt: null
             }
         ]
     );
@@ -496,7 +518,8 @@ it("replaces repeated and updated month data without duplicates", () => {
                 title: "New title",
                 color: null,
                 startsAt: "2026-01-08T09:00:00Z",
-                endsAt: "2026-01-08T10:00:00Z"
+                endsAt: "2026-01-08T10:00:00Z",
+                occursAt: null
             }
         ]
     );
@@ -518,7 +541,8 @@ it("removes an event from its old month when it moves to another month", () => {
                 title: "Rescheduled appointment",
                 color: null,
                 startsAt: "2026-01-12T09:00:00Z",
-                endsAt: "2026-01-12T10:00:00Z"
+                endsAt: "2026-01-12T10:00:00Z",
+                occursAt: null
             }
         ]
     );
@@ -532,7 +556,8 @@ it("removes an event from its old month when it moves to another month", () => {
                 title: "Rescheduled appointment",
                 color: null,
                 startsAt: "2026-02-10T09:00:00Z",
-                endsAt: "2026-02-10T10:00:00Z"
+                endsAt: "2026-02-10T10:00:00Z",
+                occursAt: null
             }
         ]
     );
@@ -553,21 +578,24 @@ it("prepares month-specific segments from a batched response", () => {
                 title: "January",
                 color: null,
                 startsAt: "2026-01-12T09:00:00Z",
-                endsAt: "2026-01-12T10:00:00Z"
+                endsAt: "2026-01-12T10:00:00Z",
+                occursAt: null
             },
             {
                 id: 2,
                 title: "February",
                 color: null,
                 startsAt: "2026-02-10T09:00:00Z",
-                endsAt: "2026-02-10T10:00:00Z"
+                endsAt: "2026-02-10T10:00:00Z",
+                occursAt: null
             },
             {
                 id: 3,
                 title: "Cross-month",
                 color: null,
                 startsAt: "2026-01-30T09:00:00Z",
-                endsAt: "2026-02-05T10:00:00Z"
+                endsAt: "2026-02-05T10:00:00Z",
+                occursAt: null
             }
         ]
     );
@@ -601,7 +629,8 @@ it("preserves prepared months from other years", () => {
                 title: "December appointment",
                 color: null,
                 startsAt: "2025-12-10T09:00:00Z",
-                endsAt: "2025-12-10T10:00:00Z"
+                endsAt: "2025-12-10T10:00:00Z",
+                occursAt: null
             }
         ]
     );
@@ -614,7 +643,8 @@ it("preserves prepared months from other years", () => {
                 title: "January appointment",
                 color: null,
                 startsAt: "2026-01-08T09:00:00Z",
-                endsAt: "2026-01-08T10:00:00Z"
+                endsAt: "2026-01-08T10:00:00Z",
+                occursAt: null
             }
         ]
     );

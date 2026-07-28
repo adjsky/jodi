@@ -31,7 +31,7 @@ type SegmentPosition = {
 };
 
 type Segment = SegmentPosition & {
-    eventId: number;
+    id: string;
     title: string;
     color: string | null;
     lane: number;
@@ -130,7 +130,9 @@ export class YearCalendar {
                 const lane = this.#calculateSegmentLane(weekSegments, position);
 
                 weekSegments.push({
-                    eventId: event.id,
+                    id: event.occursAt
+                        ? `${event.id}:${event.occursAt}`
+                        : `${event.id}`,
                     title: event.title,
                     color: event.color,
                     ...position,

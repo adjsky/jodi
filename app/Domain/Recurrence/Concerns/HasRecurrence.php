@@ -25,6 +25,15 @@ trait HasRecurrence
         $dtstart = $this->getAttribute($recurrStartKey);
         $dtend = $recurrEndKey ? $this->getAttribute($recurrEndKey) : null;
 
+        if ($dtend) {
+            $endDayOffset = $dtstart
+                ->clone()
+                ->startOfDay()
+                ->diffInDays($dtend->clone()->startOfDay());
+        } else {
+            $endDayOffset = 0;
+        }
+
         if ($this->rrule == null) {
             $model = $this->replicate();
             $model->id = $this->id;
@@ -35,14 +44,9 @@ trait HasRecurrence
         $rrule = new RRule($this->rrule, $dtstart);
 
         if ($dtend) {
-            $diff = $dtstart
-                ->clone()
-                ->startOfDay()
-                ->diffInDays($dtend->clone()->startOfDay());
-
             $candidateViewStart = $viewStart
                 ->clone()
-                ->subDays($diff);
+                ->subDays($endDayOffset);
         } else {
             $candidateViewStart = $viewStart;
         }
@@ -62,14 +66,37 @@ trait HasRecurrence
                 continue;
             }
 
-            if (! isset($exception->overrides[$recurrStartKey])) {
+            $overrides = $exception->overrides;
+
+            $hasStartOverride = isset($overrides[$recurrStartKey]);
+            $hasEndOverride = $recurrEndKey && isset($overrides[$recurrEndKey]);
+
+            if (! $hasStartOverride && ! $hasEndOverride) {
                 continue;
             }
 
-            $start = Carbon::parse($exception->overrides[$recurrStartKey]);
+            $date = Carbon::parse($datestr);
 
-            if ($start->between($candidateViewStart, $viewEnd)) {
-                $occurrences->put($datestr, Carbon::parse($datestr));
+            if ($hasStartOverride) {
+                $start = Carbon::parse($overrides[$recurrStartKey]);
+            } else {
+                $start = $date->clone()->setTimeFrom($dtstart);
+            }
+
+            if ($recurrEndKey) {
+                if ($hasEndOverride) {
+                    $end = Carbon::parse($overrides[$recurrEndKey]);
+                } else {
+                    $end = $date->clone()->addDays($endDayOffset)->setTimeFrom($dtend);
+                }
+
+                $overlaps = $start->lte($viewEnd) && $end->gt($viewStart);
+            } else {
+                $overlaps = $start->between($viewStart, $viewEnd);
+            }
+
+            if ($overlaps) {
+                $occurrences->put($datestr, $date);
             } else {
                 $occurrences->forget($datestr);
             }

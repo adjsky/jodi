@@ -46,7 +46,8 @@ class ListCalendarEvents extends JodiAction
             ->flatMap(
                 fn ($e) => $e->occurrencesBetween($overallStart, $overallEnd)
             )
-            ->sortBy('starts_at');
+            ->sortBy('starts_at')
+            ->values();
 
         return CalendarEventData::collect($events);
     }
