@@ -4,6 +4,7 @@
     import { boolAttr } from "runed";
 
     import { TIMEZONE } from "../cfg/constants";
+    import { Haptics } from "../lib/haptics";
     import PromptDialog from "./PromptDialog.svelte";
 
     import type { Time } from "@internationalized/date";
@@ -40,9 +41,10 @@
             : internalValue.minute * 6 - 90
     );
 
-    function onpointerdown(e: PointerEvent) {
+    async function onpointerdown(e: PointerEvent) {
         e.preventDefault();
         isDragging = true;
+        await Haptics.selectionStart();
         handlePointer(e);
     }
 
@@ -50,6 +52,7 @@
         if (isDragging) {
             e.preventDefault();
             isDragging = false;
+            void Haptics.selectionEnd();
             if (view == "hour") view = "minutes";
         }
     }
@@ -105,7 +108,7 @@
                 : baseHour;
 
             if (newHour != internalValue.hour) {
-                navigator.vibrate?.(1);
+                void Haptics.selectionChanged();
             }
 
             internalValue = internalValue.set({ hour: newHour });
@@ -113,7 +116,7 @@
             const newMinute = Math.round(angle / 6) % 60;
 
             if (newMinute != internalValue.minute) {
-                navigator.vibrate?.(1);
+                void Haptics.selectionChanged();
             }
 
             internalValue = internalValue.set({ minute: newMinute });
