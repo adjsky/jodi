@@ -141,7 +141,7 @@
                 {segment.title}
             </div>
         {/each}
-        {#each week as date, columnIdx (date.day)}
+        {#each week as weekday, columnIdx (weekday.day)}
             {@const count = calendar.overflow(
                 date.year,
                 date.month,
