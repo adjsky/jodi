@@ -54,7 +54,7 @@
             }
         }
     }
-    height={95}
+    height={90}
     portal
     lazyMount
     unmountOnExit
