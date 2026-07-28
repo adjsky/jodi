@@ -69,7 +69,7 @@ export class YearCalendar {
         const preparedMonths = this.#createMonths(months);
 
         for (const event of events) {
-            this.#addEvent(preparedMonths, event, months);
+            this.#addEvent(year, months, preparedMonths, event);
         }
 
         this.#store(year, preparedMonths);
@@ -86,9 +86,10 @@ export class YearCalendar {
     }
 
     #addEvent(
+        year: number,
+        months: number[],
         preparedMonths: Map<number, Segment[][]>,
-        event: CalendarEventData,
-        months: number[]
+        event: CalendarEventData
     ) {
         const options = extract(this.#options);
         const firstDayOfWeek = WEEK_START_MAP[options.weekStart];
@@ -111,14 +112,16 @@ export class YearCalendar {
             );
 
             for (const month of new Set([weekStart.month, weekEnd.month])) {
-                if (!months.includes(month)) {
+                const date = weekStart.month == month ? weekStart : weekEnd;
+
+                if (date.year != year || !months.includes(month)) {
                     continue;
                 }
 
                 const weeklySegments = preparedMonths.get(month)!;
 
                 const weekIdx = getWeekIdxInMonth(
-                    weekStart.month == month ? weekStart : weekEnd,
+                    date,
                     options.locale,
                     options.weekStart
                 );

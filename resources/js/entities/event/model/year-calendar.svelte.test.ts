@@ -256,6 +256,27 @@ it("renders a cross-year event in both requested years", () => {
     ]);
 });
 
+it("does not add segments from the same month in another year", () => {
+    const calendar = new YearCalendar({ locale: "en", weekStart: "monday" });
+
+    calendar.prepare(
+        2030,
+        [1],
+        [
+            {
+                id: 1,
+                title: "Year-long event",
+                color: null,
+                startsAt: "2030-01-01T10:00:00Z",
+                endsAt: "2031-01-02T11:00:00Z",
+                occursAt: null
+            }
+        ]
+    );
+
+    expect(calendar.segments(2030, 1, 1)).toHaveLength(1);
+});
+
 it("handles events ending on the last day of a week", () => {
     const calendar = new YearCalendar({ locale: "en", weekStart: "monday" });
 
