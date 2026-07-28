@@ -9,7 +9,7 @@ import { isAvailable } from "./is-avaiable";
 type ImpactStyle = "soft" | "rigid" | "light" | "medium" | "heavy";
 
 export async function impact(style: ImpactStyle) {
-    if (!(await isAvailable())) return;
+    if (!isAvailable) return;
 
     void Haptics.impact({
         style: match(style)
