@@ -2,6 +2,7 @@
     import { inertia } from "@inertiajs/svelte";
     import { Check } from "@lucide/svelte";
     import { tw } from "$/shared/lib/css/tw";
+    import { Haptics } from "$/shared/lib/haptics";
     import { boolAttr } from "runed";
 
     import type { UrlMethodPair, VisitOptions } from "@inertiajs/core";
@@ -35,7 +36,7 @@
         classname
     )}
     data-completed={boolAttr(completedAt)}
-    onclick={() => navigator.vibrate?.(100)}
+    onclick={() => Haptics.impact("medium")}
 >
     <Check class="group-not-data-completed:hidden" />
 </button>
