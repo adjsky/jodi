@@ -4,6 +4,8 @@ default:
     just --list --unsorted
 
 init:
+    npm install
+    composer install
     php artisan jodi:setup
 
 # -------------------------------- DEVELOPMENT ---------------------------------
