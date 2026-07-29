@@ -2,9 +2,6 @@
 include ':capacitor-android'
 project(':capacitor-android').projectDir = new File('../node_modules/@capacitor/android/capacitor')
 
-include ':capawesome-capacitor-haptics'
-project(':capawesome-capacitor-haptics').projectDir = new File('../node_modules/@capawesome/capacitor-haptics/android')
-
 include ':capacitor-firebase-messaging'
 project(':capacitor-firebase-messaging').projectDir = new File('../node_modules/@capacitor-firebase/messaging/android')
 
@@ -16,3 +13,6 @@ project(':capacitor-device').projectDir = new File('../node_modules/@capacitor/d
 
 include ':capacitor-splash-screen'
 project(':capacitor-splash-screen').projectDir = new File('../node_modules/@capacitor/splash-screen/android')
+
+include ':capawesome-capacitor-haptics'
+project(':capawesome-capacitor-haptics').projectDir = new File('../node_modules/@capawesome/capacitor-haptics/android')

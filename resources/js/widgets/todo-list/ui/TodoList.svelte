@@ -9,9 +9,11 @@
     import { prefersLightText } from "$/shared/lib/color/prefers-light-text";
     import { tw } from "$/shared/lib/css/tw";
     import { formatToHHMM } from "$/shared/lib/date/format-to-hh-mm";
+    import { Haptics } from "$/shared/lib/haptics";
     import { toaster } from "$/shared/ui/toaster";
+    import { isDeepEqual } from "remeda";
     import { untrack } from "svelte";
-    import { dragHandle, dragHandleZone } from "svelte-dnd-action";
+    import { dragHandle, dragHandleZone, TRIGGERS } from "svelte-dnd-action";
 
     import { useReorder } from "../api/reorder.svelte";
     import { UNGROUPED_KEY } from "../cfg/constants";
@@ -22,6 +24,7 @@
     import EditSheet from "./EditSheet.svelte";
 
     import type { TodoData } from "$/entities/todo";
+    import type { DndEvent } from "svelte-dnd-action";
     import type { SvelteHTMLElements } from "svelte/elements";
 
     type Props = SvelteHTMLElements["section"] & {
@@ -63,15 +66,25 @@
         }
     });
 
-    function consider(group: string, todos: TodoData[]) {
+    function consider(e: CustomEvent<DndEvent<TodoData>>, group: string) {
         isDragging = true;
-        groups = { ...groups, [group]: todos };
+
+        if (
+            e.detail.info.trigger == TRIGGERS.DRAGGED_ENTERED ||
+            e.detail.info.trigger == TRIGGERS.DRAGGED_OVER_INDEX
+        ) {
+            if (!isDeepEqual(groups[group], e.detail.items)) {
+                void Haptics.selectionChanged();
+            }
+        }
+
+        groups = { ...groups, [group]: e.detail.items };
     }
 
-    function finalize(group: string, todos: TodoData[]) {
+    function finalize(e: CustomEvent<DndEvent<TodoData>>, group: string) {
         isDragging = false;
-        groups = { ...groups, [group]: todos };
-        reorder.mutate(group, todos);
+        groups = { ...groups, [group]: e.detail.items };
+        reorder.mutate(group, e.detail.items);
     }
 </script>
 
@@ -132,8 +145,8 @@
             items: todos,
             dropTargetStyle: {}
         }}
-        onconsider={(e) => consider(group, e.detail.items)}
-        onfinalize={(e) => finalize(group, e.detail.items)}
+        onconsider={(e) => consider(e, group)}
+        onfinalize={(e) => finalize(e, group)}
     >
         {#each todos as todo (id(todo))}
             <Todo.Row class={[todo.completedAt && "opacity-40"]}>
@@ -172,7 +185,18 @@
                     </button>
                 {/snippet}
                 {#snippet grip()}
-                    <button use:dragHandle aria-label="Drag" class="shrink-0">
+                    <button
+                        use:dragHandle
+                        aria-label="Drag"
+                        class="shrink-0"
+                        onpointerdown={() => {
+                            void Haptics.selectionStart();
+                            void Haptics.impact("medium");
+                        }}
+                        onpointerup={() => {
+                            void Haptics.selectionEnd();
+                        }}
+                    >
                         <GripVertical class="text-2xl text-cream-400" />
                     </button>
                 {/snippet}
