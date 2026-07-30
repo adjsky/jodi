@@ -4,11 +4,7 @@ import { PLATFORM } from "$/shared/cfg/constants";
 import { isAvailable } from "./is-avaiable";
 
 export function selectionChanged() {
-    if (!isAvailable) return;
+    if (!isAvailable || PLATFORM == "web") return;
 
-    if (PLATFORM == "web") {
-        navigator.vibrate?.(10);
-    } else {
-        void Haptics.selectionChanged();
-    }
+    void Haptics.selectionChanged();
 }

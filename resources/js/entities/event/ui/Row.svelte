@@ -19,7 +19,7 @@
 <button
     {...props}
     class={tw(
-        "grid w-full grid-cols-[auto_1fr] items-center gap-3 rounded-md border-l-6 px-3 py-2.75 text-lg text-cream-950",
+        "grid w-full grid-cols-[auto_1fr] items-center gap-2 rounded-md border-l-6 px-2 py-2.75 text-lg text-cream-950",
         props.class
     )}
     style:background-color="color-mix(in srgb, {color} 15%, transparent)"

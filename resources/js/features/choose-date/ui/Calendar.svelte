@@ -8,6 +8,7 @@
     import { TIMEZONE } from "$/shared/cfg/constants";
     import { tw } from "$/shared/lib/css/tw";
     import { Year } from "$/shared/lib/date/year.svelte";
+    import { useDragSelection } from "$/shared/lib/hooks/use-drag-selection";
     import Button from "$/shared/ui/Button.svelte";
     import FloatingView from "$/shared/ui/FloatingView.svelte";
     import { toaster } from "$/shared/ui/toaster";
@@ -27,9 +28,7 @@
         selected: CalendarDate[];
         weekStart: WeekStart;
         min?: CalendarDate | null;
-        getDateAttachment?: (
-            date: CalendarDate
-        ) => Attachment<HTMLButtonElement>;
+        attachment?: (date: CalendarDate) => Attachment<HTMLButtonElement>;
         onClose?: VoidFunction;
         onSelect?: (date: CalendarDate[]) => void;
     };
@@ -39,7 +38,7 @@
         selected,
         weekStart,
         min,
-        getDateAttachment,
+        attachment,
         onClose,
         onSelect,
         ...props
@@ -87,6 +86,24 @@
         }
     });
 
+    const dragSelection = useDragSelection<CalendarDate>(() => ({
+        enabled: mode == "range",
+        isSelectable(value) {
+            if (!min) {
+                return true;
+            }
+
+            return min.compare(value) <= 0;
+        },
+        onSelect(date, anchor) {
+            if (date.compare(anchor) > 0) {
+                draftSelected = [anchor, date];
+            } else {
+                draftSelected = [date, anchor];
+            }
+        }
+    }));
+
     function gotoYear(direction: "next" | "previous") {
         year[direction]();
         monthsNode?.scrollTo({ top: 0, left: 0, behavior: "smooth" });
@@ -97,7 +114,7 @@
         monthsNode?.scrollTo({ top: 0, left: 0, behavior: "smooth" });
     }
 
-    function onMonthSelect(date: CalendarDate) {
+    function onPress(date: CalendarDate) {
         if (mode == "single") {
             onSelect?.([date]);
             return;
@@ -184,10 +201,13 @@
                 {mode}
                 {min}
                 {calendar}
+                {onPress}
+                attachments={{
+                    dateButton: attachment,
+                    dragSelection: dragSelection.attachment
+                }}
                 selected={draftSelected}
-                onSelect={onMonthSelect}
                 container={monthsNode}
-                attachment={getDateAttachment}
                 onEventsRequest={(date) => events.request(date)}
             />
         {/each}

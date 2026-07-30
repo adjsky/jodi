@@ -69,10 +69,7 @@
 
 {#if view.isOpen()}
     <Calendar
-        mode="single"
-        selected={[selected]}
-        weekStart={user.preferences.weekStartOn}
-        getDateAttachment={(date) =>
+        attachment={(date) =>
             fromAction(inertia, () => ({
                 href: `?d=${date.toString()}`,
                 showProgress: true,
@@ -82,6 +79,9 @@
                 viewTransition: true,
                 only: ["todos", "events"]
             }))}
+        mode="single"
+        selected={[selected]}
+        weekStart={user.preferences.weekStartOn}
         onClose={() => view.back()}
     />
 {/if}

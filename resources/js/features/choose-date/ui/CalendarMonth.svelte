@@ -2,6 +2,7 @@
     import { today } from "@internationalized/date";
     import { m } from "$/paraglide/messages";
     import { TIMEZONE } from "$/shared/cfg/constants";
+    import { Haptics } from "$/shared/lib/haptics";
     import { boolAttr, useIntersectionObserver } from "runed";
 
     import type { CalendarMode } from "../model/types";
@@ -19,8 +20,13 @@
         name: string;
         container: HTMLElement;
         calendar: YearCalendar;
-        attachment?: (date: CalendarDate) => Attachment<HTMLButtonElement>;
-        onSelect?: (date: CalendarDate) => void;
+        attachments: {
+            dateButton?: (date: CalendarDate) => Attachment<HTMLButtonElement>;
+            dragSelection: (
+                date: CalendarDate
+            ) => Attachment<HTMLButtonElement>;
+        };
+        onPress?: (date: CalendarDate) => void;
         onEventsRequest?: (date: CalendarDate) => void;
     };
 
@@ -33,8 +39,8 @@
         name,
         container,
         calendar,
-        attachment,
-        onSelect,
+        attachments,
+        onPress,
         onEventsRequest
     }: Props = $props();
 
@@ -128,7 +134,7 @@
             {@const color = segment.color ?? "var(--color-tangerine)"}
             <div
                 class={[
-                    "h-4 truncate px-1 text-2xs leading-4 font-bold text-cream-950",
+                    "h-4 truncate pr-0.5 pl-1 text-2xs leading-4 font-bold text-cream-950",
                     "data-ends-in-week:mr-1 data-ends-in-week:rounded-e-full data-starts-in-week:border-s-4"
                 ]}
                 style:grid-column="{segment.column} / span {segment.span}"
@@ -164,14 +170,18 @@
     {@const rangePosition = getRangePosition(date)}
     <td>
         <button
-            {@attach attachment?.(date)}
+            {@attach attachments.dateButton?.(date)}
+            {@attach attachments.dragSelection(date)}
             disabled={min ? min.compare(date) > 0 : false}
             type="button"
             class="group relative flex h-25 w-full flex-col items-center pt-1 text-lg disabled:cursor-not-allowed disabled:line-through disabled:opacity-40 data-outside-month:opacity-60"
             data-highlight={getHighlight(date)}
             data-range={rangePosition}
             data-outside-month={boolAttr(!isWithinMonth)}
-            onclick={() => onSelect?.(date)}
+            onclick={() => {
+                void Haptics.impact("medium");
+                onPress?.(date);
+            }}
         >
             <span
                 class={[

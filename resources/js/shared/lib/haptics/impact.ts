@@ -2,6 +2,7 @@ import {
     ImpactStyle as CapImpactStyle,
     Haptics
 } from "@capawesome/capacitor-haptics";
+import { PLATFORM } from "$/shared/cfg/constants";
 import { match } from "ts-pattern";
 
 import { isAvailable } from "./is-avaiable";
@@ -9,7 +10,7 @@ import { isAvailable } from "./is-avaiable";
 type ImpactStyle = "soft" | "rigid" | "light" | "medium" | "heavy";
 
 export async function impact(style: ImpactStyle) {
-    if (!isAvailable) return;
+    if (!isAvailable || PLATFORM == "web") return;
 
     void Haptics.impact({
         style: match(style)
