@@ -122,13 +122,13 @@
         scroll-behavior: smooth;
     }
 
-    :root.native body {
+    :root[data-platform="native"] body {
         user-select: none;
     }
 
-    :root.native input,
-    :root.native textarea,
-    :root.native [contenteditable="true"] {
+    :root[data-platform="native"] input,
+    :root[data-platform="native"] textarea,
+    :root[data-platform="native"] [contenteditable="true"] {
         user-select: text;
     }
 

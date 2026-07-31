@@ -1,10 +1,19 @@
+@php
+    $isJodiApp = str_contains(request()->userAgent() ?? '', 'AppId=Jodi');
+@endphp
+
 <!DOCTYPE html>
-<html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
+<html lang="{{ str_replace('_', '-', app()->getLocale()) }}" data-platform="{{ $isJodiApp ? 'native' : 'web' }}">
 
 <head>
     <meta charset="utf-8">
-    <meta name="viewport"
-        content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
+
+    @if ($isJodiApp)
+        <meta name="viewport"
+            content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
+    @else
+        <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+    @endif
 
     <title>{{ config('app.name') }}</title>
     <meta name="description" content="Journal & Diary">

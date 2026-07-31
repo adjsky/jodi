@@ -14,6 +14,7 @@ const config: CapacitorConfig = {
         url: process.env.CAPACITOR_SERVER_URL,
         cleartext: !process.env.CAPACITOR_SERVER_URL?.startsWith("https://")
     },
+    appendUserAgent: "AppId=Jodi",
     plugins: {
         SystemBars: {
             style: "LIGHT"
