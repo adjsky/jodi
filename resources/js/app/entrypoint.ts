@@ -3,7 +3,6 @@ import "./config/i18n";
 import "./config/date";
 import "./config/capacitor";
 
-import { Capacitor } from "@capacitor/core";
 import { createInertiaApp } from "@inertiajs/svelte";
 import { hydrate, mount } from "svelte";
 
@@ -11,10 +10,6 @@ import PersistentLayout from "./ui/layouts/PersistentLayout.svelte";
 
 import type { ResolvedComponent } from "@inertiajs/svelte";
 import type { LegacyComponentType } from "svelte/legacy";
-
-if (Capacitor.isNativePlatform()) {
-    document.documentElement.classList.add("native");
-}
 
 void createInertiaApp({
     resolve(name) {
