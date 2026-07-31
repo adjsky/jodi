@@ -134,7 +134,7 @@
             {@const color = segment.color ?? "var(--color-tangerine)"}
             <div
                 class={[
-                    "h-4 truncate pr-0.5 pl-1 text-2xs leading-4 font-bold text-cream-950",
+                    "h-4 truncate px-0.5 text-2xs leading-4 font-bold text-cream-950",
                     "data-ends-in-week:mr-1 data-ends-in-week:rounded-e-full data-starts-in-week:border-s-4"
                 ]}
                 style:grid-column="{segment.column} / span {segment.span}"
