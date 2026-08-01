@@ -23,16 +23,10 @@ export class Week {
         this.#options = options;
     }
 
-    get days() {
-        return getWeekDays(this.#startOfWeek(extract(this.#cursor)));
-    }
-
-    next() {
-        return this.#startOfWeek(extract(this.#cursor).add({ weeks: 1 }));
-    }
-
-    previous() {
-        return this.#startOfWeek(extract(this.#cursor).subtract({ weeks: 1 }));
+    at(offset: number) {
+        return getWeekDays(
+            this.#startOfWeek(extract(this.#cursor).add({ weeks: offset }))
+        );
     }
 
     #startOfWeek(date: CalendarDate) {

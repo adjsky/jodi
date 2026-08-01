@@ -6,6 +6,7 @@
     import { useFlashToaster } from "$/shared/inertia/use-flash-toaster.svelte";
     import { useServiceWorker } from "$/shared/lib/hooks/use-service-worker";
     import { pushSubscription } from "$/shared/lib/push/subscription.svelte";
+    import { initSwiperJs } from "$/shared/lib/swiper/init-swiper-js";
     import { initializeApp } from "firebase/app";
     import Cookies from "js-cookie";
     import { onMount } from "svelte";
@@ -51,6 +52,8 @@
 
         return () => unlisten.then((c) => c());
     });
+
+    initSwiperJs();
 
     useServiceWorker();
     useFlashToaster();

@@ -5,13 +5,14 @@
         getDayOfWeek,
         today
     } from "@internationalized/date";
-    import { ChevronLeft, ChevronRight } from "@lucide/svelte";
     import { getLocale } from "$/paraglide/runtime";
     import { TIMEZONE } from "$/shared/cfg/constants";
-    import { Week } from "$/shared/lib/date/week.svelte";
+
+    import { useWeekSwiper } from "../model/use-week-swiper.svelte";
 
     import type { CalendarDate } from "@internationalized/date";
     import type { WeekStart } from "$/shared/lib/types";
+    import type { SwiperContainer } from "swiper/element";
 
     type Props = {
         selected: CalendarDate;
@@ -25,9 +26,15 @@
         weekStart
     }: Props = $props();
 
-    const week = new Week(
-        () => cursor,
-        () => ({ weekStart, locale: getLocale() })
+    let swiperContainer: SwiperContainer | null = $state(null);
+
+    const swiper = useWeekSwiper(
+        () => swiperContainer,
+        () => ({
+            cursor,
+            weekStart,
+            onCursorChange: (date) => (cursor = date)
+        })
     );
 
     function highlight(date: CalendarDate) {
@@ -49,16 +56,14 @@
     }
 </script>
 
-<div class="border-b border-cream-300 p-3 pt-1 pb-5">
-    <div class="flex h-12 items-stretch">
-        <button
-            onclick={() => (cursor = week.previous())}
-            class="flex w-7 shrink-0 items-center justify-center text-2xl text-cream-700"
-        >
-            <ChevronLeft />
-        </button>
-        <div class="grid w-full grid-cols-7">
-            {#each week.days as date (date.day)}
+<swiper-container
+    bind:this={swiperContainer}
+    init="false"
+    class="border-b border-cream-300 py-3"
+>
+    {#each swiper.weeks as week, idx (idx)}
+        <swiper-slide class="grid h-14 grid-cols-7 pb-2">
+            {#each week as date (date.toString())}
                 <button
                     use:inertia={{
                         href: `?d=${date.toString()}`,
@@ -84,15 +89,9 @@
                     </span>
                 </button>
             {/each}
-        </div>
-        <button
-            onclick={() => (cursor = week.next())}
-            class="flex w-7 shrink-0 items-center justify-center text-2xl text-cream-700"
-        >
-            <ChevronRight />
-        </button>
-    </div>
-</div>
+        </swiper-slide>
+    {/each}
+</swiper-container>
 
 <style>
     button:is([data-highlight]) [data-part="day-number"]::after {
