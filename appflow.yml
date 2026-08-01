@@ -1,4 +1,6 @@
 vars:
+  APP_NAME:
+    default: Jodi
   CAPACITOR_APP_ID:
   CI_BUILD_NUMBER:
     default: 1
@@ -6,4 +8,5 @@ vars:
 platforms:
   android:
     versionCode: $CI_BUILD_NUMBER
+    appName: $APP_NAME
     packageName: $CAPACITOR_APP_ID

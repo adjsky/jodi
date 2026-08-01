@@ -8,7 +8,7 @@ dotenv.config({ quiet: true });
 
 const config: CapacitorConfig = {
     appId: process.env.CAPACITOR_APP_ID,
-    appName: "Jodi",
+    appName: process.env.APP_NAME,
     webDir: "resources/capacitor",
     server: {
         url: process.env.CAPACITOR_SERVER_URL,

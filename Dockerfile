@@ -70,6 +70,7 @@ COPY --chown=${USER}:${USER} . .
 
 USER ${USER}
 
+ENV APP_NAME=Jodi
 ENV APP_ENV=production
 ENV APP_DEBUG=false
 
