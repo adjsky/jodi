@@ -9,7 +9,7 @@
 </script>
 
 {#snippet back()}
-    <button class="p-2" onclick={() => view.back()}>
+    <button class="-ms-2 p-2" onclick={() => view.back()}>
         <ChevronLeft class="text-4xl" />
     </button>
 {/snippet}

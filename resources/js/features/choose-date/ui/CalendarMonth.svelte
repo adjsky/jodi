@@ -2,6 +2,7 @@
     import { today } from "@internationalized/date";
     import { m } from "$/paraglide/messages";
     import { TIMEZONE } from "$/shared/cfg/constants";
+    import { tw } from "$/shared/lib/css/tw";
     import { Haptics } from "$/shared/lib/haptics";
     import { boolAttr, useIntersectionObserver } from "runed";
 
@@ -103,14 +104,14 @@
 </script>
 
 <table bind:this={table} class="w-full">
-    <caption class="pb-1 text-right text-xl font-bold">
+    <caption class="px-4 pb-1 text-right text-xl font-bold">
         {name}
     </caption>
     <tbody>
         {#each year.weeks(date) as week, weekIdx (weekIdx)}
-            <tr class="relative grid grid-cols-7 border-t border-cream-200">
-                {#each week as { date, isWithinMonth } (date.day)}
-                    {@render day(date, isWithinMonth)}
+            <tr class="relative week-grid-17 border-t border-cream-200">
+                {#each week as { date, isWithinMonth }, columnIdx (date.day)}
+                    {@render day(date, isWithinMonth, columnIdx)}
                 {/each}
                 {@render events(
                     week.map(({ date }) => date),
@@ -128,14 +129,14 @@
         weekIdx + 1
     )}
     <td
-        class="pointer-events-none absolute inset-x-0 top-11 grid grid-cols-7 gap-y-0.5"
+        class="pointer-events-none absolute inset-x-1 top-11 week-grid-15 gap-y-0.5"
     >
         {#each segments as segment (segment.id)}
             {@const color = segment.color ?? "var(--color-tangerine)"}
             <div
                 class={[
                     "h-4 truncate px-0.5 text-2xs leading-4 font-bold text-cream-950",
-                    "data-ends-in-week:mr-1 data-ends-in-week:rounded-e-full data-starts-in-week:border-s-4"
+                    "data-ends-in-week:mr-0.75 data-ends-in-week:rounded-e-full data-starts-in-week:border-s-3"
                 ]}
                 style:grid-column="{segment.column} / span {segment.span}"
                 style:grid-row={segment.lane + 1}
@@ -166,7 +167,7 @@
     </td>
 {/snippet}
 
-{#snippet day(date: CalendarDate, isWithinMonth: boolean)}
+{#snippet day(date: CalendarDate, isWithinMonth: boolean, columnIdx: number)}
     {@const rangePosition = getRangePosition(date)}
     <td>
         <button
@@ -174,7 +175,11 @@
             {@attach attachments.dragSelection(date)}
             disabled={min ? min.compare(date) > 0 : false}
             type="button"
-            class="group relative flex h-25 w-full flex-col items-center pt-1 text-lg disabled:cursor-not-allowed disabled:line-through disabled:opacity-40 data-outside-month:opacity-60"
+            class={tw([
+                "group relative flex h-25 w-full flex-col items-center pt-1 text-lg disabled:cursor-not-allowed disabled:line-through disabled:opacity-40 data-outside-month:opacity-60",
+                columnIdx == 0 && "items-start ps-4",
+                columnIdx == 6 && "items-end pe-4"
+            ])}
             data-highlight={getHighlight(date)}
             data-range={rangePosition}
             data-outside-month={boolAttr(!isWithinMonth)}
@@ -197,11 +202,11 @@
             {#if rangePosition != null}
                 <span
                     class={[
-                        "pointer-events-none absolute inset-x-0 top-0.5 h-10 border-y border-dashed border-brand",
+                        "pointer-events-none absolute -inset-x-1 top-0.5 h-10 border-y border-brand",
                         rangePosition == "start" &&
-                            "left-1 rounded-s-full border-s",
+                            "left-[calc(50%-1.25rem)] rounded-s-full border-s",
                         rangePosition == "end" &&
-                            "right-1 rounded-e-full border-e"
+                            "right-[calc(50%-1.25rem)] rounded-e-full border-e"
                     ]}
                 ></span>
             {/if}

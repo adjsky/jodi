@@ -7,8 +7,9 @@
     } from "@internationalized/date";
     import { getLocale } from "$/paraglide/runtime";
     import { TIMEZONE } from "$/shared/cfg/constants";
+    import { tw } from "$/shared/lib/css/tw";
 
-    import { useWeekSwiper } from "../model/use-week-swiper.svelte";
+    import { useWeekSwiper } from "../helpers/use-week-swiper.svelte";
 
     import type { CalendarDate } from "@internationalized/date";
     import type { WeekStart } from "$/shared/lib/types";
@@ -61,31 +62,39 @@
     init="false"
     class="border-b border-cream-300 py-3"
 >
-    {#each swiper.weeks as week, idx (idx)}
-        <swiper-slide class="grid h-14 grid-cols-7 pb-2">
-            {#each week as date (date.toString())}
+    {#each swiper.weeks as week, weekIdx (weekIdx)}
+        <swiper-slide class="week-grid-12.5 h-14 pb-2">
+            {#each week as date, columnIdx (date.toString())}
                 <button
                     use:inertia={{
                         href: `?d=${date.toString()}`,
                         only: ["todos", "events"],
                         showProgress: true
                     }}
-                    class="group flex flex-col items-center justify-between"
                     data-highlight={highlight(date)}
+                    class={tw([
+                        "flex min-w-0 justify-center",
+                        columnIdx == 0 && "justify-start",
+                        columnIdx == 6 && "justify-end"
+                    ])}
                 >
                     <span
-                        class="text-xs font-semibold text-cream-500"
-                        data-part="day-name"
+                        class="flex h-full w-full max-w-12.5 flex-col items-center justify-between"
                     >
-                        {new DateFormatter(getLocale(), {
-                            weekday: "short"
-                        }).format(date.toDate(TIMEZONE))}
-                    </span>
-                    <span
-                        class="relative font-normal text-cream-800"
-                        data-part="day-number"
-                    >
-                        {date.day}
+                        <span
+                            class="text-xs font-semibold text-cream-500"
+                            data-part="day-name"
+                        >
+                            {new DateFormatter(getLocale(), {
+                                weekday: "short"
+                            }).format(date.toDate(TIMEZONE))}
+                        </span>
+                        <span
+                            class="relative font-normal text-cream-800"
+                            data-part="day-number"
+                        >
+                            {date.day}
+                        </span>
                     </span>
                 </button>
             {/each}

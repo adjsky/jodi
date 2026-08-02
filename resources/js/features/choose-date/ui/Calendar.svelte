@@ -152,7 +152,7 @@
 
 <FloatingView {...props} class={tw(props.class, "pb-safe")}>
     {#snippet back()}
-        <button class="p-2" type="button" onclick={onClose}>
+        <button class="-ms-2 p-2" type="button" onclick={onClose}>
             <ChevronLeft class="text-4xl" />
         </button>
     {/snippet}
@@ -187,13 +187,23 @@
         </div>
     {/snippet}
 
-    <div class="mt-1 grid grid-cols-7 text-xs font-semibold">
+    <div class="mt-1 week-grid-9 text-xs font-semibold">
         {#each year.weekdays() as weekday, idx (idx)}
-            <span class="text-center">{weekday}</span>
+            <span
+                class={tw([
+                    "inline-flex min-w-0 justify-center",
+                    idx == 0 && "justify-start",
+                    idx == 6 && "justify-end"
+                ])}
+            >
+                <span class="inline-flex w-full max-w-9 justify-center">
+                    {weekday}
+                </span>
+            </span>
         {/each}
     </div>
 
-    <div bind:this={monthsNode} class="mt-2 overflow-y-scroll">
+    <div bind:this={monthsNode} class="-mx-4 mt-2 overflow-y-scroll">
         {#each year.months() as month (`${month.name}-${year.current}`)}
             <CalendarMonth
                 {...month}

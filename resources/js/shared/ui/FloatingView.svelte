@@ -44,7 +44,7 @@
             {#if typeof back == "function"}
                 {@render back()}
             {:else}
-                <Link href={back} {viewTransition} class="p-2">
+                <Link href={back} {viewTransition} class="-ms-2 p-2">
                     <ChevronLeft class="text-4xl" />
                 </Link>
             {/if}
