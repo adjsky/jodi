@@ -128,15 +128,13 @@
         date.month,
         weekIdx + 1
     )}
-    <td
-        class="pointer-events-none absolute inset-x-1 top-11 week-grid-15 gap-y-0.5"
-    >
+    <td class="event-week-grid pointer-events-none">
         {#each segments as segment (segment.id)}
             {@const color = segment.color ?? "var(--color-tangerine)"}
             <div
                 class={[
-                    "h-4 truncate px-0.5 text-2xs leading-4 font-bold text-cream-950",
-                    "data-ends-in-week:mr-0.75 data-ends-in-week:rounded-e-full data-starts-in-week:border-s-3"
+                    "mx-px h-4 truncate px-0.5 text-2xs leading-4 font-bold tracking-tight text-cream-950",
+                    "not-data-starts-in-week:ps-1.25 data-ends-in-week:rounded-e-full data-starts-in-week:border-s-3"
                 ]}
                 style:grid-column="{segment.column} / span {segment.span}"
                 style:grid-row={segment.lane + 1}
@@ -213,3 +211,29 @@
         </button>
     </td>
 {/snippet}
+
+<style lang="postcss">
+    @reference "#app.css";
+
+    .event-week-grid {
+        --edge-center: 2.125rem;
+        --day-width: calc((100% - 2 * var(--edge-center)) / 6);
+
+        position: absolute;
+        top: 2.75rem;
+        left: calc(var(--edge-center) - var(--day-width) / 2);
+
+        width: calc(7 * var(--day-width));
+
+        display: grid;
+        row-gap: 0.125rem;
+        grid-template-columns: repeat(7, minmax(0, 1fr));
+
+        @media (width > 29.75rem) {
+            @apply week-grid-15;
+
+            width: auto;
+            inset-inline: 0.25rem;
+        }
+    }
+</style>
