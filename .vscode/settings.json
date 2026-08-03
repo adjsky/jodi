@@ -1,5 +1,5 @@
 {
-    "typescript.tsdk": "root/node_modules/typescript/lib",
+    "js/ts.tsdk.path": "node_modules/typescript/lib",
     "eslint.validate": ["javascript", "typescript", "svelte"],
     "editor.quickSuggestions": {
         "strings": true

@@ -28,9 +28,9 @@ export function useWeekSwiper(
     );
 
     const swiper = useSlidingWindowSwiper(container, {
-        slidesOffsetBefore: rem(0.75),
-        slidesOffsetAfter: rem(0.75),
-        spaceBetween: rem(0.375),
+        slidesOffsetBefore: rem(0.5),
+        slidesOffsetAfter: rem(0.5),
+        spaceBetween: rem(0.5),
         edgeBuffer: 2,
         onSlideChange(offset) {
             const { cursor, onCursorChange } = extract(options);

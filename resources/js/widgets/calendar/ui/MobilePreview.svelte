@@ -29,9 +29,9 @@
 </script>
 
 <header
-    class="sticky top-0 z-10 flex items-center justify-between bg-cream-50 pt-2 pr-5 pl-3"
+    class="sticky top-0 z-10 flex items-center justify-between bg-cream-50 px-4 pt-2"
 >
-    <button class="p-2.5" onclick={() => view.push()}>
+    <button class="-ms-2 p-2.5" onclick={() => view.push()}>
         <CalendarIcon class="text-3xl" />
     </button>
     <button
