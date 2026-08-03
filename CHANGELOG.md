@@ -1,5 +1,17 @@
 # Releases
 
+## 0.23.0 (2026-08-03)
+
+### Feat
+
+- swipeable week carousel
+- add drag selection in calendar
+- todo dnd haptics
+
+### Fix
+
+- disable zoom
+
 ## 0.22.0 (2026-07-28)
 
 ### Feat
