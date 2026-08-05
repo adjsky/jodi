@@ -5,6 +5,7 @@
     import { Event } from "$/entities/event";
     import { CalendarDialog } from "$/features/choose-date";
     import { RescheduleItem } from "$/features/reschedule-item";
+    import { SaveOrClose } from "$/features/save-item";
     import { Color } from "$/features/select-color";
     import { Recurrence } from "$/features/select-recurrence";
     import { Reminder } from "$/features/select-reminder";
@@ -15,8 +16,7 @@
         NOTIFICATION_DEFAULT_SUBHOURS
     } from "$/shared/cfg/constants";
     import { timediff } from "$/shared/lib/date/timediff";
-    import { pushSubscription } from "$/shared/lib/push/subscription.svelte";
-    import SaveOrClose from "$/shared/ui/SaveOrClose.svelte";
+    import { Push } from "$/shared/services/push";
     import { toaster } from "$/shared/ui/toaster";
     import ToolbarAction from "$/shared/ui/ToolbarAction.svelte";
 
@@ -58,7 +58,7 @@
         }
     }}
     onSuccess={() => {
-        pushSubscription.ahtung(m["events.reminder-ahtung"]());
+        Push.subscription.ahtung(m["events.reminder-ahtung"]());
         onClose();
     }}
     class="flex grow flex-col pb-18"

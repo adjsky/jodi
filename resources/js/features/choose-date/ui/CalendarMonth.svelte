@@ -2,14 +2,14 @@
     import { today } from "@internationalized/date";
     import { m } from "$/paraglide/messages";
     import { TIMEZONE } from "$/shared/cfg/constants";
-    import { tw } from "$/shared/lib/css/tw";
-    import { Haptics } from "$/shared/lib/haptics";
+    import { tw } from "$/shared/lib/styles/tw";
+    import { Haptics } from "$/shared/services/haptics";
     import { boolAttr, useIntersectionObserver } from "runed";
 
     import type { CalendarMode } from "../model/types";
+    import type { Year } from "../model/year.svelte";
     import type { CalendarDate } from "@internationalized/date";
-    import type { YearCalendar } from "$/entities/event/model/year-calendar.svelte";
-    import type { Year } from "$/shared/lib/date/year.svelte";
+    import type { YearCalendar } from "$/entities/event";
     import type { Attachment } from "svelte/attachments";
 
     type Props = {

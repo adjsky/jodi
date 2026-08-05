@@ -7,12 +7,12 @@
     } from "@internationalized/date";
     import { getLocale } from "$/paraglide/runtime";
     import { TIMEZONE } from "$/shared/cfg/constants";
-    import { tw } from "$/shared/lib/css/tw";
+    import { tw } from "$/shared/lib/styles/tw";
 
-    import { useWeekSwiper } from "../helpers/use-week-swiper.svelte";
+    import { WeekSwiper } from "../model/week-swiper.svelte";
 
     import type { CalendarDate } from "@internationalized/date";
-    import type { WeekStart } from "$/shared/lib/types";
+    import type { WeekStart } from "$/shared/lib/date/types";
     import type { SwiperContainer } from "swiper/element";
 
     type Props = {
@@ -29,7 +29,7 @@
 
     let swiperContainer: SwiperContainer | null = $state(null);
 
-    const swiper = useWeekSwiper(
+    const swiper = new WeekSwiper(
         () => swiperContainer,
         () => ({
             cursor,

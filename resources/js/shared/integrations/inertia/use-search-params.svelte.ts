@@ -1,0 +1,67 @@
+import { page, router } from "@inertiajs/svelte";
+import { fromStore } from "svelte/store";
+
+import type { VisitOptions } from "@inertiajs/core";
+
+type Options = {
+    showProgress?: boolean;
+    push?: boolean;
+};
+
+type SearchParams = Record<string, string> & Actions;
+
+type Actions = {
+    update: (
+        values: Record<string, string | null>,
+        options?: VisitOptions
+    ) => Promise<void>;
+};
+
+export function useSearchParams(options?: Options): SearchParams {
+    const { showProgress, push } = options ?? {};
+
+    function update(
+        values: Record<string, string | null>,
+        options?: VisitOptions
+    ) {
+        const url = new URL(window.location.href);
+
+        for (const [key, value] of Object.entries(values)) {
+            if (value === null) {
+                url.searchParams.delete(key);
+            } else {
+                url.searchParams.set(key, value);
+            }
+        }
+
+        return router.visit(url, {
+            ...options,
+            showProgress,
+            replace: options?.replace ?? !push,
+            preserveScroll: true,
+            preserveState: true,
+            async: false
+        });
+    }
+
+    // Keep this deriveds hell to stabilize reactivity (so that `sp` variable
+    // reruns on actual query changes).
+    const p = $derived(fromStore(page).current);
+    const url = $derived(new URL(p.url, window.location.href));
+    const search = $derived(url.search);
+    const sp = $derived(new URLSearchParams(search));
+
+    return new Proxy({} as SearchParams, {
+        get(_, prop: string) {
+            if (prop === "update") {
+                return update;
+            }
+
+            return sp.get(prop);
+        },
+        set(_, prop, v: string) {
+            void update({ [prop]: v });
+            return true;
+        }
+    });
+}

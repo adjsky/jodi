@@ -8,16 +8,16 @@
     import { Event } from "$/entities/event";
     import { m } from "$/paraglide/messages";
     import { TIMEZONE } from "$/shared/cfg/constants";
-    import { useSearchParams } from "$/shared/inertia/use-search-params.svelte";
-    import { tw } from "$/shared/lib/css/tw";
+    import { useSearchParams } from "$/shared/integrations/inertia";
     import { formatToHHMM } from "$/shared/lib/date/format-to-hh-mm";
+    import { tw } from "$/shared/lib/styles/tw";
 
     import { getEventDayPosition } from "../helpers/get-event-day-position";
     import { id } from "../helpers/id";
     import { editView } from "../model/view";
     import EditSheet from "./EditSheet.svelte";
 
-    import type { EventData } from "$/entities/event/model/types";
+    import type { EventData } from "$/entities/event";
     import type { SvelteHTMLElements } from "svelte/elements";
 
     type Props = SvelteHTMLElements["section"] & {

@@ -7,7 +7,7 @@ import type { ZonedDateTime } from "@internationalized/date";
 export function formatDateRange(
     startsAt: ZonedDateTime,
     endsAt: ZonedDateTime
-) {
+): string {
     const f = new DateFormatter(getLocale(), {
         day: "2-digit",
         month: "short",

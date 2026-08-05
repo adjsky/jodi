@@ -27,7 +27,7 @@ export function googleServices(): Plugin[] {
     ];
 }
 
-export async function generateGoogleServices(ctx: Context) {
+export async function generateGoogleServices(ctx: Context): Promise<void> {
     const json = {
         project_info: {
             project_number: ctx.env.FIREBASE_MESSAGING_SENDER_ID,

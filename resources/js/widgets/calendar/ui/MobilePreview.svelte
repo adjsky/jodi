@@ -5,8 +5,10 @@
     import { Calendar, WeekCarousel } from "$/features/choose-date";
     import { getLocale } from "$/paraglide/runtime";
     import { TIMEZONE } from "$/shared/cfg/constants";
-    import { HistoryView } from "$/shared/inertia/history-view.svelte";
-    import { useSearchParams } from "$/shared/inertia/use-search-params.svelte";
+    import {
+        HistoryView,
+        useSearchParams
+    } from "$/shared/integrations/inertia";
     import { fromAction } from "svelte/attachments";
 
     import type { Snippet } from "svelte";

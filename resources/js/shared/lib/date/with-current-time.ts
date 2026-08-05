@@ -1,8 +1,7 @@
 import { now, toCalendarDateTime, toZoned } from "@internationalized/date";
+import { TIMEZONE } from "$/shared/cfg/constants";
 
-import { TIMEZONE } from "../../cfg/constants";
-
-import type { CalendarDate } from "@internationalized/date";
+import type { CalendarDate, ZonedDateTime } from "@internationalized/date";
 
 type WithCurrentTimeOptions = {
     hourOffset?: number;
@@ -12,7 +11,7 @@ type WithCurrentTimeOptions = {
 export function withCurrentTime(
     date: CalendarDate,
     options?: WithCurrentTimeOptions
-) {
+): ZonedDateTime {
     const { hourOffset, minuteOffset } = options ?? {};
 
     const datetime = toZoned(toCalendarDateTime(date, now(TIMEZONE)), TIMEZONE);

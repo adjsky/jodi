@@ -1,6 +1,6 @@
 <script lang="ts">
     import { PinInput } from "@ark-ui/svelte/pin-input";
-    import { tw } from "$/shared/lib/css/tw";
+    import { tw } from "$/shared/lib/styles/tw";
 
     import type { HTMLInputAttributes } from "svelte/elements";
     import type { Except } from "type-fest";

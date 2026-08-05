@@ -10,6 +10,7 @@
     import { Checkbox } from "$/features/complete-todo";
     import { DeleteItem } from "$/features/delete-item";
     import { RescheduleItem } from "$/features/reschedule-item";
+    import { SaveOrClose } from "$/features/save-item";
     import { TodoTime } from "$/features/schedule-todo-time";
     import { Category } from "$/features/select-category";
     import { Color } from "$/features/select-color";
@@ -25,16 +26,17 @@
     } from "$/shared/cfg/constants";
     import { normalizeIsoString } from "$/shared/lib/date/normalize-iso-string";
     import { timediff } from "$/shared/lib/date/timediff";
-    import { announce } from "$/shared/lib/dom/announce";
-    import SaveOrClose from "$/shared/ui/SaveOrClose.svelte";
+    import { dispatchInput } from "$/shared/lib/dom/dispatch-input";
     import { toaster } from "$/shared/ui/toaster";
     import { tick, untrack } from "svelte";
 
-    import { optimistic, visitOptions } from "../cfg/inertia";
+    import { complete } from "../api/complete";
+    import { edit } from "../api/edit";
+    import { visitOptions } from "../cfg/inertia";
     import { editView } from "../model/view";
 
+    import type { RecurrenceScope } from "$/entities/recurrence";
     import type { TodoData } from "$/entities/todo";
-    import type { RecurrenceScope } from "$/shared/lib/types";
 
     type Props = {
         todo: TodoData;
@@ -62,7 +64,7 @@
 </script>
 
 <Form
-    {...optimistic.edit(todo, draft.notifyAt != null)}
+    {...edit(todo, draft.notifyAt != null)}
     action={UpdateTodo(todo.id, {
         query: { scope: isRRuleDirty ? "all" : scope }
     })}
@@ -97,7 +99,7 @@
                     }
                     draft.scheduledAt = draft.scheduledAt.set(d);
                     await tick();
-                    announce(dateAnnouncerInput);
+                    dispatchInput(dateAnnouncerInput);
                 }}
             >
                 {#snippet children(props)}
@@ -132,7 +134,7 @@
         {#snippet checkbox()}
             <Checkbox
                 {...visitOptions}
-                {...optimistic.complete(todo)}
+                {...complete(todo)}
                 href={CompleteTodo(todo.id)}
                 completedAt={todo.completedAt}
                 occursAt={todo.occursAt}
@@ -160,7 +162,7 @@
                     draft.scheduledAt = draft.scheduledAt.set(time);
 
                     await tick();
-                    announce(dateAnnouncerInput);
+                    dispatchInput(dateAnnouncerInput);
                 }}
             />
         {/snippet}
@@ -226,7 +228,7 @@
                     }
                     draft.scheduledAt = draft.scheduledAt.set(d);
                     await tick();
-                    announce(dateAnnouncerInput);
+                    dispatchInput(dateAnnouncerInput);
                 }}
             />
         {/snippet}

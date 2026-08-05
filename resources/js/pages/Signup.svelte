@@ -8,7 +8,7 @@
     import Bee from "$/shared/assets/bee.svg";
     import Calendar from "$/shared/assets/calendar.svg";
     import Cat from "$/shared/assets/cat.svg";
-    import { HistoryView } from "$/shared/inertia/history-view.svelte";
+    import { HistoryView } from "$/shared/integrations/inertia";
     import Button from "$/shared/ui/Button.svelte";
     import TextField from "$/shared/ui/TextField.svelte";
 

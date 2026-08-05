@@ -4,7 +4,7 @@
     import { CheckIcon, ClipboardCopyIcon } from "@lucide/svelte";
     import DestroyRegistrationInvitation from "$/generated/actions/App/Domain/Identity/Actions/DestroyRegistrationInvitation";
     import { m } from "$/paraglide/messages";
-    import { HistoryView } from "$/shared/inertia/history-view.svelte";
+    import { HistoryView } from "$/shared/integrations/inertia";
     import Button from "$/shared/ui/Button.svelte";
     import Confirmable from "$/shared/ui/Confirmable.svelte";
     import FloatingView from "$/shared/ui/FloatingView.svelte";

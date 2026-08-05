@@ -5,19 +5,20 @@
     import CompleteTodo from "$/generated/actions/App/Domain/Todo/Actions/CompleteTodo";
     import { m } from "$/paraglide/messages";
     import PencilNote from "$/shared/assets/pencil-note.svg";
-    import { useSearchParams } from "$/shared/inertia/use-search-params.svelte";
-    import { prefersLightText } from "$/shared/lib/color/prefers-light-text";
-    import { tw } from "$/shared/lib/css/tw";
+    import { useSearchParams } from "$/shared/integrations/inertia";
+    import { needsLightContrast } from "$/shared/lib/color/needs-light-contrast";
     import { formatToHHMM } from "$/shared/lib/date/format-to-hh-mm";
-    import { Haptics } from "$/shared/lib/haptics";
+    import { tw } from "$/shared/lib/styles/tw";
+    import { Haptics } from "$/shared/services/haptics";
     import { toaster } from "$/shared/ui/toaster";
     import { isDeepEqual } from "remeda";
     import { untrack } from "svelte";
     import { dragHandle, dragHandleZone, TRIGGERS } from "svelte-dnd-action";
 
+    import { complete } from "../api/complete";
     import { useReorder } from "../api/reorder.svelte";
     import { UNGROUPED_KEY } from "../cfg/constants";
-    import { optimistic, visitOptions } from "../cfg/inertia";
+    import { visitOptions } from "../cfg/inertia";
     import { groupTodos } from "../helpers/group-todos";
     import { id } from "../helpers/id";
     import { editView } from "../model/view";
@@ -74,7 +75,7 @@
             e.detail.info.trigger == TRIGGERS.DRAGGED_OVER_INDEX
         ) {
             if (!isDeepEqual(groups[group], e.detail.items)) {
-                void Haptics.selectionChanged();
+                Haptics.selectionChanged();
             }
         }
 
@@ -153,7 +154,7 @@
                 {#snippet checkbox()}
                     <Checkbox
                         {...visitOptions}
-                        {...optimistic.complete(todo)}
+                        {...complete(todo)}
                         href={CompleteTodo(todo.id)}
                         completedAt={todo.completedAt}
                         occursAt={todo.occursAt}
@@ -175,7 +176,8 @@
                                 todo.completedAt && "line-through",
                                 todo.color && [
                                     "rounded-xl px-1.5",
-                                    prefersLightText(todo.color) && "text-white"
+                                    needsLightContrast(todo.color) &&
+                                        "text-white"
                                 ]
                             ]}
                             style="background: {todo.color ?? 'transparent'};"
@@ -190,11 +192,11 @@
                         aria-label="Drag"
                         class="shrink-0"
                         onpointerdown={() => {
-                            void Haptics.selectionStart();
+                            Haptics.selectionStart();
                             void Haptics.impact("medium");
                         }}
                         onpointerup={() => {
-                            void Haptics.selectionEnd();
+                            Haptics.selectionEnd();
                         }}
                     >
                         <GripVertical class="text-2xl text-cream-400" />

@@ -1,7 +1,7 @@
 <script lang="ts">
     import { Check } from "@lucide/svelte";
 
-    import { tw } from "../lib/css/tw";
+    import { tw } from "../lib/styles/tw";
 
     import type { Snippet } from "svelte";
     import type { HTMLButtonAttributes } from "svelte/elements";

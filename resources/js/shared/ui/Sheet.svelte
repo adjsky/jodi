@@ -2,7 +2,7 @@
     import { Drawer, useDrawer } from "@ark-ui/svelte";
 
     import { DEFER_FRAMES } from "../cfg/constants";
-    import { useDeferUntilNextFrame } from "../lib/hooks/use-defer-until-next-frame.svelte";
+    import { DeferUntilNextFrame } from "../lib/svelte/defer-until-next-frame.svelte";
 
     import type { DrawerRootProps } from "@ark-ui/svelte";
     import type { Snippet } from "svelte";
@@ -31,7 +31,7 @@
     // Defer opening the drawer on page load until the next available frame so
     // that Zag can calculate content height properly, otherwise the content
     // will be rendered according to the largest available snap point.
-    const deferred = useDeferUntilNextFrame(DEFER_FRAMES.SHEET);
+    const deferred = new DeferUntilNextFrame(DEFER_FRAMES.SHEET);
 
     const drawer = useDrawer({
         get id() {

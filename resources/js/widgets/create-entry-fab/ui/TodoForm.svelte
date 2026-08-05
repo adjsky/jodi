@@ -5,6 +5,7 @@
     import { Todo } from "$/entities/todo";
     import { CalendarDialog } from "$/features/choose-date";
     import { RescheduleItem } from "$/features/reschedule-item";
+    import { SaveOrClose } from "$/features/save-item";
     import { TodoTime } from "$/features/schedule-todo-time";
     import { Category } from "$/features/select-category";
     import { Color } from "$/features/select-color";
@@ -18,8 +19,7 @@
     } from "$/shared/cfg/constants";
     import { normalizeIsoString } from "$/shared/lib/date/normalize-iso-string";
     import { timediff } from "$/shared/lib/date/timediff";
-    import { pushSubscription } from "$/shared/lib/push/subscription.svelte";
-    import SaveOrClose from "$/shared/ui/SaveOrClose.svelte";
+    import { Push } from "$/shared/services/push";
     import { toaster } from "$/shared/ui/toaster";
     import ToolbarAction from "$/shared/ui/ToolbarAction.svelte";
 
@@ -54,7 +54,7 @@
     })}
     onSuccess={() => {
         if (notifyAt) {
-            pushSubscription.ahtung(m["todos.reminder-ahtung"]());
+            Push.subscription.ahtung(m["todos.reminder-ahtung"]());
         }
         onClose();
     }}

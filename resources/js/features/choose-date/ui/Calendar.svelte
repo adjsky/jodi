@@ -1,23 +1,23 @@
 <script lang="ts">
     import { DateFormatter } from "@internationalized/date";
     import { ChevronLeft, ChevronRight } from "@lucide/svelte";
-    import { CalendarEvents } from "$/entities/event/api/calendar-events.svelte";
-    import { YearCalendar } from "$/entities/event/model/year-calendar.svelte";
+    import { CalendarEvents, YearCalendar } from "$/entities/event";
     import { m } from "$/paraglide/messages";
     import { getLocale } from "$/paraglide/runtime";
     import { TIMEZONE } from "$/shared/cfg/constants";
-    import { tw } from "$/shared/lib/css/tw";
-    import { Year } from "$/shared/lib/date/year.svelte";
-    import { useDragSelection } from "$/shared/lib/hooks/use-drag-selection";
+    import { useDragSelection } from "$/shared/lib/interaction/use-drag-selection";
+    import { tw } from "$/shared/lib/styles/tw";
+    import { Haptics } from "$/shared/services/haptics";
     import Button from "$/shared/ui/Button.svelte";
     import FloatingView from "$/shared/ui/FloatingView.svelte";
     import { toaster } from "$/shared/ui/toaster";
 
+    import { Year } from "../model/year.svelte";
     import CalendarMonth from "./CalendarMonth.svelte";
 
     import type { CalendarMode } from "../model/types";
     import type { CalendarDate } from "@internationalized/date";
-    import type { WeekStart } from "$/shared/lib/types";
+    import type { WeekStart } from "$/shared/lib/date/types";
     import type { Attachment } from "svelte/attachments";
     import type { SvelteHTMLElements } from "svelte/elements";
     import type { Except } from "type-fest";
@@ -95,12 +95,24 @@
 
             return min.compare(value) <= 0;
         },
-        onSelect(date, anchor) {
+        onStart() {
+            void Haptics.selectionStart();
+        },
+        onSelect(date, anchor, phase) {
+            if (phase == "start") {
+                void Haptics.impact("medium");
+            } else {
+                void Haptics.selectionChanged();
+            }
+
             if (date.compare(anchor) > 0) {
                 draftSelected = [anchor, date];
             } else {
                 draftSelected = [date, anchor];
             }
+        },
+        onEnd() {
+            void Haptics.selectionEnd();
         }
     }));
 

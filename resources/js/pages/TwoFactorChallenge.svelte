@@ -6,9 +6,11 @@
     import ResendTwoFactorChallengeCode from "$/generated/actions/App/Domain/Identity/Actions/ResendTwoFactorChallengeCode";
     import { m } from "$/paraglide/messages";
     import Froggy from "$/shared/assets/froggy.svg";
-    import { HistoryView } from "$/shared/inertia/history-view.svelte";
-    import { useActionRateLimit } from "$/shared/inertia/use-action-rate-limit.svelte";
-    import { pushSubscription } from "$/shared/lib/push/subscription.svelte";
+    import {
+        ActionRateLimit,
+        HistoryView
+    } from "$/shared/integrations/inertia";
+    import { Push } from "$/shared/services/push";
     import { createActionBanner } from "$/shared/ui/ActionBanner.svelte";
     import Button from "$/shared/ui/Button.svelte";
     import OneTimePasswordInput from "$/shared/ui/OneTimePasswordInput.svelte";
@@ -16,19 +18,19 @@
 
     const id = $props.id();
 
-    const resendTimer = useActionRateLimit(
+    const resendTimer = new ActionRateLimit(
         ResendTwoFactorChallengeCode.definition
     );
-    const consumeTimer = useActionRateLimit(
+    const consumeTimer = new ActionRateLimit(
         CompleteTwoFactorChallenge.definition
     );
 
     const view = new HistoryView(null, { viewTransition: true });
 
     async function handleSuccessfulLogin() {
-        await pushSubscription.synchronize();
+        await Push.subscription.synchronize();
 
-        if (pushSubscription.warnings.needsConfiguration) {
+        if (Push.subscription.warnings.needsConfiguration) {
             createActionBanner(m["push-notifications.configure.title"](), {
                 id: "configure-push-notifications",
                 action: m["push-notifications.configure.action"](),
@@ -72,9 +74,9 @@
             <button
                 class="font-semibold text-brand"
                 form="{id}-resend-form"
-                disabled={resendTimer.running}
+                disabled={resendTimer.isRunning}
             >
-                {#if resendTimer.running}
+                {#if resendTimer.isRunning}
                     {m["2fa.resend-in"]({ seconds: resendTimer.secondsLeft })}
                 {:else}
                     {m["2fa.resend"]()}
@@ -82,8 +84,8 @@
             </button>
         </p>
 
-        <Button disabled={consumeTimer.running || processing}>
-            {#if consumeTimer.running}
+        <Button disabled={consumeTimer.isRunning || processing}>
+            {#if consumeTimer.isRunning}
                 {m["2fa.continue-in"]({ seconds: consumeTimer.secondsLeft })}
             {:else}
                 {m["2fa.continue"]()}

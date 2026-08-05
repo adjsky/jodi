@@ -1,5 +1,5 @@
 <script lang="ts" generics="T extends keyof SvelteHTMLElements = 'button'">
-    import { tw } from "$/shared/lib/css/tw";
+    import { tw } from "$/shared/lib/styles/tw";
     import ExclamationMark from "$/shared/ui/Warning.svelte";
 
     import type { SvelteHTMLElements } from "svelte/elements";

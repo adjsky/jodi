@@ -1,4 +1,4 @@
-import { HistoryView } from "$/shared/inertia/history-view.svelte";
+import { HistoryView } from "$/shared/integrations/inertia";
 
 import type { TodoData } from "$/entities/todo";
 

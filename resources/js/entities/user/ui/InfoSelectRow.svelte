@@ -1,6 +1,6 @@
 <script lang="ts">
     import { Check } from "@lucide/svelte";
-    import { tw } from "$/shared/lib/css/tw";
+    import { tw } from "$/shared/lib/styles/tw";
     import { boolAttr } from "runed";
 
     import InfoActionRow from "./InfoActionRow.svelte";
@@ -10,7 +10,7 @@
         UrlMethodPair,
         VisitCallbacks
     } from "@inertiajs/core";
-    import type { ClassName } from "$/shared/lib/css/tw";
+    import type { ClassName } from "$/shared/lib/styles/tw";
     import type { Snippet } from "svelte";
 
     type Props = Partial<VisitCallbacks> & {

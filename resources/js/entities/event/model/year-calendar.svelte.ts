@@ -12,7 +12,7 @@ import { SvelteMap } from "svelte/reactivity";
 import type { CalendarEventData } from "./types";
 import type { CalendarDate } from "@internationalized/date";
 import type { Locale } from "$/paraglide/runtime";
-import type { WeekStart } from "$/shared/lib/types";
+import type { WeekStart } from "$/shared/lib/date/types";
 import type { MaybeGetter } from "runed";
 
 const DEFAULT_MAX_LANES = 2;
@@ -45,17 +45,22 @@ export class YearCalendar {
         this.#options = options;
     }
 
-    segments(year: number, month: number, week: number) {
+    segments(year: number, month: number, week: number): Segment[] {
         return this.#segments.get(year)?.get(month)?.[week - 1] ?? [];
     }
 
-    visibleSegments(year: number, month: number, week: number) {
+    visibleSegments(year: number, month: number, week: number): Segment[] {
         const maxLanes = extract(this.#options).maxLanes ?? DEFAULT_MAX_LANES;
         const segments = this.segments(year, month, week);
         return segments.filter((segment) => segment.lane < maxLanes);
     }
 
-    overflow(year: number, month: number, week: number, column: number) {
+    overflow(
+        year: number,
+        month: number,
+        week: number,
+        column: number
+    ): number {
         const maxLanes = extract(this.#options).maxLanes ?? DEFAULT_MAX_LANES;
         const segments = this.segments(year, month, week).filter(
             (segment) =>
@@ -65,7 +70,7 @@ export class YearCalendar {
         return segments.length;
     }
 
-    prepare(year: number, months: number[], events: CalendarEventData[]) {
+    prepare(year: number, months: number[], events: CalendarEventData[]): void {
         const preparedMonths = this.#createMonths(months);
 
         for (const event of events) {

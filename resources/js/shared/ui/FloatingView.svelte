@@ -3,7 +3,7 @@
     import { Link } from "@inertiajs/svelte";
     import { ChevronLeft } from "@lucide/svelte";
 
-    import { tw } from "../lib/css/tw";
+    import { tw } from "../lib/styles/tw";
 
     import type { UrlMethodPair } from "@inertiajs/core";
     import type { Snippet } from "svelte";

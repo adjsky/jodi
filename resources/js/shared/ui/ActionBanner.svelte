@@ -23,7 +23,7 @@
     export function createActionBanner(
         title: string,
         options?: CreateActionBannerOptions
-    ) {
+    ): string {
         const {
             id = nanoid(),
             action,
@@ -57,7 +57,7 @@
         return id;
     }
 
-    export function destroyActionBanner(id: string) {
+    export function destroyActionBanner(id: string): void {
         banners = banners.filter((banner) => id != banner.id);
     }
 </script>
@@ -68,7 +68,7 @@
 
     import Button from "./Button.svelte";
 
-    import type { MaybePromise } from "../lib/types";
+    import type { MaybePromise } from "../lib/async/types";
 
     const banner = $derived(banners[0]);
 </script>

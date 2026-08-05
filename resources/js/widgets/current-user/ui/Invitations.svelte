@@ -17,7 +17,7 @@
     import { back } from "./Back.svelte";
     import Invitation from "./Invitation.svelte";
 
-    import type { RegistrationInvitationData } from "$/entities/user/model/types";
+    import type { RegistrationInvitationData } from "$/entities/user";
 
     let inviteInput = $state<HTMLInputElement | null>(null);
 

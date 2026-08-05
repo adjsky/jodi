@@ -13,3 +13,5 @@ export const User = {
         SelectRow: InfoSelectRow
     }
 };
+
+export * from "./model/types";

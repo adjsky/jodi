@@ -1,7 +1,7 @@
 <script lang="ts">
     import { page } from "@inertiajs/svelte";
-    import { HistoryView } from "$/shared/inertia/history-view.svelte";
-    import { useDeferUntilNextFrame } from "$/shared/lib/hooks/use-defer-until-next-frame.svelte";
+    import { HistoryView } from "$/shared/integrations/inertia";
+    import { DeferUntilNextFrame } from "$/shared/lib/svelte/defer-until-next-frame.svelte";
     import SheetDialog from "$/shared/ui/SheetDialog.svelte";
 
     import Calendar from "./Calendar.svelte";
@@ -34,7 +34,7 @@
     const view = new HistoryView<{
         __yearcalendardialog: { isOpen: string };
     }>();
-    const deferredView = useDeferUntilNextFrame(() => deferHistoryViewFrames);
+    const deferredView = new DeferUntilNextFrame(() => deferHistoryViewFrames);
 </script>
 
 <SheetDialog

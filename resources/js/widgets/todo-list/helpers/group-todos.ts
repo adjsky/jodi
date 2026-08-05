@@ -2,7 +2,7 @@ import { UNGROUPED_KEY } from "../cfg/constants";
 
 import type { TodoData } from "$/entities/todo";
 
-export function groupTodos(todos: TodoData[]) {
+export function groupTodos(todos: TodoData[]): Record<string, TodoData[]> {
     const groups: Record<string, TodoData[]> = {};
 
     for (const todo of todos) {

@@ -1,8 +1,8 @@
 import ListCalendarEvents from "$/generated/actions/App/Domain/Event/Actions/ListCalendarEvents";
 import { useDebounce } from "runed";
 
+import type { CalendarEventData } from "../model/types";
 import type { DateValue } from "@internationalized/date";
-import type { CalendarEventData } from "$/entities/event/model/types";
 
 type Options = {
     onError?: VoidFunction;
@@ -29,7 +29,7 @@ export class CalendarEvents {
         this.#options = options;
     }
 
-    request(date: DateValue) {
+    request(date: DateValue): void {
         const version = ++this.#requestCounter;
 
         if (this.#pendingRequests && this.#pendingRequests.year == date.year) {

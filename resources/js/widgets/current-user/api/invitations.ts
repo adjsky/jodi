@@ -1,7 +1,7 @@
 import GetRegistrationInvitation from "$/generated/actions/App/Domain/Identity/Actions/GetRegistrationInvitation";
 import ListRegistrationInvitations from "$/generated/actions/App/Domain/Identity/Actions/ListRegistrationInvitations";
 
-import type { RegistrationInvitationData } from "$/entities/user/model/types";
+import type { RegistrationInvitationData } from "$/entities/user";
 import type { ResourceFetcher } from "runed";
 
 export class NotFoundResourceError extends Error {}

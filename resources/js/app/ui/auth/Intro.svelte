@@ -1,6 +1,6 @@
 <script lang="ts">
     import Logo from "$/shared/assets/logo.svg";
-    import { tw } from "$/shared/lib/css/tw";
+    import { tw } from "$/shared/lib/styles/tw";
 
     import type { Snippet } from "svelte";
 

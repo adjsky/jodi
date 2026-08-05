@@ -1,14 +1,4 @@
-import { m } from "$/paraglide/messages";
-import { optimistic as _optimistic } from "$/shared/inertia/visit/optimistic";
-import { pushSubscription } from "$/shared/lib/push/subscription.svelte";
-import { toaster } from "$/shared/ui/toaster";
-
-import { id } from "../helpers/id";
-import { editView } from "../model/view";
-
 import type { VisitOptions } from "@inertiajs/core";
-import type { ZonedDateTime } from "@internationalized/date";
-import type { EventData } from "$/entities/event/model/types";
 
 export const visitOptions: VisitOptions = {
     only: ["events"],
@@ -16,31 +6,4 @@ export const visitOptions: VisitOptions = {
     preserveScroll: true,
     preserveUrl: true,
     replace: true
-};
-
-export const optimistic = {
-    edit: (
-        event: EventData,
-        draft: { startsAt: ZonedDateTime; endsAt: ZonedDateTime }
-    ) =>
-        _optimistic(
-            (prev, data) => ({
-                events: prev.events.map((e: EventData) =>
-                    id(e) === id(event) ? { ...e, ...data } : e
-                )
-            }),
-            {
-                error: m["events.errors.edit"](),
-                onBefore() {
-                    if (draft.startsAt.compare(draft.endsAt) >= 0) {
-                        toaster.error(m["common.invalid-time-range"]());
-                        return false;
-                    }
-                },
-                onSuccess() {
-                    pushSubscription.ahtung(m["events.reminder-ahtung"]());
-                    void editView.back();
-                }
-            }
-        )
 };

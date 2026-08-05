@@ -1,7 +1,7 @@
 <script lang="ts">
-    import { HistoryView } from "$/shared/inertia/history-view.svelte";
-    import { announce } from "$/shared/lib/dom/announce";
-    import { useDeferUntilNextFrame } from "$/shared/lib/hooks/use-defer-until-next-frame.svelte";
+    import { HistoryView } from "$/shared/integrations/inertia";
+    import { dispatchInput } from "$/shared/lib/dom/dispatch-input";
+    import { DeferUntilNextFrame } from "$/shared/lib/svelte/defer-until-next-frame.svelte";
     import { tick } from "svelte";
 
     import BasicMenu from "./BasicMenu.svelte";
@@ -28,7 +28,7 @@
     const customPickerView = new HistoryView<{
         __selectrecurrence: { isOpen: boolean };
     }>();
-    const deferredView = useDeferUntilNextFrame(() => deferHistoryViewFrames);
+    const deferredView = new DeferUntilNextFrame(() => deferHistoryViewFrames);
 
     let rruleAnnouncer = $state<HTMLInputElement | null>(null);
     let isMenuOpen = $state(false);
@@ -36,7 +36,7 @@
     async function onSelect(r: string | null) {
         rrule = r;
         await tick();
-        announce(rruleAnnouncer);
+        dispatchInput(rruleAnnouncer);
     }
 </script>
 

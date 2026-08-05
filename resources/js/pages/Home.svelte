@@ -8,7 +8,7 @@
     import { EventList } from "$/widgets/event-list/";
     import { TodoList } from "$/widgets/todo-list";
 
-    import type { EventData } from "$/entities/event/model/types";
+    import type { EventData } from "$/entities/event";
     import type { TodoData } from "$/entities/todo";
 
     type Props = {

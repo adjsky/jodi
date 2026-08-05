@@ -2,10 +2,10 @@
     import { router } from "@inertiajs/svelte";
     import { parseAbsolute, toCalendarDate } from "@internationalized/date";
     import { Trash } from "@lucide/svelte";
+    import { Recurrence } from "$/entities/recurrence";
     import { TIMEZONE } from "$/shared/cfg/constants";
-    import { HistoryView } from "$/shared/inertia/history-view.svelte";
-    import { useDeferUntilNextFrame } from "$/shared/lib/hooks/use-defer-until-next-frame.svelte";
-    import RecurrenceActionDialog from "$/shared/ui/RecurrenceActionDialog.svelte";
+    import { HistoryView } from "$/shared/integrations/inertia";
+    import { DeferUntilNextFrame } from "$/shared/lib/svelte/defer-until-next-frame.svelte";
     import ToolbarAction from "$/shared/ui/ToolbarAction.svelte";
 
     import type { UrlMethodPair, VisitOptions } from "@inertiajs/core";
@@ -37,10 +37,10 @@
     }: Props = $props();
 
     const view = new HistoryView<{ __deleteitem: { isOpen: boolean } }>();
-    const deferredView = useDeferUntilNextFrame(() => deferHistoryViewFrames);
+    const deferredView = new DeferUntilNextFrame(() => deferHistoryViewFrames);
 </script>
 
-<RecurrenceActionDialog
+<Recurrence.ScopeDialog
     {scopeLabels}
     bind:open={
         () => deferredView.ready && (view.meta?.__deleteitem?.isOpen ?? false),
@@ -76,4 +76,4 @@
             <Trash />
         </ToolbarAction>
     {/snippet}
-</RecurrenceActionDialog>
+</Recurrence.ScopeDialog>

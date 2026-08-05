@@ -1,6 +1,6 @@
 import ListFriends from "$/generated/actions/App/Domain/Identity/Actions/ListFriends";
 
-import type { FriendData } from "$/entities/user/model/types";
+import type { FriendData } from "$/entities/user";
 import type { ResourceFetcher } from "runed";
 
 export const fetchFriends: ResourceFetcher<unknown, FriendData[]> =

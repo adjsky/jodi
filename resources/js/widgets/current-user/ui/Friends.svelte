@@ -11,7 +11,7 @@
     import { fetchFriends } from "../api/friends";
     import { back } from "./Back.svelte";
 
-    import type { FriendData } from "$/entities/user/model/types";
+    import type { FriendData } from "$/entities/user";
 
     const friendsResource = resource(() => [], fetchFriends);
 </script>

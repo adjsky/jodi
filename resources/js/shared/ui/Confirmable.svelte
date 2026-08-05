@@ -5,7 +5,7 @@
 
     import Button from "./Button.svelte";
 
-    import type { MaybePromise } from "../lib/types";
+    import type { MaybePromise } from "../lib/async/types";
     import type { DialogRootProps } from "@ark-ui/svelte/dialog";
     import type { Snippet } from "svelte";
     import type { HTMLAttributes } from "svelte/elements";

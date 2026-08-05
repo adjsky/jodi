@@ -9,6 +9,7 @@
     import { CalendarDialog } from "$/features/choose-date";
     import { DeleteItem } from "$/features/delete-item";
     import { RescheduleItem } from "$/features/reschedule-item";
+    import { SaveOrClose } from "$/features/save-item";
     import { Color } from "$/features/select-color";
     import { Recurrence } from "$/features/select-recurrence";
     import { Reminder } from "$/features/select-reminder";
@@ -18,15 +19,15 @@
     import { DEFER_FRAMES } from "$/shared/cfg/constants";
     import { normalizeIsoString } from "$/shared/lib/date/normalize-iso-string";
     import { timediff } from "$/shared/lib/date/timediff";
-    import { announce } from "$/shared/lib/dom/announce";
-    import SaveOrClose from "$/shared/ui/SaveOrClose.svelte";
+    import { dispatchInput } from "$/shared/lib/dom/dispatch-input";
     import { tick, untrack } from "svelte";
 
-    import { optimistic, visitOptions } from "../cfg/inertia";
+    import { edit } from "../api/edit";
+    import { visitOptions } from "../cfg/inertia";
     import { editView } from "../model/view";
 
-    import type { EventData } from "$/entities/event/model/types";
-    import type { RecurrenceScope } from "$/shared/lib/types";
+    import type { EventData } from "$/entities/event";
+    import type { RecurrenceScope } from "$/entities/recurrence";
 
     type Props = {
         event: EventData;
@@ -53,7 +54,7 @@
 </script>
 
 <Form
-    {...optimistic.edit(event, draft)}
+    {...edit(event, draft)}
     action={UpdateEvent(event.id, {
         query: { scope: isRRuleDirty ? "all" : scope }
     })}
@@ -82,11 +83,11 @@
         description={event.description}
         onStartsAtChange={async () => {
             await tick();
-            announce(startsAtAnnouncerInput);
+            dispatchInput(startsAtAnnouncerInput);
         }}
         onEndsAtChange={async () => {
             await tick();
-            announce(endsAtAnnouncerInput);
+            dispatchInput(endsAtAnnouncerInput);
         }}
     >
         {#snippet calendar(trigger)}
@@ -105,7 +106,7 @@
                     draft.startsAt = draft.startsAt.set(date[0]);
                     draft.endsAt = draft.endsAt.set(date[1]);
                     await tick();
-                    announce(startsAtAnnouncerInput);
+                    dispatchInput(startsAtAnnouncerInput);
                 }}
             >
                 {#snippet children(props)}
@@ -185,7 +186,7 @@
                     draft.startsAt = draft.startsAt.set(d);
                     draft.endsAt = draft.endsAt.set(d);
                     await tick();
-                    announce(startsAtAnnouncerInput);
+                    dispatchInput(startsAtAnnouncerInput);
                 }}
             />
         {/snippet}

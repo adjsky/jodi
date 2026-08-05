@@ -1,7 +1,7 @@
 <script lang="ts">
     import { Popover } from "@ark-ui/svelte";
     import { Circle } from "@lucide/svelte";
-    import { announce } from "$/shared/lib/dom/announce";
+    import { dispatchInput } from "$/shared/lib/dom/dispatch-input";
     import ToolbarAction from "$/shared/ui/ToolbarAction.svelte";
     import { tick } from "svelte";
 
@@ -58,7 +58,7 @@
                         current = color == "transparent" ? null : color;
                         open = false;
                         await tick();
-                        announce(announcerInput);
+                        dispatchInput(announcerInput);
                     }}
                     class="flex h-10 w-11.25 items-center justify-center"
                 >

@@ -1,6 +1,6 @@
 <script lang="ts">
     import { ChevronRight } from "@lucide/svelte";
-    import { tw } from "$/shared/lib/css/tw";
+    import { tw } from "$/shared/lib/styles/tw";
 
     import type { Snippet } from "svelte";
     import type { HTMLButtonAttributes } from "svelte/elements";

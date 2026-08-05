@@ -1,5 +1,5 @@
 <script lang="ts">
-    import { tw } from "../lib/css/tw";
+    import { tw } from "../lib/styles/tw";
 
     import type { SVGAttributes } from "svelte/elements";
 

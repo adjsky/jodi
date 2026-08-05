@@ -1,9 +1,9 @@
 <!-- Ref: https://github.com/dvtng/react-loading-skeleton -->
 
 <script lang="ts">
-    import { tw } from "../lib/css/tw";
+    import { tw } from "../lib/styles/tw";
 
-    import type { ClassName } from "../lib/css/tw";
+    import type { ClassName } from "../lib/styles/tw";
     import type { SvelteHTMLElements } from "svelte/elements";
 
     type Props = {

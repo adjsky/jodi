@@ -1,10 +1,10 @@
 <script lang="ts">
-    import { useLastMatching } from "$/shared/lib/hooks/use-last-matching.svelte";
+    import { LastMatching } from "$/shared/lib/svelte/last-matching.svelte";
     import Sheet from "$/shared/ui/Sheet.svelte";
 
     import EditForm from "./EditForm.svelte";
 
-    import type { EventData } from "$/entities/event/model/types";
+    import type { EventData } from "$/entities/event";
 
     type Props = {
         open: boolean;
@@ -13,7 +13,7 @@
 
     let { open = $bindable(), ...props }: Props = $props();
 
-    const event = useLastMatching(
+    const event = new LastMatching(
         () => props.event,
         (event) => event != null
     );

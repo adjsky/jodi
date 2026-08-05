@@ -4,8 +4,8 @@
     import { Search, Tag, X } from "@lucide/svelte";
     import { m } from "$/paraglide/messages";
     import Jelly from "$/shared/assets/jelly.svg";
-    import { announce } from "$/shared/lib/dom/announce";
-    import { useDeferUntilNextFrame } from "$/shared/lib/hooks/use-defer-until-next-frame.svelte";
+    import { dispatchInput } from "$/shared/lib/dom/dispatch-input";
+    import { DeferUntilNextFrame } from "$/shared/lib/svelte/defer-until-next-frame.svelte";
     import SheetDialog from "$/shared/ui/SheetDialog.svelte";
     import { tick, untrack } from "svelte";
 
@@ -24,7 +24,7 @@
 
     let { name, current, deferHistoryViewFrames = 0 }: Props = $props();
 
-    const deferredView = useDeferUntilNextFrame(() => deferHistoryViewFrames);
+    const deferredView = new DeferUntilNextFrame(() => deferHistoryViewFrames);
 
     const filters = useFilter({ sensitivity: "base" });
 
@@ -50,7 +50,7 @@
     async function onSelect(category: CategoryData | null) {
         selected = category;
         await tick();
-        announce(formInput);
+        dispatchInput(formInput);
     }
 
     $effect(() => {

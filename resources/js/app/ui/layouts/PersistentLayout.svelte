@@ -3,10 +3,10 @@
     import { SplashScreen } from "@capacitor/splash-screen";
     import { page, router } from "@inertiajs/svelte";
     import { DEVICE_ID_COOKIE } from "$/shared/cfg/constants";
-    import { useFlashToaster } from "$/shared/inertia/use-flash-toaster.svelte";
-    import { useServiceWorker } from "$/shared/lib/hooks/use-service-worker";
-    import { pushSubscription } from "$/shared/lib/push/subscription.svelte";
-    import { initSwiperJs } from "$/shared/lib/swiper/init-swiper-js";
+    import { useFlashToaster } from "$/shared/integrations/inertia";
+    import { Swiper } from "$/shared/integrations/swiper";
+    import { Push } from "$/shared/services/push";
+    import { PWA } from "$/shared/services/pwa";
     import { initializeApp } from "firebase/app";
     import Cookies from "js-cookie";
     import { onMount } from "svelte";
@@ -41,21 +41,21 @@
                 });
             }
 
-            await pushSubscription.synchronize();
+            await Push.subscription.synchronize();
         }
 
         initializeApp(get(page).props.config.firebase);
 
         void synchronize();
 
-        const unlisten = pushSubscription.listen();
+        const unlisten = Push.subscription.listen();
 
         return () => unlisten.then((c) => c());
     });
 
-    initSwiperJs();
+    PWA.init();
+    Swiper.init();
 
-    useServiceWorker();
     useFlashToaster();
 </script>
 

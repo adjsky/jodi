@@ -1,12 +1,12 @@
 <script lang="ts">
     import { inertia } from "@inertiajs/svelte";
     import { Check } from "@lucide/svelte";
-    import { tw } from "$/shared/lib/css/tw";
-    import { Haptics } from "$/shared/lib/haptics";
+    import { tw } from "$/shared/lib/styles/tw";
+    import { Haptics } from "$/shared/services/haptics";
     import { boolAttr } from "runed";
 
     import type { UrlMethodPair, VisitOptions } from "@inertiajs/core";
-    import type { ClassName } from "$/shared/lib/css/tw";
+    import type { ClassName } from "$/shared/lib/styles/tw";
 
     type Props = VisitOptions & {
         href: string | UrlMethodPair;
