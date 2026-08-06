@@ -1,20 +1,27 @@
 import { router } from "@inertiajs/svelte";
+import * as v from "valibot";
 
-export type PushActionData = {
-    purpose: "reminder";
-    target: string;
-    id: string;
-    d: string;
-};
+const ActionSchema = v.variant("purpose", [
+    v.object({
+        purpose: v.literal("reminder"),
+        target: v.picklist(["event", "todo"]),
+        id: v.string(),
+        d: v.string()
+    })
+]);
 
-export function handleAction(data: PushActionData): void {
-    switch (data.purpose) {
+export function handleAction(data: unknown): void {
+    const result = v.safeParse(ActionSchema, data);
+    if (!result.success) return;
+
+    switch (result.output.purpose) {
         case "reminder": {
+            const { target, id, d } = result.output;
             void router.visit("/", {
                 data: {
-                    d: data.d,
-                    target: data.target,
-                    id: data.id
+                    target,
+                    id,
+                    d
                 },
                 only: ["todos", "events"],
                 showProgress: true,

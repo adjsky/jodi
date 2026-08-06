@@ -10,15 +10,15 @@ const types = ["info", "success", "error"] as const;
 
 export const toaster = types.reduce(
     (acc, type) => {
-        acc[type] = (title: string) => {
+        acc[type] = (title, description) => {
             toast(Toast, {
                 position: "top-center",
                 unstyled: true,
                 class: "w-full [view-transition-name:disabled] top-safe!",
-                componentProps: { title, type }
+                componentProps: { title, description, type }
             });
         };
         return acc;
     },
-    {} as Record<ToastTypes, (title: string) => void>
+    {} as Record<ToastTypes, (title: string, description?: string) => void>
 );

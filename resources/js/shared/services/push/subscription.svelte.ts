@@ -1,5 +1,4 @@
 import { FirebaseMessaging } from "@capacitor-firebase/messaging";
-import { Device } from "@capacitor/device";
 import { page, progress, router } from "@inertiajs/svelte";
 import UpsertPushSubscription from "$/generated/actions/App/Domain/Identity/Actions/UpsertPushSubscription";
 import { m } from "$/paraglide/messages";
@@ -9,8 +8,6 @@ import { toaster } from "$/shared/ui/toaster";
 import { get } from "svelte/store";
 
 import { handleAction } from "./handle-action";
-
-import type { PushActionData } from "./handle-action";
 
 type StoreOptions = {
     async?: boolean;
@@ -26,13 +23,21 @@ export class Subscription {
     #warnings: Warnings = $state({ needsConfiguration: false });
     #isSubscribing = false;
 
-    get warnings(): Warnings {
-        return this.#warnings;
+    get needsConfiguration(): boolean {
+        const { user } = get(page).props.auth;
+
+        return (
+            user?.preferences.notifications == "push" &&
+            this.#warnings.needsConfiguration
+        );
     }
 
     async synchronize(): Promise<void> {
         const { fcm, user } = get(page).props.auth;
-        if (!user) return;
+        if (!user) {
+            this.#warnings.needsConfiguration = false;
+            return;
+        }
 
         const hasPermission = await this.#checkPermission();
         if (!hasPermission) {
@@ -40,10 +45,12 @@ export class Subscription {
             return;
         }
 
-        const { token, deviceId } = await this.#getDeviceContext();
+        this.#warnings.needsConfiguration = false;
+
+        const token = await this.#getToken();
 
         if (token !== fcm?.token) {
-            await this.#store(token, deviceId, { async: true });
+            await this.#store(token, { async: true });
         }
     }
 
@@ -53,8 +60,7 @@ export class Subscription {
                 "tokenReceived",
                 async ({ token }) => {
                     if (this.#isSubscribing) return;
-                    const { identifier } = await Device.getId();
-                    await this.#store(token, identifier, { async: true });
+                    await this.#store(token, { async: true });
                 }
             ),
 
@@ -64,22 +70,21 @@ export class Subscription {
                     const { title, ...options } = notification;
                     if (!title) return;
 
-                    new Notification(title, options);
+                    if (
+                        typeof Notification != "undefined" &&
+                        Notification.permission == "granted"
+                    ) {
+                        new Notification(title, options);
+                    } else {
+                        toaster.info(title, options.body);
+                    }
                 }
             ),
 
             FirebaseMessaging.addListener(
                 "notificationActionPerformed",
                 (event) => {
-                    if (
-                        typeof event.notification.data != "object" ||
-                        event.notification.data == null ||
-                        !("purpose" in event.notification.data)
-                    ) {
-                        return;
-                    }
-
-                    handleAction(event.notification.data as PushActionData);
+                    handleAction(event.notification.data);
                 }
             )
         ]);
@@ -90,6 +95,8 @@ export class Subscription {
     }
 
     async subscribe(): Promise<void> {
+        if (this.#isSubscribing) return;
+
         try {
             this.#isSubscribing = true;
 
@@ -103,9 +110,9 @@ export class Subscription {
             progress.reveal(true);
             progress.start();
 
-            const { token, deviceId } = await this.#getDeviceContext();
+            const token = await this.#getToken();
 
-            await this.#store(token, deviceId, {
+            await this.#store(token, {
                 onSuccess: () => {
                     progress.finish();
                     toaster.success(
@@ -123,23 +130,15 @@ export class Subscription {
             });
         } catch (e) {
             progress.remove();
-            console.error(e);
             toaster.error(m["common.unexpected-error"]());
+            throw e;
         } finally {
             this.#isSubscribing = false;
         }
     }
 
-    async unsubscribe(): Promise<void> {
-        await FirebaseMessaging.deleteToken();
-    }
-
     ahtung(message: string): void {
-        // TODO: should we check permissions here? if user has a fcm token but no
-        // permissions, they turned them off manually?
-        const { fcm } = get(page).props.auth;
-        if (fcm) return;
-
+        if (!this.needsConfiguration) return;
         toaster.info(message);
     }
 
@@ -148,22 +147,19 @@ export class Subscription {
         return permission.receive == "granted";
     }
 
-    async #getDeviceContext() {
+    async #getToken() {
         const { token } = await FirebaseMessaging.getToken({
             vapidKey: get(page).props.config.firebase.vapidKey
         });
 
-        const { identifier } = await Device.getId();
-
-        return { token, deviceId: identifier };
+        return token;
     }
 
-    async #store(token: string, deviceId: string, options?: StoreOptions) {
+    async #store(token: string, options?: StoreOptions) {
         await router.visit(UpsertPushSubscription(), {
             data: {
-                fcm_token: token,
-                platform: PLATFORM,
-                device_id: deviceId
+                fcmToken: token,
+                platform: PLATFORM
             },
             async: options?.async,
             showProgress: false,

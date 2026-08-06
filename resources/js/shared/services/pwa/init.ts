@@ -35,18 +35,15 @@ export function init(): void {
         if (!("serviceWorker" in navigator)) return;
 
         function handler(event: MessageEvent) {
-            if (event.data.messageType != "notification-clicked") {
+            if (
+                typeof event.data != "object" ||
+                event.data == null ||
+                event.data.messageType != "notification-clicked"
+            ) {
                 return;
             }
 
-            if (
-                "data" in event.data &&
-                typeof event.data.data == "object" &&
-                event.data.data != null &&
-                "purpose" in event.data.data
-            ) {
-                Push.handleAction(event.data.data);
-            }
+            Push.handleAction(event.data.data);
         }
 
         navigator.serviceWorker.addEventListener("message", handler);

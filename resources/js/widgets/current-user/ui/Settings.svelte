@@ -1,5 +1,5 @@
 <script lang="ts">
-    import { page, progress } from "@inertiajs/svelte";
+    import { page } from "@inertiajs/svelte";
     import { Bell } from "@lucide/svelte";
     import { User } from "$/entities/user";
     import LogoutUser from "$/generated/actions/App/Domain/Identity/Actions/LogoutUser";
@@ -67,7 +67,7 @@
                 `current-user.notifications.${user.preferences.notifications}`
             ](),
             component: SelectNotification,
-            warning: Push.subscription.warnings.needsConfiguration
+            warning: Push.subscription.needsConfiguration
         }
     ] as const);
 
@@ -132,22 +132,7 @@
         </User.Info.Block>
 
         <User.Info.Block class="mt-10">
-            <User.Info.ActionRow
-                href={LogoutUser()}
-                onBefore={async () => {
-                    progress.reveal(true);
-                    progress.start();
-                    await Push.subscription.unsubscribe();
-                }}
-                onInvalid={() => {
-                    progress.remove();
-                }}
-                onSuccess={() => {
-                    progress.finish();
-                }}
-                showProgress={false}
-                viewTransition
-            >
+            <User.Info.ActionRow href={LogoutUser()} viewTransition>
                 {m["current-user.log-out"]()}
             </User.Info.ActionRow>
         </User.Info.Block>

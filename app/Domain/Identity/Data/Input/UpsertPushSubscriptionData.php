@@ -9,10 +9,8 @@ use Spatie\LaravelData\Data;
 
 class UpsertPushSubscriptionData extends Data
 {
-    public string $fcm_token;
+    public string $fcmToken;
 
     #[In('web', 'android')]
     public string $platform;
-
-    public string $device_id;
 }

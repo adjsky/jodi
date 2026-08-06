@@ -30,7 +30,7 @@
     async function handleSuccessfulLogin() {
         await Push.subscription.synchronize();
 
-        if (Push.subscription.warnings.needsConfiguration) {
+        if (Push.subscription.needsConfiguration) {
             createActionBanner(m["push-notifications.configure.title"](), {
                 id: "configure-push-notifications",
                 action: m["push-notifications.configure.action"](),
