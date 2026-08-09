@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Domain\Todo\Data\Input;
 
+use App\Support\Data\JodiData;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Validation\Rules\Exists;
@@ -11,16 +12,16 @@ use Spatie\LaravelData\Attributes\DataCollectionOf;
 use Spatie\LaravelData\Attributes\MergeValidationRules;
 use Spatie\LaravelData\Attributes\Validation\DateFormat;
 use Spatie\LaravelData\Attributes\Validation\Min;
-use Spatie\LaravelData\Data;
 
-class ReorderTodosData extends Data
+class ReorderTodosData extends JodiData
 {
+    /** @var Collection<int, ReorderTodoData> */
     #[DataCollectionOf(ReorderTodoData::class)]
     public Collection $todos;
 }
 
 #[MergeValidationRules]
-class ReorderTodoData extends Data
+class ReorderTodoData extends JodiData
 {
     public int $id;
 

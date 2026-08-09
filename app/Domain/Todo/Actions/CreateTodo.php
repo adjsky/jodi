@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Domain\Todo\Actions;
 
 use App\Domain\Identity\Models\User;
+use App\Domain\Reminder\Enums\ReminderDeliveryStatus;
 use App\Domain\Todo\Data\Input\CreateTodoData;
 use App\Support\Actions\JodiAction;
 use App\Support\Http\JodiRequest;
@@ -16,7 +17,7 @@ class CreateTodo extends JodiAction
     {
         $user->todos()->create([
             ...$data->toArray(),
-            'notify_status' => $data->notifyAt ? 'waiting' : null,
+            'notify_status' => $data->notifyAt ? ReminderDeliveryStatus::Waiting : null,
         ]);
     }
 

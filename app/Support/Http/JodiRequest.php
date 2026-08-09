@@ -31,4 +31,9 @@ class JodiRequest extends Request
     {
         return $this->session()->get(self::FLASH_DATA_KEY, []);
     }
+
+    public function ipOrFail(): string
+    {
+        return $this->ip() ?? throw new \LogicException(__('Unable to resolve client IP.'));
+    }
 }

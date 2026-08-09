@@ -12,6 +12,7 @@ use App\Domain\Identity\Models\User;
 use App\Domain\Identity\Models\UserOneTimePasswords;
 use App\Domain\Identity\Support\OtpGenerator;
 use Carbon\CarbonInterval;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Timebox;
 
 class OtpService
@@ -20,30 +21,36 @@ class OtpService
 
     public function consume(OtpPurpose $purpose, string $email, string $password): User
     {
-        $callback = function () use ($purpose, $email, $password) {
-            $user = User::where('email', $email)->first();
+        $callback = fn () => DB::transaction(
+            function () use ($purpose, $email, $password) {
+                $user = User::query()
+                    ->where('email', $email)
+                    ->lockForUpdate()
+                    ->first();
 
-            if (! $user) {
-                throw new NoUserException;
+                if (! $user) {
+                    throw new NoUserException;
+                }
+
+                $otp = $user->oneTimePasswords()
+                    ->where('purpose', $purpose)
+                    ->where('password', $password)
+                    ->lockForUpdate()
+                    ->first();
+
+                if (! $otp) {
+                    throw new InvalidOtpException;
+                }
+
+                if ($otp->expires_at->isPast()) {
+                    throw new OtpExpiredException;
+                }
+
+                $otp->delete();
+
+                return $user;
             }
-
-            $otp = $user->oneTimePasswords()->where([
-                'purpose' => $purpose->value,
-                'password' => $password,
-            ])->first();
-
-            if (! $otp) {
-                throw new InvalidOtpException;
-            }
-
-            if ($otp->expires_at->isPast()) {
-                throw new OtpExpiredException;
-            }
-
-            $otp->delete();
-
-            return $user;
-        };
+        );
 
         return (new Timebox)->call(
             $callback,
@@ -55,13 +62,17 @@ class OtpService
     {
         $password = $this->otpGenerator->numeric(UserOneTimePasswords::SIZE);
 
-        $user->oneTimePasswords()->create([
-            'purpose' => $purpose->value,
-            'password' => $password,
-            'expires_at' => now()->addMinutes(
-                UserOneTimePasswords::EXPIRES_IN_X_MINUTES
-            ),
-        ]);
+        DB::transaction(function () use ($purpose, $user, $password) {
+            $user->oneTimePasswords()->where('purpose', $purpose)->delete();
+
+            $user->oneTimePasswords()->create([
+                'purpose' => $purpose,
+                'password' => $password,
+                'expires_at' => now()->addMinutes(
+                    UserOneTimePasswords::EXPIRES_IN_X_MINUTES
+                ),
+            ]);
+        });
 
         return $password;
     }

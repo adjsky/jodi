@@ -5,18 +5,18 @@ declare(strict_types=1);
 namespace App\Console\Commands;
 
 use App\Support\Commands\JodiCommand;
+use Illuminate\Console\Attributes\Description;
+use Illuminate\Console\Attributes\Signature;
 use Illuminate\Support\Facades\File;
 
+#[Signature('jodi:setup
+            {--no-keygen : Skip application key generation.}
+            {--no-seed : Skip the seed task.}
+            {--no-ide-helpers : Skip IDE helpers generation.}
+            {--recreate : Overwrite existing files.}')]
+#[Description('Setup application before running it.')]
 class SetupCommand extends JodiCommand
 {
-    protected $signature = 'jodi:setup
-                            {--no-keygen : Skip application key generation.}
-                            {--no-seed : Skip the seed task.}
-                            {--no-ide-helpers : Skip IDE helpers generation.}
-                            {--recreate : Overwrite existing files.}';
-
-    protected $description = 'Setup application before running it.';
-
     const DOTENV_PATH = '.env';
 
     const EXAMPLE_DOTENV_PATH = '.env.example';

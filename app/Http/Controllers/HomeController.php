@@ -7,6 +7,7 @@ namespace App\Http\Controllers;
 use App\Domain\Event\Actions\ListEvents;
 use App\Domain\Todo\Actions\ListTodos;
 use App\Domain\Todo\Data\Output\CategoryData;
+use App\Support\DeviceDetector\RequestDeviceDetector;
 use App\Support\Http\JodiRequest;
 use Carbon\Carbon;
 use Inertia\Inertia;
@@ -16,7 +17,7 @@ class HomeController extends Controller
     public function __invoke(JodiRequest $request)
     {
         if (config('jodi.features.redirect_desktop_users')) {
-            $device = detect_device();
+            $device = new RequestDeviceDetector($request);
 
             if (! $device->isMobile()) {
                 return redirect()->route('calendar');

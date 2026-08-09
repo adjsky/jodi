@@ -6,6 +6,7 @@ namespace App\Domain\Todo\Models;
 
 use Carbon\CarbonImmutable;
 use Database\Factories\TodoPositionFactory;
+use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\UseFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -33,17 +34,14 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  *
  * @mixin \Eloquent
  */
+#[Fillable([
+    'date',
+    'position',
+])]
 #[UseFactory(TodoPositionFactory::class)]
 class TodoPosition extends Model
 {
     use HasFactory;
-
-    protected $fillable = [
-        'date',
-        'position',
-    ];
-
-    protected $hidden = [];
 
     protected function casts(): array
     {

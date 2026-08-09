@@ -1,27 +1,33 @@
-import { router } from "@inertiajs/svelte";
+import { page, router } from "@inertiajs/svelte";
 import { m } from "$/paraglide/messages";
 import { toaster } from "$/shared/ui/toaster";
+import { onMount } from "svelte";
+import { get } from "svelte/store";
+
+import type { AppPageProps } from "$/globals";
 
 let isUnloading = false;
 
 window.addEventListener("beforeunload", () => (isUnloading = true));
 
 export function useFlashToaster(): void {
-    $effect(() =>
-        router.on("success", (e) => {
-            const { flash } = e.detail.page.props;
+    function toast(flash: AppPageProps["flash"]) {
+        if (flash.error) {
+            toaster.error(flash.error);
+        } else if (flash.message) {
+            toaster.info(flash.message);
+        } else if (flash.success) {
+            toaster.success(flash.success);
+        }
+    }
 
-            if (flash.error) {
-                toaster.error(flash.error);
-            } else if (flash.message) {
-                toaster.info(flash.message);
-            } else if (flash.success) {
-                toaster.success(flash.success);
-            }
-        })
+    onMount(() => toast(get(page).props.flash));
+
+    $effect(() =>
+        router.on("success", (e) => toast(e.detail.page.props.flash))
     );
 
-    $effect(() => {
+    $effect(() =>
         router.on("invalid", ({ detail: { response } }) => {
             if (!isUnloading && response.status != 429) {
                 console.error(response.data.message);
@@ -29,8 +35,8 @@ export function useFlashToaster(): void {
             }
 
             return false;
-        });
-    });
+        })
+    );
 
     $effect(() =>
         router.on("exception", (e) => {

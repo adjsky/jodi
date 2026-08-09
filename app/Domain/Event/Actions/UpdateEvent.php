@@ -7,6 +7,7 @@ namespace App\Domain\Event\Actions;
 use App\Domain\Event\Data\Input\UpdateEventData;
 use App\Domain\Event\Data\Internal\SingleOccurrenceUpdateData;
 use App\Domain\Event\Models\Event;
+use App\Domain\Reminder\Enums\ReminderDeliveryStatus;
 use App\Support\Actions\JodiAction;
 use App\Support\Http\JodiRequest;
 use Carbon\Carbon;
@@ -109,7 +110,7 @@ class UpdateEvent extends JodiAction
             return;
         }
 
-        $attributes['notify_status'] = 'waiting';
+        $attributes['notify_status'] = ReminderDeliveryStatus::Waiting;
     }
 
     public function authorize(JodiRequest $request): bool

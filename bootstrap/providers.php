@@ -2,7 +2,12 @@
 
 declare(strict_types=1);
 
+use App\Providers\AppServiceProvider;
+use App\Providers\SqidsServiceProvider;
+use App\Providers\TypeScriptTransformerServiceProvider;
+
 return [
-    App\Providers\AppServiceProvider::class,
-    App\Providers\SqidsServiceProvider::class,
+    AppServiceProvider::class,
+    SqidsServiceProvider::class,
+    TypeScriptTransformerServiceProvider::class,
 ];

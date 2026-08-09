@@ -5,14 +5,14 @@ declare(strict_types=1);
 namespace App\Console\Commands;
 
 use App\Support\Commands\JodiCommand;
+use Illuminate\Console\Attributes\Description;
+use Illuminate\Console\Attributes\Signature;
 use Illuminate\Support\Facades\File;
 
+#[Signature('jodi:ide-helper')]
+#[Description('Generate IDE helper files.')]
 class IdeHelperCommand extends JodiCommand
 {
-    protected $signature = 'jodi:ide-helper';
-
-    protected $description = 'Generate IDE helper files.';
-
     public function handle(): int
     {
         File::ensureDirectoryExists(File::dirname(config('ide-helper.filename')));

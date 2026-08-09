@@ -29,6 +29,7 @@
             placeholder={m["current-user.account.name"]()}
             error={errors.name}
             defaultValue={user.name}
+            maxlength={36}
             required
         >
             {#snippet indicator()}<AtSign />{/snippet}

@@ -7,21 +7,36 @@ namespace App\Domain\Reminder\Notifications;
 use App\Domain\Event\Models\Event;
 use App\Domain\Identity\Enums\NotificationChannel;
 use App\Domain\Identity\Models\User;
+use App\Domain\Reminder\Enums\ReminderDeliveryStatus;
 use App\Domain\Reminder\Support\Carbon\CalendarFormatter;
 use Carbon\CarbonInterface;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
+use Illuminate\Queue\Attributes\Backoff;
+use Illuminate\Queue\Attributes\DeleteWhenMissingModels;
+use Illuminate\Queue\Attributes\Timeout;
+use Illuminate\Queue\Attributes\Tries;
 use NotificationChannels\Fcm\FcmChannel;
 use NotificationChannels\Fcm\FcmMessage;
 use NotificationChannels\Fcm\Resources\Notification as FcmNotification;
 
+#[Tries(2)]
+#[Backoff(15)]
+#[Timeout(30)]
+#[DeleteWhenMissingModels]
 class EventReminder extends Notification implements ShouldQueue
 {
     use Queueable;
 
-    public function __construct(public Event $model, public ?string $occursAt) {}
+    const MAX_DELIVERY_ATTEMPTS = 3;
+
+    public function __construct(
+        public Event $model,
+        public ?string $occursAt,
+        public int $deliveryAttempts = 1
+    ) {}
 
     public function via(User $user): array
     {
@@ -29,6 +44,21 @@ class EventReminder extends Notification implements ShouldQueue
             NotificationChannel::Push => [FcmChannel::class],
             NotificationChannel::Mail => ['mail']
         };
+    }
+
+    public function failed(\Throwable $_): void
+    {
+        if ($this->occursAt) {
+            $this->model->applyException(
+                $this->occursAt,
+                ['notify_status' => ReminderDeliveryStatus::Failed],
+                $this->model->findException($this->occursAt),
+            );
+        } else {
+            $this->model->update([
+                'notify_status' => ReminderDeliveryStatus::Failed,
+            ]);
+        }
     }
 
     public function toFcm(User $user): FcmMessage

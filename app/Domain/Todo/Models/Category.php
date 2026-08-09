@@ -7,6 +7,7 @@ namespace App\Domain\Todo\Models;
 use App\Domain\Identity\Models\User;
 use Carbon\CarbonImmutable;
 use Database\Factories\CategoryFactory;
+use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\UseFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -32,16 +33,11 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  *
  * @mixin \Eloquent
  */
+#[Fillable(['name'])]
 #[UseFactory(CategoryFactory::class)]
 class Category extends Model
 {
     use HasFactory;
-
-    protected $fillable = [
-        'name',
-    ];
-
-    protected $hidden = [];
 
     protected function casts(): array
     {

@@ -4,20 +4,50 @@ declare(strict_types=1);
 
 namespace App\Domain\Identity\Services;
 
+use App\Support\Cache\CacheKey;
 use Illuminate\Http\Exceptions\ThrottleRequestsException;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\RateLimiter;
 
 class ThrottleService
 {
-    public function throttle(
+    public function throttleByEmail(
         string $action,
         int $attempts,
         int $decaySeconds,
         string $email
     ): void {
-        $key = '2fa'.'|'.$action.'|'.str($email)->lower()->transliterate();
+        $key = CacheKey::make(
+            config('auth.2fa.namespace'),
+            $action,
+            'email',
+            hash('sha256', $email)
+        );
 
+        $this->throttle($key, $attempts, $decaySeconds);
+    }
+
+    public function throttleByIp(
+        string $action,
+        int $attempts,
+        int $decaySeconds,
+        string $ip
+    ): void {
+        $key = CacheKey::make(
+            config('auth.2fa.namespace'),
+            $action,
+            'ip',
+            hash('sha256', $ip)
+        );
+
+        $this->throttle($key, $attempts, $decaySeconds);
+    }
+
+    private function throttle(
+        string $key,
+        int $attempts,
+        int $decaySeconds,
+    ): void {
         $hits = RateLimiter::hit($key, $decaySeconds);
 
         if ($hits <= $attempts) {

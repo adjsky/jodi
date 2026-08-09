@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Domain\Todo\Actions;
 
 use App\Domain\Recurrence\Models\RecurrenceException;
+use App\Domain\Reminder\Enums\ReminderDeliveryStatus;
 use App\Domain\Todo\Data\Input\UpdateTodoData;
 use App\Domain\Todo\Data\Internal\SingleOccurrenceUpdateData;
 use App\Domain\Todo\Models\Todo;
@@ -138,7 +139,7 @@ class UpdateTodo extends JodiAction
         }
 
         if ($attributes['notify_at']) {
-            $attributes['notify_status'] = 'waiting';
+            $attributes['notify_status'] = ReminderDeliveryStatus::Waiting;
         } else {
             $attributes['notify_status'] = null;
         }

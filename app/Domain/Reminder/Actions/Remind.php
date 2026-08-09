@@ -6,6 +6,7 @@ namespace App\Domain\Reminder\Actions;
 
 use App\Domain\Event\Models\Event;
 use App\Domain\Recurrence\Builders\RecurrenceBuilder;
+use App\Domain\Reminder\Enums\ReminderDeliveryStatus;
 use App\Domain\Todo\Models\Todo;
 use App\Support\Actions\JodiAction;
 
@@ -28,7 +29,7 @@ class Remind extends JodiAction
         $models = $query
             ->withPossibleOccurrencesBetween($start, $end)
             ->with('user')
-            ->where('notify_status', '=', 'waiting')
+            ->where('notify_status', '=', ReminderDeliveryStatus::Waiting)
             ->get();
 
         foreach ($models as $m) {
@@ -39,22 +40,51 @@ class Remind extends JodiAction
                 if ($notifyAt->gt($start) || $startsAt->lte($start)) {
                     continue;
                 }
-                if ($occurrence->notify_status != 'waiting') {
+                if ($occurrence->notify_status != ReminderDeliveryStatus::Waiting) {
                     continue;
                 }
 
-                $m->user->notify(new $notification($occurrence, $occurrence->occurs_at));
+                $this->updateStatus(
+                    $m,
+                    $occurrence->occurs_at,
+                    ReminderDeliveryStatus::Processing
+                );
 
-                if ($occurrence->occurs_at) {
-                    $m->applyException(
-                        $occurrence->occurs_at,
-                        ['notify_status' => 'processing'],
-                        $m->findException($occurrence->occurs_at)
-                    );
-                } else {
-                    $m->update(['notify_status' => 'processing']);
+                try {
+                    $m->user->notify(new $notification($occurrence, $occurrence->occurs_at));
+                } catch (\Throwable $dispatchException) {
+                    try {
+                        $this->updateStatus(
+                            $m,
+                            $occurrence->occurs_at,
+                            ReminderDeliveryStatus::Waiting
+                        );
+                    } catch (\Throwable $updateException) {
+                        report($updateException);
+                    }
+
+                    throw $dispatchException;
                 }
             }
+        }
+    }
+
+    /**
+     * @param  Todo|Event  $model
+     */
+    private function updateStatus(
+        $model,
+        ?string $occursAt,
+        ReminderDeliveryStatus $status
+    ): void {
+        if ($occursAt) {
+            $model->applyException(
+                $occursAt,
+                ['notify_status' => $status],
+                $model->findException($occursAt)
+            );
+        } else {
+            $model->update(['notify_status' => $status]);
         }
     }
 }

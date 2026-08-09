@@ -5,19 +5,23 @@ declare(strict_types=1);
 namespace App\Domain\Event\Data\Input;
 
 use App\Support\Data\CastAndTransformers\RRuleCastAndTransformer;
+use App\Support\Data\JodiData;
 use RRule\RRule;
 use Spatie\LaravelData\Attributes\MapOutputName;
 use Spatie\LaravelData\Attributes\Validation\Date;
+use Spatie\LaravelData\Attributes\Validation\Max;
+use Spatie\LaravelData\Attributes\Validation\Min;
 use Spatie\LaravelData\Attributes\Validation\Rule;
 use Spatie\LaravelData\Attributes\WithCastAndTransformer;
-use Spatie\LaravelData\Data;
 use Spatie\LaravelData\Mappers\SnakeCaseMapper;
 
 #[MapOutputName(SnakeCaseMapper::class)]
-class CreateEventData extends Data
+class CreateEventData extends JodiData
 {
+    #[Min(1), Max(120)]
     public string $title;
 
+    #[Max(2_000)]
     public ?string $description;
 
     #[Rule('hex_color')]

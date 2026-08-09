@@ -11,7 +11,9 @@ class SignupController extends Controller
     public function __invoke(JodiRequest $request, string $code)
     {
         if (! $request->hasValidSignature()) {
-            return to_route('login')->with(['error' => __('URL signature is invalid. Request a new invitation.')]);
+            $request->setFlash('error', __('URL signature is invalid. Request a new invitation.'));
+
+            return to_route('login');
         }
 
         return inertia('Signup', ['code' => $code]);

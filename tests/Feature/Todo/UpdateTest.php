@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 use App\Domain\Identity\Models\User;
 use App\Domain\Recurrence\Models\RecurrenceException;
+use App\Domain\Reminder\Enums\ReminderDeliveryStatus;
 use App\Domain\Todo\Actions\UpdateTodo;
 use App\Domain\Todo\Models\Category;
 use App\Domain\Todo\Models\Todo;
@@ -41,7 +42,7 @@ test('update preserves notify_status if notify_at is the same', function () {
     $user = User::factory()->create();
     $todo = Todo::factory()->for($user)->create([
         'notify_at' => now(),
-        'notify_status' => 'sent',
+        'notify_status' => ReminderDeliveryStatus::Sent,
     ]);
 
     $data = UpdateTodoDataFactory::make(['notify_at' => $todo->notify_at->toISOString()]);
@@ -57,7 +58,7 @@ test('update preserves notify_status if notify_at is the same', function () {
 test('update resets notify_status if notify_at is different', function () {
     $user = User::factory()->create();
     $todo = Todo::factory()->for($user)->create([
-        'notify_status' => 'sent',
+        'notify_status' => ReminderDeliveryStatus::Sent,
     ]);
 
     $data = UpdateTodoDataFactory::make(['notifyAt' => '2030-01-01T12:34:56Z']);
@@ -66,7 +67,7 @@ test('update resets notify_status if notify_at is different', function () {
 
     assertDatabaseHas('todos', [
         'id' => $todo->id,
-        'notify_status' => 'waiting',
+        'notify_status' => ReminderDeliveryStatus::Waiting,
     ]);
 });
 
@@ -181,7 +182,7 @@ test('recurring global update resets existing exceptions', function () {
 
     RecurrenceException::factory()->for($todo, 'recurrenceable')->create([
         'occurs_at' => $occursAt->toDateString(),
-        'overrides' => ['notify_status' => 'sent'],
+        'overrides' => ['notify_status' => ReminderDeliveryStatus::Sent],
     ]);
     RecurrenceException::factory()->for($todo, 'recurrenceable')->create([
         'occurs_at' => $occursAt->addWeek()->toDateString(),
@@ -205,7 +206,7 @@ test('recurring global update resets existing exceptions', function () {
         'recurrenceable_type' => 'todo',
         'recurrenceable_id' => $todo->id,
         'occurs_at' => $occursAt->toDateString(),
-        'overrides' => json_encode(['notify_status' => 'sent']),
+        'overrides' => json_encode(['notify_status' => ReminderDeliveryStatus::Sent]),
     ]);
 });
 
@@ -324,7 +325,7 @@ test('exceptions are transferred and reset when changing rrule', function () {
 
     RecurrenceException::factory()->for($todo, 'recurrenceable')->create([
         'occurs_at' => $occursAt->toDateString(),
-        'overrides' => ['notify_status' => 'sent'],
+        'overrides' => ['notify_status' => ReminderDeliveryStatus::Sent],
     ]);
     RecurrenceException::factory()->for($todo, 'recurrenceable')->create([
         'occurs_at' => $occursAt->subDays(2)->toDateString(),

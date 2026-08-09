@@ -79,6 +79,7 @@
     placeholder={m["todos.placeholders.description"]()}
     class="mt-3 form-input w-full grow resize-none overflow-y-scroll border-none bg-transparent p-0 text-lg font-semibold text-cream-950 placeholder:text-cream-600 focus:ring-0"
     defaultValue={description ?? ""}
+    maxlength={2000}
 ></textarea>
 
 <div
@@ -100,6 +101,7 @@
         )}
         placeholder={m["todos.placeholders.title"]()}
         defaultValue={title ?? ""}
+        maxlength={120}
         required
     />
 {/snippet}

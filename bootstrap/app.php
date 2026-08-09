@@ -65,11 +65,21 @@ return Application::configure(basePath: dirname(__DIR__))
                     ->mapWithKeys(fn ($h) => [$h => $response->headers->get($h)])
                     ->all();
 
-                return response()->json(
-                    [
+                if (app()->hasDebugModeEnabled()) {
+                    $data = [
                         'exception' => get_class($exception),
                         'message' => $exception->getMessage(),
-                    ],
+                    ];
+                } else {
+                    $data = [
+                        'message' => $status >= 500
+                            ? 'An unexpected error occurred.'
+                            : $exception->getMessage(),
+                    ];
+                }
+
+                return response()->json(
+                    $data,
                     $status,
                     $headers
                 );

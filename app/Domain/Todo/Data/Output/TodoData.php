@@ -6,12 +6,12 @@ namespace App\Domain\Todo\Data\Output;
 
 use App\Domain\Todo\Models\Category;
 use App\Domain\Todo\Models\Todo;
+use App\Support\Data\JodiData;
 use Carbon\CarbonInterface;
-use Spatie\LaravelData\Data;
 use Spatie\TypeScriptTransformer\Attributes\TypeScript;
 
 #[TypeScript]
-class TodoData extends Data
+class TodoData extends JodiData
 {
     public function __construct(
         public int $id,
@@ -50,7 +50,7 @@ class TodoData extends Data
 }
 
 #[TypeScript]
-class CategoryData extends Data
+class CategoryData extends JodiData
 {
     public function __construct(public int $id, public string $name) {}
 

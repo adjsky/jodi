@@ -6,6 +6,7 @@ use App\Domain\Event\Actions\UpdateEvent;
 use App\Domain\Event\Models\Event;
 use App\Domain\Identity\Models\User;
 use App\Domain\Recurrence\Models\RecurrenceException;
+use App\Domain\Reminder\Enums\ReminderDeliveryStatus;
 use Carbon\Carbon;
 use Tests\Factory\Data\UpdateEventDataFactory;
 
@@ -32,14 +33,14 @@ test('regular update', function () {
         'starts_at' => Carbon::parse($data->startsAt)->toDateTimeString(),
         'ends_at' => Carbon::parse($data->endsAt)->toDateTimeString(),
         'notify_at' => Carbon::parse($data->notifyAt)->toDateTimeString(),
-        'notify_status' => 'waiting',
+        'notify_status' => ReminderDeliveryStatus::Waiting,
     ]);
 });
 
 test('update preserves notify_status if notify_at is the same', function () {
     $user = User::factory()->create();
     $event = Event::factory()->for($user)->create([
-        'notify_status' => 'sent',
+        'notify_status' => ReminderDeliveryStatus::Sent,
     ]);
 
     $data = UpdateEventDataFactory::make(['notify_at' => $event->notify_at->toISOString()]);
@@ -55,7 +56,7 @@ test('update preserves notify_status if notify_at is the same', function () {
 test('update resets notify_status if notify_at is different', function () {
     $user = User::factory()->create();
     $event = Event::factory()->for($user)->create([
-        'notify_status' => 'sent',
+        'notify_status' => ReminderDeliveryStatus::Sent,
     ]);
 
     $data = UpdateEventDataFactory::make(['notify_at' => '2030-01-01T12:34:56Z']);
@@ -64,7 +65,7 @@ test('update resets notify_status if notify_at is different', function () {
 
     assertDatabaseHas('events', [
         'id' => $event->id,
-        'notify_status' => 'waiting',
+        'notify_status' => ReminderDeliveryStatus::Waiting,
     ]);
 });
 
@@ -95,7 +96,7 @@ test('recurring local update applies an exception instead of modifying the origi
         'starts_at' => $event->starts_at->toDateTimeString(),
         'ends_at' => $event->ends_at->toDateTimeString(),
         'notify_at' => $event->notify_at->toDateTimeString(),
-        'notify_status' => 'waiting',
+        'notify_status' => ReminderDeliveryStatus::Waiting,
     ]);
 
     assertDatabaseHas('recurrence_exceptions', [
@@ -142,7 +143,7 @@ test('recurring global update modifies the original event', function () {
         'starts_at' => Carbon::parse($data->startsAt)->toDateTimeString(),
         'ends_at' => Carbon::parse($data->endsAt)->toDateTimeString(),
         'notify_at' => Carbon::parse($data->notifyAt)->toDateTimeString(),
-        'notify_status' => 'waiting',
+        'notify_status' => ReminderDeliveryStatus::Waiting,
     ]);
 
     assertDatabaseMissing('recurrence_exceptions', [
@@ -186,7 +187,7 @@ test('recurring global update resets existing exceptions', function () {
 
     RecurrenceException::factory()->for($event, 'recurrenceable')->create([
         'occurs_at' => $occursAt->toDateString(),
-        'overrides' => ['notify_status' => 'sent'],
+        'overrides' => ['notify_status' => ReminderDeliveryStatus::Sent],
     ]);
     RecurrenceException::factory()->for($event, 'recurrenceable')->create([
         'occurs_at' => $occursAt->addWeek()->toDateString(),
@@ -210,7 +211,7 @@ test('recurring global update resets existing exceptions', function () {
         'recurrenceable_type' => 'event',
         'recurrenceable_id' => $event->id,
         'occurs_at' => $occursAt->toDateString(),
-        'overrides' => json_encode(['notify_status' => 'sent']),
+        'overrides' => json_encode(['notify_status' => ReminderDeliveryStatus::Sent]),
     ]);
 });
 
@@ -284,7 +285,7 @@ test('exceptions are transferred and reset when changing rrule', function () {
 
     RecurrenceException::factory()->for($event, 'recurrenceable')->create([
         'occurs_at' => $occursAt->toDateString(),
-        'overrides' => ['notify_status' => 'sent'],
+        'overrides' => ['notify_status' => ReminderDeliveryStatus::Sent],
     ]);
     RecurrenceException::factory()->for($event, 'recurrenceable')->create([
         'occurs_at' => $occursAt->subDays(2)->toDateString(),

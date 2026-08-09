@@ -6,6 +6,7 @@ namespace App\Domain\Identity\Models;
 
 use Carbon\CarbonImmutable;
 use Database\Factories\PushSubscriptionFactory;
+use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\UseFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -35,19 +36,16 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  *
  * @mixin \Eloquent
  */
+#[Fillable([
+    'user_id',
+    'fcm_token',
+    'platform',
+    'device_id',
+])]
 #[UseFactory(PushSubscriptionFactory::class)]
 class PushSubscription extends Model
 {
     use HasFactory;
-
-    protected $fillable = [
-        'user_id',
-        'fcm_token',
-        'platform',
-        'device_id',
-    ];
-
-    protected $hidden = [];
 
     protected function casts(): array
     {

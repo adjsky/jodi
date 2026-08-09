@@ -106,6 +106,7 @@
         "title": "Log In",
         "email-placeholder": "Enter your email",
         "submit": "Continue",
+        "submit-in": "Continue in {seconds}s",
         "with-passkey": "Log in with a passkey"
     },
     "2fa": {

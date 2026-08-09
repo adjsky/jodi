@@ -7,6 +7,7 @@ namespace App\Domain\Identity\Models;
 use App\Support\Concerns\HasSqid;
 use Carbon\CarbonImmutable;
 use Database\Factories\RegistrationInvitationFactory;
+use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\UseFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -39,18 +40,15 @@ use Illuminate\Database\Eloquent\Model;
  *
  * @mixin \Eloquent
  */
+#[Fillable([
+    'email',
+    'code',
+    'expires_at',
+])]
 #[UseFactory(RegistrationInvitationFactory::class)]
 class RegistrationInvitation extends Model
 {
     use HasFactory, HasSqid;
-
-    protected $fillable = [
-        'email',
-        'code',
-        'expires_at',
-    ];
-
-    protected $hidden = [];
 
     protected function casts(): array
     {

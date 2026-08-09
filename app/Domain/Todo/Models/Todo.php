@@ -8,9 +8,11 @@ use App\Domain\Identity\Models\User;
 use App\Domain\Recurrence\Concerns\HasRecurrence;
 use App\Domain\Recurrence\Contracts\Recurrable;
 use App\Domain\Recurrence\Models\RecurrenceException;
+use App\Domain\Reminder\Enums\ReminderDeliveryStatus;
 use App\Domain\Todo\Builders\TodoBuilder;
 use Carbon\CarbonImmutable;
 use Database\Factories\TodoFactory;
+use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\UseEloquentBuilder;
 use Illuminate\Database\Eloquent\Attributes\UseFactory;
 use Illuminate\Database\Eloquent\Collection;
@@ -31,7 +33,7 @@ use Illuminate\Database\Eloquent\Relations\MorphMany;
  * @property string|null $color
  * @property CarbonImmutable|null $completed_at
  * @property CarbonImmutable|null $notify_at
- * @property string|null $notify_status
+ * @property ReminderDeliveryStatus|null $notify_status
  * @property CarbonImmutable|null $created_at
  * @property CarbonImmutable|null $updated_at
  * @property string|null $rrule
@@ -65,6 +67,17 @@ use Illuminate\Database\Eloquent\Relations\MorphMany;
  *
  * @mixin \Eloquent
  */
+#[Fillable([
+    'title',
+    'description',
+    'category_id',
+    'scheduled_at',
+    'has_time',
+    'notify_at',
+    'notify_status',
+    'color',
+    'rrule',
+])]
 #[UseFactory(TodoFactory::class)]
 #[UseEloquentBuilder(TodoBuilder::class)]
 class Todo extends Model implements Recurrable
@@ -81,20 +94,6 @@ class Todo extends Model implements Recurrable
         'notify_at',
     ];
 
-    protected $fillable = [
-        'title',
-        'description',
-        'category_id',
-        'scheduled_at',
-        'has_time',
-        'notify_at',
-        'notify_status',
-        'color',
-        'rrule',
-    ];
-
-    protected $hidden = [];
-
     protected function casts(): array
     {
         return [
@@ -102,6 +101,7 @@ class Todo extends Model implements Recurrable
             'completed_at' => 'datetime',
             'scheduled_at' => 'datetime',
             'has_time' => 'boolean',
+            'notify_status' => ReminderDeliveryStatus::class,
         ];
     }
 

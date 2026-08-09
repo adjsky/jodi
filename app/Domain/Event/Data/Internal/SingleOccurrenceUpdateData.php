@@ -5,13 +5,13 @@ declare(strict_types=1);
 namespace App\Domain\Event\Data\Internal;
 
 use App\Domain\Event\Data\Input\UpdateEventData;
+use App\Support\Data\JodiData;
 use RRule\RRule;
 use Spatie\LaravelData\Attributes\MapOutputName;
-use Spatie\LaravelData\Data;
 use Spatie\LaravelData\Mappers\SnakeCaseMapper;
 
 #[MapOutputName(SnakeCaseMapper::class)]
-class SingleOccurrenceUpdateData extends Data
+class SingleOccurrenceUpdateData extends JodiData
 {
     public function __construct(
         public string $title,

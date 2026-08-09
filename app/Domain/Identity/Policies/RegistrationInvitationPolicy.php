@@ -9,6 +9,11 @@ use App\Domain\Identity\Models\User;
 
 class RegistrationInvitationPolicy
 {
+    public function view(User $user, RegistrationInvitation $invitation): bool
+    {
+        return $user->id == $invitation->inviter_user_id;
+    }
+
     public function destroy(User $user, RegistrationInvitation $invitation): bool
     {
         return $user->id == $invitation->inviter_user_id;

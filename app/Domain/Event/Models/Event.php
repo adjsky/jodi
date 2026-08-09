@@ -9,8 +9,10 @@ use App\Domain\Identity\Models\User;
 use App\Domain\Recurrence\Concerns\HasRecurrence;
 use App\Domain\Recurrence\Contracts\Recurrable;
 use App\Domain\Recurrence\Models\RecurrenceException;
+use App\Domain\Reminder\Enums\ReminderDeliveryStatus;
 use Carbon\CarbonImmutable;
 use Database\Factories\EventFactory;
+use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\UseEloquentBuilder;
 use Illuminate\Database\Eloquent\Attributes\UseFactory;
 use Illuminate\Database\Eloquent\Collection;
@@ -30,7 +32,7 @@ use Illuminate\Database\Eloquent\Relations\MorphMany;
  * @property CarbonImmutable $starts_at
  * @property CarbonImmutable $ends_at
  * @property CarbonImmutable $notify_at
- * @property string $notify_status
+ * @property ReminderDeliveryStatus $notify_status
  * @property CarbonImmutable|null $created_at
  * @property CarbonImmutable|null $updated_at
  * @property string|null $rrule
@@ -62,6 +64,16 @@ use Illuminate\Database\Eloquent\Relations\MorphMany;
  *
  * @mixin \Eloquent
  */
+#[Fillable([
+    'title',
+    'description',
+    'starts_at',
+    'ends_at',
+    'notify_at',
+    'notify_status',
+    'color',
+    'rrule',
+])]
 #[UseFactory(EventFactory::class)]
 #[UseEloquentBuilder(EventBuilder::class)]
 class Event extends Model implements Recurrable
@@ -78,25 +90,13 @@ class Event extends Model implements Recurrable
         'notify_at',
     ];
 
-    protected $fillable = [
-        'title',
-        'description',
-        'starts_at',
-        'ends_at',
-        'notify_at',
-        'notify_status',
-        'color',
-        'rrule',
-    ];
-
-    protected $hidden = [];
-
     protected function casts(): array
     {
         return [
             'notify_at' => 'datetime',
             'starts_at' => 'datetime',
             'ends_at' => 'datetime',
+            'notify_status' => ReminderDeliveryStatus::class,
         ];
     }
 

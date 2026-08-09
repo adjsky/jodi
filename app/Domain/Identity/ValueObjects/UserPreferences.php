@@ -6,10 +6,10 @@ namespace App\Domain\Identity\ValueObjects;
 
 use App\Domain\Identity\Enums\NotificationChannel;
 use App\Domain\Identity\Enums\WeekStart;
+use App\Support\Data\JodiData;
 use Spatie\LaravelData\Attributes\MapName;
-use Spatie\LaravelData\Data;
 
-class UserPreferences extends Data
+class UserPreferences extends JodiData
 {
     public string $locale;
 

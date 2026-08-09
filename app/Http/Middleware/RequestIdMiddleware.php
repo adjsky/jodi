@@ -15,7 +15,7 @@ class RequestIdMiddleware
     {
         $requestId = strtolower((string) Str::ulid());
 
-        Log::withContext(['request-id' => $requestId]);
+        Log::withContext(['request_id' => $requestId]);
 
         $response = $next($request);
 

@@ -4,13 +4,15 @@ declare(strict_types=1);
 
 namespace App\Domain\Identity\Models;
 
+use App\Domain\Identity\Enums\OtpPurpose;
 use Carbon\CarbonImmutable;
+use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Model;
 
 /**
  * @property int $id
  * @property int $user_id
- * @property string $purpose
+ * @property OtpPurpose $purpose
  * @property string $password
  * @property CarbonImmutable $expires_at
  * @property CarbonImmutable|null $created_at
@@ -29,19 +31,17 @@ use Illuminate\Database\Eloquent\Model;
  *
  * @mixin \Eloquent
  */
+#[Fillable(['purpose', 'password', 'expires_at'])]
 class UserOneTimePasswords extends Model
 {
     const EXPIRES_IN_X_MINUTES = 15;
 
     const SIZE = 6;
 
-    protected $fillable = ['purpose', 'password', 'expires_at'];
-
-    protected $hidden = [];
-
     protected function casts(): array
     {
         return [
+            'purpose' => OtpPurpose::class,
             'expires_at' => 'datetime',
         ];
     }

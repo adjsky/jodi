@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Database\Factories;
 
 use App\Domain\Event\Models\Event;
+use App\Domain\Reminder\Enums\ReminderDeliveryStatus;
 use Carbon\CarbonImmutable;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
@@ -28,7 +29,7 @@ class EventFactory extends Factory
             'starts_at' => $startsAt,
             'ends_at' => $startsAt->addHours(fake()->numberBetween(1, 8)),
             'notify_at' => $startsAt->subHour(),
-            'notify_status' => 'waiting',
+            'notify_status' => ReminderDeliveryStatus::Waiting,
         ];
     }
 }

@@ -6,6 +6,7 @@ namespace App\Domain\Recurrence\Models;
 
 use Carbon\CarbonImmutable;
 use Database\Factories\RecurrenceExceptionFactory;
+use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\UseFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -37,18 +38,15 @@ use Illuminate\Database\Eloquent\Relations\MorphTo;
  *
  * @mixin \Eloquent
  */
+#[Fillable([
+    'occurs_at',
+    'is_cancelled',
+    'overrides',
+])]
 #[UseFactory(RecurrenceExceptionFactory::class)]
 class RecurrenceException extends Model
 {
     use HasFactory;
-
-    protected $fillable = [
-        'occurs_at',
-        'is_cancelled',
-        'overrides',
-    ];
-
-    protected $hidden = [];
 
     protected function casts(): array
     {

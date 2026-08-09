@@ -38,10 +38,6 @@ class MoodTrackerEntry extends Model
 {
     use HasFactory;
 
-    protected $fillable = [];
-
-    protected $hidden = [];
-
     protected function casts(): array
     {
         return [

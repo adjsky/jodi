@@ -5,11 +5,11 @@ declare(strict_types=1);
 namespace App\Domain\Identity\Data\Output;
 
 use App\Domain\Identity\Models\User;
-use Spatie\LaravelData\Data;
+use App\Support\Data\JodiData;
 use Spatie\TypeScriptTransformer\Attributes\TypeScript;
 
 #[TypeScript]
-class FriendData extends Data
+class FriendData extends JodiData
 {
     public function __construct(
         public string $id,

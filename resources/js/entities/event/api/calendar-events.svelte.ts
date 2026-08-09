@@ -1,4 +1,5 @@
 import ListCalendarEvents from "$/generated/actions/App/Domain/Event/Actions/ListCalendarEvents";
+import ky from "ky";
 import { useDebounce } from "runed";
 
 import type { CalendarEventData } from "../model/types";
@@ -60,11 +61,10 @@ export class CalendarEvents {
                 { query: { m: [...requests.months].join(",") } }
             );
 
-            const response = await fetch(url, {
+            const events: CalendarEventData[] = await ky(url, {
                 method,
                 signal: this.#abortController.signal
-            });
-            const events = (await response.json()) as CalendarEventData[];
+            }).json();
 
             this.#options.onSuccess?.(
                 requests.year,

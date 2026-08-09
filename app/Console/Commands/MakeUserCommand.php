@@ -6,14 +6,14 @@ namespace App\Console\Commands;
 
 use App\Domain\Identity\Models\User;
 use App\Support\Commands\JodiCommand;
+use Illuminate\Console\Attributes\Description;
+use Illuminate\Console\Attributes\Signature;
 use Illuminate\Contracts\Console\PromptsForMissingInput;
 
+#[Signature('jodi:make:user {email} {--name=John Doe}')]
+#[Description('Create a user.')]
 class MakeUserCommand extends JodiCommand implements PromptsForMissingInput
 {
-    protected $signature = 'jodi:make:user {email} {--name=John Doe}';
-
-    protected $description = 'Create a user.';
-
     public function handle(): void
     {
         User::create([

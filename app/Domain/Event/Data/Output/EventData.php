@@ -5,12 +5,12 @@ declare(strict_types=1);
 namespace App\Domain\Event\Data\Output;
 
 use App\Domain\Event\Models\Event;
+use App\Support\Data\JodiData;
 use Carbon\CarbonInterface;
-use Spatie\LaravelData\Data;
 use Spatie\TypeScriptTransformer\Attributes\TypeScript;
 
 #[TypeScript]
-class EventData extends Data
+class EventData extends JodiData
 {
     public function __construct(
         public int $id,

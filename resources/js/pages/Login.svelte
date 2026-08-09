@@ -6,8 +6,11 @@
     import AuthenticateUser from "$/generated/actions/App/Domain/Identity/Actions/AuthenticateUser";
     import { m } from "$/paraglide/messages";
     import Cat from "$/shared/assets/cat.svg";
+    import { ActionRateLimit } from "$/shared/integrations/inertia";
     import Button from "$/shared/ui/Button.svelte";
     import TextField from "$/shared/ui/TextField.svelte";
+
+    const requestTimer = new ActionRateLimit(AuthenticateUser.definition);
 </script>
 
 <AuthLayout>
@@ -28,14 +31,24 @@
             name="email"
             placeholder={m["login.email-placeholder"]()}
             error={errors.email}
+            maxlength={254}
             required
         >
             {#snippet indicator()}<Mail />{/snippet}
         </TextField>
 
         <div class="space-y-1.25">
-            <Button type="submit" disabled={processing}>
-                {m["login.submit"]()}
+            <Button
+                type="submit"
+                disabled={requestTimer.isRunning || processing}
+            >
+                {#if requestTimer.isRunning}
+                    {m["login.submit-in"]({
+                        seconds: requestTimer.secondsLeft
+                    })}
+                {:else}
+                    {m["login.submit"]()}
+                {/if}
             </Button>
             <div
                 class="flex items-center gap-3 text-sm leading-normal font-semibold text-cream-400"

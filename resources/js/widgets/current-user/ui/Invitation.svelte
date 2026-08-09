@@ -9,9 +9,10 @@
     import Confirmable from "$/shared/ui/Confirmable.svelte";
     import FloatingView from "$/shared/ui/FloatingView.svelte";
     import { toaster } from "$/shared/ui/toaster";
+    import { isHTTPError } from "ky";
     import { resource } from "runed";
 
-    import { fetchInvitation, NotFoundResourceError } from "../api/invitations";
+    import { fetchInvitation } from "../api/invitations";
     import { buildViewName, view } from "../model/view";
     import { back } from "./Back.svelte";
 
@@ -34,7 +35,10 @@
 
     $effect(() => {
         if (invitation.error) {
-            if (invitation.error instanceof NotFoundResourceError) {
+            if (
+                isHTTPError(invitation.error) &&
+                invitation.error.response.status == 404
+            ) {
                 void view.replace(buildViewName("invitations"));
             } else {
                 toaster.error(m["common.unexpected-error"]());

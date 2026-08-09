@@ -121,6 +121,7 @@
                 name="email"
                 placeholder={m["current-user.account.email"]()}
                 error={errors.email}
+                maxlength={254}
                 required
             >
                 {#snippet indicator()}<Mail />{/snippet}

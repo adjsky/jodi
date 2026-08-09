@@ -26,12 +26,19 @@ class CompleteTwoFactorChallenge extends JodiAction
         private ThrottleService $throttleService
     ) {}
 
-    public function handle(CompleteTwoFactorChallengeData $data, string $email): User
+    public function handle(CompleteTwoFactorChallengeData $data, string $ip, string $email): User
     {
-        $this->throttleService->throttle(
-            'consume-otp',
-            config('auth.2fa.throttle.attempts'),
-            config('auth.2fa.throttle.decay_seconds'),
+        $this->throttleService->throttleByIp(
+            'consume',
+            config('auth.2fa.throttle.consume.ip.attempts'),
+            config('auth.2fa.throttle.consume.ip.decay_seconds'),
+            $ip
+        );
+
+        $this->throttleService->throttleByEmail(
+            'consume',
+            config('auth.2fa.throttle.consume.email.attempts'),
+            config('auth.2fa.throttle.consume.email.decay_seconds'),
             $email
         );
 
@@ -42,14 +49,20 @@ class CompleteTwoFactorChallenge extends JodiAction
 
     public function asController(JodiRequest $request): RedirectResponse
     {
-        $email = $request->session()->get(sprintf('%s.email', config('auth.2fa.session_key')));
+        $email = $request->session()->get(sprintf('%s.email', config('auth.2fa.namespace')));
 
         if (! $email) {
-            return to_route('login')->with(['error' => __('Log in first.')]);
+            $request->setFlash('error', __('Log in first.'));
+
+            return to_route('login');
         }
 
         try {
-            $user = $this->handle(CompleteTwoFactorChallengeData::from($request), $email);
+            $user = $this->handle(
+                CompleteTwoFactorChallengeData::from($request),
+                $request->ipOrFail(),
+                $email
+            );
 
             Auth::login($user, remember: true);
 

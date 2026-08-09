@@ -92,11 +92,39 @@ return [
     */
 
     '2fa' => [
-        'session_key' => env('2FA_SESSION_KEY', '2fa'),
+        'namespace' => '2fa',
+
         'throttle' => [
-            'attempts' => (int) env('2FA_THROTTLE_ATTEMPTS', 5),
-            'decay_seconds' => (int) env('2FA_THROTTLE_DECAY_SECONDS', 300),
+            'request' => [
+                'email' => [
+                    'attempts' => 3,
+                    'decay_seconds' => 900,
+                ],
+                'ip' => [
+                    'attempts' => 20,
+                    'decay_seconds' => 900,
+                ],
+            ],
+            'consume' => [
+                'email' => [
+                    'attempts' => 5,
+                    'decay_seconds' => 300,
+                ],
+                'ip' => [
+                    'attempts' => 30,
+                    'decay_seconds' => 300,
+                ],
+            ],
+            'resend' => [
+                'email' => [
+                    'attempts' => 1,
+                    'decay_seconds' => 60,
+                ],
+                'ip' => [
+                    'attempts' => 10,
+                    'decay_seconds' => 600,
+                ],
+            ],
         ],
-        'resend_otp_throttle' => (int) env('2FA_RESEND_OTP_THROTTLE', 60),
     ],
 ];

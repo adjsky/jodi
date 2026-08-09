@@ -112,6 +112,7 @@
         "title": "Авторизуйтесь",
         "email-placeholder": "Введите ваш email",
         "submit": "Продолжить",
+        "submit-in": "Продолжить через {seconds}с",
         "with-passkey": "Войти с ключом доступа"
     },
     "2fa": {

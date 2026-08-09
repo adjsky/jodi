@@ -211,6 +211,7 @@
     "Too Many Requests": "Слишком много запросов",
     "Translate": "Перевод",
     "Translate It": "Перевести",
+    "Unable to resolve client IP.": "Не удалось определить IP-адрес клиента.",
     "Unauthorized": "Не авторизован",
     "Unavailable For Legal Reasons": "Недоступно по юридическим причинам",
     "Unknown Error": "Неизвестная ошибка",

@@ -15,6 +15,8 @@ use App\Support\Concerns\HasSqid;
 use Carbon\CarbonImmutable;
 use Database\Factories\UserFactory;
 use Illuminate\Contracts\Translation\HasLocalePreference;
+use Illuminate\Database\Eloquent\Attributes\Fillable;
+use Illuminate\Database\Eloquent\Attributes\Hidden;
 use Illuminate\Database\Eloquent\Attributes\UseFactory;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -71,20 +73,16 @@ use Illuminate\Notifications\Notifiable;
  *
  * @mixin \Eloquent
  */
+#[Fillable([
+    'name',
+    'email',
+    'preferences',
+])]
+#[Hidden(['remember_token'])]
 #[UseFactory(UserFactory::class)]
 class User extends Authenticatable implements HasLocalePreference
 {
     use HasFactory, HasSqid, Notifiable;
-
-    protected $fillable = [
-        'name',
-        'email',
-        'preferences',
-    ];
-
-    protected $hidden = [
-        'remember_token',
-    ];
 
     protected function casts(): array
     {
@@ -98,9 +96,6 @@ class User extends Authenticatable implements HasLocalePreference
         return $this->preferences->locale;
     }
 
-    /**
-     * @return string[]
-     */
     public function routeNotificationForFcm(): array
     {
         return $this->pushSubscriptions->pluck('fcm_token')->toArray();

@@ -6,6 +6,7 @@ namespace App\Domain\Event\Actions;
 
 use App\Domain\Event\Data\Input\CreateEventData;
 use App\Domain\Identity\Models\User;
+use App\Domain\Reminder\Enums\ReminderDeliveryStatus;
 use App\Support\Actions\JodiAction;
 use App\Support\Http\JodiRequest;
 use Illuminate\Http\RedirectResponse;
@@ -16,7 +17,7 @@ class CreateEvent extends JodiAction
     {
         $user->events()->create([
             ...$data->toArray(),
-            'notify_status' => 'waiting',
+            'notify_status' => ReminderDeliveryStatus::Waiting,
         ]);
     }
 

@@ -140,6 +140,7 @@
             bind:value={search}
             class="form-input h-13.75 w-full rounded-xl border-none bg-cream-500/10 ps-10 pe-12 text-lg font-medium outline-none placeholder:text-cream-600 focus:ring-0"
             placeholder={m["todos.category.placeholder"]()}
+            maxlength={50}
         />
     </div>
 

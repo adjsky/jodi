@@ -94,6 +94,8 @@ return [
 
     ],
 
+    'serializable_classes' => false,
+
     /*
     |--------------------------------------------------------------------------
     | Cache Key Prefix
@@ -105,6 +107,5 @@ return [
     |
     */
 
-    'prefix' => env('CACHE_PREFIX', Str::slug((string) env('APP_NAME', 'Jodi')).'-cache-'),
-
+    'prefix' => 'cache'.'|'.Str::slug(env('APP_NAME', 'Jodi')).'|',
 ];

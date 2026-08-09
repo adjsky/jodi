@@ -20,12 +20,19 @@ class ResendTwoFactorChallengeCode extends JodiAction
         private ThrottleService $throttleService
     ) {}
 
-    public function handle(string $email): void
+    public function handle(string $ip, string $email): void
     {
-        $this->throttleService->throttle(
-            'resend-otp',
-            1,
-            config('auth.2fa.resend_otp_throttle'),
+        $this->throttleService->throttleByIp(
+            'resend',
+            config('auth.2fa.throttle.resend.ip.attempts'),
+            config('auth.2fa.throttle.resend.ip.decay_seconds'),
+            $ip
+        );
+
+        $this->throttleService->throttleByEmail(
+            'resend',
+            config('auth.2fa.throttle.resend.email.attempts'),
+            config('auth.2fa.throttle.resend.email.decay_seconds'),
             $email
         );
 
@@ -40,14 +47,16 @@ class ResendTwoFactorChallengeCode extends JodiAction
     public function asController(JodiRequest $request): RedirectResponse
     {
         $email = $request->session()->get(
-            sprintf('%s.email', config('auth.2fa.session_key'))
+            sprintf('%s.email', config('auth.2fa.namespace'))
         );
 
         if (! $email) {
-            return to_route('login')->with(['error' => __('Log in first.')]);
+            $request->setFlash('error', __('Log in first.'));
+
+            return to_route('login');
         }
 
-        $this->handle($email);
+        $this->handle($request->ipOrFail(), $email);
 
         $request->setFlash('success', __('The code has been sent.'));
 

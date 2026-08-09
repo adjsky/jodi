@@ -12,7 +12,11 @@
     import Button from "$/shared/ui/Button.svelte";
     import TextField from "$/shared/ui/TextField.svelte";
 
-    const { code }: { code: string } = $props();
+    type Props = {
+        code: string;
+    };
+
+    const { code }: Props = $props();
 
     const view = new HistoryView();
 </script>
@@ -25,7 +29,7 @@
             {/snippet}
         </Intro>
         <Form
-            action={RegisterUser(code)}
+            action={RegisterUser(code, { mergeQuery: {} })}
             class="mt-13 space-y-4"
             let:processing
             let:errors
@@ -35,6 +39,7 @@
                 name="name"
                 placeholder={m["signup.step.start.name-placeholder"]()}
                 error={errors.name}
+                maxlength={36}
                 required
             >
                 {#snippet indicator()}<AtSign />{/snippet}

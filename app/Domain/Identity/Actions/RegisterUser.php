@@ -20,7 +20,11 @@ class RegisterUser extends JodiAction
     public function handle(RegisterUserData $data, string $code, ?string $timezone): User
     {
         return DB::transaction(function () use ($code, $data, $timezone) {
-            $invitation = RegistrationInvitation::where('code', '=', $code)->firstOrFail();
+            $invitation = RegistrationInvitation::query()
+                ->where('code', '=', $code)
+                ->where('expires_at', '>', now())
+                ->lockForUpdate()
+                ->firstOrFail();
 
             $user = User::create([
                 'email' => $invitation->email,
@@ -45,6 +49,12 @@ class RegisterUser extends JodiAction
 
     public function asController(JodiRequest $request, string $code): RedirectResponse
     {
+        if (! $request->hasValidSignature()) {
+            $request->setFlash('error', __('URL signature is invalid. Request a new invitation.'));
+
+            return to_route('login');
+        }
+
         $user = $this->handle(RegisterUserData::from($request), $code, $request->timezone());
 
         Auth::login($user, remember: true);

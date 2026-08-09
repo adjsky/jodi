@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Domain\Todo\Data\Input;
 
 use App\Support\Data\CastAndTransformers\RRuleCastAndTransformer;
+use App\Support\Data\JodiData;
 use App\Support\Http\JodiRequest;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Validation\Rules\Exists;
@@ -14,17 +15,20 @@ use Spatie\LaravelData\Attributes\MergeValidationRules;
 use Spatie\LaravelData\Attributes\Validation\Date;
 use Spatie\LaravelData\Attributes\Validation\DateFormat;
 use Spatie\LaravelData\Attributes\Validation\In;
+use Spatie\LaravelData\Attributes\Validation\Max;
+use Spatie\LaravelData\Attributes\Validation\Min;
 use Spatie\LaravelData\Attributes\Validation\Rule;
 use Spatie\LaravelData\Attributes\WithCastAndTransformer;
-use Spatie\LaravelData\Data;
 use Spatie\LaravelData\Mappers\SnakeCaseMapper;
 
 #[MergeValidationRules]
 #[MapOutputName(SnakeCaseMapper::class)]
-class UpdateTodoData extends Data
+class UpdateTodoData extends JodiData
 {
+    #[Min(1), Max(120)]
     public string $title;
 
+    #[Max(2_000)]
     public ?string $description;
 
     #[Rule('hex_color')]
