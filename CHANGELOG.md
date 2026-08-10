@@ -1,5 +1,12 @@
 # Releases
 
+## 0.23.3 (2026-08-10)
+
+### Fix
+
+- increase day number font size in week carousel
+- rename conflicting APP_NAME
+
 ## 0.23.2 (2026-08-10)
 
 ### Fix
