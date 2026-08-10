@@ -1,5 +1,11 @@
 # Releases
 
+## 0.23.2 (2026-08-10)
+
+### Fix
+
+- Haptics availability hangs production web build
+
 ## 0.23.1 (2026-08-09)
 
 ### Fix
