@@ -44,7 +44,7 @@
     function onpointerdown(e: PointerEvent) {
         e.preventDefault();
         isDragging = true;
-        Haptics.selectionStart();
+        void Haptics.selectionStart();
         handlePointer(e);
     }
 
@@ -52,7 +52,7 @@
         if (isDragging) {
             e.preventDefault();
             isDragging = false;
-            Haptics.selectionEnd();
+            void Haptics.selectionEnd();
             if (view == "hour") view = "minutes";
         }
     }
@@ -108,7 +108,7 @@
                 : baseHour;
 
             if (newHour != internalValue.hour) {
-                Haptics.selectionChanged();
+                void Haptics.selectionChanged();
             }
 
             internalValue = internalValue.set({ hour: newHour });
@@ -116,7 +116,7 @@
             const newMinute = Math.round(angle / 6) % 60;
 
             if (newMinute != internalValue.minute) {
-                Haptics.selectionChanged();
+                void Haptics.selectionChanged();
             }
 
             internalValue = internalValue.set({ minute: newMinute });

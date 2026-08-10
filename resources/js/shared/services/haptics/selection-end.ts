@@ -2,8 +2,8 @@ import { Haptics } from "@capawesome/capacitor-haptics";
 
 import { isAvailable } from "./is-available";
 
-export function selectionEnd(): void {
-    if (!isAvailable) return;
+export async function selectionEnd(): Promise<void> {
+    if (!(await isAvailable())) return;
 
     void Haptics.selectionEnd();
 }

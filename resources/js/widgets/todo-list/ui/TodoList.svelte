@@ -75,7 +75,7 @@
             e.detail.info.trigger == TRIGGERS.DRAGGED_OVER_INDEX
         ) {
             if (!isDeepEqual(groups[group], e.detail.items)) {
-                Haptics.selectionChanged();
+                void Haptics.selectionChanged();
             }
         }
 
@@ -192,11 +192,11 @@
                         aria-label="Drag"
                         class="shrink-0"
                         onpointerdown={() => {
-                            Haptics.selectionStart();
+                            void Haptics.selectionStart();
                             void Haptics.impact("medium");
                         }}
                         onpointerup={() => {
-                            Haptics.selectionEnd();
+                            void Haptics.selectionEnd();
                         }}
                     >
                         <GripVertical class="text-2xl text-cream-400" />

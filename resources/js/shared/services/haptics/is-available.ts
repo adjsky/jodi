@@ -1,5 +1,12 @@
 import { Haptics } from "@capawesome/capacitor-haptics";
 
-const { available: isAvailable } = await Haptics.isAvailable();
+let availability: boolean | null = null;
 
-export { isAvailable };
+export async function isAvailable(): Promise<boolean> {
+    availability ??= await Haptics.isAvailable().then(
+        ({ available }) => available,
+        () => false
+    );
+
+    return availability;
+}
