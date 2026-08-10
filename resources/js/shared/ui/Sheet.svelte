@@ -25,7 +25,6 @@
         ...drawerRootProps
     }: Props = $props();
 
-    let contentRef: HTMLElement | null = $state(null);
     let isAnimating = $state(false);
 
     // Defer opening the drawer on page load until the next available frame so
@@ -49,9 +48,6 @@
         get snapPoints() {
             return snapPoints;
         },
-        initialFocusEl() {
-            return contentRef;
-        },
         get closeOnInteractOutside() {
             return !isAnimating;
         }
@@ -72,7 +68,6 @@
         class="fixed inset-0 z-[calc(100+var(--layer-index,0))] flex items-end justify-center"
     >
         <Drawer.Content
-            bind:ref={contentRef}
             class="relative flex size-full flex-col rounded-t-2xl bg-white shadow-none outline-none"
             style="max-height: {maxHeight * 100}svh"
         >

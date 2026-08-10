@@ -69,6 +69,7 @@
                     });
                 }
             }}
+            data-autofocus
         >
             {#if variant == "close"}
                 <X class="text-xl text-cream-700" />

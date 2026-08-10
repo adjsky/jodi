@@ -29,11 +29,9 @@
         onConfirm,
         ...dialogRootProps
     }: Props = $props();
-
-    let closeTrigger = $state<HTMLButtonElement | null>(null);
 </script>
 
-<Dialog.Root bind:open {...dialogRootProps} initialFocusEl={() => closeTrigger}>
+<Dialog.Root bind:open {...dialogRootProps}>
     <Portal disabled={!portal}>
         <Dialog.Backdrop
             class={[
@@ -57,9 +55,9 @@
 
             <div class="mt-5 flex justify-end gap-8">
                 <Dialog.CloseTrigger
-                    bind:ref={closeTrigger}
                     class="text-ms font-bold text-brand"
                     onclick={onAbort}
+                    data-autofocus
                 >
                     {label.abort}
                 </Dialog.CloseTrigger>
