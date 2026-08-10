@@ -90,7 +90,7 @@
                             }).format(date.toDate(TIMEZONE))}
                         </span>
                         <span
-                            class="relative font-normal text-cream-800"
+                            class="relative text-lg font-normal text-cream-800"
                             data-part="day-number"
                         >
                             {date.day}
