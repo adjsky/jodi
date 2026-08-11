@@ -4,14 +4,13 @@
     import { SplashScreen } from "@capacitor/splash-screen";
     import { page, router } from "@inertiajs/svelte";
     import { DEVICE_ID_COOKIE } from "$/shared/cfg/constants";
-    import { useFlashToaster } from "$/shared/integrations/inertia";
     import { Swiper } from "$/shared/integrations/swiper";
     import { Push } from "$/shared/services/push";
     import { PWA } from "$/shared/services/pwa";
+    import ToastProvider from "$/shared/ui/ToastProvider.svelte";
     import { initializeApp } from "firebase/app";
     import Cookies from "js-cookie";
     import { onMount } from "svelte";
-    import { Toaster } from "svelte-sonner";
     import { get } from "svelte/store";
 
     import type { Snippet } from "svelte";
@@ -56,12 +55,10 @@
 
     PWA.init();
     Swiper.init();
-
-    useFlashToaster();
 </script>
 
 <Portal>
-    <Toaster />
+    <ToastProvider />
 </Portal>
 
 {@render children()}
