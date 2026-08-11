@@ -3,6 +3,7 @@
     import { Clock } from "@lucide/svelte";
     import { m } from "$/paraglide/messages";
     import { getLocale } from "$/paraglide/runtime";
+    import { getRandomInt } from "$/shared/lib/random/get-random-int";
     import { tw } from "$/shared/lib/styles/tw";
 
     import type { ZonedDateTime } from "@internationalized/date";
@@ -42,6 +43,40 @@
         notify,
         more
     }: Props = $props();
+
+    const titleSuggestions = [
+        m["todos.placeholders.title.reply-later"](),
+        m["todos.placeholders.title.important-email"](),
+        m["todos.placeholders.title.laundry-chair"](),
+        m["todos.placeholders.title.drink-water"](),
+        m["todos.placeholders.title.tiny-task"](),
+        m["todos.placeholders.title.five-minute-task"](),
+        m["todos.placeholders.title.scary-phone-call"](),
+        m["todos.placeholders.title.buy-groceries"](),
+        m["todos.placeholders.title.clean-desktop"](),
+        m["todos.placeholders.title.open-document"](),
+        m["todos.placeholders.title.deadline"](),
+        m["todos.placeholders.title.laundry"](),
+        m["todos.placeholders.title.take-vitamins"](),
+        m["todos.placeholders.title.water-plants"](),
+        m["todos.placeholders.title.change-sheets"](),
+        m["todos.placeholders.title.book-appointment"](),
+        m["todos.placeholders.title.send-reminder"](),
+        m["todos.placeholders.title.return-package"](),
+        m["todos.placeholders.title.clear-inbox"](),
+        m["todos.placeholders.title.update-password"](),
+        m["todos.placeholders.title.backup-files"](),
+        m["todos.placeholders.title.meal-prep"](),
+        m["todos.placeholders.title.stretch"](),
+        m["todos.placeholders.title.go-outside"](),
+        m["todos.placeholders.title.declutter"](),
+        m["todos.placeholders.title.one-thing"](),
+        m["todos.placeholders.title.stop-procrastinating"](),
+        m["todos.placeholders.title.remember-why"]()
+    ];
+
+    const titlePlaceholder =
+        titleSuggestions[getRandomInt(0, titleSuggestions.length - 1)];
 </script>
 
 <div class="grid grid-cols-[auto_1fr_auto] items-center gap-3">
@@ -99,7 +134,7 @@
             "form-input w-full border-none bg-transparent p-0 text-xl font-bold text-cream-950 placeholder:text-cream-600 focus:ring-0",
             classname
         )}
-        placeholder={m["todos.placeholders.title"]()}
+        placeholder={titlePlaceholder}
         defaultValue={title ?? ""}
         maxlength={120}
         required

@@ -160,7 +160,36 @@
             "reorder": "Failed to reorder tasks. Try again later."
         },
         "placeholders": {
-            "title": "Task",
+            "title": {
+                "reply-later": "Reply to that message",
+                "important-email": "Write that very important email",
+                "laundry-chair": "Clear the clothes chair 🪑",
+                "drink-water": "Drink some water 💧",
+                "tiny-task": "Do one tiny thing",
+                "five-minute-task": "A five-minute task (supposedly)",
+                "scary-phone-call": "Make that phone call 📞",
+                "buy-groceries": "Buy some grown-up groceries",
+                "clean-desktop": "Sort out the desktop chaos",
+                "open-document": "At least open the document",
+                "deadline": "Save the deadline 🚨",
+                "laundry": "Do the laundry",
+                "take-vitamins": "Remember to take vitamins",
+                "water-plants": "Save the plants 🪴",
+                "change-sheets": "Change the bed sheets",
+                "book-appointment": "Book that overdue appointment",
+                "send-reminder": "Send another reminder",
+                "return-package": "Finally return that package 📦",
+                "clear-inbox": "Clear the inbox",
+                "update-password": "Update the password before it's too late",
+                "backup-files": "Back up the files",
+                "meal-prep": "Prepare some food for later",
+                "stretch": "Stretch my back 🧘",
+                "go-outside": "Go outside for a little while 🌿",
+                "declutter": "Sort through the pile of stuff",
+                "one-thing": "Get at least one thing done",
+                "stop-procrastinating": "Stop putting this off 🫠",
+                "remember-why": "Remember why I came here"
+            },
             "description": "Add a few extra notes here..."
         },
         "recurrence-action": {
@@ -191,7 +220,26 @@
             "edit": "Failed to update event. Try again later."
         },
         "placeholders": {
-            "title": "Event",
+            "title": {
+                "second-date": "2nd date!!",
+                "games-night": "Games night",
+                "beach-day": "Beach day",
+                "hot-yoga": "Hot yoga 🧘‍♀️",
+                "karaoke": "Karaoke-eee",
+                "disco-night": "Disco night 🪩",
+                "spain-trip": "Trip to Spain ✈️",
+                "park-picnic": "Picnic at the park 🧺",
+                "cutting-bangs": "Cutting my own bangs",
+                "dentist": "Dentist (again... fml)",
+                "self-care-sunday": "✨ Self-care Sunday ✨",
+                "leg-day": "Leg day 💀",
+                "croissant-mission": "Emergency croissant mission 🥐",
+                "important-nap": "Very important afternoon nap",
+                "coffee-emergency": "Emergency coffee meeting",
+                "cancel-plans": "Cancel plans and breathe",
+                "sunset-chasing": "Chasing the sunset 🌅",
+                "survive-monday": "Survive Monday"
+            },
             "description": "Add a few extra notes here..."
         },
         "recurrence-action": {

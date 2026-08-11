@@ -3,6 +3,7 @@
     import { Calendar, Clock } from "@lucide/svelte";
     import { m } from "$/paraglide/messages";
     import { DEFER_FRAMES } from "$/shared/cfg/constants";
+    import { getRandomInt } from "$/shared/lib/random/get-random-int";
     import TimeRangePicker from "$/shared/ui/TimeRangePicker.svelte";
 
     import { formatDateRange } from "../helpers/format-date-range";
@@ -42,6 +43,30 @@
         onStartsAtChange,
         onEndsAtChange
     }: Props = $props();
+
+    const titleSuggestions = [
+        m["events.placeholders.title.second-date"](),
+        m["events.placeholders.title.games-night"](),
+        m["events.placeholders.title.beach-day"](),
+        m["events.placeholders.title.hot-yoga"](),
+        m["events.placeholders.title.karaoke"](),
+        m["events.placeholders.title.disco-night"](),
+        m["events.placeholders.title.spain-trip"](),
+        m["events.placeholders.title.park-picnic"](),
+        m["events.placeholders.title.cutting-bangs"](),
+        m["events.placeholders.title.dentist"](),
+        m["events.placeholders.title.self-care-sunday"](),
+        m["events.placeholders.title.leg-day"](),
+        m["events.placeholders.title.croissant-mission"](),
+        m["events.placeholders.title.important-nap"](),
+        m["events.placeholders.title.coffee-emergency"](),
+        m["events.placeholders.title.cancel-plans"](),
+        m["events.placeholders.title.sunset-chasing"](),
+        m["events.placeholders.title.survive-monday"]()
+    ];
+
+    const titlePlaceholder =
+        titleSuggestions[getRandomInt(0, titleSuggestions.length - 1)];
 </script>
 
 <div class="flex items-center justify-between">
@@ -61,7 +86,7 @@
 
 <input
     class="mt-5 form-input w-full border-none bg-transparent p-0 text-xl font-bold text-cream-950 placeholder:text-cream-600 focus:ring-0"
-    placeholder={m["events.placeholders.title"]()}
+    placeholder={titlePlaceholder}
     name="title"
     defaultValue={title ?? ""}
     maxlength={120}
