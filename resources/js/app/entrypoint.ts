@@ -4,7 +4,8 @@ import "./config/date";
 import "./config/capacitor";
 
 import { createInertiaApp } from "@inertiajs/svelte";
-import { hydrate, mount } from "svelte";
+import { attachPortalRoot } from "$/shared/lib/dom/attach-portal-root";
+import { mount } from "svelte";
 
 import PersistentLayout from "./ui/layouts/PersistentLayout.svelte";
 
@@ -24,11 +25,9 @@ void createInertiaApp({
         };
     },
     setup({ el, App, props }) {
-        if (el && el.dataset.serverRendered === "true") {
-            hydrate(App, { target: el, props });
-        } else if (el) {
-            mount(App, { target: el, props });
-        }
+        if (!el) return;
+        const portalRoot = attachPortalRoot(el);
+        mount(App, { target: el, anchor: portalRoot, props });
     },
     progress: {
         color: "var(--color-brand)",

@@ -1,8 +1,8 @@
 <script lang="ts">
     import { Dialog } from "@ark-ui/svelte/dialog";
-    import { Portal } from "@ark-ui/svelte/portal";
     import { m } from "$/paraglide/messages";
 
+    import AppPortal from "./AppPortal.svelte";
     import Button from "./Button.svelte";
 
     import type { MaybePromise } from "../lib/async/types";
@@ -38,7 +38,7 @@
             {#snippet asChild(props)}{@render trigger(props)}{/snippet}
         </Dialog.Trigger>
     {/if}
-    <Portal disabled={!portal}>
+    <AppPortal disabled={!portal}>
         <Dialog.Backdrop
             class={[
                 "fixed inset-0 z-[calc(100+var(--layer-index,0))] bg-cream-950/60 duration-300",
@@ -81,5 +81,5 @@
                 </Button>
             </div>
         </Dialog.Content>
-    </Portal>
+    </AppPortal>
 </Dialog.Root>

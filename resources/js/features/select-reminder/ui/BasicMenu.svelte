@@ -1,7 +1,8 @@
 <script lang="ts">
-    import { Menu, Portal } from "@ark-ui/svelte";
+    import { Menu } from "@ark-ui/svelte";
     import { Bell, BellDot, Check } from "@lucide/svelte";
     import { m } from "$/paraglide/messages";
+    import AppPortal from "$/shared/ui/AppPortal.svelte";
     import ToolbarAction from "$/shared/ui/ToolbarAction.svelte";
     import { boolAttr } from "runed";
 
@@ -72,7 +73,7 @@
             </ToolbarAction>
         {/snippet}
     </Menu.Trigger>
-    <Portal>
+    <AppPortal>
         <Menu.Positioner>
             <Menu.Content
                 class="z-200 min-w-30 rounded-xl bg-white text-lg font-medium outline outline-cream-950"
@@ -99,5 +100,5 @@
                 {/each}
             </Menu.Content>
         </Menu.Positioner>
-    </Portal>
+    </AppPortal>
 </Menu.Root>

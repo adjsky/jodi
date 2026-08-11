@@ -1,9 +1,9 @@
 <script lang="ts">
-    import { Portal } from "@ark-ui/svelte";
     import { Link } from "@inertiajs/svelte";
     import { ChevronLeft } from "@lucide/svelte";
 
     import { tw } from "../lib/styles/tw";
+    import AppPortal from "./AppPortal.svelte";
 
     import type { UrlMethodPair } from "@inertiajs/core";
     import type { Snippet } from "svelte";
@@ -31,7 +31,7 @@
     }: Props = $props();
 </script>
 
-<Portal disabled={!portal}>
+<AppPortal disabled={!portal}>
     <div
         id="floating-view-{id}"
         {...props}
@@ -63,4 +63,4 @@
         </div>
         {@render children()}
     </div>
-</Portal>
+</AppPortal>

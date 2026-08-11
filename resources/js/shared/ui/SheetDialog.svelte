@@ -1,6 +1,8 @@
 <script lang="ts">
-    import { Dialog, Portal } from "@ark-ui/svelte";
+    import { Dialog } from "@ark-ui/svelte";
     import { ChevronLeft } from "@lucide/svelte";
+
+    import AppPortal from "./AppPortal.svelte";
 
     import type { DialogRootProps } from "@ark-ui/svelte";
     import type { Snippet } from "svelte";
@@ -38,7 +40,7 @@
         </Dialog.Trigger>
     {/if}
 
-    <Portal disabled={!portal}>
+    <AppPortal disabled={!portal}>
         <Dialog.Backdrop
             class={[
                 "fixed inset-0 z-[calc(100+var(--layer-index,0))] bg-cream-950/60",
@@ -73,5 +75,5 @@
 
             {@render children()}
         </Dialog.Content>
-    </Portal>
+    </AppPortal>
 </Dialog.Root>

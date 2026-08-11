@@ -1,5 +1,7 @@
 <script lang="ts">
-    import { Dialog, Portal } from "@ark-ui/svelte";
+    import { Dialog } from "@ark-ui/svelte";
+
+    import AppPortal from "./AppPortal.svelte";
 
     import type { DialogRootProps } from "@ark-ui/svelte";
     import type { Snippet } from "svelte";
@@ -32,7 +34,7 @@
 </script>
 
 <Dialog.Root bind:open {...dialogRootProps}>
-    <Portal disabled={!portal}>
+    <AppPortal disabled={!portal}>
         <Dialog.Backdrop
             class={[
                 "fixed inset-0 z-[calc(100+var(--layer-index,0))] bg-cream-950/60 duration-300",
@@ -70,5 +72,5 @@
                 </button>
             </div>
         </Dialog.Content>
-    </Portal>
+    </AppPortal>
 </Dialog.Root>

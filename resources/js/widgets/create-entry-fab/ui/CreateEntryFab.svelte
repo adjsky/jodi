@@ -1,5 +1,5 @@
 <script lang="ts">
-    import { Dialog, Portal } from "@ark-ui/svelte";
+    import { Dialog } from "@ark-ui/svelte";
     import { now, parseDate, toZoned } from "@internationalized/date";
     import { CalendarClock, Check, X } from "@lucide/svelte";
     import { m } from "$/paraglide/messages";
@@ -9,6 +9,7 @@
         useSearchParams
     } from "$/shared/integrations/inertia";
     import { LastMatching } from "$/shared/lib/svelte/last-matching.svelte";
+    import AppPortal from "$/shared/ui/AppPortal.svelte";
     import Sheet from "$/shared/ui/Sheet.svelte";
 
     import ActionButton from "./ActionButton.svelte";
@@ -58,7 +59,7 @@
             </ActionButton>
         {/snippet}
     </Dialog.Trigger>
-    <Portal>
+    <AppPortal>
         <Dialog.Backdrop
             class={[
                 "fixed inset-0 z-15 bg-cream-950/60 duration-300",
@@ -86,7 +87,7 @@
                 <Check />
             </ActionRow>
         </Dialog.Content>
-    </Portal>
+    </AppPortal>
 </Dialog.Root>
 
 <Sheet

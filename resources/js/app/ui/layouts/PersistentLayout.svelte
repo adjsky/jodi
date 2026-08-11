@@ -1,4 +1,5 @@
 <script lang="ts">
+    import { Portal } from "@ark-ui/svelte";
     import { Device } from "@capacitor/device";
     import { SplashScreen } from "@capacitor/splash-screen";
     import { page, router } from "@inertiajs/svelte";
@@ -59,6 +60,8 @@
     useFlashToaster();
 </script>
 
-<Toaster />
+<Portal>
+    <Toaster />
+</Portal>
 
 {@render children()}
