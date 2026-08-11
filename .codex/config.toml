@@ -4,3 +4,7 @@ args = ["artisan", "boost:mcp"]
 
 [mcp_servers.svelte]
 url = "https://mcp.svelte.dev/mcp"
+
+[mcp_servers.ark-ui]
+command = "npx"
+args = ["-y", "@ark-ui/mcp"]
