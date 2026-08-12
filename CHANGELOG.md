@@ -1,5 +1,18 @@
 # Releases
 
+## 0.24.0 (2026-08-12)
+
+### Feat
+
+- add silly title placeholders
+
+### Fix
+
+- typescript error
+- apply view transition to #app
+- initial toast
+- render everything inside #app, except nprogress and toast
+
 ## 0.23.3 (2026-08-10)
 
 ### Fix
