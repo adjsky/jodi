@@ -14,6 +14,6 @@
 <Portal
     {disabled}
     {children}
-    container={document.querySelector("#portal-root") ??
+    container={document.querySelector<HTMLElement>("#portal-root") ??
         raise("Failed to locate portal root.")}
 />
