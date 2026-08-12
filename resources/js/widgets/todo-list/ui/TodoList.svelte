@@ -109,7 +109,7 @@
             {m["todos.no-todos"]()}
         </p>
     {:else}
-        <div class="mt-4 space-y-4">
+        <div class="mt-1.75 space-y-4">
             {#each Object.entries(groups) as [group, todos] (group)}
                 {#if Object.keys(groups).length == 1 && group == UNGROUPED_KEY}
                     {@render list(group, todos)}
