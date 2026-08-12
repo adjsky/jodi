@@ -31,7 +31,7 @@
     @inertiaHead
 </head>
 
-<body class="antialiased p-safe">
+<body class="antialiased">
     @inertia
 </body>
 

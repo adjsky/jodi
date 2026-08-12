@@ -150,7 +150,9 @@
         position: relative;
         contain: layout;
 
-        min-height: 100dvh;
+        height: 100dvh;
+        padding: env(safe-area-inset-top, 0) env(safe-area-inset-right, 0)
+            env(safe-area-inset-bottom, 0) env(safe-area-inset-left, 0);
     }
 
     /** Remove yellow/blue autofill indicator */
