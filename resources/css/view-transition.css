@@ -13,7 +13,7 @@
               transitions. Keep this hack until element-scoped view transitions
               are supported in all major browsers.
         */
-        clip-path: inset(calc(env(safe-area-inset-top) + 3px) 0 0 0);
+        clip-path: inset(calc(env(safe-area-inset-top, 0) + 3px) 0 0 0);
     }
 
     ::view-transition-old(app) {
