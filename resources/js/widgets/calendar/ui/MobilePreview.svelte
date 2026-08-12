@@ -30,9 +30,7 @@
     const view = new HistoryView("calendar", { viewTransition: true });
 </script>
 
-<header
-    class="sticky top-0 z-10 flex items-center justify-between bg-cream-50 px-4 pt-2"
->
+<header class="flex items-center justify-between bg-cream-50 px-4 pt-2">
     <button class="-ms-2 p-2.5" onclick={() => view.push()}>
         <CalendarIcon class="text-3xl" />
     </button>
