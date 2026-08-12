@@ -146,6 +146,13 @@
         margin: 0 auto;
     }
 
+    #app {
+        position: relative;
+        contain: layout;
+
+        min-height: 100dvh;
+    }
+
     /** Remove yellow/blue autofill indicator */
     input:-webkit-autofill {
         background-clip: text !important;
