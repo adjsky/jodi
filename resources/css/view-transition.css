@@ -8,6 +8,11 @@
     }
 
     ::view-transition-group(app) {
+        /*
+        TODO: Apply clip-path to prevent nprogress from being captured in view
+              transitions. Keep this hack until element-scoped view transitions
+              are supported in all major browsers.
+        */
         clip-path: inset(3px 0 0 0);
     }
 
