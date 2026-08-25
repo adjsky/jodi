@@ -7,25 +7,41 @@
         view-transition-name: app;
     }
 
+    .phpdebugbar {
+        view-transition-name: disabled;
+    }
+
     ::view-transition-group(app) {
         /*
         TODO: Apply clip-path to prevent nprogress from being captured in view
               transitions. Keep this hack until element-scoped view transitions
               are supported in all major browsers.
         */
-        clip-path: inset(calc(env(safe-area-inset-top, 0) + 3px) 0 0 0);
+        clip-path: inset(calc(env(safe-area-inset-top, 0px) + 3px) 0 0 0);
     }
 
     ::view-transition-old(app) {
         animation:
-            60ms cubic-bezier(0.4, 0, 1, 1) both fade-out,
-            200ms cubic-bezier(0.4, 0, 0.2, 1) both slide-to-left;
+            80ms cubic-bezier(0.4, 0, 1, 1) both fade-out,
+            260ms cubic-bezier(0.4, 0, 0.2, 1) both slide-to-left;
     }
 
     ::view-transition-new(app) {
         animation:
-            140ms cubic-bezier(0, 0, 0.2, 1) 60ms both fade-in,
-            200ms cubic-bezier(0.4, 0, 0.2, 1) both slide-from-right;
+            180ms cubic-bezier(0, 0, 0.2, 1) 80ms both fade-in,
+            260ms cubic-bezier(0.4, 0, 0.2, 1) both slide-from-right;
+    }
+
+    :root:active-view-transition-type(back)::view-transition-old(app) {
+        animation:
+            80ms cubic-bezier(0.4, 0, 1, 1) both fade-out,
+            260ms cubic-bezier(0.4, 0, 0.2, 1) both slide-to-right;
+    }
+
+    :root:active-view-transition-type(back)::view-transition-new(app) {
+        animation:
+            180ms cubic-bezier(0, 0, 0.2, 1) 80ms both fade-in,
+            260ms cubic-bezier(0.4, 0, 0.2, 1) both slide-from-left;
     }
 
     @keyframes fade-in {
@@ -42,13 +58,25 @@
 
     @keyframes slide-from-right {
         from {
-            transform: translateX(30px);
+            transform: translateX(64px);
         }
     }
 
     @keyframes slide-to-left {
         to {
-            transform: translateX(-30px);
+            transform: translateX(-64px);
+        }
+    }
+
+    @keyframes slide-from-left {
+        from {
+            transform: translateX(-64px);
+        }
+    }
+
+    @keyframes slide-to-right {
+        to {
+            transform: translateX(64px);
         }
     }
 }

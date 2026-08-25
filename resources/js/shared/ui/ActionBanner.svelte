@@ -90,6 +90,7 @@
         {/if}
         {#if banner.action}
             <Button
+                type="button"
                 class="h-auto w-max rounded-lg px-2 py-1 text-ms"
                 onclick={() => banner.onAccept?.()}
             >

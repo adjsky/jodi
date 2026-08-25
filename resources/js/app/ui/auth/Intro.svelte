@@ -16,7 +16,14 @@
 
 <div {...props} class={tw("mx-auto space-y-2.5", props.class)}>
     <div class="flex items-center justify-center gap-3">
-        <img src={Logo} width={120} height={55} alt="" />
+        <img
+            src={Logo}
+            width={120}
+            height={55}
+            alt=""
+            decoding="async"
+            fetchpriority="high"
+        />
         {@render icon()}
     </div>
     <h1 class="text-center text-3xl font-bold">{title}</h1>

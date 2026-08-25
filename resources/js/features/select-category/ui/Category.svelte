@@ -86,6 +86,7 @@
             }
         }
     }
+    class="pb-0"
     height={75}
     title={m["todos.category.title"]()}
     onExitComplete={() => {
@@ -144,7 +145,9 @@
         />
     </div>
 
-    <div class="mt-2 flex grow flex-col overflow-y-scroll">
+    <div
+        class="mt-2 flex grow flex-col overflow-y-auto overscroll-contain pb-safe"
+    >
         {#if showAddButton}
             <AddCategory
                 name={search}
@@ -165,7 +168,6 @@
                 width={82}
                 height={85}
                 alt=""
-                loading="lazy"
                 decoding="async"
                 class="mx-auto mt-[10vh] w-full max-w-28"
             />

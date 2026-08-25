@@ -6,6 +6,7 @@
         toCalendarDateTime
     } from "@internationalized/date";
     import { m } from "$/paraglide/messages";
+    import { VirtualKeyboard } from "$/shared/services/virtual-keyboard";
     import Button from "$/shared/ui/Button.svelte";
     import SheetDialog from "$/shared/ui/SheetDialog.svelte";
     import { Frequency, RRule, rrulestr } from "rrule";
@@ -78,22 +79,26 @@
 </script>
 
 <SheetDialog
+    {@attach VirtualKeyboard.retainFocus()}
     bind:open
-    onExitComplete={reset}
+    class="pb-0"
     height={90}
     title={m["recurrence.custom.title"]()}
+    onExitComplete={reset}
     portal
     lazyMount
 >
-    <SelectFrequency {day} bind:freq bind:interval bind:byweekday />
+    <div class="flex min-h-0 flex-col overflow-y-auto overscroll-contain">
+        <SelectFrequency {day} bind:freq bind:interval bind:byweekday />
 
-    {#if freq == RRule.WEEKLY}
-        <SelectWeekdays bind:byweekday />
-    {/if}
+        {#if freq == RRule.WEEKLY}
+            <SelectWeekdays bind:byweekday />
+        {/if}
 
-    <SelectRecurrenceLimit {day} bind:limit bind:until bind:count />
+        <SelectRecurrenceLimit {day} bind:limit bind:until bind:count />
+    </div>
 
-    <div class="flex grow items-end pb-2">
+    <div class="mt-4 mb-safe-offset-5 flex grow items-end safe-area-keyboard">
         <Button
             type="button"
             disabled={Number(interval) === 0 ||

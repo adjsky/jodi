@@ -3,8 +3,9 @@
 
     import type { HTMLButtonAttributes } from "svelte/elements";
 
-    type Props = HTMLButtonAttributes & {
+    type Props = Exclude<HTMLButtonAttributes, "type"> & {
         variant?: "main" | "secondary";
+        type: NonNullable<HTMLButtonAttributes["type"]>;
     };
 
     const { children, variant = "main", ...rest }: Props = $props();

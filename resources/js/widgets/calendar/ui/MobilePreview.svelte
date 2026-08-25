@@ -1,5 +1,5 @@
 <script lang="ts">
-    import { inertia, page } from "@inertiajs/svelte";
+    import { inertia, page, router } from "@inertiajs/svelte";
     import { DateFormatter, parseDate, today } from "@internationalized/date";
     import { Calendar as CalendarIcon } from "@lucide/svelte";
     import { Calendar, WeekCarousel } from "$/features/choose-date";
@@ -41,8 +41,16 @@
 
             if (date.compare(selected) == 0) {
                 cursor = date;
+
+                void router.reload({
+                    showProgress: true,
+                    only: ["todos", "events"]
+                });
             } else {
-                void searchParams.update({ d: date.toString() });
+                void searchParams.update(
+                    { d: date.toString() },
+                    { only: ["todos", "events"] }
+                );
             }
         }}
     >

@@ -1,10 +1,10 @@
+import { TOUCH_SLOP } from "$/shared/cfg/constants";
 import { extract } from "runed";
 
 import type { MaybeGetter } from "runed";
 import type { Attachment } from "svelte/attachments";
 
 const SELECTION_DELAY = 350;
-const MOVE_TOLERANCE = 10;
 
 type Options<T> = {
     enabled: boolean;
@@ -82,7 +82,7 @@ export function useDragSelection<T>(
                 if (!isSelecting) {
                     const [x, y] = startPosition;
                     const distance = Math.hypot(e.clientX - x, e.clientY - y);
-                    if (distance > MOVE_TOLERANCE) reset();
+                    if (distance >= TOUCH_SLOP) reset();
                     return;
                 }
 

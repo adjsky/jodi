@@ -1,14 +1,17 @@
 <script lang="ts">
     import { page } from "@inertiajs/svelte";
-    import { Bell } from "@lucide/svelte";
     import { User } from "$/entities/user";
     import LogoutUser from "$/generated/actions/App/Domain/Identity/Actions/LogoutUser";
     import { m } from "$/paraglide/messages";
     import { getLocale } from "$/paraglide/runtime";
     import { LANGUAGES } from "$/shared/cfg/constants";
+    import { ScreenView } from "$/shared/composites/screen-view";
     import { Push } from "$/shared/services/push";
-    import FloatingView from "$/shared/ui/FloatingView.svelte";
+    import { resource } from "runed";
 
+    import { fetchFriends } from "../api/friends";
+    import { fetchInvitations } from "../api/invitations";
+    import { context } from "../model/context";
     import { buildViewName, view } from "../model/view";
     import { back } from "./Back.svelte";
     import EditEmail from "./EditEmail.svelte";
@@ -19,6 +22,11 @@
     import SelectNotification from "./SelectNotification.svelte";
     import SelectWeekStart from "./SelectWeekStart.svelte";
     import Warning from "./Warning.svelte";
+
+    const friends = resource(() => [], fetchFriends);
+    const invitations = resource(() => [], fetchInvitations);
+
+    context.set({ friends, invitations });
 
     const user = $derived($page.props.auth.user);
     const { nInvitations, nFriends } = $derived($page.props.me);
@@ -76,69 +84,50 @@
     }
 </script>
 
-{#if view.isOpen("me")}
-    <FloatingView {back} class="pb-8">
-        {#snippet title()}
-            <div
-                class="absolute top-1 left-1/2 flex -translate-x-1/2 flex-col items-center gap-1.5"
+{#if view.name.startsWith("me")}
+    <ScreenView.Overlay class="pb-0">
+        <ScreenView.Header {back} title={m["current-user.settings"]()} />
+        <ScreenView.Content
+            class="overflow-y-auto overscroll-contain pt-5 pb-safe-offset-8"
+        >
+            <User.Info.Block title={m["current-user.account.title"]()}>
+                {#each accountRows as { name, value } (name)}
+                    <User.Info.SettingRow
+                        title={m[`current-user.account.${name}`]()}
+                        onclick={() => onRowClick(name)}
+                    >
+                        {value}
+                    </User.Info.SettingRow>
+                {/each}
+            </User.Info.Block>
+            <User.Info.Block
+                title={m["current-user.app-settings.title"]()}
+                class="mt-10"
             >
-                <User.Avatar
-                    as="div"
-                    name={user.name}
-                    class="size-10 text-xl"
-                />
-                <h1 class="text-xl font-bold">
-                    {user.name}
-                </h1>
-            </div>
-        {/snippet}
-        {#snippet action()}
-            <button class="p-2.5 disabled:text-cream-400" disabled>
-                <Bell class="text-3xl " />
-            </button>
-        {/snippet}
+                {#each appSettingsRows as { name, value, warning } (name)}
+                    <User.Info.SettingRow
+                        title={m[`current-user.app-settings.${name}`]()}
+                        onclick={() => onRowClick(name)}
+                    >
+                        {#snippet indicator()}
+                            {#if warning}
+                                <Warning />
+                            {/if}
+                        {/snippet}
+                        {value}
+                    </User.Info.SettingRow>
+                {/each}
+            </User.Info.Block>
 
-        <User.Info.Block
-            title={m["current-user.account.title"]()}
-            class="mt-13"
-        >
-            {#each accountRows as { name, value } (name)}
-                <User.Info.SettingRow
-                    title={m[`current-user.account.${name}`]()}
-                    onclick={() => onRowClick(name)}
-                >
-                    {value}
-                </User.Info.SettingRow>
-            {/each}
-        </User.Info.Block>
+            <User.Info.Block class="mt-10">
+                <User.Info.ActionRow href={LogoutUser()} viewTransition>
+                    {m["current-user.log-out"]()}
+                </User.Info.ActionRow>
+            </User.Info.Block>
 
-        <User.Info.Block
-            title={m["current-user.app-settings.title"]()}
-            class="mt-10"
-        >
-            {#each appSettingsRows as { name, value, warning } (name)}
-                <User.Info.SettingRow
-                    title={m[`current-user.app-settings.${name}`]()}
-                    onclick={() => onRowClick(name)}
-                >
-                    {#snippet indicator()}
-                        {#if warning}
-                            <Warning />
-                        {/if}
-                    {/snippet}
-                    {value}
-                </User.Info.SettingRow>
-            {/each}
-        </User.Info.Block>
-
-        <User.Info.Block class="mt-10">
-            <User.Info.ActionRow href={LogoutUser()} viewTransition>
-                {m["current-user.log-out"]()}
-            </User.Info.ActionRow>
-        </User.Info.Block>
-
-        <p class="mt-4 text-sm">v.{$page.props.version}</p>
-    </FloatingView>
+            <p class="mt-4 text-sm">v.{$page.props.version}</p>
+        </ScreenView.Content>
+    </ScreenView.Overlay>
 {/if}
 
 {#each [...accountRows, ...appSettingsRows] as { name, component: Component } (name)}

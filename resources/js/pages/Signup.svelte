@@ -25,7 +25,7 @@
     {#if view.isOpen("start")}
         <Intro title={m["signup.step.start.title"]()}>
             {#snippet icon()}
-                <img src={Bee} width={92} height={85} alt="" />
+                <img src={Bee} width={92} height={85} alt="" decoding="async" />
             {/snippet}
         </Intro>
         <Form
@@ -59,11 +59,12 @@
             src={Calendar}
             width={325}
             height={236}
-            loading="lazy"
-            decoding="async"
             alt=""
+            decoding="async"
+            fetchpriority="high"
         />
         <Button
+            type="button"
             class="fixed inset-x-4 bottom-12 w-auto"
             onclick={() => view.push("start")}
         >

@@ -1,5 +1,6 @@
 /// <reference types="@capacitor/splash-screen" />
 
+import { KeyboardResize } from "@capacitor/keyboard";
 import dotenv from "dotenv";
 
 import type { CapacitorConfig } from "@capacitor/cli";
@@ -17,10 +18,14 @@ const config: CapacitorConfig = {
     appendUserAgent: "AppId=Jodi",
     plugins: {
         SystemBars: {
-            style: "LIGHT"
+            style: "LIGHT",
+            insetsHandling: "disable"
         },
         SplashScreen: {
             launchAutoHide: false
+        },
+        Keyboard: {
+            resize: KeyboardResize.None
         }
     }
 };

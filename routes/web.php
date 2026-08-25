@@ -11,7 +11,6 @@ use App\Domain\Identity\Actions\AuthenticateUser;
 use App\Domain\Identity\Actions\CompleteTwoFactorChallenge;
 use App\Domain\Identity\Actions\CreateRegistrationInvitation;
 use App\Domain\Identity\Actions\DestroyRegistrationInvitation;
-use App\Domain\Identity\Actions\GetRegistrationInvitation;
 use App\Domain\Identity\Actions\ListFriends;
 use App\Domain\Identity\Actions\ListRegistrationInvitations;
 use App\Domain\Identity\Actions\LogoutUser;
@@ -101,7 +100,6 @@ Route::middleware('auth')->group(function () {
         ->group(function () {
             Route::post('/', CreateRegistrationInvitation::class);
             Route::get('/', ListRegistrationInvitations::class);
-            Route::get('/{invitation}', GetRegistrationInvitation::class);
             Route::delete('/{invitation}', DestroyRegistrationInvitation::class);
         });
 

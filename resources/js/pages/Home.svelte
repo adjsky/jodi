@@ -36,7 +36,6 @@
             width={300}
             height={231}
             alt=""
-            loading="lazy"
             decoding="async"
             class="mx-auto mt-[15vh] max-w-48"
         />

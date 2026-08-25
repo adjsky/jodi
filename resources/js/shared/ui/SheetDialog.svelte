@@ -2,23 +2,25 @@
     import { Dialog } from "@ark-ui/svelte";
     import { ChevronLeft } from "@lucide/svelte";
 
+    import { tw } from "../lib/styles/tw";
     import AppPortal from "./AppPortal.svelte";
 
     import type { DialogRootProps } from "@ark-ui/svelte";
     import type { Snippet } from "svelte";
-    import type { HTMLAttributes } from "svelte/elements";
+    import type { HTMLAttributes, SvelteHTMLElements } from "svelte/elements";
 
     type Props = Pick<
         DialogRootProps,
         "onExitComplete" | "lazyMount" | "unmountOnExit"
-    > & {
-        open: boolean;
-        title?: string;
-        height: number;
-        portal?: boolean;
-        trigger?: Snippet<[() => HTMLAttributes<HTMLElement>]>;
-        children: Snippet;
-    };
+    > &
+        SvelteHTMLElements["div"] & {
+            open: boolean;
+            title?: string;
+            height: number;
+            portal?: boolean;
+            trigger?: Snippet<[() => HTMLAttributes<HTMLElement>]>;
+            children: Snippet;
+        };
 
     let {
         open = $bindable(),
@@ -27,11 +29,14 @@
         trigger,
         children,
         portal = false,
+        lazyMount,
+        unmountOnExit,
+        onExitComplete,
         ...props
     }: Props = $props();
 </script>
 
-<Dialog.Root bind:open {...props}>
+<Dialog.Root bind:open {lazyMount} {unmountOnExit} {onExitComplete}>
     {#if trigger}
         <Dialog.Trigger>
             {#snippet asChild(props)}
@@ -43,17 +48,19 @@
     <AppPortal disabled={!portal}>
         <Dialog.Backdrop
             class={[
-                "fixed inset-0 z-[calc(100+var(--layer-index,0))] bg-cream-950/60",
-                "duration-500 ease-in-out data-[state=closed]:animate-out data-[state=closed]:fade-out",
-                "duration-300 ease-[cubic-bezier(0.32,0.72,0,1)] data-[state=open]:animate-in data-[state=open]:fade-in"
+                "fixed inset-0 z-[calc(200+var(--layer-index,0))] bg-cream-950/60",
+                "data-[state=closed]:animate-out data-[state=closed]:duration-300 data-[state=closed]:ease-in-out data-[state=closed]:fade-out",
+                "data-[state=open]:animate-in data-[state=open]:duration-500 data-[state=open]:ease-[cubic-bezier(0.32,0.72,0,1)] data-[state=open]:fade-in"
             ]}
         />
         <Dialog.Content
-            class={[
-                "fixed inset-x-0 bottom-0 z-[calc(100+var(--layer-index,0))] flex flex-col rounded-t-2xl bg-white px-4 py-3",
-                "duration-300 ease-in-out data-[state=closed]:animate-out data-[state=closed]:slide-out-to-bottom",
-                "duration-500 ease-[cubic-bezier(0.32,0.72,0,1)] data-[state=open]:animate-in data-[state=open]:slide-in-from-bottom"
-            ]}
+            {...props}
+            class={tw(
+                "fixed inset-x-0 bottom-0 z-[calc(200+var(--layer-index,0))] flex flex-col rounded-t-2xl bg-white pt-3 px-safe-offset-4 pb-safe-offset-5",
+                "data-[state=closed]:animate-out data-[state=closed]:duration-300 data-[state=closed]:ease-in-out data-[state=closed]:slide-out-to-bottom",
+                "data-[state=open]:animate-in data-[state=open]:duration-500 data-[state=open]:ease-[cubic-bezier(0.32,0.72,0,1)] data-[state=open]:slide-in-from-bottom",
+                props.class
+            )}
             style="height: {height}%;"
         >
             {#if title}
@@ -66,7 +73,7 @@
                         <ChevronLeft class="text-4xl" />
                     </button>
                     <span
-                        class="absolute top-1/2 left-1/2 -translate-1/2 text-xl font-bold"
+                        class="absolute left-1/2 -translate-x-1/2 text-xl font-bold"
                     >
                         {title}
                     </span>

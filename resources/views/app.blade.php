@@ -1,14 +1,14 @@
 @php
-    $isJodiApp = str_contains(request()->userAgent() ?? '', 'AppId=Jodi');
+    $isNativePlatform = str_contains(request()->userAgent() ?? '', 'AppId=Jodi');
 @endphp
 
 <!DOCTYPE html>
-<html lang="{{ str_replace('_', '-', app()->getLocale()) }}" data-platform="{{ $isJodiApp ? 'native' : 'web' }}">
+<html lang="{{ str_replace('_', '-', app()->getLocale()) }}" data-platform="{{ $isNativePlatform ? 'native' : 'web' }}">
 
 <head>
     <meta charset="utf-8">
 
-    @if ($isJodiApp)
+    @if ($isNativePlatform)
         <meta name="viewport"
             content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
     @else

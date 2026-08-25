@@ -310,6 +310,7 @@
         }
     },
     "current-user": {
+        "settings": "Settings",
         "log-out": "Log out",
         "account": {
             "title": "Account",

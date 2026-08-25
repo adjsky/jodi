@@ -1,83 +1,89 @@
 <script lang="ts">
-    import { Form, progress } from "@inertiajs/svelte";
+    import { Form } from "@inertiajs/svelte";
     import { ChevronRight, Mail } from "@lucide/svelte";
     import CreateRegistrationInvitation from "$/generated/actions/App/Domain/Identity/Actions/CreateRegistrationInvitation";
     import { m } from "$/paraglide/messages";
     import Dino from "$/shared/assets/dino.svg";
     import SadCat from "$/shared/assets/sad-cat.svg";
+    import { ScreenView } from "$/shared/composites/screen-view";
+    import { VirtualKeyboard } from "$/shared/services/virtual-keyboard";
     import Button from "$/shared/ui/Button.svelte";
-    import FloatingView from "$/shared/ui/FloatingView.svelte";
     import Skeleton from "$/shared/ui/Skeleton.svelte";
     import TextField from "$/shared/ui/TextField.svelte";
-    import { toaster } from "$/shared/ui/toaster";
-    import { resource } from "runed";
+    import { onMount } from "svelte";
 
-    import { fetchInvitations } from "../api/invitations";
+    import { context } from "../model/context";
     import { buildViewName, view } from "../model/view";
     import { back } from "./Back.svelte";
     import Invitation from "./Invitation.svelte";
 
     import type { RegistrationInvitationData } from "$/entities/user";
 
+    const { invitations } = context.get();
+
+    onMount(() => {
+        if (invitations.current && !invitations.loading && !invitations.error) {
+            void invitations.refetch();
+        }
+    });
+
     let inviteInput = $state<HTMLInputElement | null>(null);
 
-    const invitations = resource(() => [], fetchInvitations);
+    let isError = $derived(!invitations.current && invitations.error);
+    let isLoading = $derived(!invitations.current && invitations.loading);
 </script>
 
-<FloatingView {back} title={m["current-user.account.invitations"]()}>
-    <div
-        class="flex grow flex-col justify-between gap-5 overflow-y-scroll py-5"
+<ScreenView.Overlay>
+    <ScreenView.Header {back} title={m["current-user.account.invitations"]()} />
+    <ScreenView.Content
+        class={[
+            "overflow-y-auto overscroll-contain pt-5",
+            invitations.current?.length === 0 || isError
+                ? "justify-center"
+                : "gap-2"
+        ]}
+        aria-live="polite"
+        aria-busy={invitations.loading}
     >
-        <div
-            class={[
-                "flex grow flex-col overflow-y-scroll pb-5",
-                invitations.current?.length === 0 || invitations.error
-                    ? "justify-center"
-                    : "gap-2"
-            ]}
-        >
-            {#if invitations.error}
+        {#if isError}
+            <img
+                src={SadCat}
+                width={82}
+                height={85}
+                alt=""
+                decoding="async"
+                class="mx-auto w-full max-w-28"
+            />
+            <p class="mx-auto mt-4 max-w-3/4 text-center text-lg font-medium">
+                {m["current-user.invitations.error"]()}
+            </p>
+        {:else if isLoading}
+            {#each Array.from({ length: 5 }) as _, idx (idx)}
+                {@render row()}
+            {/each}
+        {:else}
+            {#each invitations.current as invitation (invitation.id)}
+                {@render row(invitation)}
+            {:else}
                 <img
-                    src={SadCat}
-                    width={82}
-                    height={85}
+                    src={Dino}
+                    width={187}
+                    height={141}
                     alt=""
-                    loading="lazy"
                     decoding="async"
                     class="mx-auto w-full max-w-28"
                 />
                 <p
                     class="mx-auto mt-4 max-w-3/4 text-center text-lg font-medium"
                 >
-                    {m["current-user.invitations.error"]()}
+                    {m["current-user.invitations.no-invitations"]()}
                 </p>
-            {:else if invitations.loading}
-                {#each Array.from({ length: 5 }) as _, idx (idx)}
-                    {@render row()}
-                {/each}
-            {:else}
-                {#each invitations.current as friend (friend.id)}
-                    {@render row(friend)}
-                {:else}
-                    <img
-                        src={Dino}
-                        width={187}
-                        height={141}
-                        alt=""
-                        loading="lazy"
-                        decoding="async"
-                        class="mx-auto w-full max-w-28"
-                    />
-                    <p
-                        class="mx-auto mt-4 max-w-3/4 text-center text-lg font-medium"
-                    >
-                        {m["current-user.invitations.no-invitations"]()}
-                    </p>
-                {/each}
-            {/if}
-        </div>
+            {/each}
+        {/if}
+    </ScreenView.Content>
+    <ScreenView.Footer class="mt-5">
         <Button
-            class="shrink-0"
+            type="button"
             onclick={async () => {
                 await view.push(buildViewName("invitations", "add"));
                 inviteInput?.focus();
@@ -86,53 +92,60 @@
         >
             {m["current-user.invitations.add"]()}
         </Button>
-    </div>
-</FloatingView>
+    </ScreenView.Footer>
+</ScreenView.Overlay>
 
 {#if view.isOpen(buildViewName("invitations", "add"))}
-    <FloatingView {back} title={m["current-user.invitations.invite"]()}>
-        <Form
-            action={CreateRegistrationInvitation()}
-            class="flex grow flex-col justify-between py-5"
-            options={{
-                replace: true,
-                preserveUrl: true,
-                only: ["flash", "me"]
-            }}
-            onSuccess={async () => {
-                try {
-                    progress.reveal(true);
-                    progress.start();
-                    await invitations.refetch();
-                    progress.finish();
+    <ScreenView.Overlay {@attach VirtualKeyboard.retainFocus()}>
+        <ScreenView.Header
+            {back}
+            title={m["current-user.invitations.invite"]()}
+        />
+        <ScreenView.Content class="mt-5">
+            <Form
+                action={CreateRegistrationInvitation()}
+                class="flex grow flex-col"
+                options={{
+                    replace: true,
+                    preserveUrl: true,
+                    only: ["flash", "me"]
+                }}
+                onSuccess={(page) => {
+                    invitations.mutate([
+                        ...(invitations.current ?? []),
+                        page.props.flash.invitation
+                    ]);
+
                     void view.back();
-                } catch (e) {
-                    console.error(e);
-                    progress.remove();
-                    toaster.error(m["common.unexpected-error"]());
-                }
-            }}
-            let:processing
-            let:errors
-        >
-            <TextField
-                bind:input={inviteInput}
-                type="email"
-                name="email"
-                placeholder={m["current-user.account.email"]()}
-                error={errors.email}
-                maxlength={254}
-                required
+                }}
+                let:processing
+                let:errors
             >
-                {#snippet indicator()}<Mail />{/snippet}
-            </TextField>
-            <Button disabled={processing}>
-                {m["current-user.invitations.invite"]()}
-            </Button>
-        </Form>
-    </FloatingView>
+                <TextField
+                    bind:input={inviteInput}
+                    type="email"
+                    name="email"
+                    placeholder={m["current-user.account.email"]()}
+                    error={errors.email}
+                    maxlength={254}
+                    required
+                >
+                    {#snippet indicator()}<Mail />{/snippet}
+                </TextField>
+
+                <Button
+                    type="submit"
+                    class="mt-auto shrink-0"
+                    disabled={processing}
+                >
+                    {m["current-user.invitations.invite"]()}
+                </Button>
+            </Form>
+        </ScreenView.Content>
+    </ScreenView.Overlay>
 {:else if /invitations\/.+$/.test(view.name)}
     <Invitation
+        resource={invitations}
         onDelete={(id) => {
             if (!invitations.current) {
                 return;
@@ -145,6 +158,7 @@
 
 {#snippet row(invitation?: RegistrationInvitationData)}
     <button
+        type="button"
         onclick={() => {
             if (!invitation) {
                 return;
@@ -152,24 +166,24 @@
             void view.push(buildViewName("invitations", invitation.id));
         }}
         disabled={!invitation}
-        class="border-gray-950 flex items-center justify-between rounded-xl border bg-white px-4 py-3"
+        class="border-gray-950 flex w-full min-w-0 items-center gap-3 rounded-xl border bg-white px-4 py-3"
     >
-        <span class="flex flex-col items-start">
-            <p class="font-semibold">
+        <span class="flex min-w-0 grow flex-col text-left">
+            <span class="font-semibold">
                 {#if !invitation}
                     <Skeleton class="w-25" />
                 {:else}
                     {m["current-user.invitations.waiting"]()}
                 {/if}
-            </p>
-            <p class="text-sm text-cream-400">
+            </span>
+            <span class="truncate text-sm text-cream-400">
                 {#if !invitation}
                     <Skeleton class="w-40" />
                 {:else}
                     {invitation.email}
                 {/if}
-            </p>
+            </span>
         </span>
-        <ChevronRight class="text-xl" />
+        <ChevronRight class="shrink-0 text-xl" />
     </button>
 {/snippet}

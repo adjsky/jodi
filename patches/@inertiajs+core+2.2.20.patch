@@ -1,5 +1,5 @@
 diff --git a/node_modules/@inertiajs/core/dist/index.esm.js b/node_modules/@inertiajs/core/dist/index.esm.js
-index 7744084..c25f024 100644
+index 7744084..c315cf6 100644
 --- a/node_modules/@inertiajs/core/dist/index.esm.js
 +++ b/node_modules/@inertiajs/core/dist/index.esm.js
 @@ -529,6 +529,7 @@ var PrefetchedRequests = class {
@@ -58,7 +58,31 @@ index 7744084..c25f024 100644
      });
    }
    clear() {
-@@ -988,7 +989,7 @@ var History = class {
+@@ -896,10 +897,19 @@ var CurrentPage = class {
+     if (!viewTransition || !document?.startViewTransition) {
+       return doSwap();
+     }
+-    const viewTransitionCallback = typeof viewTransition === "boolean" ? () => null : viewTransition;
+-    return new Promise((resolve) => {
+-      const transitionResult = document.startViewTransition(() => doSwap().then(resolve));
+-      viewTransitionCallback(transitionResult);
++    return new Promise((resolve, reject) => {
++      const update = () => doSwap().then(resolve, reject);
++      const supportsTypes = typeof ViewTransition != "undefined" && "types" in ViewTransition.prototype;
++      const useTypes = typeof viewTransition == "object" && supportsTypes;
++      const transition = useTypes
++        ? document.startViewTransition({
++          update,
++          types: viewTransition.types
++        })
++        : document.startViewTransition(update);
++      if (typeof viewTransition == "function") {
++        viewTransition(transition)
++      }
+     });
+   }
+   resolve(component) {
+@@ -988,7 +998,7 @@ var History = class {
      if (isServer) {
        return;
      }
@@ -67,7 +91,7 @@ index 7744084..c25f024 100644
        cb && cb();
        return;
      }
-@@ -1088,7 +1089,7 @@ var History = class {
+@@ -1088,7 +1098,7 @@ var History = class {
      if (isServer) {
        return;
      }
@@ -76,7 +100,7 @@ index 7744084..c25f024 100644
        cb && cb();
        return;
      }
-@@ -1186,6 +1187,9 @@ var EventHandler = class {
+@@ -1186,6 +1196,9 @@ var EventHandler = class {
        this.internalListeners = this.internalListeners.filter((listener) => listener.listener !== callback);
      };
    }
@@ -86,7 +110,7 @@ index 7744084..c25f024 100644
    onMissingHistoryItem() {
      page.clear();
      this.fireInternalEvent("missingHistoryItem");
-@@ -1204,23 +1208,37 @@ var EventHandler = class {
+@@ -1204,23 +1217,41 @@ var EventHandler = class {
        url.hash = window.location.hash;
        history.replaceState({ ...page.get(), url: url.href });
        Scroll.reset();
@@ -108,9 +132,13 @@ index 7744084..c25f024 100644
 +      if (page.get().__jodi_historyModals?.length) {
 +        const { viewTransition } = page.get().__jodi_historyModals.pop();
 +        const page2 = { ...page.get(), url: data.url };
-+        page.setQuietly(page2, { preserveState: true, viewTransition }).then(() => {
-+          this.onPopstateFinish();
-+        });
++        page.setQuietly(
++          page2,
++          {
++            preserveState: true,
++            viewTransition: viewTransition ? { types: ["back"] } : false
++          }
++        ).then(() => this.onPopstateFinish());
          return;
        }
        router.cancelAll();
@@ -125,7 +153,7 @@ index 7744084..c25f024 100644
      });
    }
  };
-@@ -1314,13 +1332,17 @@ var InitialVisit = class {
+@@ -1314,13 +1345,17 @@ var InitialVisit = class {
      if (typeof window !== "undefined") {
        page.setUrlHash(window.location.hash);
      }
@@ -145,7 +173,7 @@ index 7744084..c25f024 100644
      });
    }
  };
-@@ -1418,6 +1440,7 @@ var RequestParams = class _RequestParams {
+@@ -1418,6 +1453,7 @@ var RequestParams = class _RequestParams {
          onCancel: this.wrapCallback(params, "onCancel"),
          onSuccess: this.wrapCallback(params, "onSuccess"),
          onError: this.wrapCallback(params, "onError"),
@@ -153,7 +181,7 @@ index 7744084..c25f024 100644
          onCancelToken: this.wrapCallback(params, "onCancelToken"),
          onPrefetched: this.wrapCallback(params, "onPrefetched"),
          onPrefetching: this.wrapCallback(params, "onPrefetching")
-@@ -1718,7 +1741,7 @@ var Response = class _Response {
+@@ -1718,7 +1754,7 @@ var Response = class _Response {
        ...this.response,
        data: this.getDataFromResponse(this.response.data)
      };
@@ -162,7 +190,7 @@ index 7744084..c25f024 100644
        return config.get("future.useDialogForErrorModal") ? dialog_default.show(response.data) : modal_default.show(response.data);
      }
    }
-@@ -1768,6 +1791,11 @@ var Response = class _Response {
+@@ -1768,6 +1804,11 @@ var Response = class _Response {
      await this.setRememberedState(pageResponse);
      this.requestParams.setPreserveOptions(pageResponse);
      pageResponse.url = history.preserveUrl ? page.get().url : this.pageUrl(pageResponse);
@@ -174,7 +202,7 @@ index 7744084..c25f024 100644
      this.requestParams.all().onBeforeUpdate(pageResponse);
      fireBeforeUpdateEvent(pageResponse);
      return page.set(pageResponse, {
-@@ -2057,7 +2085,7 @@ var RequestStream = class {
+@@ -2057,7 +2098,7 @@ var RequestStream = class {
    }
    send(request) {
      this.requests.push(request);
@@ -183,7 +211,7 @@ index 7744084..c25f024 100644
        this.requests = this.requests.filter((r) => r !== request);
      });
    }
-@@ -2175,13 +2203,13 @@ var Router = class {
+@@ -2175,13 +2216,13 @@ var Router = class {
        keepAlive: options.keepAlive ?? false
      });
    }
@@ -199,22 +227,23 @@ index 7744084..c25f024 100644
        return;
      }
      const requestStream = visit.async ? this.asyncRequestStream : this.syncRequestStream;
-@@ -2196,11 +2224,10 @@ var Router = class {
+@@ -2196,11 +2237,12 @@ var Router = class {
      const prefetched = prefetchedRequests.get(requestParams);
      if (prefetched) {
        progress.reveal(prefetched.inFlight);
 -      prefetchedRequests.use(prefetched, requestParams);
 -    } else {
--      progress.reveal(true);
--      requestStream.send(Request.create(requestParams, page.get()));
 +      return prefetchedRequests.use(prefetched, requestParams);
++    }
++    if (requestParams.showProgress) {
+       progress.reveal(true);
+-      requestStream.send(Request.create(requestParams, page.get()));
      }
-+    progress.reveal(true);
 +    return requestStream.send(Request.create(requestParams, page.get()));
    }
    getCached(href, options = {}) {
      return prefetchedRequests.findCached(this.getPrefetchParams(href, options));
-@@ -2279,8 +2306,24 @@ var Router = class {
+@@ -2279,8 +2321,24 @@ var Router = class {
    resolveComponent(component) {
      return page.resolve(component);
    }
@@ -240,7 +269,7 @@ index 7744084..c25f024 100644
    }
    replaceProp(name, value, options) {
      this.replace({
-@@ -2320,15 +2363,15 @@ var Router = class {
+@@ -2320,15 +2378,15 @@ var Router = class {
      );
    }
    push(params) {
@@ -259,7 +288,7 @@ index 7744084..c25f024 100644
      const page2 = {
        ...current,
        ...pageParams,
-@@ -2336,6 +2379,9 @@ var Router = class {
+@@ -2336,6 +2394,9 @@ var Router = class {
      };
      const preserveScroll = RequestParams.resolvePreserveOption(params.preserveScroll ?? false, page2);
      const preserveState = RequestParams.resolvePreserveOption(params.preserveState ?? false, page2);
@@ -269,7 +298,7 @@ index 7744084..c25f024 100644
      return page.set(page2, {
        replace,
        preserveScroll,
-@@ -2433,6 +2479,8 @@ var Router = class {
+@@ -2433,6 +2494,8 @@ var Router = class {
        }),
        onSuccess: options.onSuccess || (() => {
        }),
@@ -278,7 +307,7 @@ index 7744084..c25f024 100644
        onError: options.onError || (() => {
        }),
        onPrefetched: options.onPrefetched || (() => {
-@@ -2444,7 +2492,7 @@ var Router = class {
+@@ -2444,7 +2507,7 @@ var Router = class {
    loadDeferredProps(deferred) {
      if (deferred) {
        Object.entries(deferred).forEach(([_, group]) => {
@@ -287,6 +316,29 @@ index 7744084..c25f024 100644
        });
      }
    }
+@@ -3609,11 +3672,19 @@ function addEventListeners(delay) {
+   document.addEventListener("inertia:progress", handleProgressEvent);
+ }
+ function handleStartEvent(event, delay) {
+-  if (!event.detail.visit.showProgress) {
+-    progress.hide();
++  const visit = event.detail.visit;
++  if (!visit.showProgress && !visit.prefetch) {
++    return;
+   }
+   const timeout = setTimeout(() => progress.start(), delay);
+-  document.addEventListener("inertia:finish", (e) => finish(e, timeout), { once: true });
++  const handleFinish = (event) => {
++    if (event.detail.visit !== visit) {
++      return;
++    }
++    document.removeEventListener("inertia:finish", handleFinish);
++    finish(event, timeout);
++  };
++  document.addEventListener("inertia:finish", handleFinish);
+ }
+ function handleProgressEvent(event) {
+   if (progress.isStarted() && event.detail.progress?.percentage) {
 diff --git a/node_modules/@inertiajs/core/types/router.d.ts b/node_modules/@inertiajs/core/types/router.d.ts
 index dcf6009..da6871e 100644
 --- a/node_modules/@inertiajs/core/types/router.d.ts

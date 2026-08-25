@@ -16,7 +16,14 @@
 <AuthLayout>
     <Intro title={m["login.title"]()}>
         {#snippet icon()}
-            <img src={Cat} width={94} height={85} alt="" />
+            <img
+                src={Cat}
+                width={94}
+                height={85}
+                alt=""
+                decoding="async"
+                fetchpriority="high"
+            />
         {/snippet}
     </Intro>
 

@@ -75,7 +75,7 @@
         occursAt: todo.occursAt
     })}
     showProgress={false}
-    class="flex grow flex-col pb-18"
+    class="flex min-h-0 grow flex-col"
     let:isDirty
     let:submit
 >

@@ -84,39 +84,47 @@
     {@render close()}
 </div>
 
-<input
-    class="mt-5 form-input w-full border-none bg-transparent p-0 text-xl font-bold text-cream-950 placeholder:text-cream-600 focus:ring-0"
-    placeholder={titlePlaceholder}
-    name="title"
-    defaultValue={title ?? ""}
-    maxlength={120}
-    required
-/>
-
-<TimeRangePicker
-    bind:startsAt={
-        () => toTime(startsAt), (time) => (startsAt = startsAt.set(time))
-    }
-    bind:endsAt={() => toTime(endsAt), (time) => (endsAt = endsAt.set(time))}
-    {onStartsAtChange}
-    {onEndsAtChange}
-    class="mt-4"
-    deferHistoryViewFrames={DEFER_FRAMES.SHEET + 1}
-    isValid={startsAt.compare(endsAt) < 0}
+<div
+    class="flex min-h-0 grow flex-col overflow-y-auto overscroll-contain pb-keyboard-or-18"
 >
-    {#snippet label()}
-        <Clock class="text-2xl" />
-        <span class="font-bold">{m["events.time"]()}</span>
-    {/snippet}
-</TimeRangePicker>
+    <input
+        class="mt-5 form-input w-full border-none bg-transparent p-0 text-xl font-bold text-cream-950 placeholder:text-cream-600 focus:ring-0"
+        placeholder={titlePlaceholder}
+        name="title"
+        defaultValue={title ?? ""}
+        maxlength={120}
+        required
+        data-expand-sheet
+    />
 
-<textarea
-    name="description"
-    placeholder={m["events.placeholders.description"]()}
-    class="mt-3 form-input w-full grow resize-none overflow-y-scroll border-none bg-transparent p-0 text-lg font-semibold text-cream-950 placeholder:text-cream-600 focus:ring-0"
-    defaultValue={description ?? ""}
-    maxlength={2000}
-></textarea>
+    <TimeRangePicker
+        bind:startsAt={
+            () => toTime(startsAt), (time) => (startsAt = startsAt.set(time))
+        }
+        bind:endsAt={
+            () => toTime(endsAt), (time) => (endsAt = endsAt.set(time))
+        }
+        {onStartsAtChange}
+        {onEndsAtChange}
+        class="mt-4"
+        deferHistoryViewFrames={DEFER_FRAMES.SHEET + 1}
+        isValid={startsAt.compare(endsAt) < 0}
+    >
+        {#snippet label()}
+            <Clock class="text-2xl" />
+            <span class="font-bold">{m["events.time"]()}</span>
+        {/snippet}
+    </TimeRangePicker>
+
+    <textarea
+        name="description"
+        placeholder={m["events.placeholders.description"]()}
+        class="mt-3 form-input min-h-34 w-full flex-1 resize-none overflow-y-auto overscroll-contain border-none bg-transparent p-0 text-lg font-semibold text-cream-950 placeholder:text-cream-600 focus:ring-0"
+        defaultValue={description ?? ""}
+        maxlength={2000}
+        data-expand-sheet
+    ></textarea>
+</div>
 
 <div
     class="absolute inset-x-0 bottom-0 flex items-end justify-between rounded-t-2xl bg-white px-4 pb-safe-offset-6"

@@ -101,7 +101,6 @@
             width={217}
             height={256}
             alt=""
-            loading="lazy"
             decoding="async"
             class="mx-auto mt-15 max-w-30"
         />

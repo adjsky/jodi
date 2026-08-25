@@ -95,27 +95,52 @@
     {@render close()}
 </div>
 
-{#if checkbox}
-    <div class={["mt-5 flex items-center gap-2", isCompleted && "opacity-40"]}>
-        {@render checkbox()}
-        {@render titleInput()}
+<div
+    class="flex min-h-0 grow flex-col overflow-y-auto overscroll-contain pb-keyboard-or-18"
+>
+    {#snippet titleInput(classname?: string)}
+        <input
+            name="title"
+            class={tw(
+                "form-input w-full border-none bg-transparent p-0 text-xl font-bold text-cream-950 placeholder:text-cream-600 focus:ring-0",
+                classname
+            )}
+            placeholder={titlePlaceholder}
+            defaultValue={title ?? ""}
+            maxlength={120}
+            required
+            data-expand-sheet
+        />
+    {/snippet}
+
+    {#if checkbox}
+        <div
+            class={[
+                "mt-5 flex items-center gap-2",
+                isCompleted && "opacity-40"
+            ]}
+        >
+            {@render checkbox()}
+            {@render titleInput()}
+        </div>
+    {:else}
+        {@render titleInput("mt-5")}
+    {/if}
+
+    <div class="mt-4 flex items-center gap-2">
+        <Clock class="text-2xl" />
+        {@render time()}
     </div>
-{:else}
-    {@render titleInput("mt-5")}
-{/if}
 
-<div class="mt-4 flex items-center gap-2">
-    <Clock class="text-2xl" />
-    {@render time()}
+    <textarea
+        name="description"
+        placeholder={m["todos.placeholders.description"]()}
+        class="mt-3 form-input min-h-34 w-full flex-1 resize-none overflow-y-auto overscroll-contain border-none bg-transparent p-0 text-lg font-semibold text-cream-950 placeholder:text-cream-600 focus:ring-0"
+        defaultValue={description ?? ""}
+        maxlength={2000}
+        data-expand-sheet
+    ></textarea>
 </div>
-
-<textarea
-    name="description"
-    placeholder={m["todos.placeholders.description"]()}
-    class="mt-3 form-input w-full grow resize-none overflow-y-scroll border-none bg-transparent p-0 text-lg font-semibold text-cream-950 placeholder:text-cream-600 focus:ring-0"
-    defaultValue={description ?? ""}
-    maxlength={2000}
-></textarea>
 
 <div
     class="absolute inset-x-0 bottom-0 flex items-end justify-between rounded-t-2xl bg-white px-4 pb-safe-offset-6"
@@ -126,17 +151,3 @@
     {@render notify()}
     {@render more()}
 </div>
-
-{#snippet titleInput(classname?: string)}
-    <input
-        name="title"
-        class={tw(
-            "form-input w-full border-none bg-transparent p-0 text-xl font-bold text-cream-950 placeholder:text-cream-600 focus:ring-0",
-            classname
-        )}
-        placeholder={titlePlaceholder}
-        defaultValue={title ?? ""}
-        maxlength={120}
-        required
-    />
-{/snippet}

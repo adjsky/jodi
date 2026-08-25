@@ -70,7 +70,7 @@
         {selected}
         {min}
         portal={false}
-        class="absolute h-full rounded-t-2xl bg-white pt-3"
+        class="absolute rounded-t-2xl bg-white pt-3"
         weekStart={$page.props.auth.user.preferences.weekStartOn}
         onSelect={async (date) => {
             await view.back();

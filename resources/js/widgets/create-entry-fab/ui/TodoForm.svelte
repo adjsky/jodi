@@ -58,7 +58,7 @@
         }
         onClose();
     }}
-    class="flex grow flex-col pb-18"
+    class="flex grow flex-col"
     let:processing
 >
     <Todo.Fields {scheduledAt}>

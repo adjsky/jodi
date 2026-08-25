@@ -3,6 +3,7 @@
 
     import { DEFER_FRAMES } from "../cfg/constants";
     import { DeferUntilNextFrame } from "../lib/svelte/defer-until-next-frame.svelte";
+    import { VirtualKeyboard } from "../services/virtual-keyboard";
 
     import type { DrawerRootProps } from "@ark-ui/svelte";
     import type { Snippet } from "svelte";
@@ -26,6 +27,8 @@
     }: Props = $props();
 
     let isAnimating = $state(false);
+    let sheetContent: HTMLElement | null = $state(null);
+    let userContent: HTMLDivElement | null = $state(null);
 
     // Defer opening the drawer on page load until the next available frame so
     // that Zag can calculate content height properly, otherwise the content
@@ -40,7 +43,9 @@
             return deferred.ready && open;
         },
         onOpenChange(details) {
-            open = details.open;
+            if (details.open != open) {
+                open = details.open;
+            }
         },
         get defaultSnapPoint() {
             return defaultSnapPoint;
@@ -50,13 +55,24 @@
         },
         get closeOnInteractOutside() {
             return !isAnimating;
+        },
+        initialFocusEl() {
+            const matched = userContent?.querySelector<HTMLElement>(
+                "[data-autofocus], autofocus"
+            );
+
+            if (!matched) {
+                return userContent;
+            }
+
+            return matched;
         }
     });
 </script>
 
 <Drawer.RootProvider value={drawer} {...drawerRootProps}>
     <Drawer.Backdrop
-        class="fixed inset-0 z-[calc(100+var(--layer-index,0))] bg-cream-950/60"
+        class="fixed inset-0 z-[calc(200+var(--layer-index,0))] bg-cream-950/60"
         onanimationstart={() => {
             isAnimating = true;
         }}
@@ -65,10 +81,12 @@
         }}
     />
     <Drawer.Positioner
-        class="fixed inset-0 z-[calc(100+var(--layer-index,0))] flex items-end justify-center"
+        class="fixed inset-0 z-[calc(200+var(--layer-index,0))] flex items-end justify-center"
     >
         <Drawer.Content
-            class="relative flex size-full flex-col rounded-t-2xl bg-white shadow-none outline-none"
+            {@attach VirtualKeyboard.retainFocus({ blurOnScroll: true })}
+            bind:ref={sheetContent}
+            class="relative flex size-full min-h-0 flex-col rounded-t-2xl bg-white shadow-none outline-none"
             style="max-height: {maxHeight * 100}svh"
         >
             <Drawer.Grabber
@@ -79,10 +97,24 @@
                 />
             </Drawer.Grabber>
             <div
+                bind:this={userContent}
+                class="relative flex min-h-0 flex-col pt-2 px-safe-offset-4 pb-safe-offset-2 outline-none"
+                tabindex="-1"
                 data-scope="drawer"
                 data-part="user-content"
-                class="relative flex flex-col pt-2 px-safe-offset-4 pb-safe-offset-2"
-                data-no-drag
+                onfocusin={(event) => {
+                    if (!VirtualKeyboard.overlaysContent()) return;
+                    if (!(event.target instanceof HTMLElement)) return;
+                    if (!event.target.closest("[data-expand-sheet]")) return;
+
+                    const owner = event.target.closest(
+                        '[data-scope="drawer"][data-part="content"]'
+                    );
+
+                    if (owner != sheetContent) return;
+
+                    drawer().setSnapPoint(Math.max(...snapPoints));
+                }}
             >
                 {@render children()}
             </div>

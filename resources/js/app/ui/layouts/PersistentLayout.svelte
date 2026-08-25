@@ -7,6 +7,7 @@
     import { Swiper } from "$/shared/integrations/swiper";
     import { Push } from "$/shared/services/push";
     import { PWA } from "$/shared/services/pwa";
+    import { VirtualKeyboard } from "$/shared/services/virtual-keyboard";
     import ToastProvider from "$/shared/ui/ToastProvider.svelte";
     import { initializeApp } from "firebase/app";
     import Cookies from "js-cookie";
@@ -55,6 +56,7 @@
 
     PWA.init();
     Swiper.init();
+    VirtualKeyboard.init();
 </script>
 
 <Portal>

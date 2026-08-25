@@ -6,15 +6,15 @@ import type { ComponentProps } from "svelte";
 
 type ToastTypes = ComponentProps<typeof Toast>["type"];
 
-const types = ["info", "success", "error"] as const;
+const TYPES = ["info", "success", "error"] as const;
 
-export const toaster = types.reduce(
+export const toaster = TYPES.reduce(
     (acc, type) => {
         acc[type] = (title, description) => {
             toast(Toast, {
                 position: "top-center",
                 unstyled: true,
-                class: "w-full [view-transition-name:disabled] top-safe!",
+                class: "w-full [view-transition-name:disabled] top-safe! pointer-events-auto",
                 componentProps: { title, description, type }
             });
         };

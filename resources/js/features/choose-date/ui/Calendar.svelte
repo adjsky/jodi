@@ -5,11 +5,12 @@
     import { m } from "$/paraglide/messages";
     import { getLocale } from "$/paraglide/runtime";
     import { TIMEZONE } from "$/shared/cfg/constants";
+    import { ScreenView } from "$/shared/composites/screen-view";
+    import { scrollIntoView } from "$/shared/lib/dom/scroll-into-view";
     import { useDragSelection } from "$/shared/lib/interaction/use-drag-selection";
     import { tw } from "$/shared/lib/styles/tw";
     import { Haptics } from "$/shared/services/haptics";
     import Button from "$/shared/ui/Button.svelte";
-    import FloatingView from "$/shared/ui/FloatingView.svelte";
     import { toaster } from "$/shared/ui/toaster";
 
     import { Year } from "../model/year.svelte";
@@ -59,7 +60,7 @@
             const element = monthsNode.querySelector(selector);
 
             if (element) {
-                element.scrollIntoView({ block: "center" });
+                scrollIntoView(element, { block: "center" });
                 break;
             }
         }
@@ -162,88 +163,98 @@
     }
 </script>
 
-<FloatingView {...props} class={tw(props.class, "pb-safe")}>
-    {#snippet back()}
-        <button class="-ms-2 p-2" type="button" onclick={onClose}>
-            <ChevronLeft class="text-4xl" />
-        </button>
-    {/snippet}
-    {#snippet action()}
-        <div class="flex items-center gap-4 text-xl">
-            <button
-                type="button"
-                class="text-2xl font-bold"
-                onclick={gotoCurrentYear}
-            >
-                {year.current}
+<ScreenView.Overlay {...props} class={tw(props.class, "pb-0")}>
+    <ScreenView.Header shape="flat">
+        {#snippet back()}
+            <button class="-ms-2 p-2" type="button" onclick={onClose}>
+                <ChevronLeft class="text-4xl" />
             </button>
+        {/snippet}
+        {#snippet action()}
+            <div class="flex items-center gap-4 text-xl">
+                <button
+                    type="button"
+                    class="text-2xl font-bold"
+                    onclick={gotoCurrentYear}
+                >
+                    {year.current}
+                </button>
 
-            <div class="flex gap-2">
-                <Button
-                    type="button"
-                    variant="secondary"
-                    class="h-auto rounded-full bg-transparent p-2"
-                    onclick={() => gotoYear("previous")}
-                >
-                    <ChevronLeft />
-                </Button>
-                <Button
-                    type="button"
-                    variant="secondary"
-                    class="h-auto rounded-full bg-transparent p-2"
-                    onclick={() => gotoYear("next")}
-                >
-                    <ChevronRight />
-                </Button>
+                <div class="flex gap-2">
+                    <Button
+                        type="button"
+                        variant="secondary"
+                        class="h-auto rounded-full bg-transparent p-2"
+                        onclick={() => gotoYear("previous")}
+                    >
+                        <ChevronLeft />
+                    </Button>
+                    <Button
+                        type="button"
+                        variant="secondary"
+                        class="h-auto rounded-full bg-transparent p-2"
+                        onclick={() => gotoYear("next")}
+                    >
+                        <ChevronRight />
+                    </Button>
+                </div>
             </div>
-        </div>
-    {/snippet}
-
-    <div class="mt-1 week-grid-9 text-xs font-semibold">
-        {#each year.weekdays() as weekday, idx (idx)}
-            <span
-                class={tw([
-                    "inline-flex min-w-0 justify-center",
-                    idx == 0 && "justify-start",
-                    idx == 6 && "justify-end"
-                ])}
-            >
-                <span class="inline-flex w-full max-w-9 justify-center">
-                    {weekday}
+        {/snippet}
+    </ScreenView.Header>
+    <ScreenView.Content class="mt-1">
+        <div class="week-grid-9 text-xs font-semibold">
+            {#each year.weekdays() as weekday, idx (idx)}
+                <span
+                    class={tw([
+                        "inline-flex min-w-0 justify-center",
+                        idx == 0 && "justify-start",
+                        idx == 6 && "justify-end"
+                    ])}
+                >
+                    <span class="inline-flex w-full max-w-9 justify-center">
+                        {weekday}
+                    </span>
                 </span>
-            </span>
-        {/each}
-    </div>
-
-    <div bind:this={monthsNode} class="-mx-4 mt-2 overflow-y-scroll">
-        {#each year.months() as month (`${month.name}-${year.current}`)}
-            <CalendarMonth
-                {...month}
-                {year}
-                {mode}
-                {min}
-                {calendar}
-                {onPress}
-                attachments={{
-                    dateButton: attachment,
-                    dragSelection: dragSelection.attachment
-                }}
-                selected={draftSelected}
-                container={monthsNode}
-                onEventsRequest={(date) => events.request(date)}
-            />
-        {/each}
-    </div>
+            {/each}
+        </div>
+        <div
+            bind:this={monthsNode}
+            class={[
+                "-mx-4 mt-2 min-h-0 grow overflow-y-scroll overscroll-contain",
+                mode == "single" && "pb-safe"
+            ]}
+        >
+            {#each year.months() as month (`${month.name}-${year.current}`)}
+                <CalendarMonth
+                    {...month}
+                    {year}
+                    {mode}
+                    {min}
+                    {calendar}
+                    {onPress}
+                    attachments={{
+                        dateButton: attachment,
+                        dragSelection: dragSelection.attachment
+                    }}
+                    selected={draftSelected}
+                    container={monthsNode}
+                    onEventsRequest={(date) => events.request(date)}
+                />
+            {/each}
+        </div>
+    </ScreenView.Content>
 
     {#if mode == "range"}
-        <Button
-            class="my-4 mb-5 shrink-0"
-            onclick={() => {
-                const [from, to] = draftSelected;
-                onSelect?.([from, to ?? from]);
-            }}
-        >
-            {formatSelected(draftSelected)}
-        </Button>
+        <ScreenView.Footer class="mt-4 mb-safe-offset-5">
+            <Button
+                type="button"
+                onclick={() => {
+                    const [from, to] = draftSelected;
+                    onSelect?.([from, to ?? from]);
+                }}
+            >
+                {formatSelected(draftSelected)}
+            </Button>
+        </ScreenView.Footer>
     {/if}
-</FloatingView>
+</ScreenView.Overlay>

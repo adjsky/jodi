@@ -3,8 +3,9 @@
     import { AtSign } from "@lucide/svelte";
     import UpdateUser from "$/generated/actions/App/Domain/Identity/Actions/UpdateUser";
     import { m } from "$/paraglide/messages";
+    import { ScreenView } from "$/shared/composites/screen-view";
+    import { VirtualKeyboard } from "$/shared/services/virtual-keyboard";
     import Button from "$/shared/ui/Button.svelte";
-    import FloatingView from "$/shared/ui/FloatingView.svelte";
     import TextField from "$/shared/ui/TextField.svelte";
 
     import { view } from "../model/view";
@@ -13,30 +14,37 @@
     const user = $derived($page.props.auth.user);
 </script>
 
-<FloatingView {back} title={m["current-user.account.name"]()}>
-    <Form
-        action={UpdateUser()}
-        class="flex grow flex-col justify-between py-5"
-        options={{ replace: true, preserveUrl: true, only: ["auth"] }}
-        onSuccess={() => view.back()}
-        let:processing
-        let:errors
-        let:isDirty
-    >
-        <TextField
-            type="text"
-            name="name"
-            placeholder={m["current-user.account.name"]()}
-            error={errors.name}
-            defaultValue={user.name}
-            maxlength={36}
-            required
+<ScreenView.Overlay {@attach VirtualKeyboard.retainFocus()}>
+    <ScreenView.Header {back} title={m["current-user.account.name"]()} />
+    <ScreenView.Content class="mt-5">
+        <Form
+            action={UpdateUser()}
+            class="flex grow flex-col"
+            options={{ replace: true, preserveUrl: true, only: ["auth"] }}
+            onSuccess={() => view.back()}
+            let:processing
+            let:errors
+            let:isDirty
         >
-            {#snippet indicator()}<AtSign />{/snippet}
-        </TextField>
+            <TextField
+                type="text"
+                name="name"
+                placeholder={m["current-user.account.name"]()}
+                error={errors.name}
+                defaultValue={user.name}
+                maxlength={36}
+                required
+            >
+                {#snippet indicator()}<AtSign />{/snippet}
+            </TextField>
 
-        <Button type="submit" disabled={processing || !isDirty}>
-            {m["current-user.name.save"]()}
-        </Button>
-    </Form>
-</FloatingView>
+            <Button
+                type="submit"
+                class="mt-auto shrink-0"
+                disabled={processing || !isDirty}
+            >
+                {m["current-user.name.save"]()}
+            </Button>
+        </Form>
+    </ScreenView.Content>
+</ScreenView.Overlay>

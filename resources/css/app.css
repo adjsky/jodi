@@ -118,12 +118,35 @@
 
 @layer base {
     :root {
+        --kb-height: 0px;
+
         color-scheme: light;
         scroll-behavior: smooth;
     }
 
+    :root[data-platform="native"] {
+        overflow: hidden;
+    }
+
     :root[data-platform="native"] body {
+        position: fixed;
+        inset: 0;
+        overscroll-behavior: none;
+
+        overflow: hidden;
+
         user-select: none;
+    }
+
+    :root[data-platform="native"] #app {
+        position: absolute;
+        inset: 0;
+
+        overflow: hidden;
+    }
+
+    :root[data-platform="web"] #app {
+        height: 100dvh;
     }
 
     :root[data-platform="native"] input,
@@ -140,19 +163,19 @@
     body {
         background-color: theme("colors.cream.50");
         color: theme("colors.cream.950");
-
-        /* TODO: remove when tablet/desktop design is ready */
-        max-width: var(--breakpoint-sm);
-        margin: 0 auto;
     }
 
     #app {
-        position: relative;
         contain: layout;
 
-        height: 100dvh;
-        padding: env(safe-area-inset-top, 0) env(safe-area-inset-right, 0)
-            env(safe-area-inset-bottom, 0) env(safe-area-inset-left, 0);
+        width: 100%;
+        max-width: var(--breakpoint-sm);
+        margin-inline: auto;
+
+        padding-top: env(safe-area-inset-top, 0px);
+        padding-right: env(safe-area-inset-right, 0px);
+        padding-bottom: env(safe-area-inset-bottom, 0px);
+        padding-left: env(safe-area-inset-left, 0px);
     }
 
     /** Remove yellow/blue autofill indicator */
@@ -176,7 +199,7 @@
 
     #nprogress .bar {
         height: 3px !important;
-        top: env(safe-area-inset-top, 0) !important;
+        top: env(safe-area-inset-top, 0px) !important;
 
         .peg {
             display: none !important;
@@ -211,4 +234,25 @@
         var(--edge-width)
         repeat(5, var(--day-step))
         var(--edge-width);
+}
+
+@utility safe-area-keyboard {
+    --twsa-safe-area-inset-bottom: max(
+        env(safe-area-inset-bottom, 0px),
+        var(--kb-height, 0px)
+    );
+}
+
+@utility mb-keyboard-or-* {
+    margin-bottom: max(
+        var(--kb-height, 0px),
+        --spacing(--value(integer, [integer]))
+    );
+}
+
+@utility pb-keyboard-or-* {
+    padding-bottom: max(
+        var(--kb-height, 0px),
+        --spacing(--value(integer, [integer]))
+    );
 }

@@ -45,7 +45,14 @@
 <AuthLayout>
     <Intro title={m["2fa.title"]()}>
         {#snippet icon()}
-            <img src={Froggy} width={90} height={85} alt="" />
+            <img
+                src={Froggy}
+                width={90}
+                height={85}
+                alt=""
+                decoding="async"
+                fetchpriority="high"
+            />
         {/snippet}
     </Intro>
 
@@ -84,7 +91,7 @@
             </button>
         </p>
 
-        <Button disabled={consumeTimer.isRunning || processing}>
+        <Button type="submit" disabled={consumeTimer.isRunning || processing}>
             {#if consumeTimer.isRunning}
                 {m["2fa.continue-in"]({ seconds: consumeTimer.secondsLeft })}
             {:else}

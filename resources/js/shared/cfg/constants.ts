@@ -23,3 +23,5 @@ export const WEEK_START_MAP = {
 export enum DEFER_FRAMES {
     SHEET = 1
 }
+
+export const TOUCH_SLOP = 10;
