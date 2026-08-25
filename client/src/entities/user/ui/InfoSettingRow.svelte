@@ -1,0 +1,33 @@
+<script lang="ts">
+    import { ChevronRight } from "@lucide/svelte";
+    import { tw } from "$/shared/lib/styles/tw";
+
+    import type { Snippet } from "svelte";
+    import type { HTMLButtonAttributes } from "svelte/elements";
+
+    type Props = HTMLButtonAttributes & {
+        title: string;
+        icon?: Snippet;
+        indicator?: Snippet;
+    };
+
+    const { title, children, icon, indicator, ...props }: Props = $props();
+</script>
+
+<button
+    {...props}
+    class={tw(
+        "flex h-14 w-full items-center justify-between border-cream-300 text-lg font-medium not-last:border-b",
+        props.class
+    )}
+>
+    <span class="flex items-center gap-2">
+        {@render icon?.()}
+        {title}
+        {@render indicator?.()}
+    </span>
+    <span class="flex items-center gap-2 text-cream-500">
+        {@render children?.()}
+        <ChevronRight class="text-xl" />
+    </span>
+</button>

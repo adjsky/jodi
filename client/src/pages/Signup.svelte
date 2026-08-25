@@ -1,0 +1,75 @@
+<script lang="ts">
+    import { Form } from "@inertiajs/svelte";
+    import { AtSign } from "@lucide/svelte";
+    import Intro from "$/app/ui/auth/Intro.svelte";
+    import AuthLayout from "$/app/ui/layouts/AuthLayout.svelte";
+    import RegisterUser from "$/generated/actions/App/Domain/Identity/Actions/RegisterUser";
+    import { m } from "$/paraglide/messages";
+    import Bee from "$/shared/assets/bee.svg";
+    import Calendar from "$/shared/assets/calendar.svg";
+    import Cat from "$/shared/assets/cat.svg";
+    import { HistoryView } from "$/shared/integrations/inertia";
+    import Button from "$/shared/ui/Button.svelte";
+    import TextField from "$/shared/ui/TextField.svelte";
+
+    type Props = {
+        code: string;
+    };
+
+    const { code }: Props = $props();
+
+    const view = new HistoryView();
+</script>
+
+<AuthLayout>
+    {#if view.isOpen("start")}
+        <Intro title={m["signup.step.start.title"]()}>
+            {#snippet icon()}
+                <img src={Bee} width={92} height={85} alt="" decoding="async" />
+            {/snippet}
+        </Intro>
+        <Form
+            action={RegisterUser(code, { mergeQuery: {} })}
+            showProgress={false}
+            class="mt-13 space-y-4"
+        >
+            {#snippet children({ processing, errors })}
+                <TextField
+                    type="text"
+                    name="name"
+                    placeholder={m["signup.step.start.name-placeholder"]()}
+                    error={errors.name}
+                    maxlength={36}
+                    required
+                >
+                    {#snippet indicator()}<AtSign />{/snippet}
+                </TextField>
+                <Button type="submit" loading={processing}>
+                    {m["signup.step.start.submit"]()}
+                </Button>
+            {/snippet}
+        </Form>
+    {:else}
+        <Intro class="mt-16" title={m["signup.intro.title"]()}>
+            {#snippet icon()}
+                <img src={Cat} width={94} height={85} alt="" />
+            {/snippet}
+        </Intro>
+        <img
+            class="mx-auto mt-10"
+            src={Calendar}
+            width={325}
+            height={236}
+            alt=""
+            decoding="async"
+            fetchpriority="high"
+        />
+        <Button
+            type="button"
+            class="fixed inset-x-4 bottom-12 w-auto"
+            onclick={() => view.push("start")}
+        >
+            {m["signup.intro.start"]()}
+        </Button>
+    {/if}
+</AuthLayout>

@@ -1,9 +1,9 @@
 ---
 paths:
-  - 'tests/Feature/**'
+  - 'api/tests/Feature/**'
 ---
 
 # Feature
 
-## Feature-test Actions directly
-Exercise domain Actions through make()->handle() with real persistence rather than routing these tests through HTTP.
+## Test domain actions directly
+Exercise actions through make()->handle() with real persistence and factory-created records rather than routing domain behavior through HTTP.

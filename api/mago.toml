@@ -1,0 +1,33 @@
+#:schema https://mago.carthage.software/1.56.1/schema.json
+# Welcome to Mago!
+# For full documentation, see https://mago.carthage.software/1.56.1/en/tools/overview/
+version = "1"
+php-version = "8.4.0"
+
+[source]
+workspace = "."
+paths = ["app/", "database/factories/", "database/seeders/", "tests/"]
+includes = ["vendor"]
+excludes = []
+
+[source.glob]
+literal-separator = true
+
+[formatter]
+preset = "pint"
+print-width = 80
+
+[linter]
+integrations = ["symfony", "laravel", "pest"]
+
+[linter.rules]
+literal-named-argument = { enabled = false }
+too-many-methods = { enabled = false }
+prefer-static-closure = { enabled = false }
+excessive-parameter-list = { enabled = false }
+no-else-clause = { enabled = false }
+no-isset = { enabled = false }
+cyclomatic-complexity = { enabled = false }
+no-shorthand-ternary = { enabled = false }
+halstead = { enabled = false }
+kan-defect = { enabled = false }

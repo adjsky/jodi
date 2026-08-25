@@ -1,0 +1,144 @@
+<script lang="ts">
+    import { Form } from "@inertiajs/svelte";
+    import { toCalendarDate } from "@internationalized/date";
+    import { Trash } from "@lucide/svelte";
+    import { Event } from "$/entities/event";
+    import { CalendarPicker } from "$/features/choose-date";
+    import { RescheduleItem } from "$/features/reschedule-item";
+    import { SaveOrClose } from "$/features/save-item";
+    import { Color } from "$/features/select-color";
+    import { Recurrence } from "$/features/select-recurrence";
+    import { Reminder } from "$/features/select-reminder";
+    import CreateEvent from "$/generated/actions/App/Domain/Event/Actions/CreateEvent";
+    import { m } from "$/paraglide/messages";
+    import {
+        DEFER_FRAMES,
+        NOTIFICATION_DEFAULT_SUBHOURS
+    } from "$/shared/cfg/constants";
+    import { timediff } from "$/shared/lib/date/timediff";
+    import { Push } from "$/shared/services/push";
+    import { toaster } from "$/shared/ui/toaster";
+    import ToolbarAction from "$/shared/ui/ToolbarAction.svelte";
+
+    import type { ZonedDateTime } from "@internationalized/date";
+
+    type Props = {
+        day: ZonedDateTime;
+        onClose: VoidFunction;
+    };
+
+    let { day: startsAt = $bindable(), onClose }: Props = $props();
+
+    let endsAt = $state(startsAt.add({ hours: 1 }));
+    let notifyAt = $state(
+        startsAt.subtract({
+            hours: NOTIFICATION_DEFAULT_SUBHOURS
+        })
+    );
+</script>
+
+<Form
+    action={CreateEvent()}
+    options={{
+        only: ["events"],
+        preserveState: true,
+        preserveScroll: true,
+        preserveUrl: true,
+        replace: true
+    }}
+    transform={(data) => ({
+        ...data,
+        startsAt: startsAt.toAbsoluteString(),
+        endsAt: endsAt.toAbsoluteString()
+    })}
+    onBefore={() => {
+        if (startsAt.compare(endsAt) >= 0) {
+            toaster.error(m["common.invalid-time-range"]());
+            return false;
+        }
+    }}
+    onSuccess={() => {
+        Push.subscription.ahtung(m["events.reminder-ahtung"]());
+        onClose();
+    }}
+    class="flex grow flex-col"
+>
+    {#snippet children({ processing })}
+        <Event.Fields
+            {startsAt}
+            bind:endsAt
+            onStartsAtChange={(time) => {
+                if (notifyAt) {
+                    notifyAt = notifyAt.add(timediff(startsAt, time));
+                } else {
+                    notifyAt = startsAt.subtract({
+                        hours: NOTIFICATION_DEFAULT_SUBHOURS
+                    });
+                }
+                startsAt = startsAt.set(time);
+            }}
+        >
+            {#snippet calendar(trigger)}
+                <CalendarPicker
+                    mode="range"
+                    selected={[
+                        toCalendarDate(startsAt),
+                        toCalendarDate(endsAt)
+                    ]}
+                    deferHistoryViewFrames={DEFER_FRAMES.SHEET + 1}
+                    onSelect={(date) => {
+                        notifyAt = notifyAt.set(date[0]);
+                        startsAt = startsAt.set(date[0]);
+                        endsAt = endsAt.set(date[1]);
+                    }}
+                >
+                    {#snippet children(props)}
+                        {@render trigger(props)}
+                    {/snippet}
+                </CalendarPicker>
+            {/snippet}
+            {#snippet close()}
+                <SaveOrClose variant="save" disabled={processing} />
+            {/snippet}
+            {#snippet destroy()}
+                <ToolbarAction
+                    tooltip={m["events.tooltips.delete"]()}
+                    onclick={onClose}
+                >
+                    <Trash />
+                </ToolbarAction>
+            {/snippet}
+            {#snippet repeat()}
+                <Recurrence
+                    day={startsAt}
+                    name="rrule"
+                    tooltip={m["events.tooltips.repeat"]()}
+                    deferHistoryViewFrames={DEFER_FRAMES.SHEET + 1}
+                />
+            {/snippet}
+            {#snippet color()}
+                <Color name="color" tooltip={m["events.tooltips.color"]()} />
+            {/snippet}
+            {#snippet notify()}
+                <Reminder
+                    {startsAt}
+                    bind:notifyAt
+                    name="notifyAt"
+                    tooltip={m["todos.tooltips.notification"]()}
+                    deferHistoryViewFrames={DEFER_FRAMES.SHEET + 1}
+                />
+            {/snippet}
+            {#snippet more()}
+                <RescheduleItem
+                    startsAt={toCalendarDate(startsAt)}
+                    tooltip={m["events.tooltips.more"]()}
+                    onReschedule={(d) => {
+                        notifyAt = notifyAt.set(d);
+                        startsAt = startsAt.set(d);
+                        endsAt = endsAt.set(d);
+                    }}
+                />
+            {/snippet}
+        </Event.Fields>
+    {/snippet}
+</Form>

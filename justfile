@@ -3,43 +3,61 @@ set quiet := true
 default:
     just --list --unsorted
 
-init:
-    npm install
-    composer install
-    php artisan jodi:setup
+bootstrap: env install
+    just api jodi:setup
 
-# -------------------------------- DEVELOPMENT ---------------------------------
+install: api-install client-install
+
+env:
+    if [ ! -f .env ]; then cp .env.example .env; fi
 
 [parallel]
-dev: (php-serve "--host=0.0.0.0") (vite "--host") worker logs
+test: api-test client-test
 
-dev-preview:
-    npm run build
-    frankenphp run
+client-install:
+    npm install
 
-gen-assets:
-    npx pwa-assets-generator
-    npx capacitor-assets generate --android --assetPath=public --iconBackgroundColor="#fdf3e2" --splashBackgroundColor="#fdf3e2" --splashBackgroundColorDark="#fdf3e2"
+client-test:
+    npm test
 
-test-php:
-    composer test
+[parallel]
+client-dev: client-serve api-types
 
-test-js:
-    npm test watch
+client-serve:
+    npm run dev -w client -- --host=jodi.localhost
 
-# ---------------------------------- SERVICES ----------------------------------
+[working-directory: "api"]
+api *args:
+    php artisan {{args}}
 
-php-serve args="":
-    php artisan serve {{args}}
+api-install:
+    composer --working-dir=api install
 
-vite args="":
-    npm run dev -- {{args}}
+api-test:
+    composer --working-dir=api test
 
-worker:
-    php artisan queue:listen --tries=1
+[parallel]
+api-dev: && api-logs api-serve api-worker
+    just api telescope:prune
 
-logs:
-    php artisan pail --timeout=0
+api-serve:
+    just api serve --host=jodi.localhost
 
+api-worker:
+    just api queue:listen --tries=1
+
+api-logs:
+    just api pail --timeout=0
+
+api-types:
+    just api typescript:transform --watch
+
+[env("CAPACITOR_APP_ID", "io.github.adjsky.jodi.dev")]
+[env("CAPACITOR_APP_NAME", "Jodi Dev")]
+[env("BUILD_NUMBER", "1")]
+android:
+    just cap run android --live-reload --host=jodi.localhost --port=5173 --forwardPorts=5173:5173
+
+[working-directory: "client"]
 cap *args:
     npx cap {{args}}

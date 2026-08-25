@@ -1,0 +1,39 @@
+<script lang="ts">
+    import { Languages } from "@lucide/svelte";
+    import { User } from "$/entities/user";
+    import UpdateUser from "$/generated/actions/App/Domain/Identity/Actions/UpdateUser";
+    import { m } from "$/paraglide/messages";
+    import { getLocale } from "$/paraglide/runtime";
+    import { LANGUAGES } from "$/shared/cfg/constants";
+    import { ScreenView } from "$/shared/composites/screen-view";
+
+    import { preferences } from "../api/preferences";
+
+    import type { ViewProps } from "../model/view";
+
+    let { open = $bindable() }: ViewProps = $props();
+</script>
+
+<ScreenView.Overlay bind:open>
+    <ScreenView.Header title={m["current-user.app-settings.language"]()} />
+    <ScreenView.Content class="py-5">
+        <User.Info.Block>
+            {#each Object.entries(LANGUAGES) as [locale, language] (locale)}
+                <User.Info.SelectRow
+                    {...preferences(
+                        { locale },
+                        m["current-user.language.errors.update"]()
+                    )}
+                    href={UpdateUser()}
+                    data={{ preferences: { locale } }}
+                    selected={locale === getLocale()}
+                >
+                    {#snippet icon()}
+                        <Languages />
+                    {/snippet}
+                    {language}
+                </User.Info.SelectRow>
+            {/each}
+        </User.Info.Block>
+    </ScreenView.Content>
+</ScreenView.Overlay>

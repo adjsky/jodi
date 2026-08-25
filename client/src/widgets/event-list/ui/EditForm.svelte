@@ -1,0 +1,207 @@
+<script lang="ts">
+    import { Form } from "@inertiajs/svelte";
+    import {
+        parseAbsoluteToLocal,
+        parseDate,
+        toCalendarDate
+    } from "@internationalized/date";
+    import { Event } from "$/entities/event";
+    import { CalendarPicker } from "$/features/choose-date";
+    import { DeleteItem } from "$/features/delete-item";
+    import { RescheduleItem } from "$/features/reschedule-item";
+    import { SaveOrClose } from "$/features/save-item";
+    import { Color } from "$/features/select-color";
+    import { Recurrence } from "$/features/select-recurrence";
+    import { Reminder } from "$/features/select-reminder";
+    import DestroyEvent from "$/generated/actions/App/Domain/Event/Actions/DestroyEvent";
+    import UpdateEvent from "$/generated/actions/App/Domain/Event/Actions/UpdateEvent";
+    import { m } from "$/paraglide/messages";
+    import { DEFER_FRAMES } from "$/shared/cfg/constants";
+    import { normalizeIsoString } from "$/shared/lib/date/normalize-iso-string";
+    import { timediff } from "$/shared/lib/date/timediff";
+    import { dispatchInput } from "$/shared/lib/dom/dispatch-input";
+    import { tick, untrack } from "svelte";
+
+    import { destroy as optimistic_destroy } from "../api/destroy";
+    import { edit } from "../api/edit";
+    import { visitOptions } from "../cfg/inertia";
+
+    import type { EventData } from "$/entities/event";
+    import type { RecurrenceScope } from "$/entities/recurrence";
+
+    type Props = {
+        event: EventData;
+        onClose?: VoidFunction;
+    };
+
+    const { event, onClose }: Props = $props();
+
+    let startsAtAnnouncerInput: HTMLInputElement | null = $state(null);
+    let endsAtAnnouncerInput: HTMLInputElement | null = $state(null);
+    let scope: RecurrenceScope = $state("this");
+
+    const draft = $state(
+        untrack(() => ({
+            startsAt: parseAbsoluteToLocal(event.startsAt),
+            endsAt: parseAbsoluteToLocal(event.endsAt),
+            notifyAt: parseAbsoluteToLocal(event.notifyAt),
+            color: event.color,
+            rrule: event.rrule
+        }))
+    );
+
+    const isRRuleDirty = $derived(event.rrule !== draft.rrule);
+</script>
+
+<Form
+    {...edit(event, draft)}
+    action={UpdateEvent(event.id, {
+        query: { scope: isRRuleDirty ? "all" : scope }
+    })}
+    options={visitOptions}
+    transform={(data) => ({
+        ...data,
+        occursAt: event.occursAt
+    })}
+    showProgress={false}
+    class="flex min-h-0 grow flex-col"
+>
+    {#snippet children({ isDirty, submit })}
+        <Event.Fields
+            bind:startsAt={
+                () => draft.startsAt,
+                (d) => {
+                    draft.notifyAt = draft.notifyAt.add(
+                        timediff(draft.startsAt, d)
+                    );
+                    draft.startsAt = d;
+                }
+            }
+            bind:endsAt={draft.endsAt}
+            title={event.title}
+            description={event.description}
+            onStartsAtChange={async () => {
+                await tick();
+                dispatchInput(startsAtAnnouncerInput);
+            }}
+            onEndsAtChange={async () => {
+                await tick();
+                dispatchInput(endsAtAnnouncerInput);
+            }}
+        >
+            {#snippet calendar(trigger)}
+                <CalendarPicker
+                    mode="range"
+                    selected={[
+                        toCalendarDate(draft.startsAt),
+                        toCalendarDate(draft.endsAt)
+                    ]}
+                    min={event.recurringSince
+                        ? parseDate(event.recurringSince)
+                        : null}
+                    deferHistoryViewFrames={DEFER_FRAMES.SHEET + 1}
+                    onSelect={async (date) => {
+                        draft.notifyAt = draft.notifyAt.set(date[0]);
+                        draft.startsAt = draft.startsAt.set(date[0]);
+                        draft.endsAt = draft.endsAt.set(date[1]);
+                        await tick();
+                        dispatchInput(startsAtAnnouncerInput);
+                    }}
+                >
+                    {#snippet children(props)}
+                        {@render trigger(props)}
+                    {/snippet}
+                </CalendarPicker>
+            {/snippet}
+            {#snippet close()}
+                <SaveOrClose
+                    {onClose}
+                    title={m["events.recurrence-action.edit-title"]()}
+                    variant={isDirty ? "save" : "close"}
+                    scopeLabels={{
+                        this: m["events.recurrence-action.this"](),
+                        all: m["events.recurrence-action.all"]()
+                    }}
+                    confirm={event.rrule !== null && !isRRuleDirty}
+                    onConfirm={async (s) => {
+                        scope = s;
+                        await tick();
+                        submit();
+                    }}
+                />
+            {/snippet}
+            {#snippet destroy()}
+                <DeleteItem
+                    {...optimistic_destroy(event)}
+                    {...visitOptions}
+                    href={DestroyEvent(event.id)}
+                    title={{
+                        recurring: m["events.recurrence-action.delete-title"](),
+                        general: m["events.delete-ahtung"]()
+                    }}
+                    tooltip={m["events.tooltips.delete"]()}
+                    recurring={event.rrule !== null}
+                    occursAt={event.occursAt}
+                    date={event.startsAt}
+                    scopeLabels={{
+                        this: m["events.recurrence-action.this"](),
+                        following: m["events.recurrence-action.following"](),
+                        all: m["events.recurrence-action.all"]()
+                    }}
+                    deferHistoryViewFrames={DEFER_FRAMES.SHEET + 1}
+                />
+            {/snippet}
+            {#snippet repeat()}
+                <Recurrence
+                    bind:rrule={draft.rrule}
+                    day={draft.startsAt}
+                    name="rrule"
+                    tooltip={m["events.tooltips.repeat"]()}
+                    deferHistoryViewFrames={DEFER_FRAMES.SHEET + 1}
+                />
+            {/snippet}
+            {#snippet color()}
+                <Color
+                    bind:current={draft.color}
+                    name="color"
+                    tooltip={m["events.tooltips.color"]()}
+                />
+            {/snippet}
+            {#snippet notify()}
+                <Reminder
+                    bind:notifyAt={draft.notifyAt}
+                    startsAt={draft.startsAt}
+                    name="notifyAt"
+                    tooltip={m["events.tooltips.notification"]()}
+                    deferHistoryViewFrames={DEFER_FRAMES.SHEET + 1}
+                />
+            {/snippet}
+            {#snippet more()}
+                <RescheduleItem
+                    startsAt={toCalendarDate(draft.startsAt)}
+                    tooltip={m["events.tooltips.more"]()}
+                    onReschedule={async (d) => {
+                        draft.notifyAt = draft.notifyAt.set(d);
+                        draft.startsAt = draft.startsAt.set(d);
+                        draft.endsAt = draft.endsAt.set(d);
+                        await tick();
+                        dispatchInput(startsAtAnnouncerInput);
+                    }}
+                />
+            {/snippet}
+        </Event.Fields>
+
+        <input
+            bind:this={startsAtAnnouncerInput}
+            hidden
+            name="startsAt"
+            value={normalizeIsoString(draft.startsAt.toAbsoluteString())}
+        />
+        <input
+            bind:this={endsAtAnnouncerInput}
+            hidden
+            name="endsAt"
+            value={normalizeIsoString(draft.endsAt.toAbsoluteString())}
+        />
+    {/snippet}
+</Form>

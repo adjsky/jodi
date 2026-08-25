@@ -1,0 +1,164 @@
+<script lang="ts">
+    import { Form } from "@inertiajs/svelte";
+    import { toCalendarDate } from "@internationalized/date";
+    import { Trash } from "@lucide/svelte";
+    import { Todo } from "$/entities/todo";
+    import { CalendarPicker } from "$/features/choose-date";
+    import { RescheduleItem } from "$/features/reschedule-item";
+    import { SaveOrClose } from "$/features/save-item";
+    import { TodoTime } from "$/features/schedule-todo-time";
+    import { Category } from "$/features/select-category";
+    import { Color } from "$/features/select-color";
+    import { Recurrence } from "$/features/select-recurrence";
+    import Reminder from "$/features/select-reminder/ui/Reminder.svelte";
+    import CreateTodo from "$/generated/actions/App/Domain/Todo/Actions/CreateTodo";
+    import { m } from "$/paraglide/messages";
+    import {
+        DEFER_FRAMES,
+        NOTIFICATION_DEFAULT_SUBHOURS
+    } from "$/shared/cfg/constants";
+    import { normalizeIsoString } from "$/shared/lib/date/normalize-iso-string";
+    import { timediff } from "$/shared/lib/date/timediff";
+    import { Push } from "$/shared/services/push";
+    import { toaster } from "$/shared/ui/toaster";
+    import ToolbarAction from "$/shared/ui/ToolbarAction.svelte";
+
+    import type { ZonedDateTime } from "@internationalized/date";
+
+    type Props = {
+        day: ZonedDateTime;
+        onClose: VoidFunction;
+    };
+
+    let { day: scheduledAt = $bindable(), onClose }: Props = $props();
+
+    let hasTime = $state(false);
+    let notifyAt = $state<ZonedDateTime | null>(null);
+</script>
+
+<Form
+    action={CreateTodo()}
+    options={{
+        only: ["todos"],
+        preserveState: true,
+        preserveScroll: true,
+        preserveUrl: true,
+        replace: true
+    }}
+    transform={(data) => ({
+        ...data,
+        hasTime,
+        scheduledAt: hasTime
+            ? normalizeIsoString(scheduledAt.toAbsoluteString())
+            : toCalendarDate(scheduledAt).toString()
+    })}
+    onSuccess={() => {
+        if (notifyAt) {
+            Push.subscription.ahtung(m["todos.reminder-ahtung"]());
+        }
+        onClose();
+    }}
+    class="flex grow flex-col"
+>
+    {#snippet children({ processing })}
+        <Todo.Fields {scheduledAt}>
+            {#snippet calendar(trigger)}
+                <CalendarPicker
+                    mode="single"
+                    selected={[toCalendarDate(scheduledAt)]}
+                    deferHistoryViewFrames={DEFER_FRAMES.SHEET + 1}
+                    onSelect={([d]) => {
+                        if (notifyAt) {
+                            notifyAt = notifyAt.set(d);
+                        }
+                        scheduledAt = scheduledAt.set(d);
+                    }}
+                >
+                    {#snippet children(props)}
+                        {@render trigger(props)}
+                    {/snippet}
+                </CalendarPicker>
+            {/snippet}
+            {#snippet close()}
+                <SaveOrClose variant="save" disabled={processing} />
+            {/snippet}
+            {#snippet category()}
+                <Category
+                    name="categoryId"
+                    current={null}
+                    deferHistoryViewFrames={DEFER_FRAMES.SHEET + 1}
+                />
+            {/snippet}
+            {#snippet time()}
+                <TodoTime
+                    {scheduledAt}
+                    bind:hasTime
+                    deferHistoryViewFrames={DEFER_FRAMES.SHEET + 1}
+                    onChange={(time, hasTime) => {
+                        if (!hasTime) {
+                            notifyAt = null;
+                        } else {
+                            if (notifyAt) {
+                                notifyAt = notifyAt.add(
+                                    timediff(scheduledAt, time)
+                                );
+                            } else {
+                                notifyAt = scheduledAt.set(time).subtract({
+                                    hours: NOTIFICATION_DEFAULT_SUBHOURS
+                                });
+                            }
+                        }
+
+                        scheduledAt = scheduledAt.set(time);
+                    }}
+                />
+            {/snippet}
+            {#snippet destroy()}
+                <ToolbarAction
+                    tooltip={m["todos.tooltips.delete"]()}
+                    onclick={onClose}
+                >
+                    <Trash />
+                </ToolbarAction>
+            {/snippet}
+            {#snippet repeat()}
+                <Recurrence
+                    day={scheduledAt}
+                    name="rrule"
+                    tooltip={m["todos.tooltips.repeat"]()}
+                    deferHistoryViewFrames={DEFER_FRAMES.SHEET + 1}
+                />
+            {/snippet}
+            {#snippet color()}
+                <Color name="color" tooltip={m["todos.tooltips.color"]()} />
+            {/snippet}
+            {#snippet notify()}
+                <Reminder
+                    bind:notifyAt
+                    startsAt={scheduledAt}
+                    name="notifyAt"
+                    tooltip={m["todos.tooltips.notification"]()}
+                    beforeOpen={() => {
+                        if (!hasTime) {
+                            toaster.info(m["todos.reminder.select-time"]());
+                            return false;
+                        }
+                    }}
+                    deferHistoryViewFrames={DEFER_FRAMES.SHEET + 1}
+                />
+            {/snippet}
+            {#snippet more()}
+                <RescheduleItem
+                    startsAt={toCalendarDate(scheduledAt)}
+                    tooltip={m["todos.tooltips.more"]()}
+                    onReschedule={(d) => {
+                        if (notifyAt) {
+                            notifyAt = notifyAt.set(d);
+                        }
+                        scheduledAt = scheduledAt.set(d);
+                    }}
+                />
+            {/snippet}
+        </Todo.Fields>
+    {/snippet}
+</Form>

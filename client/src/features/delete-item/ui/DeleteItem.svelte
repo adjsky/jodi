@@ -1,0 +1,78 @@
+<script lang="ts">
+    import { router } from "@inertiajs/core";
+    import { parseAbsolute, toCalendarDate } from "@internationalized/date";
+    import { Trash } from "@lucide/svelte";
+    import { Recurrence } from "$/entities/recurrence";
+    import { TIMEZONE } from "$/shared/cfg/constants";
+    import { HistoryView } from "$/shared/integrations/inertia";
+    import { DeferUntilNextFrame } from "$/shared/lib/svelte/defer-until-next-frame.svelte";
+    import ToolbarAction from "$/shared/ui/ToolbarAction.svelte";
+
+    import type { UrlMethodPair, VisitOptions } from "@inertiajs/core";
+
+    type Props = VisitOptions & {
+        href: string | UrlMethodPair;
+        title: {
+            recurring: string;
+            general: string;
+        };
+        tooltip: string;
+        recurring: boolean;
+        occursAt: string | null;
+        date?: string;
+        scopeLabels: { this: string; following: string; all: string };
+        deferHistoryViewFrames?: number;
+    };
+
+    const {
+        href,
+        title,
+        tooltip,
+        recurring,
+        occursAt,
+        date,
+        scopeLabels,
+        deferHistoryViewFrames = 0,
+        ...options
+    }: Props = $props();
+
+    const view = new HistoryView<{ __deleteitem: { isOpen: boolean } }>();
+    const deferredView = new DeferUntilNextFrame(() => deferHistoryViewFrames);
+</script>
+
+<Recurrence.ScopeDialog
+    {scopeLabels}
+    bind:open={
+        () => deferredView.ready && (view.meta?.__deleteitem?.isOpen ?? false),
+        (v) => {
+            if (v) {
+                void view.push(view.name, {
+                    meta: { ...view.meta, __deleteitem: { isOpen: true } }
+                });
+            } else {
+                void view.back();
+            }
+        }
+    }
+    title={recurring ? title.recurring : title.general}
+    fallback={!recurring}
+    onConfirm={(scope) => {
+        router.visit(href, {
+            ...options,
+            data: {
+                scope,
+                occursAt,
+                date: date
+                    ? toCalendarDate(parseAbsolute(date, TIMEZONE)).toString()
+                    : null
+            },
+            showProgress: false
+        });
+    }}
+>
+    {#snippet trigger(props)}
+        <ToolbarAction {...props()} {tooltip}>
+            <Trash />
+        </ToolbarAction>
+    {/snippet}
+</Recurrence.ScopeDialog>

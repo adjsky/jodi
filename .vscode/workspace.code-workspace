@@ -1,0 +1,39 @@
+{
+    "folders": [
+        {
+            "name": "root",
+            "path": ".."
+        },
+        {
+            "name": "api",
+            "path": "../api"
+        },
+        {
+            "name": "client",
+            "path": "../client"
+        }
+    ],
+    "settings": {
+        "phpantom.rootDir": "api",
+
+        "js/ts.tsdk.path": "node_modules/typescript/lib",
+        "js/ts.preferences.importModuleSpecifierEnding": "js",
+
+        "eslint.validate": ["javascript", "typescript", "svelte"],
+
+        "editor.quickSuggestions": {
+            "strings": true
+        },
+        "files.associations": {
+            "*.css": "tailwindcss"
+        },
+
+        "editor.defaultFormatter": "esbenp.prettier-vscode",
+        "[php]": {
+            "editor.defaultFormatter": "phpantom.phpantom"
+        },
+        "[blade]": {
+            "editor.formatOnSave": false
+        }
+    }
+}

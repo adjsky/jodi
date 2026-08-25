@@ -1,0 +1,10 @@
+vars:
+  CAPACITOR_APP_NAME:
+  CAPACITOR_APP_ID:
+  BUILD_NUMBER:
+
+platforms:
+  android:
+    versionCode: $BUILD_NUMBER
+    appName: $CAPACITOR_APP_NAME
+    packageName: $CAPACITOR_APP_ID
