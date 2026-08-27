@@ -1,7 +1,7 @@
 <script lang="ts">
     import { ParaglideMessage } from "@inlang/paraglide-js-svelte";
     import { DateFormatter, toCalendarDate } from "@internationalized/date";
-    import { CalendarDialog } from "$/features/choose-date";
+    import { CalendarPicker } from "$/features/choose-date";
     import { m } from "$/paraglide/messages";
     import { getLocale } from "$/paraglide/runtime";
     import Checkbox from "$/shared/ui/Checkbox.svelte";
@@ -27,7 +27,7 @@
 </script>
 
 <CustomConfiguratorBlock title={m["recurrence.custom.select-when-to-end"]()}>
-    <div class="mt-2">
+    <div class="mt-0.5">
         <Checkbox
             label={m["recurrence.custom.never"]()}
             checked={limit == "never"}
@@ -42,7 +42,7 @@
             }}
         >
             {#snippet label()}
-                <CalendarDialog
+                <CalendarPicker
                     mode="single"
                     selected={[toCalendarDate(day)]}
                     id="recurrence-until-calendar"
@@ -53,7 +53,7 @@
                 >
                     {#snippet children(props)}
                         <div
-                            {...props()}
+                            {...props}
                             class="flex h-10 items-center gap-1.5 rounded-md border border-cream-300 px-2 font-medium"
                         >
                             {new DateFormatter(getLocale(), {
@@ -64,7 +64,7 @@
                             }).format(until.toDate("UTC"))}
                         </div>
                     {/snippet}
-                </CalendarDialog>
+                </CalendarPicker>
             {/snippet}
         </Checkbox>
         <div class="flex items-stretch">

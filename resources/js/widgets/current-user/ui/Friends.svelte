@@ -1,60 +1,51 @@
 <script lang="ts">
+    import { createQuery } from "@tanstack/svelte-query";
     import { User } from "$/entities/user";
     import { m } from "$/paraglide/messages";
     import Jelly from "$/shared/assets/jelly.svg";
-    import SadCat from "$/shared/assets/sad-cat.svg";
     import { ScreenView } from "$/shared/composites/screen-view";
     import Button from "$/shared/ui/Button.svelte";
+    import ResourceError from "$/shared/ui/ResourceError.svelte";
     import Skeleton from "$/shared/ui/Skeleton.svelte";
-    import { onMount } from "svelte";
 
-    import { context } from "../model/context";
-    import { back } from "./Back.svelte";
+    import { friendsQueryOptions } from "../api/friends";
 
+    import type { ViewProps } from "../model/view";
     import type { FriendData } from "$/entities/user";
 
-    const { friends } = context.get();
+    let { open = $bindable() }: ViewProps = $props();
 
-    onMount(() => {
-        if (friends.current && !friends.loading && !friends.error) {
-            void friends.refetch();
-        }
-    });
+    const friends = createQuery(() => ({
+        ...friendsQueryOptions,
+        enabled: open
+    }));
 
-    const isError = $derived(!friends.current && friends.error);
-    const isLoading = $derived(!friends.current && friends.loading);
+    const isError = $derived(!friends.data && friends.error);
+    const isLoading = $derived(friends.isLoading);
 </script>
 
-<ScreenView.Overlay>
-    <ScreenView.Header {back} title={m["current-user.account.friends"]()} />
+<ScreenView.Overlay bind:open>
+    <ScreenView.Header title={m["current-user.account.friends"]()} />
     <ScreenView.Content
         class={[
-            "overflow-y-auto overscroll-contain pt-5",
-            friends.current?.length === 0 || isError
-                ? "justify-center"
-                : "gap-2"
+            "overflow-y-auto overscroll-contain",
+            !isError && "pt-5",
+            friends.data?.length === 0 || isError ? "justify-center" : "gap-2"
         ]}
         aria-live="polite"
-        aria-busy={friends.loading}
+        aria-busy={friends.isFetching}
     >
         {#if isError}
-            <img
-                src={SadCat}
-                width={82}
-                height={85}
-                alt=""
-                decoding="async"
-                class="mx-auto w-full max-w-28"
+            <ResourceError
+                message={m["current-user.friends.error"]()}
+                onRetry={() => friends.refetch()}
             />
-            <p class="mx-auto mt-4 max-w-3/4 text-center text-lg font-medium">
-                {m["current-user.friends.error"]()}
-            </p>
         {:else if isLoading}
             {#each Array.from({ length: 5 }) as _, idx (idx)}
                 {@render row()}
             {/each}
         {:else}
-            {#each friends.current as friend (friend.id)}
+            {#each friends.data as friend (friend.id)}
                 {@render row(friend)}
             {:else}
                 <img

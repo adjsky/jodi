@@ -1,9 +1,9 @@
 <script lang="ts">
-    import { Link } from "@inertiajs/svelte";
     import { ChevronLeft } from "@lucide/svelte";
     import { tw } from "$/shared/lib/styles/tw";
 
-    import type { UrlMethodPair } from "@inertiajs/core";
+    import { context } from "../model/context";
+
     import type { Snippet } from "svelte";
     import type { SvelteHTMLElements } from "svelte/elements";
     import type { Except } from "type-fest";
@@ -11,19 +11,12 @@
     type Props = Except<SvelteHTMLElements["div"], "title" | "children"> & {
         shape?: "flat" | "arched";
         title?: string | Snippet;
-        back: string | UrlMethodPair | Snippet;
-        viewTransition?: boolean;
         action?: Snippet;
     };
 
-    const {
-        shape = "arched",
-        title,
-        back,
-        action,
-        viewTransition,
-        ...props
-    }: Props = $props();
+    const { shape = "arched", title, action, ...props }: Props = $props();
+
+    const ctx = context.getOr(null);
 </script>
 
 <div
@@ -34,13 +27,15 @@
     )}
     data-shape={shape}
 >
-    {#if typeof back == "function"}
-        {@render back()}
-    {:else}
-        <Link href={back} {viewTransition} class="-ms-2 p-2">
-            <ChevronLeft class="text-4xl" />
-        </Link>
-    {/if}
+    <button
+        class="-ms-2 p-2"
+        onclick={() => {
+            if (!ctx) return;
+            ctx.open = false;
+        }}
+    >
+        <ChevronLeft class="text-4xl" />
+    </button>
     {#if title}
         {#if typeof title == "function"}
             {@render title()}

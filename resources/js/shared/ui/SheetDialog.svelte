@@ -48,7 +48,7 @@
     <AppPortal disabled={!portal}>
         <Dialog.Backdrop
             class={[
-                "fixed inset-0 z-[calc(200+var(--layer-index,0))] bg-cream-950/60",
+                "fixed inset-0 z-[calc(100+var(--layer-index,0))] bg-cream-950/60",
                 "data-[state=closed]:animate-out data-[state=closed]:duration-300 data-[state=closed]:ease-in-out data-[state=closed]:fade-out",
                 "data-[state=open]:animate-in data-[state=open]:duration-500 data-[state=open]:ease-[cubic-bezier(0.32,0.72,0,1)] data-[state=open]:fade-in"
             ]}
@@ -56,7 +56,7 @@
         <Dialog.Content
             {...props}
             class={tw(
-                "fixed inset-x-0 bottom-0 z-[calc(200+var(--layer-index,0))] flex flex-col rounded-t-2xl bg-white pt-3 px-safe-offset-4 pb-safe-offset-5",
+                "fixed inset-x-0 bottom-0 z-[calc(100+var(--layer-index,0))] flex flex-col rounded-t-2xl bg-white pt-3 px-safe-offset-4 pb-safe-offset-5",
                 "data-[state=closed]:animate-out data-[state=closed]:duration-300 data-[state=closed]:ease-in-out data-[state=closed]:slide-out-to-bottom",
                 "data-[state=open]:animate-in data-[state=open]:duration-500 data-[state=open]:ease-[cubic-bezier(0.32,0.72,0,1)] data-[state=open]:slide-in-from-bottom",
                 props.class

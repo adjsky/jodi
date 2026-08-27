@@ -4,9 +4,11 @@
     import CreateCategory from "$/generated/actions/App/Domain/Todo/Actions/CreateCategory";
     import { m } from "$/paraglide/messages";
 
+    import type { CategoryData } from "$/entities/todo";
+
     type Props = {
         name: string;
-        onAdd?: (id: number) => void;
+        onAdd?: (category: CategoryData) => void;
     };
 
     const { name, onAdd }: Props = $props();
@@ -15,13 +17,13 @@
 <Form
     action={CreateCategory()}
     options={{
-        only: ["flash", "categories"],
+        only: ["flash"],
         preserveState: true,
         preserveScroll: true,
         preserveUrl: true,
         replace: true
     }}
-    onSuccess={(page) => onAdd?.(page.props.flash.id)}
+    onSuccess={(page) => onAdd?.(page.props.flash.category)}
     let:processing
 >
     <input hidden name="name" value={name} />

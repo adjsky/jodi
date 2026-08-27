@@ -52,7 +52,7 @@
     bind:value={() => value, setter}
     inputMode="numeric"
     class={tw(
-        "form-input h-13.75 w-full rounded-xl border-none bg-cream-500/10 px-4 text-lg font-medium outline-none placeholder:text-cream-600 focus:ring-0",
+        "form-input h-13.75 w-full shrink-0 rounded-xl border-none bg-cream-500/10 px-4 text-lg font-medium outline-none placeholder:text-cream-600 focus:ring-0",
         props.class
     )}
     autocomplete="off"

@@ -1,7 +1,7 @@
 import type { VisitOptions } from "@inertiajs/core";
 
 export const visitOptions: VisitOptions = {
-    only: ["todos", "categories"],
+    only: ["todos"],
     preserveState: true,
     preserveScroll: true,
     preserveUrl: true,

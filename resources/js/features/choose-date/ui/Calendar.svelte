@@ -24,23 +24,23 @@
     import type { Except } from "type-fest";
 
     type Props = Except<SvelteHTMLElements["div"], "children" | "title"> & {
+        open: boolean;
         portal?: boolean;
         mode: CalendarMode;
         selected: CalendarDate[];
         weekStart: WeekStart;
         min?: CalendarDate | null;
         attachment?: (date: CalendarDate) => Attachment<HTMLButtonElement>;
-        onClose?: VoidFunction;
         onSelect?: (date: CalendarDate[]) => void;
     };
 
-    const {
+    let {
+        open = $bindable(),
         mode,
         selected,
         weekStart,
         min,
         attachment,
-        onClose,
         onSelect,
         ...props
     }: Props = $props();
@@ -163,13 +163,8 @@
     }
 </script>
 
-<ScreenView.Overlay {...props} class={tw(props.class, "pb-0")}>
+<ScreenView.Overlay bind:open {...props} class={tw(props.class, "pb-0")}>
     <ScreenView.Header shape="flat">
-        {#snippet back()}
-            <button class="-ms-2 p-2" type="button" onclick={onClose}>
-                <ChevronLeft class="text-4xl" />
-            </button>
-        {/snippet}
         {#snippet action()}
             <div class="flex items-center gap-4 text-xl">
                 <button

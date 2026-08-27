@@ -2,6 +2,7 @@ import { fileURLToPath } from "node:url";
 
 import { includeIgnoreFile } from "@eslint/compat";
 import js from "@eslint/js";
+import pluginQuery from "@tanstack/eslint-plugin-query";
 import svelte from "eslint-plugin-svelte";
 import { defineConfig } from "eslint/config";
 import globals from "globals";
@@ -14,6 +15,7 @@ export default defineConfig(
     js.configs.recommended,
     ...ts.configs.recommended,
     ...svelte.configs.recommended,
+    ...pluginQuery.configs["flat/recommended-strict"],
     {
         languageOptions: {
             globals: {
@@ -69,6 +71,12 @@ export default defineConfig(
         rules: {
             "svelte/no-target-blank": "error",
             "svelte/prefer-svelte-reactivity": "off"
+        }
+    },
+    {
+        files: ["resources/js/**/api/**/*.ts"],
+        rules: {
+            "@typescript-eslint/explicit-module-boundary-types": "off"
         }
     },
     {

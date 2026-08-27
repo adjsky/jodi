@@ -3,6 +3,7 @@ import { raf } from "$/shared/lib/dom/raf";
 import { onMount } from "svelte";
 
 import { overlaysContent } from "./overlays-content";
+import { revealCaret } from "./reveal-caret";
 import { revealFocusedElement } from "./reveal-focused-element";
 
 import type { KeyboardInfo } from "@capacitor/keyboard";
@@ -21,6 +22,7 @@ export function init(): void {
 
             raf(() => {
                 revealFocusedElement();
+                revealCaret();
             });
         }
 

@@ -1,9 +1,11 @@
 <script lang="ts">
     import { page } from "@inertiajs/svelte";
     import { m } from "$/paraglide/messages";
+    import { VirtualKeyboard } from "$/shared/services/virtual-keyboard";
+    import Button from "$/shared/ui/Button.svelte";
     import Checkbox from "$/shared/ui/Checkbox.svelte";
     import NumericInput from "$/shared/ui/NumericInput.svelte";
-    import PromptDialog from "$/shared/ui/PromptDialog.svelte";
+    import SheetDialog from "$/shared/ui/SheetDialog.svelte";
 
     import type { ZonedDateTime } from "@internationalized/date";
 
@@ -56,38 +58,65 @@
     }
 </script>
 
-<PromptDialog
+<SheetDialog
+    {@attach VirtualKeyboard.retainFocus()}
     bind:open
+    class="pb-0"
+    height={80}
     title={m["reminders.custom.title"]()}
-    label={{
-        abort: m["reminders.custom.cancel"](),
-        confirm: m["reminders.custom.ok"]()
-    }}
-    disabled={Number(amount) === 0}
-    onConfirm={() => {
-        onSelect?.(durations[selectedIdx].template.replace("{A}", amount));
-        open = false;
-    }}
     onExitComplete={() => {
         [selectedIdx, amount] = getNotifyOffset();
     }}
     portal
     lazyMount
 >
-    <NumericInput
-        bind:value={amount}
-        class="mt-4"
-        min={0}
-        max={durations[selectedIdx].max}
-    />
+    <div class="flex min-h-0 flex-col overflow-y-auto overscroll-contain">
+        <NumericInput
+            bind:value={amount}
+            class="mt-4"
+            min={0}
+            max={durations[selectedIdx].max}
+        />
 
-    <div class="mt-3">
-        {#each durations as { label, template }, idx (template)}
+        <div class="mt-0.5">
+            {#each durations as { label, template }, idx (template)}
+                <Checkbox
+                    {label}
+                    checked={selectedIdx == idx}
+                    onclick={() => (selectedIdx = idx)}
+                />
+            {/each}
+        </div>
+
+        <hr class="mt-4 h-px text-cream-300" />
+
+        <div class="mt-4">
             <Checkbox
-                {label}
-                checked={selectedIdx == idx}
-                onclick={() => (selectedIdx = idx)}
+                class="opacity-60"
+                label={m["reminders.custom.as-push"]()}
+                checked
+                disabled
             />
-        {/each}
+            <Checkbox
+                class="opacity-60"
+                label={m["reminders.custom.as-email"]()}
+                disabled
+            />
+        </div>
     </div>
-</PromptDialog>
+
+    <div class="mt-4 mb-safe-offset-5 flex grow items-end safe-area-keyboard">
+        <Button
+            type="button"
+            disabled={Number(amount) === 0}
+            onclick={() => {
+                onSelect?.(
+                    durations[selectedIdx].template.replace("{A}", amount)
+                );
+                open = false;
+            }}
+        >
+            {m["reminders.custom.apply"]()}
+        </Button>
+    </div>
+</SheetDialog>

@@ -12,6 +12,7 @@ type Options = {
     omitHash?: boolean;
     onBefore?: () => MaybePromise<boolean | void>;
     onSuccess?: (props: PageProps) => void;
+    onRollback?: (previousProps: PageProps) => void;
 };
 
 export function optimistic(
@@ -48,6 +49,7 @@ export function optimistic(
                     preserveState: true,
                     props: savedProps
                 });
+                options?.onRollback?.(savedProps);
                 savedProps = null;
             }
             toaster.error(options?.error ?? response.data.message);

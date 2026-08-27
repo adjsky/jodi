@@ -3,7 +3,7 @@
     import { toCalendarDate } from "@internationalized/date";
     import { Trash } from "@lucide/svelte";
     import { Event } from "$/entities/event";
-    import { CalendarDialog } from "$/features/choose-date";
+    import { CalendarPicker } from "$/features/choose-date";
     import { RescheduleItem } from "$/features/reschedule-item";
     import { SaveOrClose } from "$/features/save-item";
     import { Color } from "$/features/select-color";
@@ -79,7 +79,7 @@
         }}
     >
         {#snippet calendar(trigger)}
-            <CalendarDialog
+            <CalendarPicker
                 mode="range"
                 selected={[toCalendarDate(startsAt), toCalendarDate(endsAt)]}
                 deferHistoryViewFrames={DEFER_FRAMES.SHEET + 1}
@@ -90,9 +90,9 @@
                 }}
             >
                 {#snippet children(props)}
-                    {@render trigger(props())}
+                    {@render trigger(props)}
                 {/snippet}
-            </CalendarDialog>
+            </CalendarPicker>
         {/snippet}
         {#snippet close()}
             <SaveOrClose variant="save" disabled={processing} />

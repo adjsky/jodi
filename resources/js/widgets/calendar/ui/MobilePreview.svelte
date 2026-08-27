@@ -75,21 +75,19 @@
     weekStart={user.preferences.weekStartOn}
 />
 
-{#if view.isOpen()}
-    <Calendar
-        attachment={(date) =>
-            fromAction(inertia, () => ({
-                href: `?d=${date.toString()}`,
-                showProgress: true,
-                replace: true,
-                preserveScroll: true,
-                preserveState: true,
-                viewTransition: true,
-                only: ["todos", "events"]
-            }))}
-        mode="single"
-        selected={[selected]}
-        weekStart={user.preferences.weekStartOn}
-        onClose={() => view.back()}
-    />
-{/if}
+<Calendar
+    bind:open={() => view.isOpen(), () => view.back()}
+    attachment={(date) =>
+        fromAction(inertia, () => ({
+            href: `?d=${date.toString()}`,
+            showProgress: true,
+            replace: true,
+            preserveScroll: true,
+            preserveState: true,
+            viewTransition: true,
+            only: ["todos", "events"]
+        }))}
+    mode="single"
+    selected={[selected]}
+    weekStart={user.preferences.weekStartOn}
+/>

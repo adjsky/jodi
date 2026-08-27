@@ -9,7 +9,7 @@
     const { title, children }: Props = $props();
 </script>
 
-<hr class="mt-4 h-px text-cream-300" />
+<hr class="mt-4 h-px text-cream-300 first:hidden" />
 <h3 class="mt-4 text-sm font-semibold">
     {title}
 </h3>

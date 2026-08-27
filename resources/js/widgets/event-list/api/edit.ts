@@ -6,15 +6,14 @@ import { toaster } from "$/shared/ui/toaster";
 import { id } from "../helpers/id";
 import { editView } from "../model/view";
 
-import type { VisitCallbacks } from "@inertiajs/core";
 import type { ZonedDateTime } from "@internationalized/date";
 import type { EventData } from "$/entities/event";
 
-export function edit(
+export const edit = (
     event: EventData,
     draft: { startsAt: ZonedDateTime; endsAt: ZonedDateTime }
-): Partial<VisitCallbacks> {
-    return optimistic(
+) =>
+    optimistic(
         (prev, data) => ({
             events: prev.events.map((e: EventData) =>
                 id(e) === id(event) ? { ...e, ...data } : e
@@ -34,4 +33,3 @@ export function edit(
             }
         }
     );
-}

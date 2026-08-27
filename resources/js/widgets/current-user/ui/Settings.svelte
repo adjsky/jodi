@@ -1,19 +1,19 @@
 <script lang="ts">
     import { page } from "@inertiajs/svelte";
+    import { useQueryClient } from "@tanstack/svelte-query";
     import { User } from "$/entities/user";
     import LogoutUser from "$/generated/actions/App/Domain/Identity/Actions/LogoutUser";
     import { m } from "$/paraglide/messages";
     import { getLocale } from "$/paraglide/runtime";
     import { LANGUAGES } from "$/shared/cfg/constants";
     import { ScreenView } from "$/shared/composites/screen-view";
+    import { noop } from "$/shared/lib/function/noop";
     import { Push } from "$/shared/services/push";
-    import { resource } from "runed";
+    import { onMount } from "svelte";
 
-    import { fetchFriends } from "../api/friends";
-    import { fetchInvitations } from "../api/invitations";
-    import { context } from "../model/context";
+    import { friendsQueryOptions } from "../api/friends";
+    import { invitationsQueryOptions } from "../api/invitations";
     import { buildViewName, view } from "../model/view";
-    import { back } from "./Back.svelte";
     import EditEmail from "./EditEmail.svelte";
     import EditName from "./EditName.svelte";
     import Friends from "./Friends.svelte";
@@ -23,10 +23,12 @@
     import SelectWeekStart from "./SelectWeekStart.svelte";
     import Warning from "./Warning.svelte";
 
-    const friends = resource(() => [], fetchFriends);
-    const invitations = resource(() => [], fetchInvitations);
+    const queryClient = useQueryClient();
 
-    context.set({ friends, invitations });
+    onMount(() => {
+        void queryClient.query(friendsQueryOptions).catch(noop);
+        void queryClient.query(invitationsQueryOptions).catch(noop);
+    });
 
     const user = $derived($page.props.auth.user);
     const { nInvitations, nFriends } = $derived($page.props.me);
@@ -35,22 +37,22 @@
         {
             name: "name",
             value: user.name,
-            component: EditName
+            view: EditName
         },
         {
             name: "email",
             value: user.email,
-            component: EditEmail
+            view: EditEmail
         },
         {
             name: "friends",
             value: nFriends,
-            component: Friends
+            view: Friends
         },
         {
             name: "invitations",
             value: nInvitations,
-            component: Invitations
+            view: Invitations
         }
     ] as const);
 
@@ -58,7 +60,7 @@
         {
             name: "language",
             value: LANGUAGES[getLocale()],
-            component: SelectLanguage,
+            view: SelectLanguage,
             warning: false
         },
         {
@@ -66,7 +68,7 @@
             value: m[
                 `current-user.week-start.${user.preferences.weekStartOn}`
             ](),
-            component: SelectWeekStart,
+            view: SelectWeekStart,
             warning: false
         },
         {
@@ -74,7 +76,7 @@
             value: m[
                 `current-user.notifications.${user.preferences.notifications}`
             ](),
-            component: SelectNotification,
+            view: SelectNotification,
             warning: Push.subscription.needsConfiguration
         }
     ] as const);
@@ -84,54 +86,57 @@
     }
 </script>
 
-{#if view.name.startsWith("me")}
-    <ScreenView.Overlay class="pb-0">
-        <ScreenView.Header {back} title={m["current-user.settings"]()} />
-        <ScreenView.Content
-            class="overflow-y-auto overscroll-contain pt-5 pb-safe-offset-8"
+<ScreenView.Overlay
+    bind:open={() => view.name.startsWith("me"), () => view.back()}
+    class="pb-0"
+>
+    <ScreenView.Header title={m["current-user.settings"]()} />
+    <ScreenView.Content
+        class="overflow-y-auto overscroll-contain pt-5 pb-safe-offset-8"
+    >
+        <User.Info.Block title={m["current-user.account.title"]()}>
+            {#each accountRows as { name, value } (name)}
+                <User.Info.SettingRow
+                    title={m[`current-user.account.${name}`]()}
+                    onclick={() => onRowClick(name)}
+                >
+                    {value}
+                </User.Info.SettingRow>
+            {/each}
+        </User.Info.Block>
+        <User.Info.Block
+            title={m["current-user.app-settings.title"]()}
+            class="mt-10"
         >
-            <User.Info.Block title={m["current-user.account.title"]()}>
-                {#each accountRows as { name, value } (name)}
-                    <User.Info.SettingRow
-                        title={m[`current-user.account.${name}`]()}
-                        onclick={() => onRowClick(name)}
-                    >
-                        {value}
-                    </User.Info.SettingRow>
-                {/each}
-            </User.Info.Block>
-            <User.Info.Block
-                title={m["current-user.app-settings.title"]()}
-                class="mt-10"
-            >
-                {#each appSettingsRows as { name, value, warning } (name)}
-                    <User.Info.SettingRow
-                        title={m[`current-user.app-settings.${name}`]()}
-                        onclick={() => onRowClick(name)}
-                    >
-                        {#snippet indicator()}
-                            {#if warning}
-                                <Warning />
-                            {/if}
-                        {/snippet}
-                        {value}
-                    </User.Info.SettingRow>
-                {/each}
-            </User.Info.Block>
+            {#each appSettingsRows as { name, value, warning } (name)}
+                <User.Info.SettingRow
+                    title={m[`current-user.app-settings.${name}`]()}
+                    onclick={() => onRowClick(name)}
+                >
+                    {#snippet indicator()}
+                        {#if warning}
+                            <Warning />
+                        {/if}
+                    {/snippet}
+                    {value}
+                </User.Info.SettingRow>
+            {/each}
+        </User.Info.Block>
 
-            <User.Info.Block class="mt-10">
-                <User.Info.ActionRow href={LogoutUser()} viewTransition>
-                    {m["current-user.log-out"]()}
-                </User.Info.ActionRow>
-            </User.Info.Block>
+        <User.Info.Block class="mt-10">
+            <User.Info.ActionRow href={LogoutUser()} viewTransition>
+                {m["current-user.log-out"]()}
+            </User.Info.ActionRow>
+        </User.Info.Block>
 
-            <p class="mt-4 text-sm">v.{$page.props.version}</p>
-        </ScreenView.Content>
-    </ScreenView.Overlay>
-{/if}
+        <p class="mt-4 text-sm">v.{$page.props.version}</p>
+    </ScreenView.Content>
+</ScreenView.Overlay>
 
-{#each [...accountRows, ...appSettingsRows] as { name, component: Component } (name)}
-    {#if view.name.startsWith(buildViewName(name))}
-        <Component />
-    {/if}
+{#each [...accountRows, ...appSettingsRows] as { name, view: View } (name)}
+    <View
+        bind:open={
+            () => view.name.startsWith(buildViewName(name)), () => view.back()
+        }
+    />
 {/each}

@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace App\Domain\Todo\Data\Output;
 
-use App\Domain\Todo\Models\Category;
 use App\Domain\Todo\Models\Todo;
 use App\Support\Data\JodiData;
 use Carbon\CarbonInterface;
@@ -46,16 +45,5 @@ class TodoData extends JodiData
             $todo->completed_at,
             $todo->created_at
         );
-    }
-}
-
-#[TypeScript]
-class CategoryData extends JodiData
-{
-    public function __construct(public int $id, public string $name) {}
-
-    public static function fromModel(Category $category): self
-    {
-        return new self($category->id, $category->name);
     }
 }

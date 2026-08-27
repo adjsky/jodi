@@ -1,68 +1,62 @@
 <script lang="ts">
     import { Form } from "@inertiajs/svelte";
     import { ChevronRight, Mail } from "@lucide/svelte";
+    import { createQuery, useQueryClient } from "@tanstack/svelte-query";
     import CreateRegistrationInvitation from "$/generated/actions/App/Domain/Identity/Actions/CreateRegistrationInvitation";
     import { m } from "$/paraglide/messages";
     import Dino from "$/shared/assets/dino.svg";
-    import SadCat from "$/shared/assets/sad-cat.svg";
     import { ScreenView } from "$/shared/composites/screen-view";
     import { VirtualKeyboard } from "$/shared/services/virtual-keyboard";
     import Button from "$/shared/ui/Button.svelte";
+    import ResourceError from "$/shared/ui/ResourceError.svelte";
     import Skeleton from "$/shared/ui/Skeleton.svelte";
     import TextField from "$/shared/ui/TextField.svelte";
-    import { onMount } from "svelte";
 
-    import { context } from "../model/context";
+    import { invitationsQueryOptions } from "../api/invitations";
     import { buildViewName, view } from "../model/view";
-    import { back } from "./Back.svelte";
     import Invitation from "./Invitation.svelte";
 
+    import type { ViewProps } from "../model/view";
     import type { RegistrationInvitationData } from "$/entities/user";
 
-    const { invitations } = context.get();
+    let { open = $bindable() }: ViewProps = $props();
 
-    onMount(() => {
-        if (invitations.current && !invitations.loading && !invitations.error) {
-            void invitations.refetch();
-        }
-    });
+    const queryClient = useQueryClient();
+    const invitations = createQuery(() => ({
+        ...invitationsQueryOptions,
+        enabled: open
+    }));
 
     let inviteInput = $state<HTMLInputElement | null>(null);
 
-    let isError = $derived(!invitations.current && invitations.error);
-    let isLoading = $derived(!invitations.current && invitations.loading);
+    const isError = $derived(!invitations.data && invitations.error);
+    const isLoading = $derived(invitations.isLoading);
 </script>
 
-<ScreenView.Overlay>
-    <ScreenView.Header {back} title={m["current-user.account.invitations"]()} />
+<ScreenView.Overlay bind:open>
+    <ScreenView.Header title={m["current-user.account.invitations"]()} />
     <ScreenView.Content
         class={[
-            "overflow-y-auto overscroll-contain pt-5",
-            invitations.current?.length === 0 || isError
+            "overflow-y-auto overscroll-contain",
+            !isError && "pt-5",
+            invitations.data?.length === 0 || isError
                 ? "justify-center"
                 : "gap-2"
         ]}
         aria-live="polite"
-        aria-busy={invitations.loading}
+        aria-busy={invitations.isFetching}
     >
         {#if isError}
-            <img
-                src={SadCat}
-                width={82}
-                height={85}
-                alt=""
-                decoding="async"
-                class="mx-auto w-full max-w-28"
+            <ResourceError
+                message={m["current-user.invitations.error"]()}
+                onRetry={() => invitations.refetch()}
             />
-            <p class="mx-auto mt-4 max-w-3/4 text-center text-lg font-medium">
-                {m["current-user.invitations.error"]()}
-            </p>
         {:else if isLoading}
             {#each Array.from({ length: 5 }) as _, idx (idx)}
                 {@render row()}
             {/each}
         {:else}
-            {#each invitations.current as invitation (invitation.id)}
+            {#each invitations.data as invitation (invitation.id)}
                 {@render row(invitation)}
             {:else}
                 <img
@@ -88,73 +82,78 @@
                 await view.push(buildViewName("invitations", "add"));
                 inviteInput?.focus();
             }}
-            disabled={!invitations.current}
+            disabled={!invitations.data}
         >
             {m["current-user.invitations.add"]()}
         </Button>
     </ScreenView.Footer>
 </ScreenView.Overlay>
 
-{#if view.isOpen(buildViewName("invitations", "add"))}
-    <ScreenView.Overlay {@attach VirtualKeyboard.retainFocus()}>
-        <ScreenView.Header
-            {back}
-            title={m["current-user.invitations.invite"]()}
-        />
-        <ScreenView.Content class="mt-5">
-            <Form
-                action={CreateRegistrationInvitation()}
-                class="flex grow flex-col"
-                options={{
-                    replace: true,
-                    preserveUrl: true,
-                    only: ["flash", "me"]
-                }}
-                onSuccess={(page) => {
-                    invitations.mutate([
-                        ...(invitations.current ?? []),
+<ScreenView.Overlay
+    bind:open={
+        () => view.isOpen(buildViewName("invitations", "add")),
+        () => view.back()
+    }
+    {@attach VirtualKeyboard.retainFocus()}
+>
+    <ScreenView.Header title={m["current-user.invitations.invite"]()} />
+    <ScreenView.Content class="mt-5">
+        <Form
+            action={CreateRegistrationInvitation()}
+            class="flex grow flex-col"
+            options={{
+                replace: true,
+                preserveUrl: true,
+                only: ["flash", "me"]
+            }}
+            onSuccess={(page) => {
+                queryClient.setQueryData(
+                    invitationsQueryOptions.queryKey,
+                    (invitations) => [
+                        ...(invitations ?? []),
                         page.props.flash.invitation
-                    ]);
+                    ]
+                );
 
-                    void view.back();
-                }}
-                let:processing
-                let:errors
+                void view.back();
+            }}
+            let:processing
+            let:errors
+        >
+            <TextField
+                bind:input={inviteInput}
+                type="email"
+                name="email"
+                placeholder={m["current-user.account.email"]()}
+                error={errors.email}
+                maxlength={254}
+                required
             >
-                <TextField
-                    bind:input={inviteInput}
-                    type="email"
-                    name="email"
-                    placeholder={m["current-user.account.email"]()}
-                    error={errors.email}
-                    maxlength={254}
-                    required
-                >
-                    {#snippet indicator()}<Mail />{/snippet}
-                </TextField>
+                {#snippet indicator()}<Mail />{/snippet}
+            </TextField>
 
-                <Button
-                    type="submit"
-                    class="mt-auto shrink-0"
-                    disabled={processing}
-                >
-                    {m["current-user.invitations.invite"]()}
-                </Button>
-            </Form>
-        </ScreenView.Content>
-    </ScreenView.Overlay>
-{:else if /invitations\/.+$/.test(view.name)}
-    <Invitation
-        resource={invitations}
-        onDelete={(id) => {
-            if (!invitations.current) {
-                return;
-            }
+            <Button
+                type="submit"
+                class="mt-auto shrink-0"
+                disabled={processing}
+            >
+                {m["current-user.invitations.invite"]()}
+            </Button>
+        </Form>
+    </ScreenView.Content>
+</ScreenView.Overlay>
 
-            invitations.mutate(invitations.current.filter((i) => i.id != id));
-        }}
-    />
-{/if}
+<Invitation
+    bind:open={
+        () => /invitations\/(?!add$).+$/.test(view.name), () => view.back()
+    }
+    onDelete={(id) => {
+        queryClient.setQueryData(
+            invitationsQueryOptions.queryKey,
+            (invitations) => invitations?.filter((i) => i.id != id)
+        );
+    }}
+/>
 
 {#snippet row(invitation?: RegistrationInvitationData)}
     <button

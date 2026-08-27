@@ -27,6 +27,7 @@ use App\Domain\Todo\Actions\CreateCategory;
 use App\Domain\Todo\Actions\CreateTodo;
 use App\Domain\Todo\Actions\DestroyCategory;
 use App\Domain\Todo\Actions\DestroyTodo;
+use App\Domain\Todo\Actions\ListCategories;
 use App\Domain\Todo\Actions\ReorderTodos;
 use App\Domain\Todo\Actions\UpdateTodo;
 use App\Domain\Todo\Models\Todo;
@@ -70,6 +71,7 @@ Route::middleware('auth')->group(function () {
 
     Route::prefix('/categories')
         ->group(function () {
+            Route::get('/', ListCategories::class);
             Route::post('/', CreateCategory::class);
             Route::delete('/{category}', DestroyCategory::class);
         });

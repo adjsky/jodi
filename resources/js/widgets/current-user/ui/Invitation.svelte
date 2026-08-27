@@ -2,25 +2,31 @@
     import { Clipboard } from "@ark-ui/svelte";
     import { router } from "@inertiajs/svelte";
     import { CheckIcon, ClipboardCopyIcon } from "@lucide/svelte";
+    import { createQuery } from "@tanstack/svelte-query";
     import DestroyRegistrationInvitation from "$/generated/actions/App/Domain/Identity/Actions/DestroyRegistrationInvitation";
     import { m } from "$/paraglide/messages";
     import { ScreenView } from "$/shared/composites/screen-view";
     import { HistoryView } from "$/shared/integrations/inertia";
     import Button from "$/shared/ui/Button.svelte";
     import Confirmable from "$/shared/ui/Confirmable.svelte";
+    import ResourceError from "$/shared/ui/ResourceError.svelte";
+    import Skeleton from "$/shared/ui/Skeleton.svelte";
 
+    import { invitationsQueryOptions } from "../api/invitations";
     import { view } from "../model/view";
-    import { back } from "./Back.svelte";
 
-    import type { RegistrationInvitationData } from "$/entities/user";
-    import type { ResourceReturn } from "runed";
+    import type { ViewProps } from "../model/view";
 
-    type Props = {
-        resource: ResourceReturn<RegistrationInvitationData[]>;
+    type Props = ViewProps & {
         onDelete?: (id: string) => void;
     };
 
-    const { resource, onDelete }: Props = $props();
+    let { open = $bindable(), onDelete }: Props = $props();
+
+    const invitations = createQuery(() => ({
+        ...invitationsQueryOptions,
+        enabled: open
+    }));
 
     const deleteView = new HistoryView<{
         __deleteinvitation: { isOpen: boolean };
@@ -34,39 +40,48 @@
     });
 
     const invitation = $derived(
-        resource.current?.find((invitation) => invitation.id == id)
+        invitations.data?.find((invitation) => invitation.id == id)
     );
 
-    let isError = $derived(!resource.current && resource.error);
-    let isLoading = $derived(!resource.current && resource.loading);
-    let isNotFound = $derived(resource.current && !invitation);
+    const isError = $derived(!invitations.data && invitations.error);
+    const isLoading = $derived(invitations.isLoading);
+    const isNotFound = $derived(invitations.data && !invitation);
 </script>
 
-<ScreenView.Overlay>
-    <ScreenView.Header
-        {back}
-        title={m["current-user.invitations.invitation"]()}
-    />
+<ScreenView.Overlay bind:open>
+    <ScreenView.Header title={m["current-user.invitations.invitation"]()} />
     <ScreenView.Content
-        class={["mt-5", (isError || isNotFound) && "justify-center"]}
+        class={[isError || isNotFound ? "justify-center" : "mt-5"]}
         aria-live="polite"
-        aria-busy={resource.loading}
+        aria-busy={invitations.isFetching}
     >
-        {#if isError || isNotFound}
-            error
-        {:else if isLoading}
-            loading...
-        {:else if invitation}
+        {#if isError}
+            <ResourceError
+                message={m["current-user.invitations.error"]()}
+                onRetry={() => invitations.refetch()}
+            />
+        {:else if isNotFound}
+            <ResourceError
+                message={m["current-user.invitations.not-found"]()}
+            />
+        {:else}
             <!-- TODO: maybe use web share API? -->
-            <Clipboard.Root value={invitation.shareUrl}>
+            <Clipboard.Root value={invitation?.shareUrl ?? ""}>
                 <Clipboard.Label class="font-semibold">
                     {m["current-user.invitations.share"]()}:
                 </Clipboard.Label>
                 <Clipboard.Control
                     class="mt-2 flex items-center gap-1 rounded-lg border border-cream-950 bg-white p-2"
                 >
-                    <Clipboard.ValueText class="truncate font-medium" />
-                    <Clipboard.Trigger class="shrink-0 p-1">
+                    {#if isLoading}
+                        <Skeleton grow inline={false} />
+                    {:else}
+                        <Clipboard.ValueText class="truncate font-medium" />
+                    {/if}
+                    <Clipboard.Trigger
+                        class="shrink-0 p-1"
+                        disabled={isLoading}
+                    >
                         <Clipboard.Indicator>
                             {#snippet copied()}
                                 <CheckIcon class="text-xl text-green" />
@@ -79,60 +94,62 @@
         {/if}
     </ScreenView.Content>
 
-    <ScreenView.Footer class="mt-5">
-        <Confirmable
-            bind:open={
-                () => deleteView.meta?.__deleteinvitation?.isOpen ?? false,
-                (v) => {
-                    if (v) {
-                        void deleteView.push(view.name, {
-                            meta: {
-                                ...view.meta,
-                                __deleteinvitation: { isOpen: true }
-                            }
-                        });
-                    } else {
-                        void deleteView.back();
+    {#if !isNotFound}
+        <ScreenView.Footer class="mt-5">
+            <Confirmable
+                bind:open={
+                    () => deleteView.meta?.__deleteinvitation?.isOpen ?? false,
+                    (v) => {
+                        if (v) {
+                            void deleteView.push(view.name, {
+                                meta: {
+                                    ...view.meta,
+                                    __deleteinvitation: { isOpen: true }
+                                }
+                            });
+                        } else {
+                            void deleteView.back();
+                        }
                     }
                 }
-            }
-            title={m["current-user.invitations.delete-ahtung"]()}
-            onConfirm={async () => {
-                if (!invitation || isDeleting) return;
+                title={m["current-user.invitations.delete-ahtung"]()}
+                onConfirm={async () => {
+                    if (!invitation || isDeleting) return;
 
-                isDeleting = true;
+                    isDeleting = true;
 
-                try {
-                    await router.visit(
-                        DestroyRegistrationInvitation(invitation.id),
-                        {
-                            replace: true,
-                            preserveUrl: true,
-                            preserveState: true,
-                            only: ["flash", "me"],
-                            onSuccess: () => {
-                                void view.back();
-                                onDelete?.(invitation.id);
+                    try {
+                        await router.visit(
+                            DestroyRegistrationInvitation(invitation.id),
+                            {
+                                replace: true,
+                                preserveUrl: true,
+                                preserveState: true,
+                                only: ["flash", "me"],
+                                onSuccess: () => {
+                                    void view.back();
+                                    onDelete?.(invitation.id);
+                                }
                             }
-                        }
-                    );
+                        );
 
-                    return true;
-                } finally {
-                    isDeleting = false;
-                }
-            }}
-        >
-            {#snippet trigger(props)}
-                <Button
-                    {...props()}
-                    type="button"
-                    class="shrink-0"
-                    disabled={!invitation || isDeleting}
-                >
-                    {m["current-user.invitations.delete"]()}
-                </Button>
-            {/snippet}
-        </Confirmable>
-    </ScreenView.Footer>
+                        return true;
+                    } finally {
+                        isDeleting = false;
+                    }
+                }}
+            >
+                {#snippet trigger(props)}
+                    <Button
+                        {...props()}
+                        type="button"
+                        class="shrink-0"
+                        disabled={!invitation || isDeleting}
+                    >
+                        {m["current-user.invitations.delete"]()}
+                    </Button>
+                {/snippet}
+            </Confirmable>
+        </ScreenView.Footer>
+    {/if}
 </ScreenView.Overlay>

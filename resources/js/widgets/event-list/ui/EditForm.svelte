@@ -6,7 +6,7 @@
         toCalendarDate
     } from "@internationalized/date";
     import { Event } from "$/entities/event";
-    import { CalendarDialog } from "$/features/choose-date";
+    import { CalendarPicker } from "$/features/choose-date";
     import { DeleteItem } from "$/features/delete-item";
     import { RescheduleItem } from "$/features/reschedule-item";
     import { SaveOrClose } from "$/features/save-item";
@@ -91,7 +91,7 @@
         }}
     >
         {#snippet calendar(trigger)}
-            <CalendarDialog
+            <CalendarPicker
                 mode="range"
                 selected={[
                     toCalendarDate(draft.startsAt),
@@ -110,9 +110,9 @@
                 }}
             >
                 {#snippet children(props)}
-                    {@render trigger(props())}
+                    {@render trigger(props)}
                 {/snippet}
-            </CalendarDialog>
+            </CalendarPicker>
         {/snippet}
         {#snippet close()}
             <SaveOrClose

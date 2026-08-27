@@ -8,16 +8,15 @@
     import { Push } from "$/shared/services/push";
     import Button from "$/shared/ui/Button.svelte";
 
-    import { back } from "./Back.svelte";
+    import type { ViewProps } from "../model/view";
+
+    let { open = $bindable() }: ViewProps = $props();
 
     const user = $derived($page.props.auth.user);
 </script>
 
-<ScreenView.Overlay>
-    <ScreenView.Header
-        {back}
-        title={m["current-user.app-settings.notifications"]()}
-    />
+<ScreenView.Overlay bind:open>
+    <ScreenView.Header title={m["current-user.app-settings.notifications"]()} />
     <ScreenView.Content class="py-5">
         <User.Info.Block>
             <User.Info.SelectRow

@@ -3,7 +3,7 @@
     import { toCalendarDate } from "@internationalized/date";
     import { Trash } from "@lucide/svelte";
     import { Todo } from "$/entities/todo";
-    import { CalendarDialog } from "$/features/choose-date";
+    import { CalendarPicker } from "$/features/choose-date";
     import { RescheduleItem } from "$/features/reschedule-item";
     import { SaveOrClose } from "$/features/save-item";
     import { TodoTime } from "$/features/schedule-todo-time";
@@ -39,7 +39,7 @@
 <Form
     action={CreateTodo()}
     options={{
-        only: ["todos", "categories"],
+        only: ["todos"],
         preserveState: true,
         preserveScroll: true,
         preserveUrl: true,
@@ -63,7 +63,7 @@
 >
     <Todo.Fields {scheduledAt}>
         {#snippet calendar(trigger)}
-            <CalendarDialog
+            <CalendarPicker
                 mode="single"
                 selected={[toCalendarDate(scheduledAt)]}
                 deferHistoryViewFrames={DEFER_FRAMES.SHEET + 1}
@@ -75,9 +75,9 @@
                 }}
             >
                 {#snippet children(props)}
-                    {@render trigger(props())}
+                    {@render trigger(props)}
                 {/snippet}
-            </CalendarDialog>
+            </CalendarPicker>
         {/snippet}
         {#snippet close()}
             <SaveOrClose variant="save" disabled={processing} />

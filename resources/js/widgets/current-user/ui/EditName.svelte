@@ -9,13 +9,16 @@
     import TextField from "$/shared/ui/TextField.svelte";
 
     import { view } from "../model/view";
-    import { back } from "./Back.svelte";
+
+    import type { ViewProps } from "../model/view";
+
+    let { open = $bindable() }: ViewProps = $props();
 
     const user = $derived($page.props.auth.user);
 </script>
 
-<ScreenView.Overlay {@attach VirtualKeyboard.retainFocus()}>
-    <ScreenView.Header {back} title={m["current-user.account.name"]()} />
+<ScreenView.Overlay bind:open {@attach VirtualKeyboard.retainFocus()}>
+    <ScreenView.Header title={m["current-user.account.name"]()} />
     <ScreenView.Content class="mt-5">
         <Form
             action={UpdateUser()}

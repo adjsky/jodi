@@ -82,7 +82,7 @@
     {@attach VirtualKeyboard.retainFocus()}
     bind:open
     class="pb-0"
-    height={90}
+    height={80}
     title={m["recurrence.custom.title"]()}
     onExitComplete={reset}
     portal

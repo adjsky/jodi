@@ -5,11 +5,10 @@ import { normalizeIsoString } from "$/shared/lib/date/normalize-iso-string";
 import { id } from "../helpers/id";
 import { editView } from "../model/view";
 
-import type { VisitCallbacks } from "@inertiajs/core";
 import type { TodoData } from "$/entities/todo";
 
-export function complete(todo: TodoData): Partial<VisitCallbacks> {
-    return optimistic(
+export const complete = (todo: TodoData) =>
+    optimistic(
         (prev) => ({
             todos: prev.todos.map((t: TodoData) =>
                 id(t) === id(todo)
@@ -34,4 +33,3 @@ export function complete(todo: TodoData): Partial<VisitCallbacks> {
             }
         }
     );
-}

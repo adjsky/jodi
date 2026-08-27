@@ -6,11 +6,9 @@ namespace App\Http\Controllers;
 
 use App\Domain\Event\Actions\ListEvents;
 use App\Domain\Todo\Actions\ListTodos;
-use App\Domain\Todo\Data\Output\CategoryData;
 use App\Support\DeviceDetector\RequestDeviceDetector;
 use App\Support\Http\JodiRequest;
 use Carbon\Carbon;
-use Inertia\Inertia;
 
 class HomeController extends Controller
 {
@@ -39,9 +37,6 @@ class HomeController extends Controller
                 'nInvitations' => $this->user()->invitations->count(),
                 'nFriends' => $this->user()->friends->count(),
             ],
-            'categories' => Inertia::defer(
-                fn () => CategoryData::collect($this->user()->categories()->get()),
-            ),
         ]);
     }
 }

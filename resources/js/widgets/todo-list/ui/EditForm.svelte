@@ -6,7 +6,7 @@
         toCalendarDate
     } from "@internationalized/date";
     import { Todo } from "$/entities/todo";
-    import { CalendarDialog } from "$/features/choose-date";
+    import { CalendarPicker } from "$/features/choose-date";
     import { Checkbox } from "$/features/complete-todo";
     import { DeleteItem } from "$/features/delete-item";
     import { RescheduleItem } from "$/features/reschedule-item";
@@ -86,7 +86,7 @@
         isCompleted={todo.completedAt != null}
     >
         {#snippet calendar(trigger)}
-            <CalendarDialog
+            <CalendarPicker
                 mode="single"
                 selected={[toCalendarDate(draft.scheduledAt)]}
                 min={todo.recurringSince
@@ -103,9 +103,9 @@
                 }}
             >
                 {#snippet children(props)}
-                    {@render trigger(props())}
+                    {@render trigger(props)}
                 {/snippet}
-            </CalendarDialog>
+            </CalendarPicker>
         {/snippet}
         {#snippet close()}
             <SaveOrClose

@@ -5,13 +5,9 @@ import { Push } from "$/shared/services/push";
 import { id } from "../helpers/id";
 import { editView } from "../model/view";
 
-import type { VisitCallbacks } from "@inertiajs/core";
 import type { TodoData } from "$/entities/todo";
 
-export function edit(
-    todo: TodoData,
-    withAhtungReminder: boolean
-): Partial<VisitCallbacks> {
+export function edit(todo: TodoData, withAhtungReminder: boolean) {
     return optimistic(
         (prev, data) => ({
             todos: prev.todos.map((t: TodoData) =>

@@ -18,6 +18,8 @@ export function scrollIntoView(target: Element, options?: Options): void {
         inline
     });
 
+    if (actions.length == 0) return;
+
     const { el, left, top } = actions[0];
 
     el.scrollTo({ left, top, behavior });

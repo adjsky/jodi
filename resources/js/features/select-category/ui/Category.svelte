@@ -1,14 +1,16 @@
 <script lang="ts">
     import { useFilter, useListCollection } from "@ark-ui/svelte";
-    import { page } from "@inertiajs/svelte";
     import { Search, Tag, X } from "@lucide/svelte";
+    import { createQuery, useQueryClient } from "@tanstack/svelte-query";
     import { m } from "$/paraglide/messages";
     import Jelly from "$/shared/assets/jelly.svg";
     import { dispatchInput } from "$/shared/lib/dom/dispatch-input";
     import { DeferUntilNextFrame } from "$/shared/lib/svelte/defer-until-next-frame.svelte";
+    import ResourceError from "$/shared/ui/ResourceError.svelte";
     import SheetDialog from "$/shared/ui/SheetDialog.svelte";
     import { tick, untrack } from "svelte";
 
+    import { categoriesQueryOptions } from "../api/categories";
     import { view } from "../model/view";
     import AddCategory from "./AddCategory.svelte";
     import Categories from "./Categories.svelte";
@@ -26,7 +28,7 @@
 
     const deferredView = new DeferUntilNextFrame(() => deferHistoryViewFrames);
 
-    const filters = useFilter({ sensitivity: "base" });
+    // ------------------------------ COLLECTION -------------------------------
 
     const { collection, filter, set } = useListCollection({
         initialItems: [] as { id: number; name: string }[],
@@ -41,29 +43,46 @@
         }
     });
 
-    let formInput = $state<HTMLInputElement | null>(null);
-    let selected = $state(untrack(() => current));
+    // ------------------------------- FILTERS ---------------------------------
+
     let search = $state("");
 
-    let showAddButton = $derived(search != "" && !collection().has(search));
+    const filters = useFilter({ sensitivity: "base" });
+
+    $effect(() => {
+        filter(search);
+    });
+
+    // --------------------------------- QUERY ---------------------------------
+
+    const queryClient = useQueryClient();
+
+    const categories = createQuery(() => categoriesQueryOptions);
+
+    const isError = $derived(!categories.data && categories.error);
+    const isLoading = $derived(categories.isLoading);
+
+    $effect(() => {
+        if (categories.data) {
+            set(categories.data);
+        }
+    });
+
+    // -------------------------------- STATES ---------------------------------
+
+    let formInput = $state<HTMLInputElement | null>(null);
+    let selected = $state(untrack(() => current));
+
+    const showAddButton = $derived(search != "" && !collection().has(search));
+    const hasNoCategories = $derived(search == "" && collection().size == 0);
+
+    // ------------------------------- CALLBACKS -------------------------------
 
     async function onSelect(category: CategoryData | null) {
         selected = category;
         await tick();
         dispatchInput(formInput);
     }
-
-    $effect(() => {
-        const categories = $page.props["categories"];
-        if (categories) {
-            set(categories);
-            untrack(() => filter(search));
-        }
-    });
-
-    $effect(() => {
-        filter(search);
-    });
 </script>
 
 <input bind:this={formInput} type="number" value={selected?.id} {name} hidden />
@@ -146,42 +165,63 @@
     </div>
 
     <div
-        class="mt-2 flex grow flex-col overflow-y-auto overscroll-contain pb-safe"
+        class={[
+            "flex min-h-0 grow flex-col",
+            !isError && !hasNoCategories && "mt-2"
+        ]}
+        aria-live="polite"
+        aria-busy={categories.isFetching}
     >
-        {#if showAddButton}
-            <AddCategory
-                name={search}
-                onAdd={async (id) => {
-                    void onSelect({ id, name: search });
-                    search = "";
+        {#if isError}
+            <ResourceError
+                message={m["todos.category.error"]()}
+                onRetry={() => categories.refetch()}
+            />
+        {:else if isLoading}
+            <Categories isLoading />
+        {:else}
+            {#if showAddButton}
+                <AddCategory
+                    name={search}
+                    onAdd={async (category) => {
+                        queryClient.setQueryData(
+                            categoriesQueryOptions.queryKey,
+                            (categories) => [...(categories ?? []), category]
+                        );
+                        void onSelect(category);
+
+                        search = "";
+                    }}
+                />
+            {/if}
+
+            {#if showAddButton && collection().size > 0}
+                <hr class="mt-2 text-cream-300" />
+            {/if}
+
+            {#if hasNoCategories}
+                <img
+                    src={Jelly}
+                    width={82}
+                    height={85}
+                    alt=""
+                    decoding="async"
+                    class="mx-auto mt-[10vh] w-full max-w-28"
+                />
+                <p
+                    class="mx-auto mt-8 max-w-74 text-center text-lg font-medium"
+                >
+                    {m["todos.category.no-categories"]()}
+                </p>
+            {/if}
+
+            <Categories
+                list={collection().items}
+                selectedId={selected?.id ?? null}
+                onSelect={(category) => {
+                    void onSelect(category);
                 }}
             />
         {/if}
-
-        {#if showAddButton && collection().size > 0}
-            <hr class="mt-2 text-cream-300" />
-        {/if}
-
-        {#if search == "" && collection().size == 0}
-            <img
-                src={Jelly}
-                width={82}
-                height={85}
-                alt=""
-                decoding="async"
-                class="mx-auto mt-[10vh] w-full max-w-28"
-            />
-            <p class="mx-auto mt-8 max-w-74 text-center text-lg font-medium">
-                {m["todos.category.no-categories"]()}
-            </p>
-        {/if}
-
-        <Categories
-            list={collection().items}
-            selectedId={selected?.id ?? null}
-            onSelect={(category) => {
-                void onSelect(category);
-            }}
-        />
     </div>
 </SheetDialog>

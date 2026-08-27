@@ -10,6 +10,7 @@
         "required-field": "Please fill out this field",
         "to": "to",
         "invalid-time-range": "Invalid time range",
+        "try-again": "Try again",
         "time-picker": {
             "title": "Select time",
             "ok": "OK",
@@ -138,7 +139,8 @@
             "placeholder": "Search a category",
             "add": "Create category",
             "confirm-delete": "Are you sure you want to delete \"{category}\"?",
-            "no-categories": "No categories yet. Type in the search bar above to create your first category."
+            "no-categories": "No categories yet. Type in the search bar above to create your first category.",
+            "error": "Failed to load your list of categories."
         },
         "time": {
             "add": "Add time"
@@ -274,8 +276,9 @@
         "custom": {
             "title": "Remind before",
             "trigger": "Other",
-            "ok": "OK",
-            "cancel": "Cancel"
+            "as-push": "As notification",
+            "as-email": "As email",
+            "apply": "Apply"
         }
     },
     "reschedule": {
@@ -334,7 +337,8 @@
             "no-invitations": "Looks like you have nothing here. Let's add someone.",
             "waiting": "Waiting...",
             "share": "Share the invitation link",
-            "error": "Failed to load your list of invitations. Try again later.",
+            "not-found": "Looks like this invitation has wandered off. It may have already been accepted or removed.",
+            "error": "Failed to load your list of invitations.",
             "invite": "Invite",
             "delete": "Delete",
             "delete-ahtung": "Are you sure you want to delete this invitation?",
@@ -345,7 +349,7 @@
         "friends": {
             "no-friends": "You have no friends. What a shame.",
             "add": "Add",
-            "error": "Failed to load your list of friends. Try again later."
+            "error": "Failed to load your list of friends."
         },
         "week-start": {
             "monday": "Monday",

@@ -7,14 +7,13 @@
     import { LANGUAGES } from "$/shared/cfg/constants";
     import { ScreenView } from "$/shared/composites/screen-view";
 
-    import { back } from "./Back.svelte";
+    import type { ViewProps } from "../model/view";
+
+    let { open = $bindable() }: ViewProps = $props();
 </script>
 
-<ScreenView.Overlay>
-    <ScreenView.Header
-        {back}
-        title={m["current-user.app-settings.language"]()}
-    />
+<ScreenView.Overlay bind:open>
+    <ScreenView.Header title={m["current-user.app-settings.language"]()} />
     <ScreenView.Content class="py-5">
         <User.Info.Block>
             {#each Object.entries(LANGUAGES) as [locale, language] (locale)}

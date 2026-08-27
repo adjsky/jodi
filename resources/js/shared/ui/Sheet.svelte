@@ -72,7 +72,7 @@
 
 <Drawer.RootProvider value={drawer} {...drawerRootProps}>
     <Drawer.Backdrop
-        class="fixed inset-0 z-[calc(200+var(--layer-index,0))] bg-cream-950/60"
+        class="fixed inset-0 z-[calc(100+var(--layer-index,0))] bg-cream-950/60"
         onanimationstart={() => {
             isAnimating = true;
         }}
@@ -81,7 +81,7 @@
         }}
     />
     <Drawer.Positioner
-        class="fixed inset-0 z-[calc(200+var(--layer-index,0))] flex items-end justify-center"
+        class="fixed inset-0 z-[calc(100+var(--layer-index,0))] flex items-end justify-center"
     >
         <Drawer.Content
             {@attach VirtualKeyboard.retainFocus({ blurOnScroll: true })}

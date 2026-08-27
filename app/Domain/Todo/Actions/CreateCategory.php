@@ -6,24 +6,25 @@ namespace App\Domain\Todo\Actions;
 
 use App\Domain\Identity\Models\User;
 use App\Domain\Todo\Data\Input\CreateCategoryData;
+use App\Domain\Todo\Models\Category;
 use App\Support\Actions\JodiAction;
 use App\Support\Http\JodiRequest;
 use Illuminate\Http\RedirectResponse;
 
 class CreateCategory extends JodiAction
 {
-    public function handle(User $user, CreateCategoryData $data): int
+    public function handle(User $user, CreateCategoryData $data): Category
     {
         $category = $user->categories()->create(['name' => $data->name]);
 
-        return $category->id;
+        return $category;
     }
 
     public function asController(JodiRequest $request): RedirectResponse
     {
-        $id = $this->handle($this->user(), CreateCategoryData::from($request));
+        $category = $this->handle($this->user(), CreateCategoryData::from($request));
 
-        $request->setFlash('id', $id);
+        $request->setFlash('category', $category);
 
         return back();
     }

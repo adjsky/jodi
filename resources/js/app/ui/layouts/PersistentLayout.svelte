@@ -3,6 +3,7 @@
     import { Device } from "@capacitor/device";
     import { SplashScreen } from "@capacitor/splash-screen";
     import { page, router } from "@inertiajs/svelte";
+    import { QueryClient, QueryClientProvider } from "@tanstack/svelte-query";
     import { DEVICE_ID_COOKIE } from "$/shared/cfg/constants";
     import { Swiper } from "$/shared/integrations/swiper";
     import { Push } from "$/shared/services/push";
@@ -17,6 +18,21 @@
     import type { Snippet } from "svelte";
 
     const { children }: { children: Snippet } = $props();
+
+    const queryClient = new QueryClient({
+        defaultOptions: {
+            queries: {
+                staleTime: 60_000,
+                gcTime: 30 * 60_000,
+                retry: false,
+                refetchOnWindowFocus: false,
+                refetchOnReconnect: true
+            },
+            mutations: {
+                retry: false
+            }
+        }
+    });
 
     onMount(() => {
         void SplashScreen.hide();
@@ -59,8 +75,10 @@
     VirtualKeyboard.init();
 </script>
 
-<Portal>
-    <ToastProvider />
-</Portal>
+<QueryClientProvider client={queryClient}>
+    <Portal>
+        <ToastProvider />
+    </Portal>
 
-{@render children()}
+    {@render children()}
+</QueryClientProvider>

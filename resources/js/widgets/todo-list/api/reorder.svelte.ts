@@ -14,17 +14,9 @@ type Options = {
     onSuccess?: VoidFunction;
 };
 
-type Reorder = {
-    mutate(group: string, todos: TodoData[]): void;
-    readonly isMutating: boolean;
-};
-
 type TodoBatches = Record<string, TodoData[]>;
 
-export function useReorder(
-    todos: Getter<TodoData[]>,
-    options?: Options
-): Reorder {
+export function useReorder(todos: Getter<TodoData[]>, options?: Options) {
     const { onError, onSuccess } = options ?? {};
 
     let isMutating = $state(false);
@@ -87,7 +79,7 @@ export function useReorder(
     }, 250);
 
     return {
-        mutate(group, todos) {
+        mutate(group: string, todos: TodoData[]) {
             todoBatches[group] = todos;
             isMutating = true;
             void _mutate({ ...todoBatches });
