@@ -4,7 +4,7 @@ import type { AppPageProps } from "$/globals";
 
 export const preferences = (
     preferences: Partial<AppPageProps["auth"]["user"]["preferences"]>,
-    error: string
+    rollbackError: string
 ) =>
     optimistic(
         (prev) => ({
@@ -19,5 +19,5 @@ export const preferences = (
                 }
             }
         }),
-        { error }
+        { rollbackError }
     );
