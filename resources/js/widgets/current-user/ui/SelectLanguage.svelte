@@ -7,6 +7,8 @@
     import { LANGUAGES } from "$/shared/cfg/constants";
     import { ScreenView } from "$/shared/composites/screen-view";
 
+    import { preferences } from "../api/preferences";
+
     import type { ViewProps } from "../model/view";
 
     let { open = $bindable() }: ViewProps = $props();
@@ -18,10 +20,13 @@
         <User.Info.Block>
             {#each Object.entries(LANGUAGES) as [locale, language] (locale)}
                 <User.Info.SelectRow
+                    {...preferences(
+                        { locale },
+                        m["current-user.language.error"]()
+                    )}
                     href={UpdateUser()}
                     data={{ preferences: { locale } }}
                     selected={locale == getLocale()}
-                    onSuccess={() => location.reload()}
                 >
                     {#snippet icon()}
                         <Languages />

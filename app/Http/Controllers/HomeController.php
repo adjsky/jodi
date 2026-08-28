@@ -33,10 +33,6 @@ class HomeController extends Controller
         return inertia('Home', [
             'todos' => ListTodos::make()->handle($this->user(), $date, $startUtc, $endUtc),
             'events' => ListEvents::make()->handle($this->user(), $startUtc, $endUtc),
-            'me' => [
-                'nInvitations' => $this->user()->invitations->count(),
-                'nFriends' => $this->user()->friends->count(),
-            ],
         ]);
     }
 }

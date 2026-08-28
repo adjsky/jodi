@@ -48,7 +48,7 @@
     >
         {#if isError}
             <ResourceError
-                message={m["current-user.invitations.error"]()}
+                message={m["current-user.invitations.list-error"]()}
                 onRetry={() => invitations.refetch()}
             />
         {:else if isLoading}
@@ -104,7 +104,7 @@
             options={{
                 replace: true,
                 preserveUrl: true,
-                only: ["me"]
+                viewTransition: false
             }}
             onSuccess={(page) => {
                 queryClient.setQueryData(
@@ -134,7 +134,7 @@
                 <Button
                     type="submit"
                     class="mt-auto shrink-0"
-                    disabled={processing}
+                    loading={processing}
                 >
                     {m["current-user.invitations.invite"]()}
                 </Button>
@@ -147,12 +147,6 @@
     bind:open={
         () => /invitations\/(?!add$).+$/.test(view.name), () => view.back()
     }
-    onDelete={(id) => {
-        queryClient.setQueryData(
-            invitationsQueryOptions.queryKey,
-            (invitations) => invitations?.filter((i) => i.id != id)
-        );
-    }}
 />
 
 {#snippet row(invitation?: RegistrationInvitationData)}

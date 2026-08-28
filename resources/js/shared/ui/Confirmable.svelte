@@ -6,7 +6,6 @@
     import AppPortal from "./AppPortal.svelte";
     import Button from "./Button.svelte";
 
-    import type { MaybePromise } from "../lib/async/types";
     import type { DialogRootProps } from "@ark-ui/svelte/dialog";
     import type { Snippet } from "svelte";
     import type { HTMLAttributes, SvelteHTMLElements } from "svelte/elements";
@@ -18,7 +17,7 @@
             portal?: boolean;
             trigger?: Snippet<[() => HTMLAttributes<HTMLElement>]>;
             content?: Snippet;
-            onConfirm?: () => MaybePromise<boolean | void>;
+            onConfirm?: () => boolean | void;
             onAbort?: VoidFunction;
         };
 
@@ -78,8 +77,8 @@
                 </Dialog.CloseTrigger>
                 <Button
                     type="button"
-                    onclick={async () => {
-                        if (await onConfirm?.()) {
+                    onclick={() => {
+                        if (onConfirm?.() !== false) {
                             open = false;
                         }
                     }}

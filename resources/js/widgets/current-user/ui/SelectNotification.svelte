@@ -8,37 +8,40 @@
     import { Push } from "$/shared/services/push";
     import Button from "$/shared/ui/Button.svelte";
 
+    import { preferences } from "../api/preferences";
+
     import type { ViewProps } from "../model/view";
 
     let { open = $bindable() }: ViewProps = $props();
 
     const user = $derived(page.props.auth.user);
+
+    const rows = [
+        { channel: "push", icon: Bell },
+        { channel: "mail", icon: Mail }
+    ] as const;
 </script>
 
 <ScreenView.Overlay bind:open>
     <ScreenView.Header title={m["current-user.app-settings.notifications"]()} />
     <ScreenView.Content class="py-5">
         <User.Info.Block>
-            <User.Info.SelectRow
-                href={UpdateUser()}
-                data={{ preferences: { notifications: "push" } }}
-                selected={user.preferences.notifications == "push"}
-            >
-                {#snippet icon()}
-                    <Bell />
-                {/snippet}
-                {m[`current-user.notifications.push`]()}
-            </User.Info.SelectRow>
-            <User.Info.SelectRow
-                href={UpdateUser()}
-                data={{ preferences: { notifications: "mail" } }}
-                selected={user.preferences.notifications == "mail"}
-            >
-                {#snippet icon()}
-                    <Mail />
-                {/snippet}
-                {m[`current-user.notifications.mail`]()}
-            </User.Info.SelectRow>
+            {#each rows as { channel, icon: Icon } (channel)}
+                <User.Info.SelectRow
+                    {...preferences(
+                        { notifications: channel },
+                        m["current-user.notifications.error"]()
+                    )}
+                    href={UpdateUser()}
+                    data={{ preferences: { notifications: channel } }}
+                    selected={user.preferences.notifications == channel}
+                >
+                    {#snippet icon()}
+                        <Icon />
+                    {/snippet}
+                    {m[`current-user.notifications.${channel}`]()}
+                </User.Info.SelectRow>
+            {/each}
         </User.Info.Block>
 
         {#if Push.subscription.needsConfiguration}

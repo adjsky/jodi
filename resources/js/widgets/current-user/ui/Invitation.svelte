@@ -1,37 +1,41 @@
 <script lang="ts">
     import { Clipboard } from "@ark-ui/svelte";
     import { CheckIcon, ClipboardCopyIcon } from "@lucide/svelte";
-    import { createQuery } from "@tanstack/svelte-query";
-    import DestroyRegistrationInvitation from "$/generated/actions/App/Domain/Identity/Actions/DestroyRegistrationInvitation";
+    import { createMutation, createQuery } from "@tanstack/svelte-query";
     import { m } from "$/paraglide/messages";
     import { ScreenView } from "$/shared/composites/screen-view";
-    import { HistoryView, visit } from "$/shared/integrations/inertia";
+    import { HistoryView } from "$/shared/integrations/inertia";
     import Button from "$/shared/ui/Button.svelte";
     import Confirmable from "$/shared/ui/Confirmable.svelte";
     import ResourceError from "$/shared/ui/ResourceError.svelte";
     import Skeleton from "$/shared/ui/Skeleton.svelte";
 
-    import { invitationsQueryOptions } from "../api/invitations";
+    import {
+        deleteInvitationMutationOptions,
+        invitationsQueryOptions
+    } from "../api/invitations";
     import { view } from "../model/view";
 
     import type { ViewProps } from "../model/view";
 
-    type Props = ViewProps & {
-        onDelete?: (id: string) => void;
-    };
+    type Props = ViewProps;
 
-    let { open = $bindable(), onDelete }: Props = $props();
+    let { open = $bindable() }: Props = $props();
 
     const invitations = createQuery(() => ({
         ...invitationsQueryOptions,
         enabled: open
     }));
 
+    const deleteInvitationMutation = createMutation(
+        () => deleteInvitationMutationOptions
+    );
+
     const deleteView = new HistoryView<{
         __deleteinvitation: { isOpen: boolean };
     }>();
 
-    let isDeleting = $state(false);
+    let confirmedIdToDelete: string | null = $state(null);
 
     const id = $derived.by(() => {
         const [_, __, id] = view.name.split("/");
@@ -56,7 +60,7 @@
     >
         {#if isError}
             <ResourceError
-                message={m["current-user.invitations.error"]()}
+                message={m["current-user.invitations.list-error"]()}
                 onRetry={() => invitations.refetch()}
             />
         {:else if isNotFound}
@@ -112,28 +116,15 @@
                     }
                 }
                 title={m["current-user.invitations.delete-ahtung"]()}
-                onConfirm={async () => {
-                    if (!invitation || isDeleting) return;
-
-                    isDeleting = true;
-
-                    const succeeded = await visit(
-                        DestroyRegistrationInvitation(invitation.id),
-                        {
-                            replace: true,
-                            preserveUrl: true,
-                            preserveState: true,
-                            only: ["me"],
-                            onSuccess: () => {
-                                void view.back();
-                                onDelete?.(invitation.id);
-                            }
-                        }
-                    );
-
-                    isDeleting = false;
-
-                    return succeeded;
+                onConfirm={() => {
+                    if (!invitation) return;
+                    confirmedIdToDelete = invitation.id;
+                }}
+                onExitComplete={async () => {
+                    if (!confirmedIdToDelete) return;
+                    await view.back();
+                    deleteInvitationMutation.mutate(confirmedIdToDelete);
+                    confirmedIdToDelete = null;
                 }}
             >
                 {#snippet trigger(props)}
@@ -141,7 +132,7 @@
                         {...props()}
                         type="button"
                         class="shrink-0"
-                        disabled={!invitation || isDeleting}
+                        disabled={!invitation}
                     >
                         {m["current-user.invitations.delete"]()}
                     </Button>

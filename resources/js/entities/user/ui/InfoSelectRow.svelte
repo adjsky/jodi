@@ -1,21 +1,15 @@
 <script lang="ts">
     import { Check } from "@lucide/svelte";
     import { tw } from "$/shared/lib/styles/tw";
-    import { boolAttr } from "runed";
 
     import InfoActionRow from "./InfoActionRow.svelte";
 
-    import type {
-        RequestPayload,
-        UrlMethodPair,
-        VisitCallbacks
-    } from "@inertiajs/core";
+    import type { UrlMethodPair, VisitOptions } from "@inertiajs/core";
     import type { ClassName } from "$/shared/lib/styles/tw";
     import type { Snippet } from "svelte";
 
-    type Props = Partial<VisitCallbacks> & {
-        href: UrlMethodPair;
-        data?: RequestPayload;
+    type Props = VisitOptions & {
+        href: string | UrlMethodPair;
         icon?: Snippet;
         children?: Snippet;
         class?: ClassName;
@@ -34,8 +28,14 @@
     {children}
     {endIcon}
     startIcon={icon}
-    data-selected={boolAttr(selected)}
-    class={tw("group data-selected:font-bold", props.class)}
+    class={tw(
+        "group data-selected:font-bold",
+        selected && "font-bold",
+        props.class
+    )}
+    showProgress={false}
     replace
     preserveUrl
+    preserveState
+    preserveScroll
 />

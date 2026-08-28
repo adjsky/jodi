@@ -1,18 +1,45 @@
 <script lang="ts">
     import { tw } from "$/shared/lib/styles/tw";
 
+    import { useLoadingDebounce } from "../lib/svelte/use-loading-debounce.svelte";
+    import Loader from "./Loader.svelte";
+
     import type { HTMLButtonAttributes } from "svelte/elements";
 
     type Props = Exclude<HTMLButtonAttributes, "type"> & {
         variant?: "main" | "secondary" | "inline";
         type: NonNullable<HTMLButtonAttributes["type"]>;
+        loading?: boolean;
+        /**
+         * Delay applying loading state. Use it if you are making a fast backend
+         * request, this option will prevent jagging glitches, improving the
+         * overall UX.
+         *
+         * If set to `0`, the loader will show up immediately.
+         *
+         * @default 200ms
+         */
+        delay?: number;
     };
 
-    const { children, variant = "main", ...rest }: Props = $props();
+    const {
+        variant = "main",
+        loading = false,
+        delay = 200,
+        disabled,
+        children,
+        ...rest
+    }: Props = $props();
+
+    const isLoaderVisible = useLoadingDebounce(
+        () => loading,
+        () => delay
+    );
 </script>
 
 <button
     {...rest}
+    disabled={isLoaderVisible.current || disabled}
     class={tw(
         "font-bold disabled:cursor-not-allowed",
         variant != "inline" &&
@@ -23,6 +50,11 @@
         variant == "inline" && "inline-flex text-brand",
         rest.class
     )}
+    aria-busy={isLoaderVisible.current}
 >
-    {@render children?.()}
+    {#if isLoaderVisible.current}
+        <Loader />
+    {:else}
+        {@render children?.()}
+    {/if}
 </button>

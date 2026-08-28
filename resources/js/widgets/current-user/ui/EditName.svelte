@@ -23,7 +23,12 @@
         <Form
             action={UpdateUser()}
             class="flex grow flex-col"
-            options={{ replace: true, preserveUrl: true, only: ["auth"] }}
+            options={{
+                only: ["auth"],
+                replace: true,
+                preserveUrl: true,
+                viewTransition: false
+            }}
             onSuccess={() => view.back()}
         >
             {#snippet children({ processing, errors, isDirty })}
@@ -42,7 +47,8 @@
                 <Button
                     type="submit"
                     class="mt-auto shrink-0"
-                    disabled={processing || !isDirty}
+                    disabled={!isDirty}
+                    loading={processing}
                 >
                     {m["current-user.name.save"]()}
                 </Button>

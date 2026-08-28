@@ -6,6 +6,8 @@
     import { m } from "$/paraglide/messages";
     import { ScreenView } from "$/shared/composites/screen-view";
 
+    import { preferences } from "../api/preferences";
+
     import type { ViewProps } from "../model/view";
 
     let { open = $bindable() }: ViewProps = $props();
@@ -21,6 +23,10 @@
         <User.Info.Block>
             {#each days as day (day)}
                 <User.Info.SelectRow
+                    {...preferences(
+                        { weekStartOn: day },
+                        m["current-user.week-start.error"]()
+                    )}
                     href={UpdateUser()}
                     data={{ preferences: { weekStartOn: day } }}
                     selected={day == user.preferences.weekStartOn}

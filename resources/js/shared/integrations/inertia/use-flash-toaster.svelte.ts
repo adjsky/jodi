@@ -34,10 +34,10 @@ export function useFlashToaster(): void {
     $effect(() =>
         router.on("networkError", (e) => {
             e.preventDefault();
-
             if (!isUnloading) {
                 toaster.error(m["common.unexpected-error"]());
             }
+            return false;
         })
     );
 }

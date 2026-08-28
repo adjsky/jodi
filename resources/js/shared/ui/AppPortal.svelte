@@ -1,19 +1,37 @@
 <script lang="ts">
-    import { Portal } from "@ark-ui/svelte";
-
     import { raise } from "../lib/exception/raise";
 
-    import type { PortalProps } from "@ark-ui/svelte";
-    import type { Except } from "type-fest";
+    import type { Snippet } from "svelte";
 
-    type Props = Except<PortalProps, "container">;
+    type Props = {
+        disabled?: boolean;
+        children?: Snippet;
+    };
 
-    const { children, disabled }: Props = $props();
+    let { disabled = false, children }: Props = $props();
+
+    function portal(element: HTMLElement) {
+        const target = document.querySelector("#portal-root");
+
+        if (!target) {
+            raise("Failed to locate portal root.");
+        }
+
+        const placeholder = document.createComment("portal");
+
+        element.before(placeholder);
+        target.append(element);
+
+        return () => {
+            if (placeholder.isConnected) {
+                placeholder.replaceWith(element);
+            } else {
+                element.remove();
+            }
+        };
+    }
 </script>
 
-<Portal
-    {disabled}
-    {children}
-    container={document.querySelector<HTMLElement>("#portal-root") ??
-        raise("Failed to locate portal root.")}
-/>
+<div class="contents" {@attach disabled ? undefined : portal}>
+    {@render children?.()}
+</div>

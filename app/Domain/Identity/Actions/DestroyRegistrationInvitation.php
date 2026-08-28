@@ -7,7 +7,7 @@ namespace App\Domain\Identity\Actions;
 use App\Domain\Identity\Models\RegistrationInvitation;
 use App\Support\Actions\JodiAction;
 use App\Support\Http\JodiRequest;
-use Illuminate\Http\RedirectResponse;
+use Illuminate\Http\JsonResponse;
 
 class DestroyRegistrationInvitation extends JodiAction
 {
@@ -21,10 +21,10 @@ class DestroyRegistrationInvitation extends JodiAction
         return $this->user()->can('destroy', $request->invitation);
     }
 
-    public function asController(RegistrationInvitation $invitation): RedirectResponse
+    public function asController(RegistrationInvitation $invitation): JsonResponse
     {
         $this->handle($invitation);
 
-        return back();
+        return response()->json(status: 204);
     }
 }

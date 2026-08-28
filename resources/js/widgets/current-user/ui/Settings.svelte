@@ -1,15 +1,13 @@
 <script lang="ts">
     import { page } from "@inertiajs/svelte";
-    import { useQueryClient } from "@tanstack/svelte-query";
+    import { createQuery } from "@tanstack/svelte-query";
     import { User } from "$/entities/user";
-    import LogoutUser from "$/generated/actions/App/Domain/Identity/Actions/LogoutUser";
     import { m } from "$/paraglide/messages";
     import { getLocale } from "$/paraglide/runtime";
     import { LANGUAGES } from "$/shared/cfg/constants";
     import { ScreenView } from "$/shared/composites/screen-view";
-    import { noop } from "$/shared/lib/function/noop";
     import { Push } from "$/shared/services/push";
-    import { onMount } from "svelte";
+    import Loader from "$/shared/ui/Loader.svelte";
 
     import { friendsQueryOptions } from "../api/friends";
     import { invitationsQueryOptions } from "../api/invitations";
@@ -18,40 +16,40 @@
     import EditName from "./EditName.svelte";
     import Friends from "./Friends.svelte";
     import Invitations from "./Invitations.svelte";
+    import Logout from "./Logout.svelte";
     import SelectLanguage from "./SelectLanguage.svelte";
     import SelectNotification from "./SelectNotification.svelte";
     import SelectWeekStart from "./SelectWeekStart.svelte";
     import Warning from "./Warning.svelte";
 
-    const queryClient = useQueryClient();
-
-    onMount(() => {
-        void queryClient.query(friendsQueryOptions).catch(noop);
-        void queryClient.query(invitationsQueryOptions).catch(noop);
-    });
+    const invitations = createQuery(() => invitationsQueryOptions);
+    const friends = createQuery(() => friendsQueryOptions);
 
     const user = $derived(page.props.auth.user);
-    const { nInvitations, nFriends } = $derived(page.props.me);
 
     const accountRows = $derived([
         {
             name: "name",
             value: user.name,
+            isLoading: false,
             view: EditName
         },
         {
             name: "email",
             value: user.email,
+            isLoading: false,
             view: EditEmail
         },
         {
             name: "friends",
-            value: nFriends,
+            value: friends.data?.length ?? 0,
+            isLoading: friends.isLoading,
             view: Friends
         },
         {
             name: "invitations",
-            value: nInvitations,
+            value: invitations.data?.length ?? 0,
+            isLoading: invitations.isLoading,
             view: Invitations
         }
     ] as const);
@@ -95,12 +93,16 @@
         class="overflow-y-auto overscroll-contain pt-5 pb-safe-offset-8"
     >
         <User.Info.Block title={m["current-user.account.title"]()}>
-            {#each accountRows as { name, value } (name)}
+            {#each accountRows as { name, value, isLoading } (name)}
                 <User.Info.SettingRow
                     title={m[`current-user.account.${name}`]()}
                     onclick={() => onRowClick(name)}
                 >
-                    {value}
+                    {#if isLoading}
+                        <Loader />
+                    {:else}
+                        {value}
+                    {/if}
                 </User.Info.SettingRow>
             {/each}
         </User.Info.Block>
@@ -124,9 +126,7 @@
         </User.Info.Block>
 
         <User.Info.Block class="mt-10">
-            <User.Info.ActionRow href={LogoutUser()} viewTransition>
-                {m["current-user.log-out"]()}
-            </User.Info.ActionRow>
+            <Logout />
         </User.Info.Block>
 
         <p class="mt-4 text-sm">v.{page.props.version}</p>
