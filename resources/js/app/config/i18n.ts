@@ -7,7 +7,6 @@ import {
 } from "$/paraglide/runtime";
 import { LOCALE_COOKIE } from "$/shared/cfg/constants";
 import Cookies from "js-cookie";
-import { get } from "svelte/store";
 
 defineCustomClientStrategy("custom-cookie", {
     getLocale() {
@@ -33,7 +32,7 @@ defineCustomClientStrategy("custom-cookie", {
 
 defineCustomClientStrategy("custom-preference", {
     getLocale() {
-        const locale = get(page).props.auth.user?.preferences?.locale;
+        const locale = page.props.auth.user?.preferences?.locale;
 
         if (!locale) {
             return;

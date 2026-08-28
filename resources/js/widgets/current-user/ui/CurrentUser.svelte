@@ -6,7 +6,7 @@
     import { view } from "../model/view";
     import Settings from "./Settings.svelte";
 
-    const user = $derived($page.props.auth.user);
+    const user = $derived(page.props.auth.user);
 </script>
 
 <User.Avatar

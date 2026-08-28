@@ -8,14 +8,15 @@ import { editView } from "../model/view";
 
 import type { ZonedDateTime } from "@internationalized/date";
 import type { EventData } from "$/entities/event";
+import type { InertiaFormData } from "$/shared/integrations/inertia";
 
 export const edit = (
     event: EventData,
     draft: { startsAt: ZonedDateTime; endsAt: ZonedDateTime }
 ) =>
-    optimistic(
+    optimistic<{ events: EventData[] }, InertiaFormData>(
         (prev, data) => ({
-            events: prev.events.map((e: EventData) =>
+            events: prev.events.map((e) =>
                 id(e) === id(event) ? { ...e, ...data } : e
             )
         }),

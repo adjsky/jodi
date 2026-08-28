@@ -1,12 +1,11 @@
 <script lang="ts">
     import { Clipboard } from "@ark-ui/svelte";
-    import { router } from "@inertiajs/svelte";
     import { CheckIcon, ClipboardCopyIcon } from "@lucide/svelte";
     import { createQuery } from "@tanstack/svelte-query";
     import DestroyRegistrationInvitation from "$/generated/actions/App/Domain/Identity/Actions/DestroyRegistrationInvitation";
     import { m } from "$/paraglide/messages";
     import { ScreenView } from "$/shared/composites/screen-view";
-    import { HistoryView } from "$/shared/integrations/inertia";
+    import { HistoryView, visit } from "$/shared/integrations/inertia";
     import Button from "$/shared/ui/Button.svelte";
     import Confirmable from "$/shared/ui/Confirmable.svelte";
     import ResourceError from "$/shared/ui/ResourceError.svelte";
@@ -118,25 +117,23 @@
 
                     isDeleting = true;
 
-                    try {
-                        await router.visit(
-                            DestroyRegistrationInvitation(invitation.id),
-                            {
-                                replace: true,
-                                preserveUrl: true,
-                                preserveState: true,
-                                only: ["flash", "me"],
-                                onSuccess: () => {
-                                    void view.back();
-                                    onDelete?.(invitation.id);
-                                }
+                    const succeeded = await visit(
+                        DestroyRegistrationInvitation(invitation.id),
+                        {
+                            replace: true,
+                            preserveUrl: true,
+                            preserveState: true,
+                            only: ["me"],
+                            onSuccess: () => {
+                                void view.back();
+                                onDelete?.(invitation.id);
                             }
-                        );
+                        }
+                    );
 
-                        return true;
-                    } finally {
-                        isDeleting = false;
-                    }
+                    isDeleting = false;
+
+                    return succeeded;
                 }}
             >
                 {#snippet trigger(props)}

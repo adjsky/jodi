@@ -50,7 +50,7 @@ class RegisterUser extends JodiAction
     public function asController(JodiRequest $request, string $code): RedirectResponse
     {
         if (! $request->hasValidSignature()) {
-            $request->setFlash('error', __('URL signature is invalid. Request a new invitation.'));
+            Inertia::flash('error', __('URL signature is invalid. Request a new invitation.'));
 
             return to_route('login');
         }

@@ -12,7 +12,7 @@
 
     const days = ["monday", "sunday"] as const;
 
-    const user = $derived($page.props.auth.user);
+    const user = $derived(page.props.auth.user);
 </script>
 
 <ScreenView.Overlay bind:open>

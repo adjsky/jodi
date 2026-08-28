@@ -52,7 +52,7 @@
         let previousCategories: CategoryData[] | null = null;
 
         void router.visit(DestroyCategory(category.id), {
-            ...optimistic(
+            ...optimistic<{ todos: TodoData[] }>(
                 (prev) => ({
                     todos: prev.todos.map((t: TodoData) => ({
                         ...t,
@@ -78,7 +78,7 @@
                                 categories?.filter((c) => c.id != category.id)
                         );
                     },
-                    onRollback() {
+                    onOptimisticRollback() {
                         if (!previousCategories) return;
 
                         queryClient.setQueryData(

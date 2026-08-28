@@ -10,7 +10,7 @@ use Illuminate\Support\Arr;
 use Illuminate\Support\Str;
 use Inertia\Middleware;
 
-class InertiaMiddleware extends Middleware
+class HandleInertiaRequests extends Middleware
 {
     /**
      * The root template that's loaded on the first page visit.
@@ -28,7 +28,7 @@ class InertiaMiddleware extends Middleware
      */
     public function version(Request $request): ?string
     {
-        return null;
+        return parent::version($request);
     }
 
     /**
@@ -54,7 +54,6 @@ class InertiaMiddleware extends Middleware
                     ->where('device_id', $request->deviceId())
                     ->first(['fcm_token as token']),
             ],
-            'flash' => $request->getFlash(),
             'config' => [
                 'firebase' => Arr::mapWithKeys(
                     config('services.firebase'),

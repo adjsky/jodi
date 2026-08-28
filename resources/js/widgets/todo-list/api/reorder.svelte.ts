@@ -64,7 +64,7 @@ export function useReorder(todos: Getter<TodoData[]>, options?: Options) {
             preserveState: true,
             preserveUrl: true,
             showProgress: false,
-            onInvalid() {
+            onHttpException() {
                 onError?.();
                 return false;
             },

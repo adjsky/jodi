@@ -10,6 +10,7 @@ export class ActionRateLimit<T extends Method | Method[]> {
     #action: RouteDefinition<T>;
     #secondsLeft = $state(0);
     #isRunning = $state(false);
+    #isPending = false;
 
     constructor(action: RouteDefinition<T>) {
         this.#action = action;
@@ -19,14 +20,18 @@ export class ActionRateLimit<T extends Method | Method[]> {
 
     #init() {
         $effect(() =>
-            router.on("invalid", (e) => {
+            router.on("start", ({ detail: { visit } }) => {
+                if (visit.url.pathname == this.#action.url) {
+                    this.#isPending = true;
+                }
+            })
+        );
+
+        $effect(() =>
+            router.on("httpException", (e) => {
                 const { response } = e.detail;
 
-                if (
-                    response.status != 429 ||
-                    new URL(response.request.responseURL).pathname !=
-                        this.#action.url
-                ) {
+                if (response.status != 429 || !this.#isPending) {
                     return;
                 }
 
@@ -36,6 +41,16 @@ export class ActionRateLimit<T extends Method | Method[]> {
                 this.#isRunning = true;
 
                 toaster.error(m["common.too-many-requests"]());
+
+                return false;
+            })
+        );
+
+        $effect(() =>
+            router.on("finish", ({ detail: { visit } }) => {
+                if (visit.url.pathname == this.#action.url) {
+                    this.#isPending = false;
+                }
             })
         );
 

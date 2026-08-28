@@ -4,6 +4,18 @@
 
 declare module "@inertiajs/core" {
     interface PageProps extends InertiaPageProps, AppPageProps {}
+
+    interface InertiaConfig {
+        flashDataType: AppFlashData;
+    }
+}
+
+export interface AppFlashData {
+    message?: string;
+    error?: string;
+    success?: string;
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    [key: string]: any;
 }
 
 export interface AppPageProps {
@@ -23,13 +35,6 @@ export interface AppPageProps {
         fcm: {
             token: string;
         } | null;
-    };
-    flash: {
-        message: string | null;
-        error: string | null;
-        success: string | null;
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        [key: string]: any;
     };
     config: {
         firebase: {

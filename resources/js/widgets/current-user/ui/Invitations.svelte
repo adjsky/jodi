@@ -104,41 +104,41 @@
             options={{
                 replace: true,
                 preserveUrl: true,
-                only: ["flash", "me"]
+                only: ["me"]
             }}
             onSuccess={(page) => {
                 queryClient.setQueryData(
                     invitationsQueryOptions.queryKey,
                     (invitations) => [
                         ...(invitations ?? []),
-                        page.props.flash.invitation
+                        page.flash.invitation
                     ]
                 );
 
                 void view.back();
             }}
-            let:processing
-            let:errors
         >
-            <TextField
-                bind:input={inviteInput}
-                type="email"
-                name="email"
-                placeholder={m["current-user.account.email"]()}
-                error={errors.email}
-                maxlength={254}
-                required
-            >
-                {#snippet indicator()}<Mail />{/snippet}
-            </TextField>
+            {#snippet children({ processing, errors })}
+                <TextField
+                    bind:input={inviteInput}
+                    type="email"
+                    name="email"
+                    placeholder={m["current-user.account.email"]()}
+                    error={errors.email}
+                    maxlength={254}
+                    required
+                >
+                    {#snippet indicator()}<Mail />{/snippet}
+                </TextField>
 
-            <Button
-                type="submit"
-                class="mt-auto shrink-0"
-                disabled={processing}
-            >
-                {m["current-user.invitations.invite"]()}
-            </Button>
+                <Button
+                    type="submit"
+                    class="mt-auto shrink-0"
+                    disabled={processing}
+                >
+                    {m["current-user.invitations.invite"]()}
+                </Button>
+            {/snippet}
         </Form>
     </ScreenView.Content>
 </ScreenView.Overlay>

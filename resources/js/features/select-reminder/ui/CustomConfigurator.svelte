@@ -20,7 +20,7 @@
 
     let [selectedIdx, amount] = $derived(getNotifyOffset());
 
-    const window = $derived($page.props.config.reminders.window);
+    const window = $derived(page.props.config.reminders.window);
 
     const durations = $derived([
         {

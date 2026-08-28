@@ -1,11 +1,11 @@
 import { FirebaseMessaging } from "@capacitor-firebase/messaging";
-import { page, progress, router } from "@inertiajs/svelte";
+import { page, progress } from "@inertiajs/svelte";
 import UpsertPushSubscription from "$/generated/actions/App/Domain/Identity/Actions/UpsertPushSubscription";
 import { m } from "$/paraglide/messages";
 import { PLATFORM } from "$/shared/cfg/constants";
+import { visit } from "$/shared/integrations/inertia/visit";
 import { destroyActionBanner } from "$/shared/ui/ActionBanner.svelte";
 import { toaster } from "$/shared/ui/toaster";
-import { get } from "svelte/store";
 
 import { handleAction } from "./handle-action";
 
@@ -24,7 +24,7 @@ export class Subscription {
     #isSubscribing = false;
 
     get needsConfiguration(): boolean {
-        const { user } = get(page).props.auth;
+        const { user } = page.props.auth;
 
         return (
             user?.preferences.notifications == "push" &&
@@ -33,7 +33,7 @@ export class Subscription {
     }
 
     async synchronize(): Promise<void> {
-        const { fcm, user } = get(page).props.auth;
+        const { fcm, user } = page.props.auth;
         if (!user) {
             this.#warnings.needsConfiguration = false;
             return;
@@ -149,14 +149,14 @@ export class Subscription {
 
     async #getToken() {
         const { token } = await FirebaseMessaging.getToken({
-            vapidKey: get(page).props.config.firebase.vapidKey
+            vapidKey: page.props.config.firebase.vapidKey
         });
 
         return token;
     }
 
     async #store(token: string, options?: StoreOptions) {
-        await router.visit(UpsertPushSubscription(), {
+        await visit(UpsertPushSubscription(), {
             data: {
                 fcmToken: token,
                 platform: PLATFORM
@@ -171,7 +171,7 @@ export class Subscription {
             onSuccess() {
                 options?.onSuccess?.();
             },
-            onInvalid() {
+            onHttpException() {
                 options?.onInvalid?.();
                 return false;
             }

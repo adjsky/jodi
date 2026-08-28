@@ -1,59 +1,46 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
-
-import { router } from "@inertiajs/svelte";
 import { toaster } from "$/shared/ui/toaster";
 
-import type { PageProps, VisitCallbacks } from "@inertiajs/core";
-import type { MaybePromise } from "$/shared/lib/async/types";
+import type {
+    ActiveVisit,
+    FormComponentOptimisticCallback,
+    FormDataConvertible,
+    OptimisticCallback,
+    VisitCallbacks,
+    VisitOptions
+} from "@inertiajs/core";
 
-type CommitFn = (prev: any, data: any) => any;
-type Options = {
-    error?: string;
-    omitHash?: boolean;
-    onBefore?: () => MaybePromise<boolean | void>;
-    onSuccess?: (props: PageProps) => void;
-    onRollback?: (previousProps: PageProps) => void;
+type OptimisticOptions = Partial<
+    Exclude<VisitCallbacks, "onOptimisticRollback">
+> & {
+    error: string;
 };
 
+type OptimisticReturn = Pick<VisitCallbacks, "onOptimisticRollback"> &
+    Pick<VisitOptions, "optimistic">;
+
+export type InertiaFormData = Record<string, FormDataConvertible>;
+
+export function optimistic<P>(
+    commit: OptimisticCallback<P>,
+    options: OptimisticOptions
+): OptimisticReturn;
+
+export function optimistic<P, F>(
+    commit: FormComponentOptimisticCallback<P, F>,
+    options: OptimisticOptions
+): OptimisticReturn;
+
 export function optimistic(
-    commit: CommitFn,
-    options?: Options
-): Partial<VisitCallbacks> {
-    let savedProps: PageProps | null = null;
-    let commitedProps: PageProps | null = null;
-
+    commit: (...args: unknown[]) => unknown,
+    { error, ...callbacks }: OptimisticOptions
+): OptimisticReturn {
     return {
-        async onBefore(e) {
-            if ((await options?.onBefore?.()) === false) {
-                return false;
+        ...callbacks,
+        optimistic: commit as never,
+        onOptimisticRollback(visit: ActiveVisit) {
+            if (!visit.cancelled && !visit.interrupted) {
+                toaster.error(error);
             }
-
-            await router.replace({
-                preserveScroll: true,
-                preserveState: true,
-                onSuccess: () => options?.onSuccess?.(commitedProps!),
-                props: (prev) => {
-                    savedProps ??= structuredClone(prev);
-                    commitedProps ??= commit(prev, e.data);
-                    return { ...prev, ...commitedProps };
-                },
-                ...(options?.omitHash && {
-                    url: location.pathname + location.search
-                })
-            });
-        },
-        onInvalid(response) {
-            if (savedProps) {
-                void router.replace({
-                    preserveScroll: true,
-                    preserveState: true,
-                    props: savedProps
-                });
-                options?.onRollback?.(savedProps);
-                savedProps = null;
-            }
-            toaster.error(options?.error ?? response.data.message);
-            return false;
         }
     };
 }

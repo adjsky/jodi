@@ -14,7 +14,7 @@
 
     let { open = $bindable() }: ViewProps = $props();
 
-    const user = $derived($page.props.auth.user);
+    const user = $derived(page.props.auth.user);
 </script>
 
 <ScreenView.Overlay bind:open {@attach VirtualKeyboard.retainFocus()}>
@@ -25,29 +25,28 @@
             class="flex grow flex-col"
             options={{ replace: true, preserveUrl: true, only: ["auth"] }}
             onSuccess={() => view.back()}
-            let:processing
-            let:errors
-            let:isDirty
         >
-            <TextField
-                type="text"
-                name="name"
-                placeholder={m["current-user.account.name"]()}
-                error={errors.name}
-                defaultValue={user.name}
-                maxlength={36}
-                required
-            >
-                {#snippet indicator()}<AtSign />{/snippet}
-            </TextField>
+            {#snippet children({ processing, errors, isDirty })}
+                <TextField
+                    type="text"
+                    name="name"
+                    placeholder={m["current-user.account.name"]()}
+                    error={errors.name}
+                    defaultValue={user.name}
+                    maxlength={36}
+                    required
+                >
+                    {#snippet indicator()}<AtSign />{/snippet}
+                </TextField>
 
-            <Button
-                type="submit"
-                class="mt-auto shrink-0"
-                disabled={processing || !isDirty}
-            >
-                {m["current-user.name.save"]()}
-            </Button>
+                <Button
+                    type="submit"
+                    class="mt-auto shrink-0"
+                    disabled={processing || !isDirty}
+                >
+                    {m["current-user.name.save"]()}
+                </Button>
+            {/snippet}
         </Form>
     </ScreenView.Content>
 </ScreenView.Overlay>

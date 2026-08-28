@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-use App\Http\Middleware\InertiaMiddleware;
+use App\Http\Middleware\HandleInertiaRequests;
 use App\Http\Middleware\LocaleMiddleware;
 use App\Http\Middleware\RequestIdMiddleware;
 use App\Http\Middleware\TimezoneMiddleware;
@@ -26,7 +26,7 @@ return Application::configure(basePath: dirname(__DIR__))
             append: [
                 LocaleMiddleware::class,
                 RequestIdMiddleware::class,
-                InertiaMiddleware::class,
+                HandleInertiaRequests::class,
                 TimezoneMiddleware::class,
             ]);
     })

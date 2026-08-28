@@ -4,7 +4,7 @@ export type ViewProps = {
     open: boolean;
 };
 
-export const view = new HistoryView<{ isDelete?: boolean }>(null, {
+export const view = new HistoryView(null, {
     viewTransition: true
 });
 

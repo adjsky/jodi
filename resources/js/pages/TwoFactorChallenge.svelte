@@ -68,35 +68,42 @@
             }
         }}
         onSuccess={handleSuccessfulLogin}
-        let:processing
-        let:errors
     >
-        <OneTimePasswordInput
-            name="password"
-            error={Boolean(errors.password)}
-        />
+        {#snippet children({ processing, errors })}
+            <OneTimePasswordInput
+                name="password"
+                error={Boolean(errors.password)}
+            />
 
-        <p class="text-center text-ms">
-            {m["2fa.no-code"]()}
-            <button
-                class="font-semibold text-brand"
-                form="{id}-resend-form"
-                disabled={resendTimer.isRunning}
+            <p class="text-center text-ms">
+                {m["2fa.no-code"]()}
+                <button
+                    class="font-semibold text-brand"
+                    form="{id}-resend-form"
+                    disabled={resendTimer.isRunning}
+                >
+                    {#if resendTimer.isRunning}
+                        {m["2fa.resend-in"]({
+                            seconds: resendTimer.secondsLeft
+                        })}
+                    {:else}
+                        {m["2fa.resend"]()}
+                    {/if}
+                </button>
+            </p>
+
+            <Button
+                type="submit"
+                disabled={consumeTimer.isRunning || processing}
             >
-                {#if resendTimer.isRunning}
-                    {m["2fa.resend-in"]({ seconds: resendTimer.secondsLeft })}
+                {#if consumeTimer.isRunning}
+                    {m["2fa.continue-in"]({
+                        seconds: consumeTimer.secondsLeft
+                    })}
                 {:else}
-                    {m["2fa.resend"]()}
+                    {m["2fa.continue"]()}
                 {/if}
-            </button>
-        </p>
-
-        <Button type="submit" disabled={consumeTimer.isRunning || processing}>
-            {#if consumeTimer.isRunning}
-                {m["2fa.continue-in"]({ seconds: consumeTimer.secondsLeft })}
-            {:else}
-                {m["2fa.continue"]()}
-            {/if}
-        </Button>
+            </Button>
+        {/snippet}
     </Form>
 </AuthLayout>

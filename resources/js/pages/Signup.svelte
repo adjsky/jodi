@@ -31,22 +31,22 @@
         <Form
             action={RegisterUser(code, { mergeQuery: {} })}
             class="mt-13 space-y-4"
-            let:processing
-            let:errors
         >
-            <TextField
-                type="text"
-                name="name"
-                placeholder={m["signup.step.start.name-placeholder"]()}
-                error={errors.name}
-                maxlength={36}
-                required
-            >
-                {#snippet indicator()}<AtSign />{/snippet}
-            </TextField>
-            <Button type="submit" disabled={processing}>
-                {m["signup.step.start.submit"]()}
-            </Button>
+            {#snippet children({ processing, errors })}
+                <TextField
+                    type="text"
+                    name="name"
+                    placeholder={m["signup.step.start.name-placeholder"]()}
+                    error={errors.name}
+                    maxlength={36}
+                    required
+                >
+                    {#snippet indicator()}<AtSign />{/snippet}
+                </TextField>
+                <Button type="submit" disabled={processing}>
+                    {m["signup.step.start.submit"]()}
+                </Button>
+            {/snippet}
         </Form>
     {:else}
         <Intro class="mt-16" title={m["signup.intro.title"]()}>

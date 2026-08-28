@@ -1,3 +1,4 @@
+import inertia from "@inertiajs/vite";
 import { paraglideVitePlugin } from "@inlang/paraglide-js";
 import { wayfinder } from "@laravel/vite-plugin-wayfinder";
 import { svelte } from "@sveltejs/vite-plugin-svelte";
@@ -28,6 +29,7 @@ export default defineConfig(({ mode }) => {
                 input: ["resources/js/app/entrypoint.ts"],
                 refresh: true
             }),
+            inertia({ ssr: false }),
             svelte(),
             tailwindcss(),
             googleServices(),

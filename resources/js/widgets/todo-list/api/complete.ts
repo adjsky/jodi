@@ -3,15 +3,14 @@ import { optimistic } from "$/shared/integrations/inertia";
 import { normalizeIsoString } from "$/shared/lib/date/normalize-iso-string";
 
 import { id } from "../helpers/id";
-import { editView } from "../model/view";
 
 import type { TodoData } from "$/entities/todo";
 
-export const complete = (todo: TodoData) =>
-    optimistic(
+export const complete = () =>
+    optimistic<{ todos: TodoData[] }>(
         (prev) => ({
-            todos: prev.todos.map((t: TodoData) =>
-                id(t) === id(todo)
+            todos: prev.todos.map((t) =>
+                id(t) === id(t)
                     ? {
                           ...t,
                           completedAt: t.completedAt
@@ -22,14 +21,6 @@ export const complete = (todo: TodoData) =>
             )
         }),
         {
-            error: m["todos.errors.complete"](),
-            onSuccess(props) {
-                const todos = props.todos as TodoData[];
-
-                const updatedTodo = todos.find((t) => id(t) === id(todo));
-                if (!updatedTodo || !editView.isOpen()) return;
-
-                return editView.updateMeta(updatedTodo);
-            }
+            error: m["todos.errors.complete"]()
         }
     );

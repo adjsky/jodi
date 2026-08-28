@@ -8,6 +8,7 @@ use App\Support\Http\JodiRequest;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Response;
+use Inertia\Inertia;
 use Throwable;
 
 class DisplayException extends JodiException
@@ -32,7 +33,7 @@ class DisplayException extends JodiException
             );
         }
 
-        $request->setFlash('error', $this->getMessage());
+        Inertia::flash('error', $this->getMessage());
 
         return back();
     }

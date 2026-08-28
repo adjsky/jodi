@@ -2,9 +2,10 @@
     import { Portal } from "@ark-ui/svelte";
     import { Device } from "@capacitor/device";
     import { SplashScreen } from "@capacitor/splash-screen";
-    import { page, router } from "@inertiajs/svelte";
+    import { page } from "@inertiajs/svelte";
     import { QueryClient, QueryClientProvider } from "@tanstack/svelte-query";
     import { DEVICE_ID_COOKIE } from "$/shared/cfg/constants";
+    import { reload } from "$/shared/integrations/inertia/visit";
     import { Swiper } from "$/shared/integrations/swiper";
     import { Push } from "$/shared/services/push";
     import { PWA } from "$/shared/services/pwa";
@@ -13,7 +14,6 @@
     import { initializeApp } from "firebase/app";
     import Cookies from "js-cookie";
     import { onMount } from "svelte";
-    import { get } from "svelte/store";
 
     import type { Snippet } from "svelte";
 
@@ -46,10 +46,10 @@
                 Cookies.set(DEVICE_ID_COOKIE, identifier, {
                     sameSite: "lax",
                     expires: 365,
-                    secure: get(page).props.environment == "production"
+                    secure: page.props.environment == "production"
                 });
 
-                await router.reload({
+                await reload({
                     async: true,
                     showProgress: false,
                     replace: true,
@@ -61,7 +61,7 @@
             await Push.subscription.synchronize();
         }
 
-        initializeApp(get(page).props.config.firebase);
+        initializeApp(page.props.config.firebase);
 
         void synchronize();
 

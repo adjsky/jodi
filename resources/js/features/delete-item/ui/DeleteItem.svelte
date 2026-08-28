@@ -1,10 +1,9 @@
 <script lang="ts">
-    import { router } from "@inertiajs/svelte";
     import { parseAbsolute, toCalendarDate } from "@internationalized/date";
     import { Trash } from "@lucide/svelte";
     import { Recurrence } from "$/entities/recurrence";
     import { TIMEZONE } from "$/shared/cfg/constants";
-    import { HistoryView } from "$/shared/integrations/inertia";
+    import { HistoryView, visit } from "$/shared/integrations/inertia";
     import { DeferUntilNextFrame } from "$/shared/lib/svelte/defer-until-next-frame.svelte";
     import ToolbarAction from "$/shared/ui/ToolbarAction.svelte";
 
@@ -57,7 +56,7 @@
     title={recurring ? title.recurring : title.general}
     fallback={!recurring}
     onConfirm={async (scope) => {
-        await router.visit(href, {
+        return visit(href, {
             ...options,
             data: {
                 scope,
@@ -68,7 +67,6 @@
             },
             showProgress: true
         });
-        return true;
     }}
 >
     {#snippet trigger(props)}

@@ -52,7 +52,7 @@ class CompleteTwoFactorChallenge extends JodiAction
         $email = $request->session()->get(sprintf('%s.email', config('auth.2fa.namespace')));
 
         if (! $email) {
-            $request->setFlash('error', __('Log in first.'));
+            Inertia::flash('error', __('Log in first.'));
 
             return to_route('login');
         }
@@ -75,7 +75,7 @@ class CompleteTwoFactorChallenge extends JodiAction
                 'password' => __('The code is wrong.'),
             ]);
         } catch (OtpExpiredException) {
-            $request->setFlash('error', __('The code is expired.'));
+            Inertia::flash('error', __('The code is expired.'));
 
             return back();
         }

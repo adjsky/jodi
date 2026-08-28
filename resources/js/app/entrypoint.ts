@@ -9,21 +9,9 @@ import { mount } from "svelte";
 
 import PersistentLayout from "./ui/layouts/PersistentLayout.svelte";
 
-import type { ResolvedComponent } from "@inertiajs/svelte";
-import type { LegacyComponentType } from "svelte/legacy";
-
 void createInertiaApp({
-    resolve(name) {
-        const pages = import.meta.glob<ResolvedComponent>(
-            "../pages/**/*.svelte",
-            { eager: true }
-        );
-        const page = pages[`../pages/${name}.svelte`];
-        return {
-            default: page.default,
-            layout: PersistentLayout as LegacyComponentType
-        };
-    },
+    pages: { path: "../pages", lazy: true },
+    layout: () => PersistentLayout,
     setup({ el, App, props }) {
         if (!el) return;
         const portalRoot = attachPortalRoot(el);

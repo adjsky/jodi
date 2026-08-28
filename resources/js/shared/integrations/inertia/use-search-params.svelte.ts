@@ -1,5 +1,6 @@
-import { page, router } from "@inertiajs/svelte";
-import { fromStore } from "svelte/store";
+import { page } from "@inertiajs/svelte";
+
+import { visit } from "./visit";
 
 import type { VisitOptions } from "@inertiajs/core";
 
@@ -20,7 +21,7 @@ type Actions = {
 export function useSearchParams(options?: Options): SearchParams {
     const { showProgress, push } = options ?? {};
 
-    function update(
+    async function update(
         values: Record<string, string | null>,
         options?: VisitOptions
     ) {
@@ -34,7 +35,7 @@ export function useSearchParams(options?: Options): SearchParams {
             }
         }
 
-        return router.visit(url, {
+        await visit(url, {
             ...options,
             showProgress,
             replace: options?.replace ?? !push,
@@ -46,8 +47,7 @@ export function useSearchParams(options?: Options): SearchParams {
 
     // Keep this deriveds hell to stabilize reactivity (so that `sp` variable
     // reruns on actual query changes).
-    const p = $derived(fromStore(page).current);
-    const url = $derived(new URL(p.url, window.location.href));
+    const url = $derived(new URL(page.url, window.location.href));
     const search = $derived(url.search);
     const sp = $derived(new URLSearchParams(search));
 

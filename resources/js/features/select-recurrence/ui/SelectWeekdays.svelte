@@ -15,7 +15,7 @@
 
     let { byweekday = $bindable() }: Props = $props();
 
-    const user = $derived($page.props.auth.user);
+    const user = $derived(page.props.auth.user);
     const start = $derived(
         startOfWeek(
             now(TIMEZONE),

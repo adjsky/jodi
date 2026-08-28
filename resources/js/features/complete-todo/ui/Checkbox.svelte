@@ -1,5 +1,5 @@
 <script lang="ts">
-    import { inertia } from "@inertiajs/svelte";
+    import { router } from "@inertiajs/svelte";
     import { Check } from "@lucide/svelte";
     import { tw } from "$/shared/lib/styles/tw";
     import { Haptics } from "$/shared/services/haptics";
@@ -19,24 +19,30 @@
         class: classname,
         completedAt,
         occursAt,
+        href,
         ...options
     }: Props = $props();
+
+    function onClick() {
+        void Haptics.impact("medium");
+
+        router.visit(href, {
+            ...options,
+            only: ["todos"],
+            data: { occursAt },
+            showProgress: false
+        });
+    }
 </script>
 
 <button
-    use:inertia={{
-        ...options,
-        only: ["todos"],
-        data: { occursAt },
-        showProgress: false
-    }}
     type="button"
     class={tw(
         "group flex size-5.5 shrink-0 items-center justify-center rounded-full border border-cream-950 text-ms data-completed:bg-cream-950 data-completed:text-cream-50",
         classname
     )}
     data-completed={boolAttr(completedAt)}
-    onclick={() => Haptics.impact("medium")}
+    onclick={onClick}
 >
     <Check class="group-not-data-completed:hidden" />
 </button>

@@ -17,26 +17,28 @@
 <Form
     action={CreateCategory()}
     options={{
-        only: ["flash"],
         preserveState: true,
         preserveScroll: true,
         preserveUrl: true,
         replace: true
     }}
-    onSuccess={(page) => onAdd?.(page.props.flash.category)}
-    let:processing
+    onSuccess={(page) => {
+        onAdd?.(page.flash.category);
+    }}
 >
-    <input hidden name="name" value={name} />
-    <button
-        type="submit"
-        disabled={processing}
-        class="flex h-13.75 w-full items-center gap-2 rounded-xl bg-brand/10 px-2 text-start text-lg font-medium"
-    >
-        <span
-            class="flex size-7 items-center justify-center rounded-full bg-brand"
+    {#snippet children({ processing })}
+        <input hidden name="name" value={name} />
+        <button
+            type="submit"
+            disabled={processing}
+            class="flex h-13.75 w-full items-center gap-2 rounded-xl bg-brand/10 px-2 text-start text-lg font-medium"
         >
-            <Plus class="text-xl text-white" />
-        </span>
-        {m["todos.category.add"]()}
-    </button>
+            <span
+                class="flex size-7 items-center justify-center rounded-full bg-brand"
+            >
+                <Plus class="text-xl text-white" />
+            </span>
+            {m["todos.category.add"]()}
+        </button>
+    {/snippet}
 </Form>

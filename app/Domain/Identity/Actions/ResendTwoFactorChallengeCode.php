@@ -12,6 +12,7 @@ use App\Domain\Identity\Services\ThrottleService;
 use App\Support\Actions\JodiAction;
 use App\Support\Http\JodiRequest;
 use Illuminate\Http\RedirectResponse;
+use Inertia\Inertia;
 
 class ResendTwoFactorChallengeCode extends JodiAction
 {
@@ -51,14 +52,14 @@ class ResendTwoFactorChallengeCode extends JodiAction
         );
 
         if (! $email) {
-            $request->setFlash('error', __('Log in first.'));
+            Inertia::flash('error', __('Log in first.'));
 
             return to_route('login');
         }
 
         $this->handle($request->ipOrFail(), $email);
 
-        $request->setFlash('success', __('The code has been sent.'));
+        Inertia::flash('success', __('The code has been sent.'));
 
         return back();
     }

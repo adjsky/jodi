@@ -17,7 +17,7 @@
     import EventForm from "./EventForm.svelte";
     import TodoForm from "./TodoForm.svelte";
 
-    const view = new HistoryView<{ isCalendarOpen: boolean }>();
+    const view = new HistoryView();
     const searchParams = useSearchParams({ showProgress: true });
 
     const lastViewName = new LastMatching(

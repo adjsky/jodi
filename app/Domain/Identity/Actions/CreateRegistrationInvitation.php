@@ -15,6 +15,7 @@ use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\URL;
 use Illuminate\Support\Str;
+use Inertia\Inertia;
 
 class CreateRegistrationInvitation extends JodiAction
 {
@@ -44,7 +45,7 @@ class CreateRegistrationInvitation extends JodiAction
             CreateRegistrationInvitationData::from($request)
         );
 
-        $request->setFlash(
+        Inertia::flash(
             'invitation',
             RegistrationInvitationData::fromModel($invitation)
         );

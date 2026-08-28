@@ -59,105 +59,106 @@
         onClose();
     }}
     class="flex grow flex-col"
-    let:processing
 >
-    <Todo.Fields {scheduledAt}>
-        {#snippet calendar(trigger)}
-            <CalendarPicker
-                mode="single"
-                selected={[toCalendarDate(scheduledAt)]}
-                deferHistoryViewFrames={DEFER_FRAMES.SHEET + 1}
-                onSelect={([d]) => {
-                    if (notifyAt) {
-                        notifyAt = notifyAt.set(d);
-                    }
-                    scheduledAt = scheduledAt.set(d);
-                }}
-            >
-                {#snippet children(props)}
-                    {@render trigger(props)}
-                {/snippet}
-            </CalendarPicker>
-        {/snippet}
-        {#snippet close()}
-            <SaveOrClose variant="save" disabled={processing} />
-        {/snippet}
-        {#snippet category()}
-            <Category
-                name="categoryId"
-                current={null}
-                deferHistoryViewFrames={DEFER_FRAMES.SHEET + 1}
-            />
-        {/snippet}
-        {#snippet time()}
-            <TodoTime
-                {scheduledAt}
-                bind:hasTime
-                deferHistoryViewFrames={DEFER_FRAMES.SHEET + 1}
-                onChange={(time, hasTime) => {
-                    if (!hasTime) {
-                        notifyAt = null;
-                    } else {
+    {#snippet children({ processing })}
+        <Todo.Fields {scheduledAt}>
+            {#snippet calendar(trigger)}
+                <CalendarPicker
+                    mode="single"
+                    selected={[toCalendarDate(scheduledAt)]}
+                    deferHistoryViewFrames={DEFER_FRAMES.SHEET + 1}
+                    onSelect={([d]) => {
                         if (notifyAt) {
-                            notifyAt = notifyAt.add(
-                                timediff(scheduledAt, time)
-                            );
-                        } else {
-                            notifyAt = scheduledAt.set(time).subtract({
-                                hours: NOTIFICATION_DEFAULT_SUBHOURS
-                            });
+                            notifyAt = notifyAt.set(d);
                         }
-                    }
+                        scheduledAt = scheduledAt.set(d);
+                    }}
+                >
+                    {#snippet children(props)}
+                        {@render trigger(props)}
+                    {/snippet}
+                </CalendarPicker>
+            {/snippet}
+            {#snippet close()}
+                <SaveOrClose variant="save" disabled={processing} />
+            {/snippet}
+            {#snippet category()}
+                <Category
+                    name="categoryId"
+                    current={null}
+                    deferHistoryViewFrames={DEFER_FRAMES.SHEET + 1}
+                />
+            {/snippet}
+            {#snippet time()}
+                <TodoTime
+                    {scheduledAt}
+                    bind:hasTime
+                    deferHistoryViewFrames={DEFER_FRAMES.SHEET + 1}
+                    onChange={(time, hasTime) => {
+                        if (!hasTime) {
+                            notifyAt = null;
+                        } else {
+                            if (notifyAt) {
+                                notifyAt = notifyAt.add(
+                                    timediff(scheduledAt, time)
+                                );
+                            } else {
+                                notifyAt = scheduledAt.set(time).subtract({
+                                    hours: NOTIFICATION_DEFAULT_SUBHOURS
+                                });
+                            }
+                        }
 
-                    scheduledAt = scheduledAt.set(time);
-                }}
-            />
-        {/snippet}
-        {#snippet destroy()}
-            <ToolbarAction
-                tooltip={m["todos.tooltips.delete"]()}
-                onclick={onClose}
-            >
-                <Trash />
-            </ToolbarAction>
-        {/snippet}
-        {#snippet repeat()}
-            <Recurrence
-                day={scheduledAt}
-                name="rrule"
-                tooltip={m["todos.tooltips.repeat"]()}
-                deferHistoryViewFrames={DEFER_FRAMES.SHEET + 1}
-            />
-        {/snippet}
-        {#snippet color()}
-            <Color name="color" tooltip={m["todos.tooltips.color"]()} />
-        {/snippet}
-        {#snippet notify()}
-            <Reminder
-                bind:notifyAt
-                startsAt={scheduledAt}
-                name="notifyAt"
-                tooltip={m["todos.tooltips.notification"]()}
-                beforeOpen={() => {
-                    if (!hasTime) {
-                        toaster.info(m["todos.reminder.select-time"]());
-                        return false;
-                    }
-                }}
-                deferHistoryViewFrames={DEFER_FRAMES.SHEET + 1}
-            />
-        {/snippet}
-        {#snippet more()}
-            <RescheduleItem
-                startsAt={toCalendarDate(scheduledAt)}
-                tooltip={m["todos.tooltips.more"]()}
-                onReschedule={(d) => {
-                    if (notifyAt) {
-                        notifyAt = notifyAt.set(d);
-                    }
-                    scheduledAt = scheduledAt.set(d);
-                }}
-            />
-        {/snippet}
-    </Todo.Fields>
+                        scheduledAt = scheduledAt.set(time);
+                    }}
+                />
+            {/snippet}
+            {#snippet destroy()}
+                <ToolbarAction
+                    tooltip={m["todos.tooltips.delete"]()}
+                    onclick={onClose}
+                >
+                    <Trash />
+                </ToolbarAction>
+            {/snippet}
+            {#snippet repeat()}
+                <Recurrence
+                    day={scheduledAt}
+                    name="rrule"
+                    tooltip={m["todos.tooltips.repeat"]()}
+                    deferHistoryViewFrames={DEFER_FRAMES.SHEET + 1}
+                />
+            {/snippet}
+            {#snippet color()}
+                <Color name="color" tooltip={m["todos.tooltips.color"]()} />
+            {/snippet}
+            {#snippet notify()}
+                <Reminder
+                    bind:notifyAt
+                    startsAt={scheduledAt}
+                    name="notifyAt"
+                    tooltip={m["todos.tooltips.notification"]()}
+                    beforeOpen={() => {
+                        if (!hasTime) {
+                            toaster.info(m["todos.reminder.select-time"]());
+                            return false;
+                        }
+                    }}
+                    deferHistoryViewFrames={DEFER_FRAMES.SHEET + 1}
+                />
+            {/snippet}
+            {#snippet more()}
+                <RescheduleItem
+                    startsAt={toCalendarDate(scheduledAt)}
+                    tooltip={m["todos.tooltips.more"]()}
+                    onReschedule={(d) => {
+                        if (notifyAt) {
+                            notifyAt = notifyAt.set(d);
+                        }
+                        scheduledAt = scheduledAt.set(d);
+                    }}
+                />
+            {/snippet}
+        </Todo.Fields>
+    {/snippet}
 </Form>

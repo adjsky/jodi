@@ -27,46 +27,43 @@
         {/snippet}
     </Intro>
 
-    <Form
-        action={AuthenticateUser()}
-        class="mt-13 space-y-4"
-        let:processing
-        let:errors
-    >
-        <TextField
-            type="email"
-            name="email"
-            placeholder={m["login.email-placeholder"]()}
-            error={errors.email}
-            maxlength={254}
-            required
-        >
-            {#snippet indicator()}<Mail />{/snippet}
-        </TextField>
+    <Form action={AuthenticateUser()} class="mt-13 space-y-4">
+        {#snippet children({ processing, errors })}
+            <TextField
+                type="email"
+                name="email"
+                placeholder={m["login.email-placeholder"]()}
+                error={errors.email}
+                maxlength={254}
+                required
+            >
+                {#snippet indicator()}<Mail />{/snippet}
+            </TextField>
 
-        <div class="space-y-1.25">
-            <Button
-                type="submit"
-                disabled={requestTimer.isRunning || processing}
-            >
-                {#if requestTimer.isRunning}
-                    {m["login.submit-in"]({
-                        seconds: requestTimer.secondsLeft
-                    })}
-                {:else}
-                    {m["login.submit"]()}
-                {/if}
-            </Button>
-            <div
-                class="flex items-center gap-3 text-sm leading-normal font-semibold text-cream-400"
-            >
-                <div class="h-px w-full rounded-[1px] bg-current"></div>
-                {m["common.or"]()}
-                <div class="h-px w-full rounded-[1px] bg-current"></div>
+            <div class="space-y-1.25">
+                <Button
+                    type="submit"
+                    disabled={requestTimer.isRunning || processing}
+                >
+                    {#if requestTimer.isRunning}
+                        {m["login.submit-in"]({
+                            seconds: requestTimer.secondsLeft
+                        })}
+                    {:else}
+                        {m["login.submit"]()}
+                    {/if}
+                </Button>
+                <div
+                    class="flex items-center gap-3 text-sm leading-normal font-semibold text-cream-400"
+                >
+                    <div class="h-px w-full rounded-[1px] bg-current"></div>
+                    {m["common.or"]()}
+                    <div class="h-px w-full rounded-[1px] bg-current"></div>
+                </div>
+                <Button variant="secondary" type="button" disabled>
+                    {m["login.with-passkey"]()}
+                </Button>
             </div>
-            <Button variant="secondary" type="button" disabled>
-                {m["login.with-passkey"]()}
-            </Button>
-        </div>
+        {/snippet}
     </Form>
 </AuthLayout>

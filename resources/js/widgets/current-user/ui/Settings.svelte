@@ -30,8 +30,8 @@
         void queryClient.query(invitationsQueryOptions).catch(noop);
     });
 
-    const user = $derived($page.props.auth.user);
-    const { nInvitations, nFriends } = $derived($page.props.me);
+    const user = $derived(page.props.auth.user);
+    const { nInvitations, nFriends } = $derived(page.props.me);
 
     const accountRows = $derived([
         {
@@ -129,7 +129,7 @@
             </User.Info.ActionRow>
         </User.Info.Block>
 
-        <p class="mt-4 text-sm">v.{$page.props.version}</p>
+        <p class="mt-4 text-sm">v.{page.props.version}</p>
     </ScreenView.Content>
 </ScreenView.Overlay>
 

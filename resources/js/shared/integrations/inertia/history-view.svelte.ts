@@ -1,6 +1,5 @@
 import { page, router } from "@inertiajs/svelte";
 import lz from "lz-string";
-import { fromStore, get } from "svelte/store";
 
 import type { ClientSideVisitOptions } from "@inertiajs/core";
 
@@ -25,30 +24,33 @@ export class HistoryView<T extends Record<string, unknown>> {
     #name?: string | null;
     #options?: HistoryViewOptions;
 
-    #url = $derived(new URL(fromStore(page).current.url, location.origin));
-
-    #hash = $derived.by(() => {
-        const [view, meta] = this.#url.hash.split("?");
-        return { view, meta };
-    });
-    #meta = $derived.by(() => {
-        if (!this.#hash.meta) {
-            return null;
-        }
-        return this.#decompress(this.#hash.meta) as T;
-    });
-
     constructor(name?: string | null, options?: HistoryViewOptions) {
         this.#name = name;
         this.#options = options;
     }
 
+    get #url(): URL {
+        return new URL(page.url, location.origin);
+    }
+
+    get #hash() {
+        const [view, meta] = this.#url.hash.split("?");
+
+        return { view, meta };
+    }
+
     get meta(): T | null {
-        return this.#meta;
+        const meta = this.#hash.meta;
+
+        if (!meta) {
+            return null;
+        }
+
+        return this.#decompress(meta) as T;
     }
 
     get name(): string {
-        return this.#hash.view?.slice(1);
+        return this.#hash.view.slice(1);
     }
 
     isOpen(): boolean;
@@ -104,7 +106,7 @@ export class HistoryView<T extends Record<string, unknown>> {
     updateMeta(meta: Partial<T>, options?: UpdateMetaOptions): Promise<void> {
         const visitOptions = this.#visitOptions(
             this.#hash.view.slice(1),
-            { ...this.#meta, ...meta } as T,
+            { ...this.meta, ...meta } as T,
             options?.viewTransition ?? this.#options?.viewTransition
         );
         if (options?.push) {
@@ -115,7 +117,7 @@ export class HistoryView<T extends Record<string, unknown>> {
     }
 
     back(): Promise<void> {
-        if (!get(page).__jodi_historyModals?.length) {
+        if (!page.__jodi_historyModals?.length) {
             return router.replace({
                 preserveScroll: true,
                 preserveState: true,

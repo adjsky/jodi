@@ -10,6 +10,7 @@ use App\Domain\Todo\Models\Category;
 use App\Support\Actions\JodiAction;
 use App\Support\Http\JodiRequest;
 use Illuminate\Http\RedirectResponse;
+use Inertia\Inertia;
 
 class CreateCategory extends JodiAction
 {
@@ -24,7 +25,7 @@ class CreateCategory extends JodiAction
     {
         $category = $this->handle($this->user(), CreateCategoryData::from($request));
 
-        $request->setFlash('category', $category);
+        Inertia::flash('category', $category);
 
         return back();
     }

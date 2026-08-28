@@ -28,11 +28,11 @@
     @endproduction
 
     @vite('resources/js/app/entrypoint.ts')
-    @inertiaHead
+    <x-inertia::head />
 </head>
 
 <body class="antialiased">
-    @inertia
+    <x-inertia::app />
 </body>
 
 </html>

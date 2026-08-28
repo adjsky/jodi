@@ -21,7 +21,7 @@
 
     const searchParams = useSearchParams({ showProgress: true, push: true });
 
-    const user = $derived($page.props.auth.user);
+    const user = $derived(page.props.auth.user);
     const selected = $derived(
         searchParams["d"] ? parseDate(searchParams["d"]) : today(TIMEZONE)
     );

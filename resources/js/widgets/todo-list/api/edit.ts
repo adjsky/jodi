@@ -6,22 +6,22 @@ import { id } from "../helpers/id";
 import { editView } from "../model/view";
 
 import type { TodoData } from "$/entities/todo";
+import type { InertiaFormData } from "$/shared/integrations/inertia";
 
-export function edit(todo: TodoData, withAhtungReminder: boolean) {
-    return optimistic(
+export const edit = (todo: TodoData, hasNotifyAt: boolean) =>
+    optimistic<{ todos: TodoData[] }, InertiaFormData>(
         (prev, data) => ({
-            todos: prev.todos.map((t: TodoData) =>
+            todos: prev.todos.map((t) =>
                 id(t) === id(todo) ? { ...t, ...data } : t
             )
         }),
         {
             error: m["todos.errors.edit"](),
             onSuccess() {
-                if (withAhtungReminder) {
+                if (hasNotifyAt) {
                     Push.subscription.ahtung(m["todos.reminder-ahtung"]());
                 }
                 void editView.back();
             }
         }
     );
-}

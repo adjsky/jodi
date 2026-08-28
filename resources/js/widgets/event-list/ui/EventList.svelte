@@ -32,17 +32,27 @@
         searchParams["d"] ? parseDate(searchParams["d"]) : today(TIMEZONE)
     );
 
+    const event = $derived.by(() => {
+        const vid = editView.meta?.__event?.id;
+        if (!vid) return null;
+
+        const event = events.find((e) => id(e) == vid);
+        if (!event) return null;
+
+        return event;
+    });
+
     $effect(() => {
         if (searchParams["target"] !== "event") return;
 
-        const id = searchParams["id"];
-        if (!id || isNaN(Number(id))) return;
+        const sid = searchParams["id"];
+        if (!sid || isNaN(Number(sid))) return;
 
-        const event = events.find((t) => t.id === Number(id));
+        const event = events.find((t) => t.id === Number(sid));
         if (!event) return;
 
         void editView.replace({
-            meta: event,
+            meta: { __event: { id: id(event) } },
             search: { d: searchParams["d"] }
         });
     });
@@ -67,7 +77,8 @@
                     selectedDate
                 )}
                 <Event.Row
-                    onclick={() => editView.push({ meta: event })}
+                    onclick={() =>
+                        editView.push({ meta: { __event: { id: id(event) } } })}
                     color={event.color}
                     disabled={editView.isOpen()}
                 >
@@ -97,6 +108,6 @@
 
     <EditSheet
         bind:open={() => editView.isOpen(), () => editView.back()}
-        event={editView.isOpen() ? editView.meta : null}
+        {event}
     />
 </section>

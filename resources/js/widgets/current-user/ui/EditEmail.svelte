@@ -7,7 +7,7 @@
 
     let { open = $bindable() }: ViewProps = $props();
 
-    const user = $derived($page.props.auth.user);
+    const user = $derived(page.props.auth.user);
 </script>
 
 <ScreenView.Overlay bind:open>

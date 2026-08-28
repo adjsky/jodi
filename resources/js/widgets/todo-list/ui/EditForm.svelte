@@ -76,170 +76,172 @@
     })}
     showProgress={false}
     class="flex min-h-0 grow flex-col"
-    let:isDirty
-    let:submit
 >
-    <Todo.Fields
-        scheduledAt={draft.scheduledAt}
-        title={todo.title}
-        description={todo.description}
-        isCompleted={todo.completedAt != null}
-    >
-        {#snippet calendar(trigger)}
-            <CalendarPicker
-                mode="single"
-                selected={[toCalendarDate(draft.scheduledAt)]}
-                min={todo.recurringSince
-                    ? parseDate(todo.recurringSince)
-                    : null}
-                deferHistoryViewFrames={DEFER_FRAMES.SHEET + 1}
-                onSelect={async ([d]) => {
-                    if (draft.notifyAt) {
-                        draft.notifyAt = draft.notifyAt.set(d);
-                    }
-                    draft.scheduledAt = draft.scheduledAt.set(d);
-                    await tick();
-                    dispatchInput(dateAnnouncerInput);
-                }}
-            >
-                {#snippet children(props)}
-                    {@render trigger(props)}
-                {/snippet}
-            </CalendarPicker>
-        {/snippet}
-        {#snippet close()}
-            <SaveOrClose
-                {onClose}
-                title={m["todos.recurrence-action.edit-title"]()}
-                variant={isDirty ? "save" : "close"}
-                scopeLabels={{
-                    this: m["todos.recurrence-action.this"](),
-                    all: m["todos.recurrence-action.all"]()
-                }}
-                confirm={todo.rrule != null && !isRRuleDirty}
-                onConfirm={async (s) => {
-                    scope = s;
-                    await tick();
-                    submit();
-                }}
-            />
-        {/snippet}
-        {#snippet category()}
-            <Category
-                name="categoryId"
-                current={todo.category}
-                deferHistoryViewFrames={DEFER_FRAMES.SHEET + 1}
-            />
-        {/snippet}
-        {#snippet checkbox()}
-            <Checkbox
-                {...visitOptions}
-                {...complete(todo)}
-                href={CompleteTodo(todo.id)}
-                completedAt={todo.completedAt}
-                occursAt={todo.occursAt}
-                class="size-6 text-lg"
-            />
-        {/snippet}
-        {#snippet time()}
-            <TodoTime
-                bind:hasTime={draft.hasTime}
-                scheduledAt={draft.scheduledAt}
-                deferHistoryViewFrames={DEFER_FRAMES.SHEET + 1}
-                onChange={async (time, hasTime) => {
-                    if (!hasTime) {
-                        draft.notifyAt = null;
-                    } else if (draft.notifyAt) {
-                        draft.notifyAt = draft.notifyAt.add(
-                            timediff(draft.scheduledAt, time)
-                        );
-                    } else {
-                        draft.notifyAt = draft.scheduledAt.set(time).subtract({
-                            hours: NOTIFICATION_DEFAULT_SUBHOURS
-                        });
-                    }
+    {#snippet children({ isDirty, submit })}
+        <Todo.Fields
+            scheduledAt={draft.scheduledAt}
+            title={todo.title}
+            description={todo.description}
+            isCompleted={todo.completedAt != null}
+        >
+            {#snippet calendar(trigger)}
+                <CalendarPicker
+                    mode="single"
+                    selected={[toCalendarDate(draft.scheduledAt)]}
+                    min={todo.recurringSince
+                        ? parseDate(todo.recurringSince)
+                        : null}
+                    deferHistoryViewFrames={DEFER_FRAMES.SHEET + 1}
+                    onSelect={async ([d]) => {
+                        if (draft.notifyAt) {
+                            draft.notifyAt = draft.notifyAt.set(d);
+                        }
+                        draft.scheduledAt = draft.scheduledAt.set(d);
+                        await tick();
+                        dispatchInput(dateAnnouncerInput);
+                    }}
+                >
+                    {#snippet children(props)}
+                        {@render trigger(props)}
+                    {/snippet}
+                </CalendarPicker>
+            {/snippet}
+            {#snippet close()}
+                <SaveOrClose
+                    {onClose}
+                    title={m["todos.recurrence-action.edit-title"]()}
+                    variant={isDirty ? "save" : "close"}
+                    scopeLabels={{
+                        this: m["todos.recurrence-action.this"](),
+                        all: m["todos.recurrence-action.all"]()
+                    }}
+                    confirm={todo.rrule != null && !isRRuleDirty}
+                    onConfirm={async (s) => {
+                        scope = s;
+                        await tick();
+                        submit();
+                    }}
+                />
+            {/snippet}
+            {#snippet category()}
+                <Category
+                    name="categoryId"
+                    current={todo.category}
+                    deferHistoryViewFrames={DEFER_FRAMES.SHEET + 1}
+                />
+            {/snippet}
+            {#snippet checkbox()}
+                <Checkbox
+                    {...visitOptions}
+                    {...complete()}
+                    href={CompleteTodo(todo.id)}
+                    completedAt={todo.completedAt}
+                    occursAt={todo.occursAt}
+                    class="size-6 text-lg"
+                />
+            {/snippet}
+            {#snippet time()}
+                <TodoTime
+                    bind:hasTime={draft.hasTime}
+                    scheduledAt={draft.scheduledAt}
+                    deferHistoryViewFrames={DEFER_FRAMES.SHEET + 1}
+                    onChange={async (time, hasTime) => {
+                        if (!hasTime) {
+                            draft.notifyAt = null;
+                        } else if (draft.notifyAt) {
+                            draft.notifyAt = draft.notifyAt.add(
+                                timediff(draft.scheduledAt, time)
+                            );
+                        } else {
+                            draft.notifyAt = draft.scheduledAt
+                                .set(time)
+                                .subtract({
+                                    hours: NOTIFICATION_DEFAULT_SUBHOURS
+                                });
+                        }
 
-                    draft.scheduledAt = draft.scheduledAt.set(time);
+                        draft.scheduledAt = draft.scheduledAt.set(time);
 
-                    await tick();
-                    dispatchInput(dateAnnouncerInput);
-                }}
-            />
-        {/snippet}
-        {#snippet destroy()}
-            <DeleteItem
-                {...visitOptions}
-                href={DestroyTodo(todo.id)}
-                title={{
-                    recurring: m["todos.recurrence-action.delete-title"](),
-                    general: m["todos.delete-ahtung"]()
-                }}
-                tooltip={m["todos.tooltips.delete"]()}
-                recurring={todo.rrule != null}
-                occursAt={todo.occursAt}
-                date={todo.scheduledAt}
-                scopeLabels={{
-                    this: m["todos.recurrence-action.this"](),
-                    following: m["todos.recurrence-action.following"](),
-                    all: m["todos.recurrence-action.all"]()
-                }}
-                deferHistoryViewFrames={DEFER_FRAMES.SHEET + 1}
-                onSuccess={() => editView.back()}
-            />
-        {/snippet}
-        {#snippet repeat()}
-            <Recurrence
-                bind:rrule={draft.rrule}
-                day={draft.scheduledAt}
-                name="rrule"
-                tooltip={m["todos.tooltips.repeat"]()}
-                deferHistoryViewFrames={DEFER_FRAMES.SHEET + 1}
-            />
-        {/snippet}
-        {#snippet color()}
-            <Color
-                bind:current={draft.color}
-                name="color"
-                tooltip={m["todos.tooltips.color"]()}
-            />
-        {/snippet}
-        {#snippet notify()}
-            <Reminder
-                bind:notifyAt={draft.notifyAt}
-                startsAt={draft.scheduledAt}
-                name="notifyAt"
-                tooltip={m["todos.tooltips.notification"]()}
-                beforeOpen={() => {
-                    if (!draft.hasTime) {
-                        toaster.info(m["todos.reminder.select-time"]());
-                        return false;
-                    }
-                }}
-                deferHistoryViewFrames={DEFER_FRAMES.SHEET + 1}
-            />
-        {/snippet}
-        {#snippet more()}
-            <RescheduleItem
-                startsAt={toCalendarDate(draft.scheduledAt)}
-                tooltip={m["todos.tooltips.more"]()}
-                onReschedule={async (d) => {
-                    if (draft.notifyAt) {
-                        draft.notifyAt = draft.notifyAt.set(d);
-                    }
-                    draft.scheduledAt = draft.scheduledAt.set(d);
-                    await tick();
-                    dispatchInput(dateAnnouncerInput);
-                }}
-            />
-        {/snippet}
-    </Todo.Fields>
+                        await tick();
+                        dispatchInput(dateAnnouncerInput);
+                    }}
+                />
+            {/snippet}
+            {#snippet destroy()}
+                <DeleteItem
+                    {...visitOptions}
+                    href={DestroyTodo(todo.id)}
+                    title={{
+                        recurring: m["todos.recurrence-action.delete-title"](),
+                        general: m["todos.delete-ahtung"]()
+                    }}
+                    tooltip={m["todos.tooltips.delete"]()}
+                    recurring={todo.rrule != null}
+                    occursAt={todo.occursAt}
+                    date={todo.scheduledAt}
+                    scopeLabels={{
+                        this: m["todos.recurrence-action.this"](),
+                        following: m["todos.recurrence-action.following"](),
+                        all: m["todos.recurrence-action.all"]()
+                    }}
+                    deferHistoryViewFrames={DEFER_FRAMES.SHEET + 1}
+                    onSuccess={() => editView.back()}
+                />
+            {/snippet}
+            {#snippet repeat()}
+                <Recurrence
+                    bind:rrule={draft.rrule}
+                    day={draft.scheduledAt}
+                    name="rrule"
+                    tooltip={m["todos.tooltips.repeat"]()}
+                    deferHistoryViewFrames={DEFER_FRAMES.SHEET + 1}
+                />
+            {/snippet}
+            {#snippet color()}
+                <Color
+                    bind:current={draft.color}
+                    name="color"
+                    tooltip={m["todos.tooltips.color"]()}
+                />
+            {/snippet}
+            {#snippet notify()}
+                <Reminder
+                    bind:notifyAt={draft.notifyAt}
+                    startsAt={draft.scheduledAt}
+                    name="notifyAt"
+                    tooltip={m["todos.tooltips.notification"]()}
+                    beforeOpen={() => {
+                        if (!draft.hasTime) {
+                            toaster.info(m["todos.reminder.select-time"]());
+                            return false;
+                        }
+                    }}
+                    deferHistoryViewFrames={DEFER_FRAMES.SHEET + 1}
+                />
+            {/snippet}
+            {#snippet more()}
+                <RescheduleItem
+                    startsAt={toCalendarDate(draft.scheduledAt)}
+                    tooltip={m["todos.tooltips.more"]()}
+                    onReschedule={async (d) => {
+                        if (draft.notifyAt) {
+                            draft.notifyAt = draft.notifyAt.set(d);
+                        }
+                        draft.scheduledAt = draft.scheduledAt.set(d);
+                        await tick();
+                        dispatchInput(dateAnnouncerInput);
+                    }}
+                />
+            {/snippet}
+        </Todo.Fields>
 
-    <input
-        bind:this={dateAnnouncerInput}
-        hidden
-        name="scheduledAt"
-        value={draft.hasTime
-            ? normalizeIsoString(draft.scheduledAt.toAbsoluteString())
-            : toCalendarDate(draft.scheduledAt).toString()}
-    />
+        <input
+            bind:this={dateAnnouncerInput}
+            hidden
+            name="scheduledAt"
+            value={draft.hasTime
+                ? normalizeIsoString(draft.scheduledAt.toAbsoluteString())
+                : toCalendarDate(draft.scheduledAt).toString()}
+        />
+    {/snippet}
 </Form>

@@ -60,7 +60,7 @@
         "data-[state=open]:animate-in data-[state=open]:duration-300 data-[state=open]:ease-[cubic-bezier(0.32,0.72,0,1)] data-[state=open]:zoom-in-95 data-[state=open]:fade-in",
         "data-[state=closed]:animate-out data-[state=closed]:duration-200 data-[state=closed]:ease-in-out data-[state=closed]:fade-out"
     ]}
-    weekStart={$page.props.auth.user.preferences.weekStartOn}
+    weekStart={page.props.auth.user.preferences.weekStartOn}
     onSelect={async (date) => {
         await view.back();
         onSelect?.(date);

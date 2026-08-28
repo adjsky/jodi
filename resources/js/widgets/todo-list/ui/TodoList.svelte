@@ -46,20 +46,30 @@
     $effect(() => {
         if (searchParams["target"] !== "todo") return;
 
-        const id = searchParams["id"];
-        if (!id || isNaN(Number(id))) return;
+        const sid = searchParams["id"];
+        if (!sid || isNaN(Number(sid))) return;
 
-        const todo = todos.find((t) => t.id === Number(id));
+        const todo = todos.find((t) => t.id === Number(sid));
         if (!todo) return;
 
         void editView.replace({
-            meta: todo,
+            meta: { __todo: { id: id(todo) } },
             search: { d: searchParams["d"] }
         });
     });
 
     let groups = $state(untrack(() => groupTodos(todos)));
     let isDragging = $state(false);
+
+    const todo = $derived.by(() => {
+        const vid = editView.meta?.__todo?.id;
+        if (!vid) return null;
+
+        const todo = todos.find((t) => id(t) == vid);
+        if (!todo) return null;
+
+        return todo;
+    });
 
     $effect(() => {
         if (!isDragging && !reorder.isMutating) {
@@ -135,7 +145,7 @@
 
     <EditSheet
         bind:open={() => editView.isOpen(), () => editView.back()}
-        todo={editView.isOpen() ? editView.meta : null}
+        {todo}
     />
 </section>
 
@@ -153,7 +163,7 @@
                 {#snippet checkbox()}
                     <Checkbox
                         {...visitOptions}
-                        {...complete(todo)}
+                        {...complete()}
                         href={CompleteTodo(todo.id)}
                         completedAt={todo.completedAt}
                         occursAt={todo.occursAt}
@@ -166,7 +176,10 @@
                     <button
                         class="relative w-full min-w-0 text-start text-lg font-medium"
                         data-part="edit"
-                        onclick={() => editView.push({ meta: todo })}
+                        onclick={() =>
+                            editView.push({
+                                meta: { __todo: { id: id(todo) } }
+                            })}
                         disabled={editView.isOpen()}
                     >
                         <span
