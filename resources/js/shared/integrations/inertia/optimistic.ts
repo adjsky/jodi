@@ -10,10 +10,8 @@ import type {
 } from "@inertiajs/core";
 import type { AppPageProps } from "$/globals";
 
-type OptimisticOptions = Partial<
-    Exclude<VisitCallbacks, "onOptimisticRollback">
-> & {
-    error: string;
+type OptimisticOptions = Partial<VisitCallbacks> & {
+    rollbackError: string;
 };
 
 type OptimisticReturn = Pick<
@@ -36,15 +34,22 @@ export function optimistic<P = AppPageProps, F = InertiaFormData>(
 
 export function optimistic(
     commit: (...args: unknown[]) => unknown,
-    { error, onHttpException, onNetworkError, ...callbacks }: OptimisticOptions
+    {
+        rollbackError,
+        onHttpException,
+        onNetworkError,
+        onOptimisticRollback,
+        ...callbacks
+    }: OptimisticOptions
 ): OptimisticReturn {
     return {
         ...callbacks,
         optimistic: commit as never,
         onOptimisticRollback(visit: ActiveVisit) {
             if (!visit.cancelled && !visit.interrupted) {
-                toaster.error(error);
+                toaster.error(rollbackError);
             }
+            onOptimisticRollback?.(visit);
         },
         onHttpException(response) {
             onHttpException?.(response);

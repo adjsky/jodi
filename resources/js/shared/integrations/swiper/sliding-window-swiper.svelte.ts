@@ -44,7 +44,7 @@ export class SlidingWindowSwiper<T> {
                 slideChangeTransitionEnd: (swiper) => {
                     const offset =
                         swiper.activeIndex - this.#options.edgeBuffer;
-                    if (offset === 0) return;
+                    if (offset == 0) return;
 
                     this.#options.onSlideChange(offset);
 

@@ -32,6 +32,7 @@
 <Recurrence.ScopeDialog
     {title}
     {scopeLabels}
+    {onConfirm}
     bind:open={
         () => view.meta?.__saveitem?.isOpen ?? false,
         (v) => {
@@ -41,10 +42,6 @@
         }
     }
     skip={!confirm}
-    onConfirm={(scope) => {
-        onConfirm?.(scope);
-        return true;
-    }}
 >
     {#snippet trigger(props)}
         <button

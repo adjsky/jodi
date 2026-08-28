@@ -72,7 +72,7 @@ export class CalendarEvents {
                 events
             );
         } catch (e) {
-            if (e instanceof DOMException && e.name === "AbortError") return;
+            if (e instanceof DOMException && e.name == "AbortError") return;
             console.error(e);
             this.#options.onError?.();
         }

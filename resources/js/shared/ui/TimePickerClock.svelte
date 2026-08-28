@@ -31,12 +31,12 @@
 
     let internalValue = $derived(value);
     let handlePosition = $derived(
-        view === "hour"
+        view == "hour"
             ? hourPosition(internalValue.hour)
             : minutePosition(internalValue.minute)
     );
     let handleAngle = $derived(
-        view === "hour"
+        view == "hour"
             ? (internalValue.hour % 12) * 30 - 90
             : internalValue.minute * 6 - 90
     );
@@ -102,7 +102,7 @@
 
             const baseHour = Math.round(angle / 30) % 12;
             const newHour = isInnerCircle
-                ? baseHour === 0
+                ? baseHour == 0
                     ? 12
                     : baseHour + 12
                 : baseHour;

@@ -18,6 +18,8 @@
 
     const id = $props.id();
 
+    let isResending = $state(false);
+
     const resendTimer = new ActionRateLimit(
         ResendTwoFactorChallengeCode.definition
     );
@@ -56,7 +58,17 @@
         {/snippet}
     </Intro>
 
-    <Form action={ResendTwoFactorChallengeCode()} id="{id}-resend-form" hidden
+    <Form
+        action={ResendTwoFactorChallengeCode()}
+        id="{id}-resend-form"
+        showProgress={false}
+        onStart={() => {
+            isResending = true;
+        }}
+        onFinish={() => {
+            isResending = false;
+        }}
+        hidden
     ></Form>
 
     <Form
@@ -67,6 +79,7 @@
                 toaster.error(error.password);
             }
         }}
+        showProgress={false}
         onSuccess={handleSuccessfulLogin}
     >
         {#snippet children({ processing, errors })}
@@ -78,9 +91,13 @@
             <p class="text-center text-ms">
                 {m["2fa.no-code"]()}
                 <button
-                    class="font-semibold text-brand"
+                    class={[
+                        "font-semibold text-brand disabled:cursor-not-allowed",
+                        isResending && "animate-pulse"
+                    ]}
                     form="{id}-resend-form"
-                    disabled={resendTimer.isRunning}
+                    disabled={resendTimer.isRunning || isResending}
+                    aria-busy={isResending}
                 >
                     {#if resendTimer.isRunning}
                         {m["2fa.resend-in"]({
@@ -94,7 +111,8 @@
 
             <Button
                 type="submit"
-                disabled={consumeTimer.isRunning || processing}
+                disabled={consumeTimer.isRunning}
+                loading={processing}
             >
                 {#if consumeTimer.isRunning}
                     {m["2fa.continue-in"]({

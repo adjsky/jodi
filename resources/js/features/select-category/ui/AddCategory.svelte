@@ -3,6 +3,8 @@
     import { Plus } from "@lucide/svelte";
     import CreateCategory from "$/generated/actions/App/Domain/Todo/Actions/CreateCategory";
     import { m } from "$/paraglide/messages";
+    import { useLoadingDebounce } from "$/shared/lib/svelte/use-loading-debounce.svelte";
+    import Loader from "$/shared/ui/Loader.svelte";
 
     import type { CategoryData } from "$/entities/todo";
 
@@ -12,6 +14,9 @@
     };
 
     const { name, onAdd }: Props = $props();
+
+    let isAdding = $state(false);
+    const isLoaderVisible = useLoadingDebounce(() => isAdding);
 </script>
 
 <Form
@@ -22,23 +27,33 @@
         preserveUrl: true,
         replace: true
     }}
+    showProgress={false}
+    onStart={() => {
+        isAdding = true;
+    }}
     onSuccess={(page) => {
         onAdd?.(page.flash.category);
     }}
+    onFinish={() => {
+        isAdding = false;
+    }}
 >
-    {#snippet children({ processing })}
-        <input hidden name="name" value={name} />
-        <button
-            type="submit"
-            disabled={processing}
-            class="flex h-13.75 w-full items-center gap-2 rounded-xl bg-brand/10 px-2 text-start text-lg font-medium"
-        >
+    <input hidden name="name" value={name} />
+    <button
+        type="submit"
+        disabled={isAdding}
+        class="flex h-14 w-full items-center gap-2 rounded-xl bg-brand/10 px-2 text-start text-lg font-medium disabled:cursor-not-allowed"
+        aria-busy={isAdding}
+    >
+        {#if isLoaderVisible.current}
+            <Loader class="mx-auto text-brand" />
+        {:else}
             <span
                 class="flex size-7 items-center justify-center rounded-full bg-brand"
             >
                 <Plus class="text-xl text-white" />
             </span>
             {m["todos.category.add"]()}
-        </button>
-    {/snippet}
+        {/if}
+    </button>
 </Form>

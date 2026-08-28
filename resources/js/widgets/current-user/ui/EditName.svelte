@@ -26,9 +26,9 @@
             options={{
                 only: ["auth"],
                 replace: true,
-                preserveUrl: true,
-                viewTransition: false
+                preserveUrl: true
             }}
+            showProgress={false}
             onSuccess={() => view.back()}
         >
             {#snippet children({ processing, errors, isDirty })}

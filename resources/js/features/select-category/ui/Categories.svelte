@@ -33,7 +33,7 @@
 
 {#snippet row(category?: CategoryData)}
     <div
-        class="relative flex h-13.75 shrink-0 items-center border-cream-300 not-first:border-t"
+        class="relative flex h-14 shrink-0 items-center border-cream-300 not-first:border-t"
     >
         {#if !category}
             <Skeleton class="text-lg" grow inline={false} />

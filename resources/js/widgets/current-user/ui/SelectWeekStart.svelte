@@ -25,7 +25,7 @@
                 <User.Info.SelectRow
                     {...preferences(
                         { weekStartOn: day },
-                        m["current-user.week-start.error"]()
+                        m["current-user.week-start.errors.update"]()
                     )}
                     href={UpdateUser()}
                     data={{ preferences: { weekStartOn: day } }}

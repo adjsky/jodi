@@ -44,12 +44,12 @@
     const searchParams = useSearchParams();
 
     $effect(() => {
-        if (searchParams["target"] !== "todo") return;
+        if (searchParams["target"] != "todo") return;
 
         const sid = searchParams["id"];
         if (!sid || isNaN(Number(sid))) return;
 
-        const todo = todos.find((t) => t.id === Number(sid));
+        const todo = todos.find((t) => t.id == Number(sid));
         if (!todo) return;
 
         void editView.replace({
@@ -99,6 +99,8 @@
     }
 </script>
 
+<EditSheet bind:open={() => editView.isOpen(), () => editView.back()} {todo} />
+
 <section {...rest} class={tw("px-4", rest.class)}>
     <div class="flex items-center gap-1.5">
         <Check class="text-3xl" />
@@ -142,11 +144,6 @@
             {/each}
         </div>
     {/if}
-
-    <EditSheet
-        bind:open={() => editView.isOpen(), () => editView.back()}
-        {todo}
-    />
 </section>
 
 {#snippet list(group: string, todos: TodoData[])}
@@ -162,8 +159,8 @@
             <Todo.Row class={[todo.completedAt && "opacity-40"]}>
                 {#snippet checkbox()}
                     <Checkbox
+                        {...complete(todo)}
                         {...visitOptions}
-                        {...complete()}
                         href={CompleteTodo(todo.id)}
                         completedAt={todo.completedAt}
                         occursAt={todo.occursAt}

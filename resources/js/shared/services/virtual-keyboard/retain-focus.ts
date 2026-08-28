@@ -163,7 +163,7 @@ function isKeyboardEditable(element: HTMLElement | null): boolean {
 
 function findTouch(touches: TouchList, identifier: number) {
     for (const touch of touches) {
-        if (touch.identifier === identifier) {
+        if (touch.identifier == identifier) {
             return touch;
         }
     }

@@ -48,7 +48,7 @@
     >
         {#if isError}
             <ResourceError
-                message={m["current-user.invitations.list-error"]()}
+                message={m["current-user.invitations.errors.list"]()}
                 onRetry={() => invitations.refetch()}
             />
         {:else if isLoading}
@@ -103,9 +103,9 @@
             class="flex grow flex-col"
             options={{
                 replace: true,
-                preserveUrl: true,
-                viewTransition: false
+                preserveUrl: true
             }}
+            showProgress={false}
             onSuccess={(page) => {
                 queryClient.setQueryData(
                     invitationsQueryOptions.queryKey,

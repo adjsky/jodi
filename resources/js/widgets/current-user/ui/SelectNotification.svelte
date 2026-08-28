@@ -30,7 +30,7 @@
                 <User.Info.SelectRow
                     {...preferences(
                         { notifications: channel },
-                        m["current-user.notifications.error"]()
+                        m["current-user.notifications.errors.update"]()
                     )}
                     href={UpdateUser()}
                     data={{ preferences: { notifications: channel } }}
@@ -51,6 +51,7 @@
                 onclick={() => {
                     void Push.subscription.subscribe();
                 }}
+                loading={Push.subscription.isSubscribing}
             >
                 <BellRing class="text-xl" />
                 {m["current-user.notifications.allow"]()}

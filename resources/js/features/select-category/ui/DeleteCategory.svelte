@@ -1,5 +1,5 @@
 <script lang="ts">
-    import { router } from "@inertiajs/svelte";
+    import { router } from "@inertiajs/core";
     import { useQueryClient } from "@tanstack/svelte-query";
     import DestroyCategory from "$/generated/actions/App/Domain/Todo/Actions/DestroyCategory";
     import { m } from "$/paraglide/messages";
@@ -12,21 +12,15 @@
 
     import type { CategoryData, TodoData } from "$/entities/todo";
 
-    type Props = {
-        onDelete?: (id: number) => void;
-    };
-
-    const { onDelete }: Props = $props();
-
     const queryClient = useQueryClient();
 
-    let bufferedCategory = $state<CategoryData | null>(null);
+    let category: CategoryData | null = $state(
+        view.meta?.__categorytodelete ?? null
+    );
 
     $effect(() => {
-        const category = view.meta?.__categorytodelete;
-        if (category) {
-            bufferedCategory = category;
-        }
+        const c = view.meta?.__categorytodelete;
+        if (c) category = c;
     });
 </script>
 
@@ -40,55 +34,45 @@
         }
     }
     title={m["todos.category.confirm-delete"]({
-        category: bufferedCategory?.name ?? ""
+        category: category?.name ?? ""
     })}
     onConfirm={async () => {
-        const category = view.meta?.__categorytodelete ?? bufferedCategory;
-
         if (!category) {
-            raise("Can't delete when no category is marked for deletion.");
+            raise("No category available for deletion.");
         }
 
-        let previousCategories: CategoryData[] | null = null;
+        const categoryId = category.id;
 
-        void router.visit(DestroyCategory(category.id), {
+        // This should resolve immediately, so it is safe to use.
+        await queryClient.cancelQueries({
+            queryKey: categoriesQueryOptions.queryKey
+        });
+
+        const previousCategories = queryClient.getQueryData(
+            categoriesQueryOptions.queryKey
+        );
+
+        queryClient.setQueryData(
+            categoriesQueryOptions.queryKey,
+            (categories) => categories?.filter((c) => c.id != categoryId)
+        );
+
+        router.visit(DestroyCategory(categoryId), {
             ...optimistic<{ todos: TodoData[] }>(
                 (prev) => ({
-                    todos: prev.todos.map((t: TodoData) => ({
+                    todos: prev.todos.map((t) => ({
                         ...t,
                         category:
-                            t.category?.id == category.id ? null : t.category
+                            t.category?.id == categoryId ? null : t.category
                     }))
                 }),
                 {
-                    error: m["todos.errors.category"](),
-                    onBefore() {
-                        void queryClient.cancelQueries({
-                            queryKey: categoriesQueryOptions.queryKey
-                        });
-
-                        previousCategories =
-                            queryClient.getQueryData(
-                                categoriesQueryOptions.queryKey
-                            ) ?? null;
-
-                        queryClient.setQueryData(
-                            categoriesQueryOptions.queryKey,
-                            (categories) =>
-                                categories?.filter((c) => c.id != category.id)
-                        );
-                    },
+                    rollbackError: m["todos.errors.delete-category"](),
                     onOptimisticRollback() {
-                        if (!previousCategories) return;
-
                         queryClient.setQueryData(
                             categoriesQueryOptions.queryKey,
                             previousCategories
                         );
-                    },
-                    onSuccess() {
-                        previousCategories = null;
-                        onDelete?.(category.id);
                     }
                 }
             ),
@@ -99,7 +83,5 @@
             replace: true,
             showProgress: false
         });
-
-        return true;
     }}
 />

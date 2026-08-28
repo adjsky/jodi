@@ -31,9 +31,9 @@
     import { tick, untrack } from "svelte";
 
     import { complete } from "../api/complete";
+    import { destroy as optimistic_destroy } from "../api/destroy";
     import { edit } from "../api/edit";
     import { visitOptions } from "../cfg/inertia";
-    import { editView } from "../model/view";
 
     import type { RecurrenceScope } from "$/entities/recurrence";
     import type { TodoData } from "$/entities/todo";
@@ -132,8 +132,8 @@
             {/snippet}
             {#snippet checkbox()}
                 <Checkbox
+                    {...complete(todo)}
                     {...visitOptions}
-                    {...complete()}
                     href={CompleteTodo(todo.id)}
                     completedAt={todo.completedAt}
                     occursAt={todo.occursAt}
@@ -169,6 +169,7 @@
             {/snippet}
             {#snippet destroy()}
                 <DeleteItem
+                    {...optimistic_destroy(todo)}
                     {...visitOptions}
                     href={DestroyTodo(todo.id)}
                     title={{
@@ -185,7 +186,6 @@
                         all: m["todos.recurrence-action.all"]()
                     }}
                     deferHistoryViewFrames={DEFER_FRAMES.SHEET + 1}
-                    onSuccess={() => editView.back()}
                 />
             {/snippet}
             {#snippet repeat()}

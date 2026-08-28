@@ -5,6 +5,7 @@
     import { m } from "$/paraglide/messages";
     import { ScreenView } from "$/shared/composites/screen-view";
     import { HistoryView } from "$/shared/integrations/inertia";
+    import { raise } from "$/shared/lib/exception/raise";
     import Button from "$/shared/ui/Button.svelte";
     import Confirmable from "$/shared/ui/Confirmable.svelte";
     import ResourceError from "$/shared/ui/ResourceError.svelte";
@@ -60,12 +61,12 @@
     >
         {#if isError}
             <ResourceError
-                message={m["current-user.invitations.list-error"]()}
+                message={m["current-user.invitations.errors.list"]()}
                 onRetry={() => invitations.refetch()}
             />
         {:else if isNotFound}
             <ResourceError
-                message={m["current-user.invitations.not-found"]()}
+                message={m["current-user.invitations.errors.not-found"]()}
             />
         {:else}
             <!-- TODO: maybe use web share API? -->
@@ -117,14 +118,19 @@
                 }
                 title={m["current-user.invitations.delete-ahtung"]()}
                 onConfirm={() => {
-                    if (!invitation) return;
+                    if (!invitation) {
+                        raise("No invitation available for deletion.");
+                    }
                     confirmedIdToDelete = invitation.id;
                 }}
                 onExitComplete={async () => {
-                    if (!confirmedIdToDelete) return;
-                    await view.back();
-                    deleteInvitationMutation.mutate(confirmedIdToDelete);
+                    const invitationId = confirmedIdToDelete;
+                    if (!invitationId) return;
+
                     confirmedIdToDelete = null;
+
+                    await view.back();
+                    deleteInvitationMutation.mutate(invitationId);
                 }}
             >
                 {#snippet trigger(props)}

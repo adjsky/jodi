@@ -1,5 +1,5 @@
 import { FirebaseMessaging } from "@capacitor-firebase/messaging";
-import { page, progress } from "@inertiajs/svelte";
+import { page } from "@inertiajs/svelte";
 import UpsertPushSubscription from "$/generated/actions/App/Domain/Identity/Actions/UpsertPushSubscription";
 import { m } from "$/paraglide/messages";
 import { PLATFORM } from "$/shared/cfg/constants";
@@ -21,7 +21,7 @@ type Listener = () => Promise<void>;
 
 export class Subscription {
     #warnings: Warnings = $state({ needsConfiguration: false });
-    #isSubscribing = false;
+    #isSubscribing = $state(false);
 
     get needsConfiguration(): boolean {
         const { user } = page.props.auth;
@@ -30,6 +30,10 @@ export class Subscription {
             user?.preferences.notifications == "push" &&
             this.#warnings.needsConfiguration
         );
+    }
+
+    get isSubscribing(): boolean {
+        return this.#isSubscribing;
     }
 
     async synchronize(): Promise<void> {
@@ -107,14 +111,10 @@ export class Subscription {
                 return;
             }
 
-            progress.reveal(true);
-            progress.start();
-
             const token = await this.#getToken();
 
             await this.#store(token, {
                 onSuccess: () => {
-                    progress.finish();
                     toaster.success(
                         m["push-notifications.success-subscribe"]()
                     );
@@ -122,14 +122,12 @@ export class Subscription {
                     this.#warnings.needsConfiguration = false;
                 },
                 onInvalid: () => {
-                    progress.remove();
                     toaster.error(
                         m["push-notifications.failed-to-subscribe"]()
                     );
                 }
             });
         } catch (e) {
-            progress.remove();
             toaster.error(m["common.unexpected-error"]());
             throw e;
         } finally {

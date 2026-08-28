@@ -12,12 +12,12 @@ export const edit = (todo: TodoData, hasNotifyAt: boolean) =>
     optimistic<{ todos: TodoData[] }, InertiaFormData>(
         (prev, data) => ({
             todos: prev.todos.map((t) =>
-                id(t) === id(todo) ? { ...t, ...data } : t
+                id(t) == id(todo) ? { ...t, ...data } : t
             )
         }),
         {
-            error: m["todos.errors.edit"](),
-            onSuccess() {
+            rollbackError: m["todos.errors.edit"](),
+            onStart() {
                 if (hasNotifyAt) {
                     Push.subscription.ahtung(m["todos.reminder-ahtung"]());
                 }

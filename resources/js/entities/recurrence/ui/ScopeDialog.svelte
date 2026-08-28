@@ -3,7 +3,6 @@
     import Confirmable from "$/shared/ui/Confirmable.svelte";
 
     import type { RecurrenceScope } from "../model/types";
-    import type { MaybePromise } from "$/shared/lib/async/types";
     import type { Snippet } from "svelte";
     import type { HTMLAttributes } from "svelte/elements";
 
@@ -15,7 +14,8 @@
         fallback?: boolean;
         skip?: boolean;
         trigger?: Snippet<[() => HTMLAttributes<HTMLElement>]>;
-        onConfirm?: (scope: RecurrenceScope) => MaybePromise<boolean | void>;
+        onConfirm?: (scope: RecurrenceScope) => boolean | void;
+        onExitComplete?: VoidFunction;
         onAbort?: VoidFunction;
     };
 
@@ -28,6 +28,7 @@
         skip,
         trigger,
         onConfirm,
+        onExitComplete,
         onAbort
     }: Props = $props();
 
@@ -45,6 +46,7 @@
         onConfirm={() => onConfirm?.(selectedScope)}
         onExitComplete={() => {
             selectedScope = "this";
+            onExitComplete?.();
         }}
     >
         {#snippet trigger(props)}

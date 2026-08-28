@@ -37,7 +37,7 @@
     >
         {#if isError}
             <ResourceError
-                message={m["current-user.friends.error"]()}
+                message={m["current-user.friends.errors.list"]()}
                 onRetry={() => friends.refetch()}
             />
         {:else if isLoading}

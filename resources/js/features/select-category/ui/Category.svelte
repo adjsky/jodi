@@ -73,6 +73,12 @@
     let formInput = $state<HTMLInputElement | null>(null);
     let selected = $state(untrack(() => current));
 
+    $effect(() => {
+        if (selected != null && !collection().has(selected.name)) {
+            selected = null;
+        }
+    });
+
     const showAddButton = $derived(search != "" && !collection().has(search));
     const hasNoCategories = $derived(search == "" && collection().size == 0);
 
@@ -133,13 +139,7 @@
         </button>
     {/snippet}
 
-    <DeleteCategory
-        onDelete={(id) => {
-            if (selected?.id == id) {
-                void onSelect(null);
-            }
-        }}
-    />
+    <DeleteCategory />
 
     <div class="relative mt-3 flex items-center">
         <Search
@@ -158,7 +158,7 @@
 
         <input
             bind:value={search}
-            class="form-input h-13.75 w-full rounded-xl border-none bg-cream-500/10 ps-10 pe-12 text-lg font-medium outline-none placeholder:text-cream-600 focus:ring-0"
+            class="form-input h-14 w-full rounded-xl border-none bg-cream-500/10 ps-10 pe-12 text-lg font-medium outline-none placeholder:text-cream-600 focus:ring-0"
             placeholder={m["todos.category.placeholder"]()}
             maxlength={50}
         />

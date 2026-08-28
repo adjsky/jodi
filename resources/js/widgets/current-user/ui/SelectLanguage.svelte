@@ -22,7 +22,7 @@
                 <User.Info.SelectRow
                     {...preferences(
                         { locale },
-                        m["current-user.language.error"]()
+                        m["current-user.language.errors.update"]()
                     )}
                     href={UpdateUser()}
                     data={{ preferences: { locale } }}

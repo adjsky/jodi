@@ -27,7 +27,11 @@
         {/snippet}
     </Intro>
 
-    <Form action={AuthenticateUser()} class="mt-13 space-y-4">
+    <Form
+        action={AuthenticateUser()}
+        showProgress={false}
+        class="mt-13 space-y-4"
+    >
         {#snippet children({ processing, errors })}
             <TextField
                 type="email"
@@ -43,7 +47,8 @@
             <div class="space-y-1.25">
                 <Button
                     type="submit"
-                    disabled={requestTimer.isRunning || processing}
+                    disabled={requestTimer.isRunning}
+                    loading={processing}
                 >
                     {#if requestTimer.isRunning}
                         {m["login.submit-in"]({

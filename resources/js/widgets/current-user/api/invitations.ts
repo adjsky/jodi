@@ -45,7 +45,7 @@ export const deleteInvitationMutationOptions = mutationOptions({
             result?.previousInvitations
         );
 
-        toaster.error(m["current-user.invitations.delete-error"]());
+        toaster.error(m["current-user.invitations.errors.delete"]());
     },
     onSettled(_, __, ___, ____, context) {
         return context.client.invalidateQueries({

@@ -108,7 +108,7 @@
     <div class="mt-4 mb-safe-offset-5 flex grow items-end safe-area-keyboard">
         <Button
             type="button"
-            disabled={Number(amount) === 0}
+            disabled={Number(amount) == 0}
             onclick={() => {
                 onSelect?.(
                     durations[selectedIdx].template.replace("{A}", amount)

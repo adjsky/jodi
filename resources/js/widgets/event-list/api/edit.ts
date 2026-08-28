@@ -17,18 +17,18 @@ export const edit = (
     optimistic<{ events: EventData[] }, InertiaFormData>(
         (prev, data) => ({
             events: prev.events.map((e) =>
-                id(e) === id(event) ? { ...e, ...data } : e
+                id(e) == id(event) ? { ...e, ...data } : e
             )
         }),
         {
-            error: m["events.errors.edit"](),
+            rollbackError: m["events.errors.edit"](),
             onBefore() {
                 if (draft.startsAt.compare(draft.endsAt) >= 0) {
                     toaster.error(m["common.invalid-time-range"]());
                     return false;
                 }
             },
-            onSuccess() {
+            onStart() {
                 Push.subscription.ahtung(m["events.reminder-ahtung"]());
                 void editView.back();
             }

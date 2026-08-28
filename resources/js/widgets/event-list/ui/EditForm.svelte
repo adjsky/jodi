@@ -22,9 +22,9 @@
     import { dispatchInput } from "$/shared/lib/dom/dispatch-input";
     import { tick, untrack } from "svelte";
 
+    import { destroy as optimistic_destroy } from "../api/destroy";
     import { edit } from "../api/edit";
     import { visitOptions } from "../cfg/inertia";
-    import { editView } from "../model/view";
 
     import type { EventData } from "$/entities/event";
     import type { RecurrenceScope } from "$/entities/recurrence";
@@ -132,6 +132,7 @@
             {/snippet}
             {#snippet destroy()}
                 <DeleteItem
+                    {...optimistic_destroy(event)}
                     {...visitOptions}
                     href={DestroyEvent(event.id)}
                     title={{
@@ -148,7 +149,6 @@
                         all: m["events.recurrence-action.all"]()
                     }}
                     deferHistoryViewFrames={DEFER_FRAMES.SHEET + 1}
-                    onSuccess={() => editView.back()}
                 />
             {/snippet}
             {#snippet repeat()}

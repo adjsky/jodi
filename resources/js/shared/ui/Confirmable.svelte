@@ -17,7 +17,7 @@
             portal?: boolean;
             trigger?: Snippet<[() => HTMLAttributes<HTMLElement>]>;
             content?: Snippet;
-            onConfirm?: () => boolean | void;
+            onConfirm?: VoidFunction;
             onAbort?: VoidFunction;
         };
 
@@ -78,9 +78,8 @@
                 <Button
                     type="button"
                     onclick={() => {
-                        if (onConfirm?.() !== false) {
-                            open = false;
-                        }
+                        open = false;
+                        onConfirm?.();
                     }}
                 >
                     {m["common.yes"]()}

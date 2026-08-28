@@ -43,12 +43,12 @@
     });
 
     $effect(() => {
-        if (searchParams["target"] !== "event") return;
+        if (searchParams["target"] != "event") return;
 
         const sid = searchParams["id"];
         if (!sid || isNaN(Number(sid))) return;
 
-        const event = events.find((t) => t.id === Number(sid));
+        const event = events.find((t) => t.id == Number(sid));
         if (!event) return;
 
         void editView.replace({
@@ -57,6 +57,8 @@
         });
     });
 </script>
+
+<EditSheet bind:open={() => editView.isOpen(), () => editView.back()} {event} />
 
 <section {...rest} class={tw("px-4", rest.class)}>
     <div class="flex items-center gap-1.5">
@@ -105,9 +107,4 @@
             {/each}
         {/if}
     </div>
-
-    <EditSheet
-        bind:open={() => editView.isOpen(), () => editView.back()}
-        {event}
-    />
 </section>

@@ -101,8 +101,8 @@
     <div class="mt-4 mb-safe-offset-5 flex grow items-end safe-area-keyboard">
         <Button
             type="button"
-            disabled={Number(interval) === 0 ||
-                (limit === "count" && Number(count) === 0)}
+            disabled={Number(interval) == 0 ||
+                (limit == "count" && Number(count) == 0)}
             onclick={onApply}
         >
             {m["recurrence.custom.apply"]()}

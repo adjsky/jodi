@@ -158,8 +158,9 @@
         "errors": {
             "complete": "Couldn't complete task. Please try again.",
             "edit": "Couldn't update task. Please try again.",
-            "category": "Couldn't delete category. Please try again.",
-            "reorder": "Couldn't reorder tasks. Please try again."
+            "delete-category": "Couldn't delete category. Please try again.",
+            "reorder": "Couldn't reorder tasks. Please try again.",
+            "destroy": "Couldn't delete task. Please try again."
         },
         "placeholders": {
             "title": {
@@ -219,7 +220,8 @@
             "more": "More"
         },
         "errors": {
-            "edit": "Couldn't update event. Please try again."
+            "edit": "Couldn't update event. Please try again.",
+            "destroy": "Couldn't delete event. Please try again."
         },
         "placeholders": {
             "title": {
@@ -337,35 +339,44 @@
             "no-invitations": "Looks like you have nothing here. Let's add someone.",
             "waiting": "Waiting...",
             "share": "Share the invitation link",
-            "not-found": "Looks like this invitation has wandered off. It may have already been accepted or removed.",
-            "list-error": "Couldn't load your list of invitations.",
-            "create-error": "Couldn't create the invitation. Please try again.",
             "invite": "Invite",
             "delete": "Delete",
             "delete-ahtung": "Are you sure you want to delete this invitation?",
-            "delete-success": "Successfuly deleted invitation.",
-            "delete-error": "Couldn't delete the invitation. Please try again.",
             "waiting-for-registration": "Waiting for user registration.",
-            "add": "Add"
+            "add": "Add",
+            "errors": {
+                "list": "Couldn't load your list of invitations.",
+                "not-found": "Looks like this invitation has wandered off. It may have already been accepted or removed.",
+                "create": "Couldn't create the invitation. Please try again.",
+                "delete": "Couldn't delete the invitation. Please try again."
+            }
         },
         "friends": {
             "no-friends": "You have no friends. What a shame.",
             "add": "Add",
-            "error": "Couldn't load your list of friends."
+            "errors": {
+                "list": "Couldn't load your list of friends."
+            }
         },
         "language": {
-            "error": "Couldn't update language preference. Please try again."
+            "errors": {
+                "update": "Couldn't update language preference. Please try again."
+            }
         },
         "week-start": {
             "monday": "Monday",
             "sunday": "Sunday",
-            "error": "Couldn't update week start preference. Please try again."
+            "errors": {
+                "update": "Couldn't update week start preference. Please try again."
+            }
         },
         "notifications": {
             "push": "Push",
             "mail": "Mail",
             "allow": "Allow push notifications",
-            "error": "Couldn't update notification preference. Please try again."
+            "errors": {
+                "update": "Couldn't update notification preference. Please try again."
+            }
         }
     }
 }

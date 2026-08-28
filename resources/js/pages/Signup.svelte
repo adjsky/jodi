@@ -30,6 +30,7 @@
         </Intro>
         <Form
             action={RegisterUser(code, { mergeQuery: {} })}
+            showProgress={false}
             class="mt-13 space-y-4"
         >
             {#snippet children({ processing, errors })}
@@ -43,7 +44,7 @@
                 >
                     {#snippet indicator()}<AtSign />{/snippet}
                 </TextField>
-                <Button type="submit" disabled={processing}>
+                <Button type="submit" loading={processing}>
                     {m["signup.step.start.submit"]()}
                 </Button>
             {/snippet}
