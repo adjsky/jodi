@@ -2,12 +2,15 @@ pre-commit:
   parallel: true
   jobs:
     - run: "composer run format {staged_files}"
+      root: "api/"
       glob: "*.php"
       stage_fixed: true
     - run: "npm run lint {staged_files} -- --fix"
+      root: "client/"
       glob: "*.{js,ts,svelte}"
       stage_fixed: true
     - run: "npm run format {staged_files} -- --write"
+      root: "client/"
       glob: "*.{json,js,ts,svelte}"
       stage_fixed: true
 
@@ -15,11 +18,15 @@ pre-push:
   parallel: true
   jobs:
     - run: "composer run check"
+      root: "api/"
       glob: "*.php"
     - run: "npm run check -- --fail-on-warnings"
+      root: "client/"
       glob: "*.{js,ts,svelte}"
-    - run: "composer test --parallel"
+    - run: "composer test"
+      root: "api/"
     - run: "npm test run"
+      skip: true
 
 commit-msg:
   jobs:

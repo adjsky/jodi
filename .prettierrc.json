@@ -25,10 +25,14 @@
         "<TYPES>"
     ],
 
-    "tailwindFunctions": ["tw"],
-    "tailwindStylesheet": "resources/css/app.css",
-
     "overrides": [
+        {
+            "files": "client/**",
+            "options": {
+                "tailwindFunctions": ["tw"],
+                "tailwindStylesheet": "client/src/app.css"
+            }
+        },
         { "files": "*.svelte", "options": { "parser": "svelte" } },
         {
             "files": "**/*.{yml,yaml}",

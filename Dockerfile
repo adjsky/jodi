@@ -1,5 +1,5 @@
 ARG PHP_VERSION=8.4
-ARG NODE_VERSION=24.12.0
+ARG NODE_VERSION=24.19.0
 
 ###################################################################
 # Stage 1: Base                                                   #
@@ -70,7 +70,6 @@ COPY --chown=${USER}:${USER} . .
 
 USER ${USER}
 
-ENV APP_NAME=Jodi
 ENV APP_ENV=production
 ENV APP_DEBUG=false
 

@@ -1,9 +1,9 @@
 ---
 paths:
-  - 'app/**'
+  - 'api/app/**'
 ---
 
 # App
 
-## Immutable application dates
-Treat application dates as CarbonImmutable values and use now() for the current application time.
+## Use immutable application dates by default
+Keep Laravel's date factory configured for CarbonImmutable; use explicit Carbon instances only where mutation-based date transformations are intentional.

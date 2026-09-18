@@ -1,0 +1,101 @@
+<script module lang="ts">
+    type Callbacks = {
+        onAccept?: () => MaybePromise;
+        onDecline?: () => MaybePromise;
+    };
+
+    type Banner = Callbacks & {
+        id: string;
+        title: string;
+        action?: string;
+        closeable: boolean;
+    };
+
+    let banners: Banner[] = $state([]);
+
+    type CreateActionBannerOptions = Callbacks & {
+        id?: string;
+        action?: string;
+        closeable?: boolean;
+        autoclose?: boolean;
+    };
+
+    export function createActionBanner(
+        title: string,
+        options?: CreateActionBannerOptions
+    ): string {
+        const {
+            id = nanoid(),
+            action,
+            closeable = false,
+            autoclose = true,
+            onAccept,
+            onDecline
+        } = options ?? {};
+
+        banners.push({
+            id,
+            title,
+            action,
+            closeable,
+            async onAccept() {
+                await onAccept?.();
+
+                if (autoclose) {
+                    destroyActionBanner(id);
+                }
+            },
+            async onDecline() {
+                await onDecline?.();
+
+                if (autoclose) {
+                    destroyActionBanner(id);
+                }
+            }
+        });
+
+        return id;
+    }
+
+    export function destroyActionBanner(id: string): void {
+        banners = banners.filter((banner) => id != banner.id);
+    }
+</script>
+
+<script lang="ts">
+    import { X } from "@lucide/svelte";
+    import { nanoid } from "nanoid";
+
+    import Button from "./Button.svelte";
+
+    import type { MaybePromise } from "#shared/lib/async/types.ts";
+
+    const banner = $derived(banners[0]);
+</script>
+
+{#if banner}
+    <div
+        class="relative m-1 flex items-center justify-between gap-2 rounded-2xl border border-cream-400 bg-white px-3 py-3"
+    >
+        <h3 class={["text-ms font-semibold", banner.closeable && "mr-5 "]}>
+            {banner.title}
+        </h3>
+        {#if banner.closeable}
+            <button
+                class="absolute top-0.5 right-1 p-2"
+                onclick={() => banner.onDecline?.()}
+            >
+                <X class="text-xl" />
+            </button>
+        {/if}
+        {#if banner.action}
+            <Button
+                type="button"
+                class="h-auto w-max rounded-lg px-2 py-1 text-ms"
+                onclick={() => banner.onAccept?.()}
+            >
+                {banner.action}
+            </Button>
+        {/if}
+    </div>
+{/if}

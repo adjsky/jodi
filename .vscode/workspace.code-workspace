@@ -1,0 +1,40 @@
+{
+    "folders": [
+        {
+            "name": "root",
+            "path": ".."
+        },
+        {
+            "name": "api",
+            "path": "../api"
+        },
+        {
+            "name": "client",
+            "path": "../client"
+        }
+    ],
+    "settings": {
+        "Laravel.basePath": "api",
+
+        "phpstan.rootDir": "${workspaceFolder:api}",
+        "phpstan.binPath": "${workspaceFolder:api}/vendor/bin/phpstan",
+        "phpstan.configFile": "${workspaceFolder:api}/phpstan.neon",
+        "phpstan.memoryLimit": "1G",
+
+        "js/ts.tsdk.path": "node_modules/typescript/lib",
+        "js/ts.preferences.importModuleSpecifierEnding": "js",
+
+        "eslint.validate": ["javascript", "typescript", "svelte"],
+
+        "editor.quickSuggestions": {
+            "strings": true
+        },
+        "files.associations": {
+            "*.css": "tailwindcss"
+        },
+
+        "[php]": {
+            "editor.defaultFormatter": "laravel.vscode-laravel"
+        }
+    }
+}

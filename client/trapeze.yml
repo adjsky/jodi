@@ -1,0 +1,14 @@
+vars:
+  CAPACITOR_APP_NAME:
+  CAPACITOR_APP_ID:
+  BUILD_VERSION:
+    default: 1.0.0
+  BUILD_NUMBER:
+    default: 1
+
+platforms:
+  android:
+    versionName: $BUILD_VERSION
+    versionCode: $BUILD_NUMBER
+    appName: $CAPACITOR_APP_NAME
+    packageName: $CAPACITOR_APP_ID

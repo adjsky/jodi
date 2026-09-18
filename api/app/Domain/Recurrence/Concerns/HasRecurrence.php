@@ -1,0 +1,265 @@
+<?php
+
+declare(strict_types=1);
+
+namespace App\Domain\Recurrence\Concerns;
+
+use App\Domain\Recurrence\Models\RecurrenceException;
+use Carbon\Carbon;
+use Carbon\CarbonInterface;
+use Illuminate\Support\Arr;
+use Illuminate\Support\Collection;
+use RRule\RRule;
+
+/**
+ * @property ?string $occurs_at
+ * @property ?string $recurring_since
+ */
+trait HasRecurrence
+{
+    public function occurrencesBetween(CarbonInterface $viewStart, CarbonInterface $viewEnd): Collection
+    {
+        $recurrStartKey = $this->recurrenceStartKey();
+        $recurrEndKey = $this->recurrenceEndKey();
+
+        $dtstart = $this->getAttribute($recurrStartKey);
+        $dtend = $recurrEndKey ? $this->getAttribute($recurrEndKey) : null;
+
+        if ($dtend) {
+            $endDayOffset = $dtstart
+                ->clone()
+                ->startOfDay()
+                ->diffInDays($dtend->clone()->startOfDay());
+        } else {
+            $endDayOffset = 0;
+        }
+
+        if ($this->rrule == null) {
+            $model = $this->replicate();
+            $model->id = $this->id;
+
+            return collect([$model]);
+        }
+
+        $rrule = new RRule($this->rrule, $dtstart);
+
+        if ($dtend) {
+            $candidateViewStart = $viewStart
+                ->clone()
+                ->subDays($endDayOffset);
+        } else {
+            $candidateViewStart = $viewStart;
+        }
+
+        $occurrences = collect($rrule->getOccurrencesBetween($candidateViewStart, $viewEnd))
+            ->keyBy(fn ($dt) => Carbon::instance($dt)->toDateString())
+            ->map(fn ($dt) => Carbon::instance($dt));
+
+        $exceptions = $this->recurrenceExceptions->keyBy(
+            fn ($e) => $e->occurs_at->toDateString()
+        );
+
+        foreach ($exceptions as $datestr => $exception) {
+            if ($exception->is_cancelled) {
+                $occurrences->forget($datestr);
+
+                continue;
+            }
+
+            $overrides = $exception->overrides;
+
+            $hasStartOverride = isset($overrides[$recurrStartKey]);
+            $hasEndOverride = $recurrEndKey && isset($overrides[$recurrEndKey]);
+
+            if (! $hasStartOverride && ! $hasEndOverride) {
+                continue;
+            }
+
+            $date = Carbon::parse($datestr);
+
+            if ($hasStartOverride) {
+                $start = Carbon::parse($overrides[$recurrStartKey]);
+            } else {
+                $start = $date->clone()->setTimeFrom($dtstart);
+            }
+
+            if ($recurrEndKey) {
+                if ($hasEndOverride) {
+                    $end = Carbon::parse($overrides[$recurrEndKey]);
+                } else {
+                    $end = $date->clone()->addDays($endDayOffset)->setTimeFrom($dtend);
+                }
+
+                $overlaps = $start->lte($viewEnd) && $end->gt($viewStart);
+            } else {
+                $overlaps = $start->between($viewStart, $viewEnd);
+            }
+
+            if ($overlaps) {
+                $occurrences->put($datestr, $date);
+            } else {
+                $occurrences->forget($datestr);
+            }
+        }
+
+        return $occurrences
+            ->map(function ($date, $datestr) use ($dtstart, $exceptions) {
+                $exception = $exceptions->get($datestr);
+
+                $model = $this->replicate();
+                $model->id = $this->id;
+                $model->occurs_at = $datestr;
+                $model->recurring_since = $dtstart->toDateString();
+
+                foreach ($this->listDateAttributes() as $key) {
+                    if (isset($exception->overrides[$key])) {
+                        continue;
+                    }
+
+                    $attribute = $this->getAttribute($key);
+
+                    if ($attribute == null) {
+                        continue;
+                    }
+
+                    $offset = $dtstart->diffInDays($attribute);
+                    $model->setAttribute($key, $date->clone()->addDays($offset)->setTimeFrom($attribute));
+                }
+
+                if ($exception) {
+                    foreach ($exception->overrides as $key => $value) {
+                        $model->setAttribute($key, $value);
+                    }
+                }
+
+                return $model;
+            })
+            ->filter(function ($m) use ($recurrEndKey, $recurrStartKey, $viewStart, $viewEnd) {
+                if (! $recurrEndKey) {
+                    return true;
+                }
+
+                $dtstart = $m->getAttribute($recurrStartKey);
+                $dtend = $m->getAttribute($recurrEndKey);
+
+                return $dtstart->lte($viewEnd) && $dtend->gt($viewStart);
+            })
+            ->values();
+    }
+
+    public function applyException(string $occursAt, array $overrides, ?RecurrenceException $existingException): void
+    {
+        if ($existingException != null) {
+            $existingException->update([
+                'overrides' => [...$existingException->overrides, ...$overrides],
+            ]);
+        } else {
+            $this->recurrenceExceptions()->create(
+                ['occurs_at' => $occursAt, 'is_cancelled' => false, 'overrides' => $overrides]
+            );
+        }
+    }
+
+    public function findException(string $occursAt): ?RecurrenceException
+    {
+        return $this->recurrenceExceptions()
+            ->where('occurs_at', '=', $occursAt)
+            ->sharedLock()
+            ->first();
+    }
+
+    public function deleteExceptions(?string $occursAt = null): void
+    {
+        $query = $this->recurrenceExceptions();
+
+        if ($occursAt) {
+            $query = $query->where('occurs_at', '=', $occursAt);
+        }
+
+        $query->delete();
+    }
+
+    public function resetExceptions(array $attributes): void
+    {
+        $this->recurrenceExceptions()->each(function ($exception) use ($attributes) {
+            $exception->overrides = Arr::except($exception->overrides, $attributes);
+
+            if (count($exception->overrides) === 0 && ! $exception->is_cancelled) {
+                $exception->delete();
+            } else {
+                $exception->save();
+            }
+        });
+    }
+
+    public function computeOccurrenceOverrides(string $occursAt, array $attributes, ?RecurrenceException $exception): array
+    {
+        $overrides = [];
+        $dateKeys = $this->listDateAttributes();
+        $dtstart = $this->getAttribute($this->recurrenceStartKey());
+
+        foreach ($attributes as $key => $value) {
+            if (in_array($key, $dateKeys)) {
+                $attribute = $this->getAttribute($key);
+
+                if ($attribute == null) {
+                    if ($attribute !== $value) {
+                        $overrides[$key] = $value;
+                    }
+
+                    continue;
+                }
+
+                $offset = $dtstart->diffInDays($attribute);
+                $exceptionOverrides = $exception->overrides ?? [];
+
+                if (Arr::exists($exceptionOverrides, $key)) {
+                    $current = Carbon::parse($exceptionOverrides[$key]);
+                } else {
+                    $current = Carbon::parse($occursAt)->addDays($offset)->setTimeFrom($attribute);
+                }
+
+                if ($current->ne($value)) {
+                    $overrides[$key] = $value;
+                }
+            } else {
+                $current = $exception?->overrides[$key] ?? $this->getAttribute($key);
+
+                if ($current !== $value) {
+                    $overrides[$key] = $value;
+                }
+            }
+        }
+
+        return $overrides;
+    }
+
+    public function cancelOccurrence(string $occursAt): void
+    {
+        $this->recurrenceExceptions()->updateOrCreate(
+            ['occurs_at' => $occursAt],
+            ['is_cancelled' => true, 'overrides' => []]
+        );
+    }
+
+    public function normalizeRecurringDataForUpdate(array &$data, string $occursAt): void
+    {
+        if (Carbon::parse($data[$this->recurrenceStartKey()])->isSameDay($occursAt)) {
+            $start = $this->getAttribute($this->recurrenceStartKey());
+
+            foreach ($this->listDateAttributes() as $key) {
+                if (isset($data[$key])) {
+                    $data[$key] = Carbon::parse($data[$key])->setDateFrom($start);
+                }
+            }
+        }
+    }
+
+    protected function listDateAttributes(): array
+    {
+        return collect($this->getCasts())
+            ->filter(fn ($cast) => str_starts_with($cast, 'date'))
+            ->keys()
+            ->toArray();
+    }
+}

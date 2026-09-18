@@ -1,9 +1,9 @@
 ---
 paths:
-  - 'app/Domain/*/Data/**'
+  - 'api/app/Domain/*/Data/**'
 ---
 
 # Data
 
-## Domain data objects use JodiData
-Represent domain input, internal, and output payloads with classes extending JodiData under the matching Data subdirectory.
+## Use JodiData for domain payloads
+Represent input, internal, output, and value-object payloads with JodiData subclasses in the owning domain.
