@@ -3,6 +3,7 @@ import { fileURLToPath } from "node:url";
 import { includeIgnoreFile } from "@eslint/compat";
 import js from "@eslint/js";
 import pluginQuery from "@tanstack/eslint-plugin-query";
+import resulto from "eslint-plugin-resulto";
 import svelte from "eslint-plugin-svelte";
 import { defineConfig } from "eslint/config";
 import globals from "globals";
@@ -14,6 +15,7 @@ export default defineConfig(
     includeIgnoreFile(gitignorePath),
     js.configs.recommended,
     ...ts.configs.recommended,
+    resulto.configs.recommended,
     ...svelte.configs.recommended,
     ...pluginQuery.configs["flat/recommended-strict"],
     {
