@@ -2,6 +2,8 @@ import { goto } from "$app/navigation";
 import { page } from "$app/state";
 
 export type OverlayName =
+    | "login/get-started"
+    | "login/email"
     | "create-entry"
     | "create-todo"
     | "create-event"
@@ -48,7 +50,7 @@ function isOpen(
 
 async function open(
     name: OverlayName,
-    meta: OverlayMeta | null,
+    meta: OverlayMeta | null = null,
     options?: { replace?: boolean }
 ): Promise<void> {
     return goto("", {

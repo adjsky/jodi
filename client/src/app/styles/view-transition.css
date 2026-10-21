@@ -7,22 +7,13 @@
         view-transition-name: app;
     }
 
-    ::view-transition-group(app) {
-        /*
-        TODO: Apply clip-path to prevent nprogress from being captured in view
-              transitions. Keep this hack until element-scoped view transitions
-              are supported in all major browsers.
-        */
-        clip-path: inset(calc(env(safe-area-inset-top, 0px) + 3px) 0 0 0);
-    }
-
-    ::view-transition-old(app) {
+    :root:active-view-transition-type(forward)::view-transition-old(app) {
         animation:
             80ms cubic-bezier(0.4, 0, 1, 1) both fade-out,
             260ms cubic-bezier(0.4, 0, 0.2, 1) both slide-to-left;
     }
 
-    ::view-transition-new(app) {
+    :root:active-view-transition-type(forward)::view-transition-new(app) {
         animation:
             180ms cubic-bezier(0, 0, 0.2, 1) 80ms both fade-in,
             260ms cubic-bezier(0.4, 0, 0.2, 1) both slide-from-right;

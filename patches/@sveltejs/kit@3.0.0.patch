@@ -1,0 +1,40 @@
+--- a/src/runtime/client/client.js	
++++ b/src/runtime/client/client.js	
+@@ -3360,8 +3360,24 @@
+ 				// This happens with hash links and `pushState`/`replaceState`. The
+ 				// exception is if we haven't navigated yet, since we could have
+ 				// got here after a modal navigation then a reload
+ 
++                const nav = create_navigation(
++                    current,
++                    shallow_intent,
++                    url,
++                    'popstate',
++                    scroll,
++                    true,
++                    shallow_target ?? undefined
++                );
++
++                await run_on_navigate_callbacks({
++                    ...nav.navigation,
++                    delta,
++                    event
++                });
++
+ 				blur_active_element(reset);
+ 
+ 				update_page({
+ 					state,
+@@ -3371,8 +3387,12 @@
+ 				update_url(url);
+ 
+ 				if (reset && scroll) scrollTo(scroll.x, scroll.y);
+ 				restore_navigation_snapshot(current_history_index, current_registrations());
++
++                await settled();
++                nav.fulfil();
++
+ 				// the token above aborted any in-flight navigation, and nothing else will clear it
+ 				is_navigating = false;
+ 				set_navigation(null);
+ 				return;

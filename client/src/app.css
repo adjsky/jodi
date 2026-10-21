@@ -197,15 +197,6 @@
         height: 1em;
     }
 
-    #nprogress .bar {
-        height: 3px !important;
-        top: env(safe-area-inset-top, 0px) !important;
-
-        .peg {
-            display: none !important;
-        }
-    }
-
     [data-scope="dialog"][data-part="content"][data-state="closed"],
     [data-scope="dialog"][data-part="backdrop"][data-state="closed"] {
         pointer-events: none;

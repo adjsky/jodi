@@ -1,4 +1,5 @@
 /.idea
+.corepack/
 node_modules/
 .direnv/
 Thumbs.db

@@ -33,10 +33,14 @@
         </h1>
     </div>
     <div class="mt-auto space-y-2.5">
-        <Button type="button" onclick={() => Overlay.open("calendar", null)}>
+        <Button type="button" onclick={() => Overlay.open("login/get-started")}>
             {m["login.get-started"]()}
         </Button>
-        <Button type="button" variant="secondary">
+        <Button
+            type="button"
+            variant="secondary"
+            onclick={() => Overlay.open("login/email")}
+        >
             {m["login.log-in"]()}
         </Button>
     </div>
@@ -48,7 +52,8 @@
 </main>
 
 <ScreenView.Overlay
-    bind:open={() => Overlay.isOpen("calendar"), () => Overlay.close()}
+    bind:open={() => Overlay.isOpen("login/email"), () => Overlay.close()}
 >
     <ScreenView.Header />
+    <ScreenView.Content></ScreenView.Content>
 </ScreenView.Overlay>

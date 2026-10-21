@@ -32,5 +32,9 @@
         "lefthook": true,
         "protobufjs": true,
         "sharp": true
+    },
+    "packageManager": "npm@12.2.0",
+    "patchedDependencies": {
+        "@sveltejs/kit@3.0.0": "patches/@sveltejs/kit@3.0.0.patch"
     }
 }

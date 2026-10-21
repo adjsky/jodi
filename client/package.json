@@ -43,7 +43,6 @@
         "@tailwindcss/forms": "^0.5.11",
         "@tailwindcss/vite": "^4.3.3",
         "@tanstack/svelte-query": "^6.2.1",
-        "@tanstack/svelte-query-devtools": "^6.3.0",
         "@trapezedev/configure": "^7.1.10",
         "@types/js-cookie": "^3.0.6",
         "better-typescript-lib": "^2.12.0",

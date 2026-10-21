@@ -8,12 +8,6 @@ import {
 } from "$app/env/public";
 import * as z from "zod";
 
-declare global {
-    interface Window {
-        __JODI_APP_CONFIG__: unknown;
-    }
-}
-
 const AppConfigSchema = z.object({
     url: z.url(),
     firebase: z.object({
