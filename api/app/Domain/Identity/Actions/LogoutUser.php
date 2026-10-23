@@ -27,12 +27,15 @@ class LogoutUser extends JodiAction
         switch (true) {
             case $accessToken instanceof PersonalAccessToken:
                 $accessToken->delete();
+                break;
 
             case $accessToken instanceof TransientToken:
                 Auth::guard('web')->logout();
 
                 $request->session()->invalidate();
                 $request->session()->regenerateToken();
+
+                break;
         }
 
         return response()->noContent();

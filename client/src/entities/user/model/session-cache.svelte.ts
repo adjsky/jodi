@@ -1,5 +1,6 @@
 import { db } from "#shared/db/dexie.ts";
 import { liveQuery } from "dexie";
+import { isHTTPError } from "ky";
 
 import { getCurrentSession } from "../api/session.ts";
 
@@ -34,8 +35,18 @@ async function hydrate(): Promise<void> {
         return;
     }
 
-    const session = await getCurrentSession();
-    await set(session);
+    try {
+        const session = await getCurrentSession();
+        await set(session);
+    } catch (e) {
+        if (isHTTPError(e) && e.response.status === 401) {
+            // Swallow error, we don't want to pollute the console with errors
+            // that are handled.
+            return;
+        }
+
+        throw e;
+    }
 }
 
 async function set(session: SessionCache): Promise<void> {

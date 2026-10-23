@@ -182,14 +182,12 @@ return [
      * the data classes. You can override these settings by passing options to the command.
      */
     'commands' => [
-
         /*
          * Provides default configuration for the `make:data` command. These settings can be overridden with options
          * passed directly to the `make:data` command for generating single Data classes, or if not set they will
          * automatically fall back to these defaults. See `php artisan make:data --help` for more information
          */
         'make' => [
-
             /*
              * The default namespace for generated Data classes. This exists under the application's root namespace,
              * so the default 'Data` will end up as '\App\Data', and generated Data classes will be placed in the

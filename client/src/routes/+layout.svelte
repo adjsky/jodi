@@ -5,6 +5,7 @@
     import { SplashScreen } from "@capacitor/splash-screen";
     import { QueryClient, QueryClientProvider } from "@tanstack/svelte-query";
     import * as ViewTransition from "#app/init/view-transition.ts";
+    import { SessionCache } from "#entities/user/mod.ts";
     import { m } from "#paraglide/messages.js";
     import { Swiper } from "#shared/capabilities/swiper/mod.ts";
     import { VirtualKeyboard } from "#shared/capabilities/virtual-keyboard/mod.ts";
@@ -29,11 +30,9 @@
     });
 
     onMount(() => {
-        void SplashScreen.hide();
-    });
-
-    onMount(() => {
         window.__TANSTACK_QUERY_CLIENT__ = queryClient;
+        void SessionCache.hydrate();
+        void SplashScreen.hide();
     });
 
     // $effect.pre(() => {

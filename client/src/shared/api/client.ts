@@ -95,6 +95,13 @@ export const api = ky.create({
                             toaster.error(m["common.errors.permission"]());
                             break;
                         }
+
+                        case 429: {
+                            toaster.error(
+                                m["common.errors.too-many-requests"]()
+                            );
+                            break;
+                        }
                     }
                 } else if (isNetworkError(error)) {
                     toaster.error(m["common.errors.internet"]());

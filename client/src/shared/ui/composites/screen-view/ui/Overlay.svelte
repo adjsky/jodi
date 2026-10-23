@@ -43,6 +43,9 @@
                 onDismiss() {
                     open = false;
                 },
+                onRequestDismiss(e) {
+                    e.preventDefault();
+                },
                 onFocusOutside(e) {
                     e.preventDefault();
                 },

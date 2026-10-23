@@ -1,27 +1,31 @@
 <script
     lang="ts"
-    generics="DataSchema extends StandardSchemaV1 | undefined = undefined"
+    generics="InputSchema extends z.ZodType | undefined = undefined, DataSchema extends StandardSchemaV1 | undefined = undefined"
 >
     import { m } from "#paraglide/messages.js";
     import { useLoadingDebounce } from "#shared/lib/svelte/use-loading-debounce.svelte.ts";
     import { isHTTPError, isNetworkError } from "ky";
-    import * as v from "valibot";
+    import * as z from "zod";
 
     import { api } from "../api/client.ts";
     import { toaster } from "./toaster.ts";
 
+    import type { MaybePromise } from "#shared/lib/async/types.ts";
     import type { RouteDefinition } from "#wayfinder/wayfinder/index.ts";
     import type { StandardSchemaV1, StandardSchemaV1InferOutput } from "ky";
     import type { Snippet } from "svelte";
     import type { SvelteHTMLElements } from "svelte/elements";
     import type { Except } from "type-fest";
-    import type { GenericSchema } from "valibot";
 
-    const ApiErrorValidationSchema = v.object({
-        errors: v.record(v.string(), v.tupleWithRest([v.string()], v.string()))
+    const ApiErrorValidationSchema = z.object({
+        errors: z.record(z.string(), z.tuple([z.string()], z.string()))
     });
 
     type FormErrors = Record<string, [string, ...string[]] | undefined>;
+
+    type Input = InputSchema extends z.ZodType
+        ? z.infer<InputSchema>
+        : Record<string, unknown>;
 
     type Data = DataSchema extends StandardSchemaV1
         ? StandardSchemaV1InferOutput<DataSchema>
@@ -39,14 +43,15 @@
     > & {
         action: RouteDefinition<"post" | "put" | "patch" | "delete">;
         children?: Snippet<[FormState]>;
-        inputSchema?: GenericSchema;
+        inputSchema?: InputSchema;
         dataSchema?: DataSchema;
         disableWhileProcessing?: boolean;
+        transform?: (input: Input) => MaybePromise<unknown>;
         onBefore?: () => boolean | void;
         onSubmit?: VoidFunction;
         onValidationError?: (errors: FormErrors) => void;
         onRateLimit?: (retryAfter: number) => void;
-        onSuccess?: (data: Data) => void;
+        onSuccess?: (data: Data) => MaybePromise<void>;
         onHttpError?: (status: number, message: string) => void;
         onFinish?: VoidFunction;
     };
@@ -57,6 +62,7 @@
         inputSchema,
         dataSchema,
         disableWhileProcessing = false,
+        transform,
         onBefore,
         onSubmit,
         onValidationError,
@@ -88,15 +94,19 @@
         );
 
         if (inputSchema) {
-            const result = v.safeParse(inputSchema, json);
+            const result = z.safeParse(inputSchema, json);
 
             if (!result.success) {
-                errors = v.flatten(result.issues).nested ?? {};
+                errors = z.flattenError(result.error).fieldErrors;
                 onValidationError?.(errors);
                 return;
             }
 
-            json = result.output;
+            json = result.data;
+        }
+
+        if (transform) {
+            json = await transform(json as Input);
         }
 
         submitting = true;
@@ -119,28 +129,27 @@
                 }
             }
 
-            onSuccess?.(data as Data);
+            await onSuccess?.(data as Data);
         } catch (e) {
             if (isHTTPError(e)) {
                 const { response } = e;
 
                 switch (response.status) {
                     case 422: {
-                        const result = v.safeParse(
+                        const result = z.safeParse(
                             ApiErrorValidationSchema,
                             e.data
                         );
 
                         if (result.success) {
-                            errors = result.output.errors;
+                            errors = result.data.errors;
                             onValidationError?.(errors);
                         }
 
                         break;
                     }
 
-                    // These are handled by api client, we don't need to do
-                    // anyhing here.
+                    // These are handled by api client, we don't need to do anyhing here.
                     case 401:
                     case 403: {
                         break;
@@ -157,15 +166,19 @@
                     }
 
                     default: {
-                        onHttpError?.(
-                            response.status,
+                        const message =
                             typeof e.data === "object" &&
-                                e.data !== null &&
-                                "message" in e.data &&
-                                typeof e.data.message === "string"
+                            e.data !== null &&
+                            "message" in e.data &&
+                            typeof e.data.message === "string"
                                 ? e.data.message
-                                : ""
-                        );
+                                : m["common.errors.unexpected"]();
+
+                        if (onHttpError) {
+                            onHttpError(response.status, message);
+                        } else {
+                            toaster.error(message);
+                        }
                     }
                 }
             } else if (!isNetworkError(e)) {

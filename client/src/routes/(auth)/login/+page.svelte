@@ -5,7 +5,8 @@
     import { Overlay } from "#shared/capabilities/overlay/mod.svelte.ts";
     import { appConfig } from "#shared/cfg/app.ts";
     import Button from "#shared/ui/Button.svelte";
-    import { ScreenView } from "#shared/ui/composites/screen-view/mod.ts";
+    import { VerifyScreen } from "#widgets/login/mod.ts";
+    import EmailScreen from "#widgets/login/ui/EmailScreen.svelte";
 </script>
 
 <main class="bottom-circle flex h-full flex-col px-4 pb-6">
@@ -51,9 +52,5 @@
     </div>
 </main>
 
-<ScreenView.Overlay
-    bind:open={() => Overlay.isOpen("login/email"), () => Overlay.close()}
->
-    <ScreenView.Header />
-    <ScreenView.Content></ScreenView.Content>
-</ScreenView.Overlay>
+<EmailScreen />
+<VerifyScreen />

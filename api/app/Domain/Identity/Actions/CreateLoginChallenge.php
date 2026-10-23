@@ -63,13 +63,12 @@ class CreateLoginChallenge extends JodiAction
 
     public function asController(JodiRequest $request): JsonResponse
     {
-        $challenge = $this->handle(
-            CreateLoginChallengeData::from($request),
-            $request->clientIp(),
-        );
+        $data = CreateLoginChallengeData::from($request);
+
+        $challenge = $this->handle($data, $request->clientIp());
 
         $id = $challenge->id ?? strtolower((string) Str::ulid());
 
-        return response()->json(['id' => $id], 202);
+        return response()->json(['id' => $id, 'email' => $data->email], 202);
     }
 }

@@ -14,6 +14,10 @@ export class Timer {
         return this.#secondsLeft;
     }
 
+    get isRunning(): boolean {
+        return this.#secondsLeft > 0;
+    }
+
     start(seconds: number): void {
         clearInterval(this.#interval);
 

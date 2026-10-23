@@ -10,7 +10,7 @@ const config: CapacitorConfig = {
     plugins: {
         SystemBars: {
             style: "LIGHT",
-            insetsHandling: "native"
+            insetsHandling: "disable"
         },
         SplashScreen: {
             launchAutoHide: false

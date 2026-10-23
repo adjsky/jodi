@@ -4,6 +4,7 @@ import { page } from "$app/state";
 export type OverlayName =
     | "login/get-started"
     | "login/email"
+    | "login/verify"
     | "create-entry"
     | "create-todo"
     | "create-event"
@@ -22,6 +23,7 @@ export type OverlayName =
     | "me/notifications";
 
 export type OverlayMeta = {
+    loginchallenge?: { email: string; id: string };
     event?: { id: string };
     todo?: { id: string };
     calendarpicker?: { isOpen: boolean };

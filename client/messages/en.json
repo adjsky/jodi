@@ -9,7 +9,8 @@
             "unexpected": "Unexpected error happened. Please try again.",
             "internet": "",
             "unauthorized": "Please log in again.",
-            "permission": "You don't have permission to perform this action"
+            "permission": "You don't have permission to perform this action",
+            "too-many-requests": "Too many requests. Try again later."
         },
         "network": {
             "offline": "You are offline. Check your internet connection.",
@@ -112,13 +113,30 @@
         "terms": "Terms and Conditions",
         "privacy-policy": "Privacy Policy"
     },
-    "2fa": {
-        "title": "Enter 6-digit code",
-        "no-code": "You didn't receive any code?",
+    "login/email": {
+        "title": "Hello there!",
+        "placeholder": "Your email",
+        "continue": "Continue",
+        "continue-in": "Continue in {seconds}s",
+        "errors": {
+            "email": {
+                "required": "Enter your email to continue.",
+                "invalid": "That email doesn't look quite right. Check for typos."
+            }
+        }
+    },
+    "login/verify": {
+        "title": "Check your inbox",
+        "sent-to": "Code sent to",
+        "no-code": "Didn't get the code?",
         "resend": "Resend code",
         "resend-in": "Resend in {seconds}s",
-        "continue": "Continue",
-        "continue-in": "Continue in {seconds}s"
+        "sent-code": "The code has been sent.",
+        "continue": "Let me in",
+        "continue-in": "Try again in {seconds}s",
+        "errors": {
+            "code": "Enter the 6-digit code."
+        }
     },
     "home": {
         "empty-day": "Woohoo! Your day is completely free. Enjoy the downtime or click + to plan something."
