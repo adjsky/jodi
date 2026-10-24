@@ -13,7 +13,7 @@
         "build": "vite build",
         "dev": "vite",
         "lint": "eslint",
-        "format": "prettier",
+        "format": "prettier --write",
         "check": "svelte-check",
         "test": "TZ=UTC vitest",
         "capacitor:sync:after": "trapeze run trapeze.yml -y --$CAPACITOR_PLATFORM_NAME"

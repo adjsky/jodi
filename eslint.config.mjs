@@ -1,18 +1,14 @@
-import { fileURLToPath } from "node:url";
-
-import { includeIgnoreFile } from "@eslint/compat";
 import js from "@eslint/js";
 import pluginQuery from "@tanstack/eslint-plugin-query";
+import gitignore from "eslint-config-flat-gitignore";
 import resulto from "eslint-plugin-resulto";
 import svelte from "eslint-plugin-svelte";
 import { defineConfig } from "eslint/config";
 import globals from "globals";
 import ts from "typescript-eslint";
 
-const gitignorePath = fileURLToPath(new URL("./.gitignore", import.meta.url));
-
 export default defineConfig(
-    includeIgnoreFile(gitignorePath),
+    gitignore({ recursive: true, root: true, cwd: import.meta.dirname }),
     js.configs.recommended,
     ...ts.configs.recommended,
     resulto.configs.recommended,
@@ -29,7 +25,8 @@ export default defineConfig(
 
             parserOptions: {
                 projectService: true,
-                tsconfigRootDir: import.meta.dirname
+                tsconfigRootDir: import.meta.dirname,
+                extraFileExtensions: [".svelte"]
             }
         },
 
@@ -65,8 +62,6 @@ export default defineConfig(
 
         languageOptions: {
             parserOptions: {
-                projectService: true,
-                extraFileExtensions: [".svelte"],
                 parser: ts.parser
             }
         },
@@ -78,6 +73,10 @@ export default defineConfig(
     },
     {
         files: ["**/*.js", "**/*.mjs"],
-        extends: [ts.configs.disableTypeChecked]
+        extends: [ts.configs.disableTypeChecked],
+        rules: {
+            "no-undef": "error",
+            "resulto/must-use-result": "off"
+        }
     }
 );
