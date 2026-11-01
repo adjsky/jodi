@@ -1,12 +1,12 @@
-import { getLocale } from "$/paraglide/runtime";
-import { SlidingWindowSwiper } from "$/shared/integrations/swiper";
-import { rem } from "$/shared/lib/styles/rem";
+import { getLocale } from "#paraglide/runtime.js";
+import { SlidingWindowSwiper } from "#shared/capabilities/swiper/sliding-window-swiper.svelte.ts";
+import { rem } from "#shared/lib/styles/rem.ts";
 import { extract } from "runed";
 
 import { Week } from "./week.svelte";
 
 import type { CalendarDate } from "@internationalized/date";
-import type { WeekStart } from "$/shared/lib/date/types";
+import type { WeekStart } from "#shared/lib/date/types.ts";
 import type { Getter, MaybeGetter } from "runed";
 import type { SwiperContainer } from "swiper/element";
 

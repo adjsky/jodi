@@ -1,4 +1,5 @@
 import { onNavigate } from "$app/navigation";
+import { page } from "$app/state";
 
 export function init(): void {
     onNavigate((navigation) => {
@@ -6,17 +7,28 @@ export function init(): void {
             return;
         }
 
+        const wentBack = navigation.delta !== undefined && navigation.delta < 0;
+        const fromSkip = page.state.skipViewTransition;
+
         return new Promise((resolve) => {
-            document.startViewTransition({
-                types: [
-                    navigation.delta !== undefined && navigation.delta < 0
-                        ? "back"
-                        : "forward"
-                ],
+            const transition = document.startViewTransition({
+                types: [wentBack ? "back" : "forward"],
                 async update() {
                     resolve();
                     await navigation.complete;
+
+                    if (wentBack ? fromSkip : page.state.skipViewTransition) {
+                        transition.skipTransition();
+                    }
                 }
+            });
+
+            transition.ready.catch((e) => {
+                if (e instanceof DOMException && e.name === "AbortError") {
+                    return;
+                }
+
+                console.error("View transition failed: ", e);
             });
         });
     });

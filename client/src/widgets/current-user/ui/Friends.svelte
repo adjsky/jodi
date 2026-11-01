@@ -1,17 +1,17 @@
 <script lang="ts">
     import { createQuery } from "@tanstack/svelte-query";
-    import { User } from "$/entities/user";
-    import { m } from "$/paraglide/messages";
-    import Jelly from "$/shared/assets/jelly.svg";
-    import { ScreenView } from "$/shared/composites/screen-view";
-    import Button from "$/shared/ui/Button.svelte";
-    import ResourceError from "$/shared/ui/ResourceError.svelte";
-    import Skeleton from "$/shared/ui/Skeleton.svelte";
+    import { User } from "#entities/user/mod.ts";
+    import { m } from "#paraglide/messages.js";
+    import Jelly from "#shared/assets/jelly.svg";
+    import Button from "#shared/ui/Button.svelte";
+    import { ScreenView } from "#shared/ui/composites/screen-view/mod.ts";
+    import ResourceError from "#shared/ui/ResourceError.svelte";
+    import Skeleton from "#shared/ui/Skeleton.svelte";
 
     import { friendsQueryOptions } from "../api/friends";
 
-    import type { ViewProps } from "../model/view";
-    import type { FriendData } from "$/entities/user";
+    import type { ViewProps } from "../model/types.ts";
+    import type { FriendData } from "#entities/user/mod.ts";
 
     let { open = $bindable() }: ViewProps = $props();
 

@@ -1,3 +1,4 @@
+import { noop } from "#shared/lib/function/noop.ts";
 import { goto } from "$app/navigation";
 import { page } from "$app/state";
 
@@ -17,7 +18,6 @@ export type OverlayName =
     | "me/friends"
     | "me/invitations"
     | "me/invitations/add"
-    | `me/invitation/${string}`
     | "me/language"
     | "me/week-start"
     | "me/notifications";
@@ -26,6 +26,7 @@ export type OverlayMeta = {
     loginchallenge?: { email: string; id: string };
     event?: { id: string };
     todo?: { id: string };
+    invitation?: { id: string };
     calendarpicker?: { isOpen: boolean };
     timepicker?: { isOpen: boolean };
     selectcategory?: { isOpen: boolean };
@@ -53,18 +54,46 @@ function isOpen(
 async function open(
     name: OverlayName,
     meta: OverlayMeta | null = null,
-    options?: { replace?: boolean }
+    options?: { replace?: boolean; skipViewTransition?: boolean }
 ): Promise<void> {
     return goto("", {
         shallow: true,
         persistState: true,
-        state: { ...page.state, overlay: { name, meta } },
+        state: {
+            ...page.state,
+            overlay: { name, meta },
+            skipViewTransition: options?.skipViewTransition ?? false
+        },
         replace: options?.replace
     });
 }
 
-function close(levels = 1): void {
-    history.go(-levels);
+async function close(levels = 1): Promise<void> {
+    if (levels >= history.length) {
+        return;
+    }
+
+    const previousState = page.state;
+    let dispose = noop;
+    let timeout: number | undefined;
+
+    try {
+        await new Promise<void>((resolve) => {
+            let observed = false;
+            timeout = window.setTimeout(resolve, 5_000);
+            dispose = $effect.root(() => {
+                $effect(() => {
+                    if (observed || page.state === previousState) return;
+                    observed = true;
+                    resolve();
+                });
+            });
+            history.go(-levels);
+        });
+    } finally {
+        window.clearTimeout(timeout);
+        dispose();
+    }
 }
 
 export const Overlay = {

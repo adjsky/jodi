@@ -1,23 +1,24 @@
 <script lang="ts">
-    import { Form } from "@inertiajs/svelte";
     import { ChevronRight, Mail } from "@lucide/svelte";
     import { createQuery, useQueryClient } from "@tanstack/svelte-query";
-    import CreateRegistrationInvitation from "$/generated/actions/App/Domain/Identity/Actions/CreateRegistrationInvitation";
-    import { m } from "$/paraglide/messages";
-    import Dino from "$/shared/assets/dino.svg";
-    import { ScreenView } from "$/shared/composites/screen-view";
-    import { VirtualKeyboard } from "$/shared/services/virtual-keyboard";
-    import Button from "$/shared/ui/Button.svelte";
-    import ResourceError from "$/shared/ui/ResourceError.svelte";
-    import Skeleton from "$/shared/ui/Skeleton.svelte";
-    import TextField from "$/shared/ui/TextField.svelte";
+    import { m } from "#paraglide/messages.js";
+    import Dino from "#shared/assets/dino.svg";
+    import { Overlay } from "#shared/capabilities/overlay/mod.svelte.ts";
+    import { VirtualKeyboard } from "#shared/capabilities/virtual-keyboard/mod.ts";
+    import ApiForm from "#shared/ui/ApiForm.svelte";
+    import Button from "#shared/ui/Button.svelte";
+    import { ScreenView } from "#shared/ui/composites/screen-view/mod.ts";
+    import ResourceError from "#shared/ui/ResourceError.svelte";
+    import Skeleton from "#shared/ui/Skeleton.svelte";
+    import TextField from "#shared/ui/TextField.svelte";
+    import CreateRegistrationInvitation from "#wayfinder/actions/App/Domain/Identity/Actions/CreateRegistrationInvitation.ts";
+    import z from "zod";
 
     import { invitationsQueryOptions } from "../api/invitations";
-    import { buildViewName, view } from "../model/view";
     import Invitation from "./Invitation.svelte";
 
-    import type { ViewProps } from "../model/view";
-    import type { RegistrationInvitationData } from "$/entities/user";
+    import type { ViewProps } from "../model/types.ts";
+    import type { RegistrationInvitationData } from "#entities/user/mod.ts";
 
     let { open = $bindable() }: ViewProps = $props();
 
@@ -79,7 +80,7 @@
         <Button
             type="button"
             onclick={async () => {
-                await view.push(buildViewName("invitations", "add"));
+                await Overlay.open("me/invitations/add");
                 inviteInput?.focus();
             }}
             disabled={!invitations.data}
@@ -91,40 +92,39 @@
 
 <ScreenView.Overlay
     bind:open={
-        () => view.isOpen(buildViewName("invitations", "add")),
-        () => view.back()
+        () => Overlay.isOpen("me/invitations/add"), () => Overlay.close()
     }
     {@attach VirtualKeyboard.retainFocus()}
 >
     <ScreenView.Header title={m["current-user.invitations.invite"]()} />
     <ScreenView.Content class="mt-5">
-        <Form
+        <ApiForm
             action={CreateRegistrationInvitation()}
             class="flex grow flex-col"
-            options={{
-                replace: true,
-                preserveUrl: true
-            }}
-            showProgress={false}
-            onSuccess={(page) => {
+            inputSchema={z.object({
+                email: z.email({ error: m["common.errors.email"]() })
+            })}
+            dataSchema={z.object({
+                id: z.string(),
+                email: z.string(),
+                expiresAt: z.iso.datetime({ offset: true }),
+                shareUrl: z.string()
+            })}
+            onSuccess={(invitation) => {
                 queryClient.setQueryData(
                     invitationsQueryOptions.queryKey,
-                    (invitations) => [
-                        ...(invitations ?? []),
-                        page.flash.invitation
-                    ]
+                    (invitations) => [...(invitations ?? []), invitation]
                 );
-
-                void view.back();
+                Overlay.close();
             }}
         >
-            {#snippet children({ processing, errors })}
+            {#snippet children({ submitting, errors, isDirty })}
                 <TextField
                     bind:input={inviteInput}
                     type="email"
                     name="email"
                     placeholder={m["current-user.account.email"]()}
-                    error={errors.email}
+                    error={errors.email?.[0]}
                     maxlength={254}
                     required
                 >
@@ -134,29 +134,26 @@
                 <Button
                     type="submit"
                     class="mt-auto shrink-0"
-                    loading={processing}
+                    loading={submitting}
+                    disabled={!isDirty}
                 >
                     {m["current-user.invitations.invite"]()}
                 </Button>
             {/snippet}
-        </Form>
+        </ApiForm>
     </ScreenView.Content>
 </ScreenView.Overlay>
 
-<Invitation
-    bind:open={
-        () => /invitations\/(?!add$).+$/.test(view.name), () => view.back()
-    }
-/>
+<Invitation />
 
 {#snippet row(invitation?: RegistrationInvitationData)}
     <button
         type="button"
         onclick={() => {
-            if (!invitation) {
-                return;
-            }
-            void view.push(buildViewName("invitations", invitation.id));
+            if (!invitation) return;
+            void Overlay.open("me/invitations", {
+                invitation: { id: invitation.id }
+            });
         }}
         disabled={!invitation}
         class="border-gray-950 flex w-full min-w-0 items-center gap-3 rounded-xl border bg-white px-4 py-3"

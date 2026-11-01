@@ -15,7 +15,8 @@ use App\Domain\Identity\Actions\ListRegistrationInvitations;
 use App\Domain\Identity\Actions\LogoutUser;
 use App\Domain\Identity\Actions\ResendInvitationRegistrationChallenge;
 use App\Domain\Identity\Actions\ResendLoginChallenge;
-use App\Domain\Identity\Actions\UpdateUser;
+use App\Domain\Identity\Actions\UpdateUserName;
+use App\Domain\Identity\Actions\UpdateUserPreferences;
 use App\Domain\Identity\Actions\UpsertPushSubscription;
 use Illuminate\Support\Facades\Route;
 
@@ -29,8 +30,14 @@ Route::prefix('/auth')->group(function () {
     Route::prefix('/invitation-registration/challenges')->group(function () {
         Route::get('/{code}/validity', CheckRegistrationInvitation::class);
         Route::post('/{code}', CreateInvitationRegistrationChallenge::class);
-        Route::post('/{id}/complete', CompleteInvitationRegistrationChallenge::class);
-        Route::post('/{id}/resend', ResendInvitationRegistrationChallenge::class);
+        Route::post(
+            '/{id}/complete',
+            CompleteInvitationRegistrationChallenge::class,
+        );
+        Route::post(
+            '/{id}/resend',
+            ResendInvitationRegistrationChallenge::class,
+        );
     });
 });
 
@@ -39,14 +46,19 @@ Route::middleware('auth:sanctum')->group(function () {
 
     Route::prefix('/me')->group(function () {
         Route::get('/', GetCurrentSession::class);
-        Route::patch('/', UpdateUser::class);
+
+        Route::patch('/preferences', UpdateUserPreferences::class);
+        Route::patch('/name', UpdateUserName::class);
 
         Route::put('/push-subscription', UpsertPushSubscription::class);
 
         Route::prefix('/invitations')->group(function () {
             Route::post('/', CreateRegistrationInvitation::class);
             Route::get('/', ListRegistrationInvitations::class);
-            Route::delete('/{invitation}', DestroyRegistrationInvitation::class);
+            Route::delete(
+                '/{invitation}',
+                DestroyRegistrationInvitation::class,
+            );
         });
 
         Route::prefix('/friends')->group(function () {

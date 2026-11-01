@@ -118,8 +118,6 @@
 
 @layer base {
     :root {
-        --kb-height: 0px;
-
         color-scheme: light;
         scroll-behavior: smooth;
     }
@@ -244,22 +242,9 @@
         var(--edge-width);
 }
 
-@utility safe-area-keyboard {
-    --twsa-safe-area-inset-bottom: max(
-        env(safe-area-inset-bottom, 0px),
-        var(--kb-height, 0px)
-    );
-}
-
 @utility pb-keyboard-or-* {
     padding-bottom: max(
         var(--kb-height, 0px),
         --spacing(--value(integer, [integer]))
-    );
-}
-
-@utility pb-keyboard-offset-* {
-    padding-bottom: calc(
-        var(--kb-height, 0px) + --spacing(--value(integer, [integer]))
     );
 }

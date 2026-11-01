@@ -18,7 +18,7 @@
 </script>
 
 <div
-    class="flex min-h-0 grow flex-col overflow-y-auto overscroll-contain pb-safe safe-area-keyboard"
+    class="flex min-h-0 grow flex-col overflow-y-auto overscroll-contain pb-safe"
 >
     {#if isLoading}
         {#each Array.from({ length: 5 }) as _, idx (idx)}

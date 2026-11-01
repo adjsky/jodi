@@ -15,7 +15,7 @@ class RegistrationInvitationData extends JodiData
     public function __construct(
         public string $id,
         public string $email,
-        public ?CarbonInterface $expiresAt,
+        public CarbonInterface $expiresAt,
         public string $shareUrl,
     ) {}
 

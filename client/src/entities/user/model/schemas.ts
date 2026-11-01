@@ -1,4 +1,4 @@
-import * as z from "zod";
+import z from "zod";
 
 export const UserSchema = z.object({
     id: z.number(),
@@ -6,7 +6,6 @@ export const UserSchema = z.object({
     email: z.string(),
     preferences: z.object({
         locale: z.string(),
-        timezone: z.string(),
         weekStartOn: z.enum(["sunday", "monday"]),
         notifications: z.enum(["push", "mail"])
     })

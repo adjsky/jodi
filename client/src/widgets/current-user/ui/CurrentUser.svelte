@@ -1,17 +1,16 @@
 <script lang="ts">
-    import { page } from "@inertiajs/svelte";
-    import { User } from "$/entities/user";
-    import { Push } from "$/shared/services/push";
+    import { SessionCache, User } from "#entities/user/mod.ts";
+    import { Overlay } from "#shared/capabilities/overlay/mod.svelte.ts";
 
-    import { view } from "../model/view";
     import Settings from "./Settings.svelte";
 
-    const user = $derived(page.props.auth.user);
+    const session = SessionCache.retain();
+    const user = $derived(session.current.user);
 </script>
 
 <User.Avatar
     name={user.name}
-    onclick={() => view.push("me")}
-    warn={Push.subscription.needsConfiguration}
+    onclick={() => Overlay.open("me")}
+    // warn={Push.subscription.needsConfiguration}
 />
 <Settings />

@@ -4,14 +4,14 @@ import {
     startOfWeek,
     toCalendarDate
 } from "@internationalized/date";
-import { WEEK_START_MAP } from "$/shared/cfg/constants";
-import { getWeekIdxInMonth } from "$/shared/lib/date/get-week-idx-in-month";
+import { WEEK_START_MAP } from "#shared/cfg/constants.ts";
+import { getWeekIdxInMonth } from "#shared/lib/date/get-week-idx-in-month.ts";
 import { extract } from "runed";
 import { SvelteMap } from "svelte/reactivity";
 
-import type { CalendarEventData } from "./types";
+import type { CalendarEventData } from "./types.ts";
 import type { CalendarDate } from "@internationalized/date";
-import type { Locale } from "$/paraglide/runtime";
+import type { Locale } from "#paraglide/runtime";
 import type { WeekStart } from "$/shared/lib/date/types";
 import type { MaybeGetter } from "runed";
 

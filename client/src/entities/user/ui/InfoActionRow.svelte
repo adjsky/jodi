@@ -1,61 +1,38 @@
 <script lang="ts">
-    import { router } from "@inertiajs/core";
-    import { tw } from "$/shared/lib/styles/tw";
-    import { useLoadingDebounce } from "$/shared/lib/svelte/use-loading-debounce.svelte";
-    import Loader from "$/shared/ui/Loader.svelte";
+    import { tw } from "#shared/lib/styles/tw.ts";
+    import { useLoadingDebounce } from "#shared/lib/svelte/use-loading-debounce.svelte.ts";
+    import Loader from "#shared/ui/Loader.svelte";
 
-    import type { UrlMethodPair, VisitOptions } from "@inertiajs/core";
-    import type { ClassName } from "$/shared/lib/styles/tw";
     import type { Snippet } from "svelte";
+    import type { HTMLButtonAttributes } from "svelte/elements";
 
-    type Props = VisitOptions & {
-        href: string | UrlMethodPair;
-        class: ClassName;
-        loadingIndicator?: boolean;
+    type Props = HTMLButtonAttributes & {
         startIcon?: Snippet;
         endIcon?: Snippet;
         children?: Snippet;
+        isLoading?: boolean;
     };
 
     const {
-        href,
-        class: classname,
-        loadingIndicator,
         startIcon,
         endIcon,
         children,
-        ...options
+        isLoading = false,
+        ...props
     }: Props = $props();
 
-    let isLoading = $state(false);
     const isLoaderVisible = useLoadingDebounce(() => isLoading);
-
-    function onClick() {
-        router.visit(href, {
-            ...options,
-            ...(loadingIndicator && {
-                showProgress: false,
-                onStart(visit) {
-                    isLoading = true;
-                    options?.onStart?.(visit);
-                },
-                onFinish(visit) {
-                    isLoading = false;
-                    options?.onFinish?.(visit);
-                }
-            })
-        });
-    }
 </script>
 
 <button
     type="button"
+    aria-busy={isLoading}
+    disabled={isLoading}
+    {...props}
     class={tw(
         "flex h-14 w-full items-center justify-between border-cream-300 text-lg font-medium not-last:border-b disabled:cursor-not-allowed",
-        classname
+        props.class
     )}
-    onclick={onClick}
-    aria-busy={isLoading}
 >
     {#if isLoaderVisible.current}
         <Loader />

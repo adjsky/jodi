@@ -1,18 +1,15 @@
 <script lang="ts">
     import { Check } from "@lucide/svelte";
-    import { tw } from "$/shared/lib/styles/tw";
+    import { tw } from "#shared/lib/styles/tw.ts";
 
     import InfoActionRow from "./InfoActionRow.svelte";
 
-    import type { UrlMethodPair, VisitOptions } from "@inertiajs/core";
-    import type { ClassName } from "$/shared/lib/styles/tw";
     import type { Snippet } from "svelte";
+    import type { HTMLButtonAttributes } from "svelte/elements";
 
-    type Props = VisitOptions & {
-        href: string | UrlMethodPair;
+    type Props = HTMLButtonAttributes & {
         icon?: Snippet;
         children?: Snippet;
-        class?: ClassName;
         selected?: boolean;
     };
 
@@ -33,9 +30,4 @@
         selected && "font-bold",
         props.class
     )}
-    showProgress={false}
-    replace
-    preserveUrl
-    preserveState
-    preserveScroll
 />

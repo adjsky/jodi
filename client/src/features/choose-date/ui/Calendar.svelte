@@ -1,7 +1,7 @@
 <script lang="ts">
     import { DateFormatter } from "@internationalized/date";
     import { ChevronLeft, ChevronRight } from "@lucide/svelte";
-    import { CalendarEvents, YearCalendar } from "$/entities/event";
+    import { CalendarEvents, YearCalendar } from "#entities/event/mod.ts";
     import { m } from "$/paraglide/messages";
     import { getLocale } from "$/paraglide/runtime";
     import { TIMEZONE } from "$/shared/cfg/constants";

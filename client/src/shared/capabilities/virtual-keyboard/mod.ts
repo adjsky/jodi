@@ -7,8 +7,6 @@ import { onMount } from "svelte";
 import { OVERLAYS_CONTENT } from "./overlays-content.ts";
 import { retainFocus } from "./retain-focus.ts";
 
-import type { KeyboardInfo } from "@capacitor/keyboard";
-
 function init(): void {
     onMount(() => {
         if (!OVERLAYS_CONTENT) {
@@ -36,36 +34,18 @@ function init(): void {
             scrollIntoView(document.activeElement, { block: "nearest" });
         }
 
-        function updateHeight(info: KeyboardInfo) {
-            document.documentElement.style.setProperty(
-                "--kb-height",
-                `${info.keyboardHeight}px`
-            );
-
-            raf(() => {
-                revealFocusedElement();
-                revealCaret();
-            });
-        }
-
-        const willShowListener = CapKeyboard.addListener(
-            "keyboardWillShow",
-            updateHeight
-        );
-
         const didShowListener = CapKeyboard.addListener(
             "keyboardDidShow",
-            updateHeight
+            () => {
+                raf(() => {
+                    revealFocusedElement();
+                    revealCaret();
+                });
+            }
         );
 
-        const hideListener = CapKeyboard.addListener("keyboardWillHide", () => {
-            document.documentElement.style.setProperty("--kb-height", "0px");
-        });
-
         return () => {
-            void willShowListener.then((listener) => listener.remove());
             void didShowListener.then((listener) => listener.remove());
-            void hideListener.then((listener) => listener.remove());
         };
     });
 }

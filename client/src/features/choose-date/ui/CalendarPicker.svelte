@@ -1,7 +1,5 @@
 <script lang="ts">
-    import { page } from "@inertiajs/svelte";
-    import { HistoryView } from "$/shared/integrations/inertia";
-    import { DeferUntilNextFrame } from "$/shared/lib/svelte/defer-until-next-frame.svelte";
+    import { DeferUntilNextFrame } from "#shared/lib/svelte/defer-until-next-frame.svelte.ts";
 
     import Calendar from "./Calendar.svelte";
 

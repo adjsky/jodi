@@ -14,8 +14,6 @@ class InvitationRegistrationChallengeData extends JodiData
 
     public string $locale;
 
-    public string $timezone;
-
     public AuthenticationCredential $credential;
 
     public string|Optional $deviceName;

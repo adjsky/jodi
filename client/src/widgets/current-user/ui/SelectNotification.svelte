@@ -1,40 +1,40 @@
 <script lang="ts">
-    import { page } from "@inertiajs/svelte";
-    import { Bell, BellRing, Mail } from "@lucide/svelte";
-    import { User } from "$/entities/user";
-    import UpdateUser from "$/generated/actions/App/Domain/Identity/Actions/UpdateUser";
-    import { m } from "$/paraglide/messages";
-    import { ScreenView } from "$/shared/composites/screen-view";
-    import { Push } from "$/shared/services/push";
-    import Button from "$/shared/ui/Button.svelte";
+    import { Bell, Mail } from "@lucide/svelte";
+    import { createMutation } from "@tanstack/svelte-query";
+    import { User } from "#entities/user/mod.ts";
+    import { m } from "#paraglide/messages.js";
+    import { ScreenView } from "#shared/ui/composites/screen-view/mod.ts";
 
-    import { preferences } from "../api/preferences";
+    // import Button from "#shared/ui/Button.svelte";
 
-    import type { ViewProps } from "../model/view";
+    import { updateUserPreferencesMutationOptions } from "../api/preferences.ts";
 
-    let { open = $bindable() }: ViewProps = $props();
+    import type { ViewProps } from "../model/types.ts";
 
-    const user = $derived(page.props.auth.user);
+    let { open = $bindable(), user }: ViewProps = $props();
 
     const rows = [
         { channel: "push", icon: Bell },
         { channel: "mail", icon: Mail }
     ] as const;
+
+    const updateUserPreferencesMutation = createMutation(
+        () => updateUserPreferencesMutationOptions
+    );
 </script>
 
 <ScreenView.Overlay bind:open>
-    <ScreenView.Header title={m["current-user.app-settings.notifications"]()} />
+    <ScreenView.Header title={m["current-user.preferences.notifications"]()} />
     <ScreenView.Content class="py-5">
         <User.Info.Block>
             {#each rows as { channel, icon: Icon } (channel)}
                 <User.Info.SelectRow
-                    {...preferences(
-                        { notifications: channel },
-                        m["current-user.notifications.errors.update"]()
-                    )}
-                    href={UpdateUser()}
-                    data={{ preferences: { notifications: channel } }}
                     selected={user.preferences.notifications === channel}
+                    onclick={() => {
+                        updateUserPreferencesMutation.mutate({
+                            notifications: channel
+                        });
+                    }}
                 >
                     {#snippet icon()}
                         <Icon />
@@ -44,7 +44,7 @@
             {/each}
         </User.Info.Block>
 
-        {#if Push.subscription.needsConfiguration}
+        <!-- {#if Push.subscription.needsConfiguration}
             <Button
                 type="button"
                 class="mt-5 gap-2"
@@ -56,6 +56,6 @@
                 <BellRing class="text-xl" />
                 {m["current-user.notifications.allow"]()}
             </Button>
-        {/if}
+        {/if} -->
     </ScreenView.Content>
 </ScreenView.Overlay>

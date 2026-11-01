@@ -7,9 +7,10 @@ import type { ClientInit } from "@sveltejs/kit";
 
 export const init: ClientInit = async () => {
     await Promise.all([
-        Capacitor.init(),
         SecureStorage.init(),
-        i18n.init(),
-        SessionCache.init()
+        SessionCache.init(),
+        Capacitor.init()
     ]);
+
+    i18n.init();
 };

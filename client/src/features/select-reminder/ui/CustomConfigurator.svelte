@@ -105,7 +105,7 @@
         </div>
     </div>
 
-    <div class="mt-4 mb-safe-offset-5 flex grow items-end safe-area-keyboard">
+    <div class="mt-4 mb-safe-offset-5 flex grow items-end">
         <Button
             type="button"
             disabled={Number(amount) === 0}

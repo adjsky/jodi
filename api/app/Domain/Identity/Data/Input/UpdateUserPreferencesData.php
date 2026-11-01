@@ -13,9 +13,6 @@ class UpdateUserPreferencesData extends JodiData
 {
     public string|Optional $locale;
 
-    #[Timezone]
-    public string|Optional $timezone;
-
     public WeekStart|Optional $weekStartOn;
 
     public NotificationChannel|Optional $notifications;

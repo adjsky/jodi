@@ -6,5 +6,5 @@ export const Event = {
     Fields
 };
 
-export { CalendarEvents } from "./api/calendar-events.svelte";
-export { YearCalendar } from "./model/year-calendar.svelte";
+// export { CalendarEvents } from "./api/calendar-events.svelte";
+// export { YearCalendar } from "./model/year-calendar.svelte";

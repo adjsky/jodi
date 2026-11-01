@@ -13,7 +13,7 @@
     {...props}
     id="screen-view:{id}:root"
     class={tw(
-        "flex h-full flex-col overflow-hidden bg-cream-50 pt-3 pb-keyboard-offset-5",
+        "flex h-full flex-col overflow-hidden bg-cream-50 pt-3 pb-5",
         props.class
     )}
 >

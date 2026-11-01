@@ -5,7 +5,9 @@
     import { m } from "#paraglide/messages.js";
     import { useLoadingDebounce } from "#shared/lib/svelte/use-loading-debounce.svelte.ts";
     import { isHTTPError, isNetworkError } from "ky";
-    import * as z from "zod";
+    import { isShallowEqual } from "remeda";
+    import { onMount } from "svelte";
+    import z from "zod";
 
     import { api } from "../api/client.ts";
     import { toaster } from "./toaster.ts";
@@ -35,6 +37,7 @@
         errors: FormErrors;
         submitting: boolean;
         delayed: boolean;
+        isDirty: boolean;
     };
 
     type Props = Except<
@@ -51,7 +54,7 @@
         onSubmit?: VoidFunction;
         onValidationError?: (errors: FormErrors) => void;
         onRateLimit?: (retryAfter: number) => void;
-        onSuccess?: (data: Data) => MaybePromise<void>;
+        onSuccess?: (data: Data, input: Input) => MaybePromise<void>;
         onHttpError?: (status: number, message: string) => void;
         onFinish?: VoidFunction;
     };
@@ -73,9 +76,37 @@
         ...props
     }: Props = $props();
 
+    let form: HTMLFormElement | null = $state(null);
+    let defaultData: Record<string, FormDataEntryValue> = {};
+
     let submitting = $state(false);
     let delayed = useLoadingDebounce(() => submitting, 200);
     let errors = $state.raw<FormErrors>({});
+    let isDirty = $state(false);
+
+    onMount(() => {
+        defaultData = getFormData();
+
+        const events = ["input", "change", "reset"];
+
+        events.map((event) => form?.addEventListener(event, updateDirtyState));
+    });
+
+    function updateDirtyState(e: Event) {
+        if (e.type === "reset") {
+            isDirty = false;
+        } else {
+            isDirty = !isShallowEqual(defaultData, getFormData());
+        }
+    }
+
+    function getFormData(submitter?: HTMLElement | null) {
+        if (!form) {
+            throw new Error("Can't get form data with no form element set.");
+        }
+
+        return Object.fromEntries(new FormData(form, submitter).entries());
+    }
 
     async function handleSubmit(e: SubmitEvent): Promise<void> {
         e.preventDefault();
@@ -86,12 +117,7 @@
 
         errors = {};
 
-        let json: unknown = Object.fromEntries(
-            new FormData(
-                e.currentTarget as HTMLFormElement,
-                e.submitter
-            ).entries()
-        );
+        let json: unknown = getFormData(e.submitter);
 
         if (inputSchema) {
             const result = z.safeParse(inputSchema, json);
@@ -129,7 +155,7 @@
                 }
             }
 
-            await onSuccess?.(data as Data);
+            await onSuccess?.(data as Data, json as Input);
         } catch (e) {
             if (isHTTPError(e)) {
                 const { response } = e;
@@ -192,6 +218,7 @@
 </script>
 
 <form
+    bind:this={form}
     {...props}
     aria-busy={submitting}
     novalidate={Boolean(inputSchema) || props.novalidate}
@@ -201,6 +228,7 @@
     {@render children?.({
         submitting,
         errors,
+        isDirty,
         get delayed() {
             return delayed.current;
         }

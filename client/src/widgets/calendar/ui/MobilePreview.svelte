@@ -1,15 +1,15 @@
 <script lang="ts">
-    import { inertia, page, router } from "@inertiajs/svelte";
-    import { DateFormatter, parseDate, today } from "@internationalized/date";
+    import { DateFormatter, today } from "@internationalized/date";
     import { Calendar as CalendarIcon } from "@lucide/svelte";
-    import { Calendar, WeekCarousel } from "$/features/choose-date";
-    import { getLocale } from "$/paraglide/runtime";
-    import { TIMEZONE } from "$/shared/cfg/constants";
+    import { SessionCache } from "#entities/user/mod.ts";
     import {
-        HistoryView,
-        useSearchParams
-    } from "$/shared/integrations/inertia";
-    import { fromAction } from "svelte/attachments";
+        // Calendar,
+        SelectedDate,
+        WeekCarousel
+    } from "#features/choose-date/mod.ts";
+    import { getLocale } from "#paraglide/runtime.js";
+    import { Overlay } from "#shared/capabilities/overlay/mod.svelte.ts";
+    import { TIMEZONE } from "#shared/cfg/constants.ts";
 
     import type { Snippet } from "svelte";
 
@@ -19,75 +19,56 @@
 
     const { children }: Props = $props();
 
-    const searchParams = useSearchParams({ showProgress: true, push: true });
+    const session = SessionCache.retain();
+    const user = $derived(session.current.user);
 
-    const user = $derived(page.props.auth.user);
-    const selected = $derived(
-        searchParams["d"] ? parseDate(searchParams["d"]) : today(TIMEZONE)
-    );
-    let cursor = $derived(selected);
-
-    const view = new HistoryView("calendar", { viewTransition: true });
+    let cursor = $derived(SelectedDate.current);
 </script>
 
 <header class="flex items-center justify-between bg-cream-50 px-4 pt-2">
-    <button class="-ms-2 p-2.5" onclick={() => view.push()}>
+    <button class="-ms-2 p-2.5" onclick={() => Overlay.open("calendar")}>
         <CalendarIcon class="text-3xl" />
     </button>
     <button
         class="absolute left-1/2 flex -translate-x-1/2 flex-col"
-        onclick={() => {
-            const date = today(TIMEZONE);
-
-            if (date.compare(selected) === 0) {
-                cursor = date;
-
-                void router.reload({
-                    showProgress: true,
-                    only: ["todos", "events"]
-                });
-            } else {
-                void searchParams.update(
-                    { d: date.toString() },
-                    { only: ["todos", "events"] }
-                );
-            }
-        }}
+        onclick={() => SelectedDate.update(today(TIMEZONE))}
     >
         <span class="text-center text-xl font-bold">
             {new DateFormatter(getLocale(), { weekday: "long" }).format(
-                selected.toDate(TIMEZONE)
+                SelectedDate.current.toDate(TIMEZONE)
             )}
         </span>
         <span class="text-center text-sm text-cream-600">
             {new DateFormatter(getLocale(), {
                 year: "numeric",
                 month: "long"
-            }).format(selected.toDate(TIMEZONE))}
+            }).format(SelectedDate.current.toDate(TIMEZONE))}
         </span>
     </button>
     {@render children()}
 </header>
 
 <WeekCarousel
-    bind:selected={() => selected, (v) => (searchParams["d"] = v.toString())}
+    bind:selected={
+        () => SelectedDate.current, (date) => SelectedDate.update(date)
+    }
     bind:cursor
     weekStart={user.preferences.weekStartOn}
 />
-
+<!--
 <Calendar
-    bind:open={() => view.isOpen(), () => view.back()}
-    attachment={(date) =>
-        fromAction(inertia, () => ({
-            href: `?d=${date.toString()}`,
-            showProgress: true,
-            replace: true,
-            preserveScroll: true,
-            preserveState: true,
-            viewTransition: true,
-            only: ["todos", "events"]
-        }))}
+    bind:open={() => Overlay.isOpen("calendar"), () => Overlay.close()}
+    // attachment={(date) =>
+    //     fromAction(inertia, () => ({
+    //         href: `?d=${date.toString()}`,
+    //         showProgress: true,
+    //         replace: true,
+    //         preserveScroll: true,
+    //         preserveState: true,
+    //         viewTransition: true,
+    //         only: ["todos", "events"]
+    //     }))}
     mode="single"
-    selected={[selected]}
+    selected={[SelectedDate.current]}
     weekStart={user.preferences.weekStartOn}
-/>
+/> -->

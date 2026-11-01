@@ -1,17 +1,15 @@
 <script lang="ts">
-    import { page } from "@inertiajs/svelte";
     import { createQuery } from "@tanstack/svelte-query";
-    import { User } from "$/entities/user";
-    import { m } from "$/paraglide/messages";
-    import { getLocale } from "$/paraglide/runtime";
-    import { LANGUAGES } from "$/shared/cfg/constants";
-    import { ScreenView } from "$/shared/composites/screen-view";
-    import { Push } from "$/shared/services/push";
-    import Loader from "$/shared/ui/Loader.svelte";
+    import { SessionCache, User } from "#entities/user/mod.ts";
+    import { m } from "#paraglide/messages.js";
+    import { getLocale } from "#paraglide/runtime.js";
+    import { Overlay } from "#shared/capabilities/overlay/mod.svelte.ts";
+    import { LANGUAGES, VERSION } from "#shared/cfg/constants.ts";
+    import { ScreenView } from "#shared/ui/composites/screen-view/mod.ts";
+    import Loader from "#shared/ui/Loader.svelte";
 
     import { friendsQueryOptions } from "../api/friends";
     import { invitationsQueryOptions } from "../api/invitations";
-    import { buildViewName, view } from "../model/view";
     import EditEmail from "./EditEmail.svelte";
     import EditName from "./EditName.svelte";
     import Friends from "./Friends.svelte";
@@ -25,7 +23,8 @@
     const invitations = createQuery(() => invitationsQueryOptions);
     const friends = createQuery(() => friendsQueryOptions);
 
-    const user = $derived(page.props.auth.user);
+    const session = SessionCache.retain();
+    const user = $derived(session.current.user);
 
     const accountRows = $derived([
         {
@@ -54,7 +53,7 @@
         }
     ] as const);
 
-    const appSettingsRows = $derived([
+    const preferencesRows = $derived([
         {
             name: "language",
             value: LANGUAGES[getLocale()],
@@ -75,28 +74,27 @@
                 `current-user.notifications.${user.preferences.notifications}`
             ](),
             view: SelectNotification,
-            warning: Push.subscription.needsConfiguration
+            warning: false
+            // warning: Push.subscription.needsConfiguration
         }
     ] as const);
-
-    function onRowClick(name: string) {
-        void view.push(buildViewName(name));
-    }
 </script>
 
 <ScreenView.Overlay
-    bind:open={() => view.name.startsWith("me"), () => view.back()}
+    bind:open={
+        () => Overlay.name?.startsWith("me") ?? false, () => Overlay.close()
+    }
     class="pb-0"
 >
     <ScreenView.Header title={m["current-user.settings"]()} />
     <ScreenView.Content
-        class="overflow-y-auto overscroll-contain pt-5 pb-safe-offset-8"
+        class="overflow-y-auto overscroll-y-contain pt-5 pb-safe-offset-8"
     >
         <User.Info.Block title={m["current-user.account.title"]()}>
             {#each accountRows as { name, value, isLoading } (name)}
                 <User.Info.SettingRow
                     title={m[`current-user.account.${name}`]()}
-                    onclick={() => onRowClick(name)}
+                    onclick={() => Overlay.open(`me/${name}`)}
                 >
                     {#if isLoading}
                         <Loader />
@@ -107,13 +105,13 @@
             {/each}
         </User.Info.Block>
         <User.Info.Block
-            title={m["current-user.app-settings.title"]()}
+            title={m["current-user.preferences.title"]()}
             class="mt-10"
         >
-            {#each appSettingsRows as { name, value, warning } (name)}
+            {#each preferencesRows as { name, value, warning } (name)}
                 <User.Info.SettingRow
-                    title={m[`current-user.app-settings.${name}`]()}
-                    onclick={() => onRowClick(name)}
+                    title={m[`current-user.preferences.${name}`]()}
+                    onclick={() => Overlay.open(`me/${name}`)}
                 >
                     {#snippet indicator()}
                         {#if warning}
@@ -129,14 +127,13 @@
             <Logout />
         </User.Info.Block>
 
-        <p class="mt-4 text-sm">v.{page.props.version}</p>
+        <p class="mt-4 text-sm">v.{VERSION}</p>
     </ScreenView.Content>
 </ScreenView.Overlay>
 
-{#each [...accountRows, ...appSettingsRows] as { name, view: View } (name)}
+{#each [...accountRows, ...preferencesRows] as { name, view: View } (name)}
     <View
-        bind:open={
-            () => view.name.startsWith(buildViewName(name)), () => view.back()
-        }
+        bind:open={() => Overlay.isOpen(`me/${name}`), () => Overlay.close()}
+        {user}
     />
 {/each}

@@ -2,46 +2,31 @@
     import { Clipboard } from "@ark-ui/svelte";
     import { CheckIcon, ClipboardCopyIcon } from "@lucide/svelte";
     import { createMutation, createQuery } from "@tanstack/svelte-query";
-    import { m } from "$/paraglide/messages";
-    import { ScreenView } from "$/shared/composites/screen-view";
-    import { HistoryView } from "$/shared/integrations/inertia";
-    import { raise } from "$/shared/lib/exception/raise";
-    import Button from "$/shared/ui/Button.svelte";
-    import Confirmable from "$/shared/ui/Confirmable.svelte";
-    import ResourceError from "$/shared/ui/ResourceError.svelte";
-    import Skeleton from "$/shared/ui/Skeleton.svelte";
+    import { m } from "#paraglide/messages.js";
+    import { Overlay } from "#shared/capabilities/overlay/mod.svelte.ts";
+    import { raise } from "#shared/lib/exception/raise.ts";
+    import Button from "#shared/ui/Button.svelte";
+    import { ScreenView } from "#shared/ui/composites/screen-view/mod.ts";
+    import Confirmable from "#shared/ui/Confirmable.svelte";
+    import ResourceError from "#shared/ui/ResourceError.svelte";
+    import Skeleton from "#shared/ui/Skeleton.svelte";
 
     import {
         deleteInvitationMutationOptions,
         invitationsQueryOptions
     } from "../api/invitations";
-    import { view } from "../model/view";
 
-    import type { ViewProps } from "../model/view";
-
-    type Props = ViewProps;
-
-    let { open = $bindable() }: Props = $props();
+    const id = $derived(Overlay.meta?.invitation?.id);
+    let confirmedIdToDelete: string | null = null;
 
     const invitations = createQuery(() => ({
         ...invitationsQueryOptions,
-        enabled: open
+        enabled: Boolean(id)
     }));
 
     const deleteInvitationMutation = createMutation(
         () => deleteInvitationMutationOptions
     );
-
-    const deleteView = new HistoryView<{
-        __deleteinvitation: { isOpen: boolean };
-    }>();
-
-    let confirmedIdToDelete: string | null = $state(null);
-
-    const id = $derived.by(() => {
-        const [_, __, id] = view.name.split("/");
-        return id;
-    });
 
     const invitation = $derived(
         invitations.data?.find((invitation) => invitation.id === id)
@@ -52,7 +37,7 @@
     const isNotFound = $derived(invitations.data && !invitation);
 </script>
 
-<ScreenView.Overlay bind:open>
+<ScreenView.Overlay bind:open={() => Boolean(id), () => Overlay.close()}>
     <ScreenView.Header title={m["current-user.invitations.invitation"]()} />
     <ScreenView.Content
         class={[isError || isNotFound ? "justify-center" : "mt-5"]}
@@ -100,50 +85,42 @@
 
     {#if !isNotFound}
         <ScreenView.Footer class="mt-5">
-            <Confirmable
-                bind:open={
-                    () => deleteView.meta?.__deleteinvitation?.isOpen ?? false,
-                    (v) => {
-                        if (v) {
-                            void deleteView.push(view.name, {
-                                meta: {
-                                    ...view.meta,
-                                    __deleteinvitation: { isOpen: true }
-                                }
-                            });
-                        } else {
-                            void deleteView.back();
-                        }
-                    }
-                }
-                title={m["current-user.invitations.delete-ahtung"]()}
-                onConfirm={() => {
-                    if (!invitation) {
-                        raise("No invitation available for deletion.");
-                    }
-                    confirmedIdToDelete = invitation.id;
-                }}
-                onExitComplete={async () => {
-                    const invitationId = confirmedIdToDelete;
-                    if (!invitationId) return;
-
-                    confirmedIdToDelete = null;
-
-                    await view.back();
-                    deleteInvitationMutation.mutate(invitationId);
-                }}
+            <Button
+                type="button"
+                class="shrink-0"
+                disabled={!invitation}
+                onclick={() =>
+                    Overlay.open(
+                        "me/invitations",
+                        {
+                            ...Overlay.meta,
+                            deleteinvitation: { isOpen: true }
+                        },
+                        { skipViewTransition: true }
+                    )}
             >
-                {#snippet trigger(props)}
-                    <Button
-                        {...props()}
-                        type="button"
-                        class="shrink-0"
-                        disabled={!invitation}
-                    >
-                        {m["current-user.invitations.delete"]()}
-                    </Button>
-                {/snippet}
-            </Confirmable>
+                {m["current-user.invitations.delete"]()}
+            </Button>
         </ScreenView.Footer>
     {/if}
 </ScreenView.Overlay>
+
+<Confirmable
+    bind:open={
+        () => Overlay.meta?.deleteinvitation?.isOpen ?? false,
+        () => Overlay.close()
+    }
+    title={m["current-user.invitations.delete-ahtung"]()}
+    onConfirm={async () => {
+        if (!invitation) raise("No invitation available.");
+        confirmedIdToDelete = invitation.id;
+        void Overlay.close();
+    }}
+    onExitComplete={async () => {
+        if (!confirmedIdToDelete) return;
+        const id = confirmedIdToDelete;
+        confirmedIdToDelete = null;
+        await Overlay.close();
+        deleteInvitationMutation.mutate(id);
+    }}
+/>

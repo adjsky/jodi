@@ -7,13 +7,14 @@
         "try-again": "Try again",
         "errors": {
             "unexpected": "Unexpected error happened. Please try again.",
-            "internet": "",
+            "internet": "No connection. Please try again.",
             "unauthorized": "Please log in again.",
             "permission": "You don't have permission to perform this action",
-            "too-many-requests": "Too many requests. Try again later."
+            "too-many-requests": "Too many requests. Try again later.",
+            "email": "That email doesn't look quite right. Check for typos."
         },
         "network": {
-            "offline": "You are offline. Check your internet connection.",
+            "offline": "No internet connection.",
             "online": "You are back online."
         },
         "validation": {
@@ -117,13 +118,7 @@
         "title": "Hello there!",
         "placeholder": "Your email",
         "continue": "Continue",
-        "continue-in": "Continue in {seconds}s",
-        "errors": {
-            "email": {
-                "required": "Enter your email to continue.",
-                "invalid": "That email doesn't look quite right. Check for typos."
-            }
-        }
+        "continue-in": "Continue in {seconds}s"
     },
     "login/verify": {
         "title": "Check your inbox",
@@ -342,14 +337,20 @@
             "friends": "Friends",
             "invitations": "Invitations"
         },
-        "app-settings": {
-            "title": "App settings",
+        "preferences": {
+            "title": "Preferences",
             "language": "Language",
             "week-start": "Week start on",
-            "notifications": "Notifications"
+            "notifications": "Notifications",
+            "errors": {
+                "update": "Couldn't save your choice. Please try again."
+            }
         },
         "name": {
-            "save": "Save"
+            "save": "Save",
+            "errors": {
+                "name": "Enter your name."
+            }
         },
         "invitations": {
             "invitation": "Invitation",
@@ -373,25 +374,14 @@
                 "list": "Couldn't load your list of friends."
             }
         },
-        "language": {
-            "errors": {
-                "update": "Couldn't update language preference. Please try again."
-            }
-        },
         "week-start": {
             "monday": "Monday",
-            "sunday": "Sunday",
-            "errors": {
-                "update": "Couldn't update week start preference. Please try again."
-            }
+            "sunday": "Sunday"
         },
         "notifications": {
             "push": "Push",
             "mail": "Mail",
-            "allow": "Allow push notifications",
-            "errors": {
-                "update": "Couldn't update notification preference. Please try again."
-            }
+            "allow": "Allow push notifications"
         }
     },
     "time-picker": {

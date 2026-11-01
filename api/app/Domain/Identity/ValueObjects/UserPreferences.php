@@ -13,8 +13,6 @@ class UserPreferences extends JodiData
 {
     public string $locale;
 
-    public string $timezone;
-
     #[MapName('weekStartOn')]
     public WeekStart $weekStart;
 

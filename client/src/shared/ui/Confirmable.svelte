@@ -75,13 +75,7 @@
                         </Button>
                     {/snippet}
                 </Dialog.CloseTrigger>
-                <Button
-                    type="button"
-                    onclick={() => {
-                        open = false;
-                        onConfirm?.();
-                    }}
-                >
+                <Button type="button" onclick={onConfirm}>
                     {m["common.yes"]()}
                 </Button>
             </div>

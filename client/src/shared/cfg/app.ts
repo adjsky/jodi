@@ -6,7 +6,7 @@ import {
     FIREBASE_VAPID_KEY,
     FIREBASE_WEB_CONFIG
 } from "$app/env/public";
-import * as z from "zod";
+import z from "zod";
 
 const AppConfigSchema = z.object({
     url: z.url(),

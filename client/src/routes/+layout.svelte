@@ -7,6 +7,7 @@
     import * as ViewTransition from "#app/init/view-transition.ts";
     import { SessionCache } from "#entities/user/mod.ts";
     import { m } from "#paraglide/messages.js";
+    import { getLocale, getTextDirection } from "#paraglide/runtime.js";
     import { Swiper } from "#shared/capabilities/swiper/mod.ts";
     import { VirtualKeyboard } from "#shared/capabilities/virtual-keyboard/mod.ts";
     import { onMount } from "svelte";
@@ -35,12 +36,12 @@
         void SplashScreen.hide();
     });
 
-    // $effect.pre(() => {
-    //     const locale = getLocale();
+    $effect.pre(() => {
+        const locale = getLocale();
 
-    //     document.documentElement.lang = locale;
-    //     document.documentElement.dir = getTextDirection(locale);
-    // });
+        document.documentElement.lang = locale;
+        document.documentElement.dir = getTextDirection(locale);
+    });
 
     ViewTransition.init();
 

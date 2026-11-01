@@ -1,14 +1,13 @@
 import { queryOptions } from "@tanstack/svelte-query";
-import ListFriends from "$/generated/actions/App/Domain/Identity/Actions/ListFriends";
-import ky from "ky";
+import { api } from "#shared/api/client.ts";
+import ListFriends from "#wayfinder/actions/App/Domain/Identity/Actions/ListFriends.ts";
 
-import type { FriendData } from "$/entities/user";
+import type { FriendData } from "#entities/user/mod.ts";
 
 export const friendsQueryOptions = queryOptions<FriendData[]>({
     queryKey: ["friends"],
     queryFn({ signal }) {
         const { url, method } = ListFriends();
-
-        return ky(url, { method, signal }).json();
+        return api(url, { method, signal }).json();
     }
 });

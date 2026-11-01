@@ -1,6 +1,6 @@
 import { api } from "#shared/api/client.ts";
 import GetCurrentSession from "#wayfinder/actions/App/Domain/Identity/Actions/GetCurrentSession.ts";
-import * as z from "zod";
+import z from "zod";
 
 import { PushSubscriptionSchema, UserSchema } from "../model/schemas.ts";
 

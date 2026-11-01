@@ -1,6 +1,6 @@
 import { defineEnvVars } from "@sveltejs/kit/env";
 import { FirebaseConfigSchema } from "#shared/lib/validation/schemas.ts";
-import * as z from "zod";
+import z from "zod";
 
 export const variables = defineEnvVars({
     APP_URL: {

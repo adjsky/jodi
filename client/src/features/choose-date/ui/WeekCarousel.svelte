@@ -1,18 +1,18 @@
 <script lang="ts">
-    import { inertia } from "@inertiajs/svelte";
     import {
         DateFormatter,
         getDayOfWeek,
         today
     } from "@internationalized/date";
-    import { getLocale } from "$/paraglide/runtime";
-    import { TIMEZONE } from "$/shared/cfg/constants";
-    import { tw } from "$/shared/lib/styles/tw";
+    import { getLocale } from "#paraglide/runtime.js";
+    import { TIMEZONE } from "#shared/cfg/constants.ts";
+    import { tw } from "#shared/lib/styles/tw.ts";
 
+    import { SelectedDate } from "../model/selected-date.ts";
     import { WeekSwiper } from "../model/week-swiper.svelte";
 
     import type { CalendarDate } from "@internationalized/date";
-    import type { WeekStart } from "$/shared/lib/date/types";
+    import type { WeekStart } from "#shared/lib/date/types.ts";
     import type { SwiperContainer } from "swiper/element";
 
     type Props = {
@@ -66,17 +66,13 @@
         <swiper-slide class="week-grid-12.5 h-14 pb-2">
             {#each week as date, columnIdx (date.toString())}
                 <button
-                    use:inertia={{
-                        href: `?d=${date.toString()}`,
-                        only: ["todos", "events"],
-                        showProgress: true
-                    }}
                     data-highlight={highlight(date)}
                     class={tw([
                         "flex min-w-0 justify-center",
                         columnIdx === 0 && "justify-start",
                         columnIdx === 6 && "justify-end"
                     ])}
+                    onclick={() => SelectedDate.update(date)}
                 >
                     <span
                         class="flex h-full w-full max-w-12.5 flex-col items-center justify-between"

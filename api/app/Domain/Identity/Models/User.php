@@ -54,6 +54,11 @@ class User extends Authenticatable implements HasLocalePreference
         return $this->pushSubscriptions->pluck('fcm_token')->toArray();
     }
 
+    public function getAuthPassword(): string
+    {
+        return '';
+    }
+
     /** @return BelongsToMany<User, $this> */
     public function friends(): BelongsToMany
     {

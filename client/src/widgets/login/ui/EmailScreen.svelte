@@ -11,7 +11,7 @@
     import { ScreenView } from "#shared/ui/composites/screen-view/mod.ts";
     import TextField from "#shared/ui/TextField.svelte";
     import CreateLoginChallenge from "#wayfinder/actions/App/Domain/Identity/Actions/CreateLoginChallenge.ts";
-    import * as z from "zod";
+    import z from "zod";
 
     const throttleTimer = new Timer();
 
@@ -35,12 +35,7 @@
             action={CreateLoginChallenge()}
             class="mt-7 flex grow flex-col"
             inputSchema={z.object({
-                email: z.email({
-                    error: (issue) =>
-                        issue.input === ""
-                            ? m["login/email.errors.email.required"]()
-                            : m["login/email.errors.email.invalid"]()
-                })
+                email: z.email({ error: m["common.errors.email"]() })
             })}
             dataSchema={z.object({ id: z.string(), email: z.string() })}
             transform={async (input) => ({
@@ -54,7 +49,7 @@
             onSuccess={({ id, email }) =>
                 Overlay.open("login/verify", { loginchallenge: { id, email } })}
         >
-            {#snippet children({ errors, submitting })}
+            {#snippet children({ errors, submitting, isDirty })}
                 <TextField
                     type="email"
                     name="email"
@@ -69,7 +64,7 @@
                 <Button
                     type="submit"
                     class="mt-auto shrink-0"
-                    disabled={throttleTimer.isRunning}
+                    disabled={throttleTimer.isRunning || !isDirty}
                     loading={submitting}
                 >
                     {#if throttleTimer.isRunning}

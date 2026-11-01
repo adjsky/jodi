@@ -21,7 +21,7 @@
     import ResendLoginChallenge from "#wayfinder/actions/App/Domain/Identity/Actions/ResendLoginChallenge.ts";
     import { goto } from "$app/navigation";
     import { resolve } from "$app/paths";
-    import * as z from "zod";
+    import z from "zod";
 
     const id = $props.id();
 
@@ -59,7 +59,7 @@
             inputSchema={z.object({
                 code: z
                     .string()
-                    .length(6, { message: m["login/verify.errors.code"]() })
+                    .length(6, { error: m["login/verify.errors.code"]() })
             })}
             dataSchema={z.object({
                 token: PLATFORM === "web" ? z.null() : z.string(),
@@ -87,7 +87,7 @@
                 await goto(resolve("/(app)"));
             }}
         >
-            {#snippet children({ errors, submitting })}
+            {#snippet children({ errors, submitting, isDirty })}
                 <OneTimePasswordInput
                     name="code"
                     error={Boolean(errors.code)}
@@ -120,7 +120,7 @@
                 <Button
                     type="submit"
                     class="mt-auto shrink-0"
-                    disabled={completeThrottleTimer.isRunning}
+                    disabled={completeThrottleTimer.isRunning || !isDirty}
                     loading={submitting}
                 >
                     {#if completeThrottleTimer.isRunning}

@@ -1,32 +1,32 @@
 <script lang="ts">
     import { Languages } from "@lucide/svelte";
-    import { User } from "$/entities/user";
-    import UpdateUser from "$/generated/actions/App/Domain/Identity/Actions/UpdateUser";
-    import { m } from "$/paraglide/messages";
-    import { getLocale } from "$/paraglide/runtime";
-    import { LANGUAGES } from "$/shared/cfg/constants";
-    import { ScreenView } from "$/shared/composites/screen-view";
+    import { createMutation } from "@tanstack/svelte-query";
+    import { User } from "#entities/user/mod.ts";
+    import { m } from "#paraglide/messages.js";
+    import { LANGUAGES } from "#shared/cfg/constants.ts";
+    import { ScreenView } from "#shared/ui/composites/screen-view/mod.ts";
 
-    import { preferences } from "../api/preferences";
+    import { updateUserPreferencesMutationOptions } from "../api/preferences.ts";
 
-    import type { ViewProps } from "../model/view";
+    import type { ViewProps } from "../model/types.ts";
 
-    let { open = $bindable() }: ViewProps = $props();
+    let { open = $bindable(), user }: ViewProps = $props();
+
+    const updateUserPreferencesMutation = createMutation(
+        () => updateUserPreferencesMutationOptions
+    );
 </script>
 
 <ScreenView.Overlay bind:open>
-    <ScreenView.Header title={m["current-user.app-settings.language"]()} />
+    <ScreenView.Header title={m["current-user.preferences.language"]()} />
     <ScreenView.Content class="py-5">
         <User.Info.Block>
             {#each Object.entries(LANGUAGES) as [locale, language] (locale)}
                 <User.Info.SelectRow
-                    {...preferences(
-                        { locale },
-                        m["current-user.language.errors.update"]()
-                    )}
-                    href={UpdateUser()}
-                    data={{ preferences: { locale } }}
-                    selected={locale === getLocale()}
+                    selected={locale === user.preferences.locale}
+                    onclick={() => {
+                        updateUserPreferencesMutation.mutate({ locale });
+                    }}
                 >
                     {#snippet icon()}
                         <Languages />

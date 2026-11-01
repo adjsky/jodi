@@ -8,24 +8,20 @@ use App\Domain\Identity\Models\User;
 use Illuminate\Support\Facades\Route;
 
 if (app()->isLocal()) {
-    $user = new User([
-        'email' => 'kirill.t@tuta.io',
-        'name' => 'Kirill T.',
-        'preferences' => [
-            'timezone' => 'Europe/Moscow',
-        ],
-    ]);
+    $user = new User(['email' => 'kirill.t@tuta.io', 'name' => 'Kirill T.']);
 
     Route::get(
         '/mail/otp',
-        fn () => new Identity\Notifications\OneTimeLoginCode('042712')->toMail()
+        fn () => new Identity\Notifications\OneTimeLoginCode(
+            '042712',
+        )->toMail(),
     );
 
     Route::get(
         '/mail/invite-to-jodi',
         fn () => new Mail\InviteToJodi(
             $user,
-            'http://example.com'
-        )
+            'http://example.com',
+        ),
     );
 }

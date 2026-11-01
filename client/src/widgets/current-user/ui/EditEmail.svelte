@@ -1,13 +1,10 @@
 <script lang="ts">
-    import { page } from "@inertiajs/svelte";
-    import { m } from "$/paraglide/messages";
-    import { ScreenView } from "$/shared/composites/screen-view";
+    import { m } from "#paraglide/messages.js";
+    import { ScreenView } from "#shared/ui/composites/screen-view/mod.ts";
 
-    import type { ViewProps } from "../model/view";
+    import type { ViewProps } from "../model/types.ts";
 
-    let { open = $bindable() }: ViewProps = $props();
-
-    const user = $derived(page.props.auth.user);
+    let { open = $bindable(), user }: ViewProps = $props();
 </script>
 
 <ScreenView.Overlay bind:open>

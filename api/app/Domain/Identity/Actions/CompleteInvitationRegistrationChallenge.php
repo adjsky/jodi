@@ -78,7 +78,6 @@ class CompleteInvitationRegistrationChallenge extends JodiAction
                     'preferences' => UserPreferences::from([
                         ...config('jodi.preferences'),
                         'locale' => $challengeData->locale,
-                        'timezone' => $challengeData->timezone,
                     ]),
                 ]);
 

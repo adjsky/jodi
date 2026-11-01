@@ -1,43 +1,44 @@
 <script lang="ts">
-    import { Form, page } from "@inertiajs/svelte";
     import { AtSign } from "@lucide/svelte";
-    import UpdateUser from "$/generated/actions/App/Domain/Identity/Actions/UpdateUser";
-    import { m } from "$/paraglide/messages";
-    import { ScreenView } from "$/shared/composites/screen-view";
-    import { VirtualKeyboard } from "$/shared/services/virtual-keyboard";
-    import Button from "$/shared/ui/Button.svelte";
-    import TextField from "$/shared/ui/TextField.svelte";
+    import { SessionCache } from "#entities/user/mod.ts";
+    import { m } from "#paraglide/messages.js";
+    import { Overlay } from "#shared/capabilities/overlay/mod.svelte.ts";
+    import { VirtualKeyboard } from "#shared/capabilities/virtual-keyboard/mod.ts";
+    import ApiForm from "#shared/ui/ApiForm.svelte";
+    import Button from "#shared/ui/Button.svelte";
+    import { ScreenView } from "#shared/ui/composites/screen-view/mod.ts";
+    import TextField from "#shared/ui/TextField.svelte";
+    import UpdateUserName from "#wayfinder/actions/App/Domain/Identity/Actions/UpdateUserName.ts";
+    import z from "zod";
 
-    import { view } from "../model/view";
+    import type { ViewProps } from "../model/types.ts";
 
-    import type { ViewProps } from "../model/view";
-
-    let { open = $bindable() }: ViewProps = $props();
-
-    const user = $derived(page.props.auth.user);
+    let { open = $bindable(), user }: ViewProps = $props();
 </script>
 
 <ScreenView.Overlay bind:open {@attach VirtualKeyboard.retainFocus()}>
     <ScreenView.Header title={m["current-user.account.name"]()} />
     <ScreenView.Content class="mt-5">
-        <Form
-            action={UpdateUser()}
+        <ApiForm
+            action={UpdateUserName()}
             class="flex grow flex-col"
-            options={{
-                only: ["auth"],
-                replace: true,
-                preserveUrl: true
+            inputSchema={z.object({
+                name: z
+                    .string()
+                    .min(1, { error: m["current-user.name.errors.name"]() })
+            })}
+            onSuccess={async (_, input) => {
+                await SessionCache.update({ "user.name": input.name });
+                Overlay.close();
             }}
-            showProgress={false}
-            onSuccess={() => view.back()}
         >
-            {#snippet children({ processing, errors, isDirty })}
+            {#snippet children({ errors, submitting, isDirty })}
                 <TextField
                     type="text"
                     name="name"
                     placeholder={m["current-user.account.name"]()}
-                    error={errors.name}
-                    defaultValue={user.name}
+                    value={user.name}
+                    error={errors.name?.[0]}
                     maxlength={36}
                     required
                 >
@@ -48,11 +49,11 @@
                     type="submit"
                     class="mt-auto shrink-0"
                     disabled={!isDirty}
-                    loading={processing}
+                    loading={submitting}
                 >
                     {m["current-user.name.save"]()}
                 </Button>
             {/snippet}
-        </Form>
+        </ApiForm>
     </ScreenView.Content>
 </ScreenView.Overlay>

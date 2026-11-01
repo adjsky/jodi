@@ -30,7 +30,6 @@ class CreateInvitationRegistrationChallenge extends JodiAction
         string $invitationCode,
         string $ip,
         string $locale,
-        ?string $timezone,
     ): RegistrationChallenge {
         $this->throttleService->throttleBy(
             action: 'invitation-registration:create',
@@ -56,7 +55,6 @@ class CreateInvitationRegistrationChallenge extends JodiAction
             $data,
             $invitationCode,
             $locale,
-            $timezone,
         ) {
             $invitation = RegistrationInvitation::query()
                 ->where('code', '=', $invitationCode)
@@ -73,9 +71,6 @@ class CreateInvitationRegistrationChallenge extends JodiAction
                 InvitationRegistrationChallengeData::from([
                     'name' => $data->name,
                     'locale' => $locale,
-                    'timezone' => $timezone ?? config(
-                        'jodi.preferences.timezone',
-                    ),
                     'credential' => $data->credential,
                     'deviceName' => $data->deviceName,
                 ]),
@@ -99,7 +94,6 @@ class CreateInvitationRegistrationChallenge extends JodiAction
             $code,
             $request->clientIp(),
             app()->getLocale(),
-            $request->timezone(),
         );
 
         return response()->json(['id' => $challenge->id], 202);
