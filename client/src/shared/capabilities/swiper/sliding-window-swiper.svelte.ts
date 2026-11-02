@@ -1,8 +1,7 @@
-import { flushSync } from "svelte";
-
 import { useSwiper } from "./use-swiper.svelte";
 
 import type { Getter } from "runed";
+import type { Swiper } from "swiper";
 import type { SwiperContainer } from "swiper/element";
 import type { SwiperParams } from "swiper/types";
 
@@ -41,19 +40,28 @@ export class SlidingWindowSwiper<T> {
             initialSlide: this.#options.edgeBuffer,
             touchStartForcePreventDefault: true,
             on: {
-                slideChangeTransitionEnd: (swiper) => {
-                    const offset =
-                        swiper.activeIndex - this.#options.edgeBuffer;
-                    if (offset === 0) return;
-
-                    this.#options.onSlideChange(offset);
-
-                    flushSync();
-
-                    swiper.update();
-                    swiper.slideTo(this.#options.edgeBuffer, 0, false);
-                }
+                transitionEnd: (swiper) => this.#recenter(swiper)
             }
         });
+    }
+
+    #recenter(swiper: Swiper): void {
+        const offset = swiper.activeIndex - this.#options.edgeBuffer;
+        if (offset === 0) return;
+
+        const translate = swiper.getTranslate();
+        const translateOffset =
+            swiper.slidesGrid[swiper.activeIndex] -
+            swiper.slidesGrid[this.#options.edgeBuffer];
+
+        this.#options.onSlideChange(offset);
+
+        swiper.setTranslate(translate + translateOffset);
+        swiper.updateActiveIndex(this.#options.edgeBuffer);
+        swiper.updateSlidesClasses();
+
+        if (swiper.touchEventsData.isTouched) {
+            swiper.touchEventsData.startTranslate = translate + translateOffset;
+        }
     }
 }

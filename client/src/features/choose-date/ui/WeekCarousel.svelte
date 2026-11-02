@@ -64,7 +64,7 @@
 >
     {#each swiper.weeks as week, weekIdx (weekIdx)}
         <swiper-slide class="week-grid-12.5 h-14 pb-2">
-            {#each week as date, columnIdx (date.toString())}
+            {#each week as date, columnIdx (columnIdx)}
                 <button
                     data-highlight={highlight(date)}
                     class={tw([
