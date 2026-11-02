@@ -16,8 +16,9 @@
         invitationsQueryOptions
     } from "../api/invitations";
 
+    let isConfirmingDeletion = $state(false);
+
     const id = $derived(Overlay.meta?.invitation?.id);
-    let confirmedIdToDelete: string | null = null;
 
     const invitations = createQuery(() => ({
         ...invitationsQueryOptions,
@@ -85,42 +86,28 @@
 
     {#if !isNotFound}
         <ScreenView.Footer class="mt-5">
-            <Button
-                type="button"
-                class="shrink-0"
-                disabled={!invitation}
-                onclick={() =>
-                    Overlay.open(
-                        "me/invitations",
-                        {
-                            ...Overlay.meta,
-                            deleteinvitation: { isOpen: true }
-                        },
-                        { skipViewTransition: true }
-                    )}
+            <Confirmable
+                bind:open={isConfirmingDeletion}
+                title={m["current-user.invitations.delete-ahtung"]()}
+                onConfirm={async () => {
+                    if (!invitation) raise("No invitation available.");
+                    const id = invitation.id;
+                    await Overlay.close();
+                    isConfirmingDeletion = false;
+                    deleteInvitationMutation.mutate(id);
+                }}
             >
-                {m["current-user.invitations.delete"]()}
-            </Button>
+                {#snippet trigger(props)}
+                    <Button
+                        {...props()}
+                        type="button"
+                        class="shrink-0"
+                        disabled={!invitation}
+                    >
+                        {m["current-user.invitations.delete"]()}
+                    </Button>
+                {/snippet}
+            </Confirmable>
         </ScreenView.Footer>
     {/if}
 </ScreenView.Overlay>
-
-<Confirmable
-    bind:open={
-        () => Overlay.meta?.deleteinvitation?.isOpen ?? false,
-        () => Overlay.close()
-    }
-    title={m["current-user.invitations.delete-ahtung"]()}
-    onConfirm={async () => {
-        if (!invitation) raise("No invitation available.");
-        confirmedIdToDelete = invitation.id;
-        void Overlay.close();
-    }}
-    onExitComplete={async () => {
-        if (!confirmedIdToDelete) return;
-        const id = confirmedIdToDelete;
-        confirmedIdToDelete = null;
-        await Overlay.close();
-        deleteInvitationMutation.mutate(id);
-    }}
-/>

@@ -27,14 +27,6 @@ export type OverlayMeta = {
     event?: { id: string };
     todo?: { id: string };
     invitation?: { id: string };
-    calendarpicker?: { isOpen: boolean };
-    timepicker?: { isOpen: boolean };
-    selectcategory?: { isOpen: boolean };
-    selectrecurrence?: { isOpen: boolean };
-    selectreminder?: { isOpen: boolean };
-    deleterecurrable?: { isOpen: boolean };
-    saverecurrable?: { isOpen: boolean };
-    deleteinvitation?: { isOpen: boolean };
 };
 
 export type OverlayState = {

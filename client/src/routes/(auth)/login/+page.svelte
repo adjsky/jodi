@@ -29,7 +29,7 @@
                 fetchpriority="high"
             />
         </div>
-        <h1 class="text-center text-3xl font-bold">
+        <h1 class="px-2 text-center text-3xl font-bold">
             {m["login.title"]()}
         </h1>
     </div>

@@ -115,7 +115,7 @@
                     invitationsQueryOptions.queryKey,
                     (invitations) => [...(invitations ?? []), invitation]
                 );
-                Overlay.close();
+                void Overlay.close();
             }}
         >
             {#snippet children({ submitting, errors, isDirty })}
