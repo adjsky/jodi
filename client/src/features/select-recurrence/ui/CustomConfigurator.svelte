@@ -5,10 +5,10 @@
         toCalendarDate,
         toCalendarDateTime
     } from "@internationalized/date";
-    import { m } from "$/paraglide/messages";
-    import { VirtualKeyboard } from "$/shared/services/virtual-keyboard";
-    import Button from "$/shared/ui/Button.svelte";
-    import SheetDialog from "$/shared/ui/SheetDialog.svelte";
+    import { m } from "#paraglide/messages.js";
+    import { VirtualKeyboard } from "#shared/capabilities/virtual-keyboard/mod.ts";
+    import Button from "#shared/ui/Button.svelte";
+    import SheetDialog from "#shared/ui/SheetDialog.svelte";
     import { Frequency, RRule, rrulestr } from "rrule";
 
     import { dateToWeekday } from "../helpers/weekday";

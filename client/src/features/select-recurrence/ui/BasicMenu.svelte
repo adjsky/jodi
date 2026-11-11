@@ -1,9 +1,9 @@
 <script lang="ts">
     import { Menu } from "@ark-ui/svelte";
     import { Check, RefreshCcw } from "@lucide/svelte";
-    import { m } from "$/paraglide/messages";
-    import AppPortal from "$/shared/ui/AppPortal.svelte";
-    import ToolbarAction from "$/shared/ui/ToolbarAction.svelte";
+    import { m } from "#paraglide/messages.js";
+    import AppPortal from "#shared/ui/AppPortal.svelte";
+    import ToolbarAction from "#shared/ui/ToolbarAction.svelte";
     import { boolAttr } from "runed";
 
     const NEVER_TRIGGER_VALUE = "__never_trigger";

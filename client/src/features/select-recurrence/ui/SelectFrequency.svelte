@@ -1,7 +1,7 @@
 <script lang="ts">
     import { createListCollection, Select } from "@ark-ui/svelte";
-    import { m } from "$/paraglide/messages";
-    import NumericInput from "$/shared/ui/NumericInput.svelte";
+    import { m } from "#paraglide/messages.js";
+    import NumericInput from "#shared/ui/NumericInput.svelte";
 
     import {
         RRULE_TO_SELECTABLE_FREQUENCY_MAP,

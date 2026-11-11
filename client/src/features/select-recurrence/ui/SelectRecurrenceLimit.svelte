@@ -1,11 +1,11 @@
 <script lang="ts">
     import { ParaglideMessage } from "@inlang/paraglide-js-svelte";
     import { DateFormatter, toCalendarDate } from "@internationalized/date";
-    import { CalendarPicker } from "$/features/choose-date";
-    import { m } from "$/paraglide/messages";
-    import { getLocale } from "$/paraglide/runtime";
-    import Checkbox from "$/shared/ui/Checkbox.svelte";
-    import NumericInput from "$/shared/ui/NumericInput.svelte";
+    import { CalendarPicker } from "#features/choose-date/mod.ts";
+    import { m } from "#paraglide/messages.js";
+    import { getLocale } from "#paraglide/runtime.js";
+    import Checkbox from "#shared/ui/Checkbox.svelte";
+    import NumericInput from "#shared/ui/NumericInput.svelte";
 
     import CustomConfiguratorBlock from "./CustomConfiguratorBlock.svelte";
 
@@ -45,11 +45,9 @@
                 <CalendarPicker
                     mode="single"
                     selected={[toCalendarDate(day)]}
-                    id="recurrence-until-calendar"
                     onSelect={([date]) => {
                         until = date;
                     }}
-                    deferHistoryViewFrames={2}
                 >
                     {#snippet children(props)}
                         <div

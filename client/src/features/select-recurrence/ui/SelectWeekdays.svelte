@@ -1,9 +1,9 @@
 <script lang="ts">
-    import { page } from "@inertiajs/svelte";
     import { DateFormatter, now, startOfWeek } from "@internationalized/date";
-    import { m } from "$/paraglide/messages";
-    import { getLocale } from "$/paraglide/runtime";
-    import { TIMEZONE, WEEK_START_MAP } from "$/shared/cfg/constants";
+    import { SessionCache } from "#entities/user/mod.ts";
+    import { m } from "#paraglide/messages.js";
+    import { getLocale } from "#paraglide/runtime.js";
+    import { TIMEZONE, WEEK_START_MAP } from "#shared/cfg/constants.ts";
     import { boolAttr } from "runed";
 
     import { getOrderedWeekdays } from "../helpers/weekday";
@@ -15,12 +15,13 @@
 
     let { byweekday = $bindable() }: Props = $props();
 
-    const user = $derived(page.props.auth.user);
+    const session = SessionCache.retain();
+
     const start = $derived(
         startOfWeek(
             now(TIMEZONE),
             getLocale(),
-            WEEK_START_MAP[user.preferences.weekStartOn]
+            WEEK_START_MAP[session.current.user.preferences.weekStartOn]
         )
     );
 </script>

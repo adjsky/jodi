@@ -2,10 +2,10 @@
     import { toCalendarDate, toZoned } from "@internationalized/date";
     import { Trash } from "@lucide/svelte";
     import { Todo } from "#entities/todo/mod.ts";
-    import { SelectedDate } from "#features/choose-date/mod.ts";
-    import CalendarPicker from "#features/choose-date/ui/CalendarPicker.svelte";
+    import { CalendarPicker, SelectedDate } from "#features/choose-date/mod.ts";
     import { SaveOrClose } from "#features/save-item/mod.ts";
     import { TodoTime } from "#features/schedule-todo-time/mod.ts";
+    import { Recurrence } from "#features/select-recurrence/mod.ts";
     import { m } from "#paraglide/messages.js";
     import { TIMEZONE } from "#shared/cfg/constants.ts";
     import ToolbarAction from "#shared/ui/ToolbarAction.svelte";
@@ -20,6 +20,7 @@
     let description = $state("");
     let scheduledAt = $state(toZoned(SelectedDate.current, TIMEZONE));
     let hasTime = $state(false);
+    let rrule: string | null = $state(null);
 </script>
 
 <Todo.Fields bind:title bind:description {scheduledAt}>
@@ -55,7 +56,13 @@
             <Trash />
         </ToolbarAction>
     {/snippet}
-    {#snippet repeat()}{/snippet}
+    {#snippet repeat()}
+        <Recurrence
+            bind:rrule
+            day={scheduledAt}
+            tooltip={m["todos.tooltips.repeat"]()}
+        />
+    {/snippet}
     {#snippet color()}{/snippet}
     {#snippet notify()}{/snippet}
     {#snippet more()}{/snippet}
@@ -97,14 +104,7 @@
             {/snippet}
 
 
-            {#snippet repeat()}
-                <Recurrence
-                    day={scheduledAt}
-                    name="rrule"
-                    tooltip={m["todos.tooltips.repeat"]()}
-                    deferHistoryViewFrames={DEFER_FRAMES.SHEET + 1}
-                />
-            {/snippet}
+
             {#snippet color()}
                 <Color name="color" tooltip={m["todos.tooltips.color"]()} />
             {/snippet}
