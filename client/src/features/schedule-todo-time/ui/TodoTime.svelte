@@ -13,11 +13,7 @@
         onChange?: (time: Time, hasTime: boolean) => void;
     };
 
-    let {
-        scheduledAt = $bindable(),
-        hasTime = $bindable(),
-        onChange
-    }: Props = $props();
+    let { scheduledAt = $bindable(), hasTime, onChange }: Props = $props();
 </script>
 
 <div
@@ -40,9 +36,6 @@
         class="h-full w-max pr-10 pl-3"
         trigger={hasTime ? undefined : trigger}
         onConfirm={async (time) => {
-            if (!hasTime) {
-                hasTime = true;
-            }
             onChange?.(time, true);
         }}
     />
@@ -53,7 +46,6 @@
             onclick={async (e) => {
                 e.stopPropagation();
 
-                hasTime = false;
                 const time = new Time(0, 0, 0, 0);
                 scheduledAt.set(time);
                 onChange?.(time, false);

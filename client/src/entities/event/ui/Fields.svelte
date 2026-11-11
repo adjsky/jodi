@@ -84,9 +84,7 @@
     {@render close()}
 </div>
 
-<div
-    class="flex min-h-0 grow flex-col overflow-y-auto overscroll-contain pb-keyboard-or-18"
->
+<div class="flex min-h-0 grow flex-col overflow-y-auto overscroll-contain">
     <input
         class="mt-5 form-input w-full border-none bg-transparent p-0 text-xl font-bold text-cream-950 placeholder:text-cream-600 focus:ring-0"
         placeholder={titlePlaceholder}
@@ -122,8 +120,7 @@
         class="mt-3 form-input min-h-34 w-full flex-1 resize-none overflow-y-auto overscroll-contain border-none bg-transparent p-0 text-lg font-semibold text-cream-950 placeholder:text-cream-600 focus:ring-0"
         defaultValue={description ?? ""}
         maxlength={2000}
-        data-expand-sheet
-    ></textarea>
+        data-expand-sheet></textarea>
 </div>
 
 <div

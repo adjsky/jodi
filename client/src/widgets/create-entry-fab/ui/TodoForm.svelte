@@ -1,17 +1,14 @@
 <script lang="ts">
     import { toCalendarDate, toZoned } from "@internationalized/date";
+    import { Trash } from "@lucide/svelte";
     import { Todo } from "#entities/todo/mod.ts";
     import { SelectedDate } from "#features/choose-date/mod.ts";
     import CalendarPicker from "#features/choose-date/ui/CalendarPicker.svelte";
     import { SaveOrClose } from "#features/save-item/mod.ts";
     import { TodoTime } from "#features/schedule-todo-time/mod.ts";
-    import {
-        NOTIFICATION_DEFAULT_SUBHOURS,
-        TIMEZONE
-    } from "#shared/cfg/constants.ts";
-    import { timediff } from "#shared/lib/date/timediff.ts";
-
-    import type { ZonedDateTime } from "@internationalized/date";
+    import { m } from "#paraglide/messages.js";
+    import { TIMEZONE } from "#shared/cfg/constants.ts";
+    import ToolbarAction from "#shared/ui/ToolbarAction.svelte";
 
     type Props = {
         onClose: VoidFunction;
@@ -23,8 +20,6 @@
     let description = $state("");
     let scheduledAt = $state(toZoned(SelectedDate.current, TIMEZONE));
     let hasTime = $state(false);
-
-    let notifyAt = $state<ZonedDateTime | null>(null);
 </script>
 
 <Todo.Fields bind:title bind:description {scheduledAt}>
@@ -47,26 +42,19 @@
     {#snippet category()}{/snippet}
     {#snippet time()}
         <TodoTime
-            bind:hasTime
             {scheduledAt}
-            onChange={(time, hasTime) => {
-                if (!hasTime) {
-                    notifyAt = null;
-                } else {
-                    if (notifyAt) {
-                        notifyAt = notifyAt.add(timediff(scheduledAt, time));
-                    } else {
-                        notifyAt = scheduledAt.set(time).subtract({
-                            hours: NOTIFICATION_DEFAULT_SUBHOURS
-                        });
-                    }
-                }
-
+            {hasTime}
+            onChange={(time, ht) => {
+                hasTime = ht;
                 scheduledAt = scheduledAt.set(time);
             }}
         />
     {/snippet}
-    {#snippet destroy()}{/snippet}
+    {#snippet destroy()}
+        <ToolbarAction tooltip={m["todos.tooltips.delete"]()} onclick={onClose}>
+            <Trash />
+        </ToolbarAction>
+    {/snippet}
     {#snippet repeat()}{/snippet}
     {#snippet color()}{/snippet}
     {#snippet notify()}{/snippet}
@@ -108,14 +96,7 @@
                 />
             {/snippet}
 
-            {#snippet destroy()}
-                <ToolbarAction
-                    tooltip={m["todos.tooltips.delete"]()}
-                    onclick={onClose}
-                >
-                    <Trash />
-                </ToolbarAction>
-            {/snippet}
+
             {#snippet repeat()}
                 <Recurrence
                     day={scheduledAt}

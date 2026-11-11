@@ -15,7 +15,7 @@ export type Todo = {
     completedAt: number | null;
     createdAt: number;
 
-    notifyBefore: string | null;
+    notifyBefore: string;
 
     timezone: string;
 };

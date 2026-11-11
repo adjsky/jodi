@@ -7,8 +7,6 @@ export const VERSION = packageJson.version;
 
 export const TIMEZONE = Intl.DateTimeFormat().resolvedOptions().timeZone;
 
-export const NOTIFICATION_DEFAULT_SUBHOURS = 1;
-
 export const PLATFORM = Capacitor.getPlatform();
 export const DEVICE_ID = await Device.getId().then((d) => d.identifier);
 

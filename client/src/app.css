@@ -241,10 +241,3 @@
         repeat(5, var(--day-step))
         var(--edge-width);
 }
-
-@utility pb-keyboard-or-* {
-    padding-bottom: max(
-        var(--kb-height, 0px),
-        --spacing(--value(integer, [integer]))
-    );
-}
