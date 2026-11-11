@@ -78,7 +78,7 @@
     <AppPortal>
         <Menu.Positioner>
             <Menu.Content
-                class="z-200 min-w-30 rounded-xl bg-white text-lg font-medium outline outline-cream-950"
+                class="z-[calc(100+var(--layer-index,0))] min-w-30 rounded-xl bg-white text-lg font-medium outline outline-cream-950"
             >
                 {#each reminders as { label, duration }, idx (duration)}
                     <Menu.Item

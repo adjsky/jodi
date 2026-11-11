@@ -2,9 +2,6 @@
     import { Drawer, useDrawer } from "@ark-ui/svelte";
     import { Dismissal } from "#shared/capabilities/dismissal/mod.svelte.ts";
     import { VirtualKeyboard } from "#shared/capabilities/virtual-keyboard/mod.ts";
-    import { DEFER_FRAMES } from "#shared/cfg/constants.ts";
-
-    import { DeferUntilNextFrame } from "../lib/svelte/defer-until-next-frame.svelte";
 
     import type { DrawerRootProps } from "@ark-ui/svelte";
     import type { Snippet } from "svelte";
@@ -31,17 +28,12 @@
     let sheetContent: HTMLElement | null = $state(null);
     let userContent: HTMLDivElement | null = $state(null);
 
-    // Defer opening the drawer on page load until the next available frame so
-    // that Zag can calculate content height properly, otherwise the content
-    // will be rendered according to the largest available snap point.
-    const deferred = new DeferUntilNextFrame(DEFER_FRAMES.SHEET);
-
     const drawer = useDrawer({
         get id() {
             return id;
         },
         get open() {
-            return deferred.ready && open;
+            return open;
         },
         onOpenChange(details) {
             if (details.open !== open) {
@@ -59,7 +51,7 @@
         },
         initialFocusEl() {
             const matched = userContent?.querySelector<HTMLElement>(
-                "[data-autofocus], autofocus"
+                "[data-autofocus], [autofocus]"
             );
 
             if (!matched) {
