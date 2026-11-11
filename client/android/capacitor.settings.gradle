@@ -14,11 +14,11 @@ project(':capacitor-app').projectDir = new File('../../node_modules/@capacitor/a
 include ':capacitor-device'
 project(':capacitor-device').projectDir = new File('../../node_modules/@capacitor/device/android')
 
-include ':capacitor-keyboard'
-project(':capacitor-keyboard').projectDir = new File('../../node_modules/@capacitor/keyboard/android')
-
 include ':capacitor-splash-screen'
 project(':capacitor-splash-screen').projectDir = new File('../../node_modules/@capacitor/splash-screen/android')
 
 include ':capawesome-capacitor-haptics'
 project(':capawesome-capacitor-haptics').projectDir = new File('../../node_modules/@capawesome/capacitor-haptics/android')
+
+include ':jodi-capacitor-virtual-keyboard'
+project(':jodi-capacitor-virtual-keyboard').projectDir = new File('../capacitor/virtual-keyboard/android')

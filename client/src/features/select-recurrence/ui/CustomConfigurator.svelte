@@ -98,7 +98,7 @@
         <SelectRecurrenceLimit {day} bind:limit bind:until bind:count />
     </div>
 
-    <div class="mt-4 mb-safe-offset-5 flex grow items-end">
+    <div class="mt-4 mb-safe-offset-5 flex grow items-end safe-area-keyboard">
         <Button
             type="button"
             disabled={Number(interval) === 0 ||

@@ -1,7 +1,5 @@
 /// <reference types="@capacitor/splash-screen" />
 
-import { KeyboardResize } from "@capacitor/keyboard";
-
 import type { CapacitorConfig } from "@capacitor/cli";
 
 const config: CapacitorConfig = {
@@ -10,13 +8,10 @@ const config: CapacitorConfig = {
     plugins: {
         SystemBars: {
             style: "LIGHT",
-            insetsHandling: "native"
+            insetsHandling: "disable"
         },
         SplashScreen: {
             launchAutoHide: false
-        },
-        Keyboard: {
-            resize: KeyboardResize.None
         }
     }
 };

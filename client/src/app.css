@@ -241,3 +241,24 @@
         repeat(5, var(--day-step))
         var(--edge-width);
 }
+
+@utility safe-area-keyboard {
+    --twsa-safe-area-inset-bottom: max(
+        env(safe-area-inset-bottom, 0px),
+        var(--keyboard-inset-height, 0px)
+    );
+}
+
+@utility pb-keyboard-or-* {
+    padding-bottom: max(
+        var(--keyboard-inset-height, 0px),
+        --spacing(--value(integer, [integer]))
+    );
+}
+
+@utility pb-keyboard-offset-* {
+    padding-bottom: calc(
+        var(--keyboard-inset-height, 0px) +
+            --spacing(--value(integer, [integer]))
+    );
+}

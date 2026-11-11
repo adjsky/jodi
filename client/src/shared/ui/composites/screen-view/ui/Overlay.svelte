@@ -67,7 +67,7 @@
         id="screen-view:{id}:overlay"
         present={open}
         class={tw(
-            "fixed inset-0 z-[calc(100+var(--layer-index,0))] flex flex-col overflow-hidden bg-cream-50 pt-safe-offset-3 pb-safe-offset-5",
+            "fixed inset-0 z-[calc(100+var(--layer-index,0))] flex flex-col overflow-hidden bg-cream-50 pt-safe-offset-3 pb-safe-offset-5 safe-area-keyboard",
             props.class
         )}
         {children}

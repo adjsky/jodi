@@ -95,7 +95,9 @@
     {@render close()}
 </div>
 
-<div class="flex min-h-0 grow flex-col overflow-y-auto overscroll-contain">
+<div
+    class="flex min-h-0 grow flex-col overflow-y-auto overscroll-contain pb-keyboard-or-18"
+>
     {#snippet titleInput(classname?: string)}
         <input
             bind:value={title}
