@@ -1,52 +1,35 @@
 <script lang="ts">
     import { Check, X } from "@lucide/svelte";
-    import { Recurrence } from "$/entities/recurrence";
-    import { HistoryView } from "$/shared/integrations/inertia";
-    import { tw } from "$/shared/lib/styles/tw";
+    import { Recurrence } from "#entities/recurrence/mod.ts";
+    import { tw } from "#shared/lib/styles/tw.ts";
 
-    import type { RecurrenceScope } from "$/entities/recurrence";
+    import type { RecurrenceScope } from "#entities/recurrence/mod.ts";
 
     type Props = {
         title?: string;
         variant: "save" | "close";
-        disabled?: boolean;
         confirm?: boolean;
         scopeLabels?: { this: string; all: string };
         onConfirm?: (scope: RecurrenceScope) => void;
         onClose?: VoidFunction;
     };
 
-    const {
-        title,
-        variant,
-        disabled,
-        confirm,
-        scopeLabels,
-        onConfirm,
-        onClose
-    }: Props = $props();
+    const { title, variant, confirm, scopeLabels, onConfirm, onClose }: Props =
+        $props();
 
-    const view = new HistoryView<{ __saveitem: { isOpen: boolean } }>();
+    let open = $state(false);
 </script>
 
 <Recurrence.ScopeDialog
+    bind:open
     {title}
     {scopeLabels}
     {onConfirm}
-    bind:open={
-        () => view.meta?.__saveitem?.isOpen ?? false,
-        (v) => {
-            if (!v) {
-                void view.back();
-            }
-        }
-    }
     skip={!confirm}
 >
     {#snippet trigger(props)}
         <button
             {...props()}
-            {disabled}
             type={variant === "save" ? "submit" : "button"}
             class={tw(
                 "flex size-7 shrink-0 items-center justify-center rounded-full",
@@ -61,9 +44,7 @@
 
                 if (confirm) {
                     e.preventDefault();
-                    void view.push(view.name, {
-                        meta: { ...view.meta, __saveitem: { isOpen: true } }
-                    });
+                    open = true;
                 }
             }}
         >

@@ -1,6 +1,6 @@
 <script lang="ts">
-    import Checkbox from "$/shared/ui/Checkbox.svelte";
-    import Confirmable from "$/shared/ui/Confirmable.svelte";
+    import Checkbox from "#shared/ui/Checkbox.svelte";
+    import Confirmable from "#shared/ui/Confirmable.svelte";
 
     import type { RecurrenceScope } from "../model/types";
     import type { Snippet } from "svelte";

@@ -1,6 +1,7 @@
 <script lang="ts">
     import { Presence } from "@ark-ui/svelte";
     import { trackDismissableElement } from "@zag-js/dismissable";
+    import { Dismissal } from "#shared/capabilities/dismissal/mod.svelte.ts";
     import { tw } from "#shared/lib/styles/tw.ts";
     import AppPortal from "#shared/ui/AppPortal.svelte";
 
@@ -31,6 +32,11 @@
             open = false;
         }
     });
+
+    Dismissal.use(
+        () => open,
+        () => (open = false)
+    );
 </script>
 
 <AppPortal disabled={!portal}>

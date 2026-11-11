@@ -1,5 +1,5 @@
 <script lang="ts">
-    import { DeferUntilNextFrame } from "#shared/lib/svelte/defer-until-next-frame.svelte.ts";
+    import { SessionCache } from "#entities/user/mod.ts";
 
     import Calendar from "./Calendar.svelte";
 
@@ -9,47 +9,28 @@
     import type { HTMLAttributes } from "svelte/elements";
 
     type Props = {
-        id?: string;
         mode: CalendarMode;
         selected: CalendarDate[];
         min?: CalendarDate | null;
-        deferHistoryViewFrames?: number;
         children: Snippet<[HTMLAttributes<HTMLElement>]>;
         onSelect?: (date: CalendarDate[]) => void;
     };
 
-    let {
-        id = "general",
-        mode,
-        selected,
-        min,
-        deferHistoryViewFrames = 0,
-        children,
-        onSelect
-    }: Props = $props();
+    const { mode, selected, min, children, onSelect }: Props = $props();
 
-    const view = new HistoryView<{
-        __calendarpicker: { isOpen: string };
-    }>();
-    const deferredView = new DeferUntilNextFrame(() => deferHistoryViewFrames);
+    const session = SessionCache.retain();
+
+    let open = $state(false);
 </script>
 
 {@render children({
     onclick() {
-        void view.push(view.name, {
-            meta: {
-                ...view.meta,
-                __calendarpicker: { isOpen: id }
-            }
-        });
+        open = true;
     }
 })}
 
 <Calendar
-    bind:open={
-        () => deferredView.ready && view.meta?.__calendarpicker?.isOpen === id,
-        () => view.back()
-    }
+    bind:open
     {mode}
     {selected}
     {min}
@@ -58,9 +39,9 @@
         "data-[state=open]:animate-in data-[state=open]:duration-300 data-[state=open]:ease-[cubic-bezier(0.32,0.72,0,1)] data-[state=open]:zoom-in-95 data-[state=open]:fade-in",
         "data-[state=closed]:animate-out data-[state=closed]:duration-200 data-[state=closed]:ease-in-out data-[state=closed]:fade-out"
     ]}
-    weekStart={page.props.auth.user.preferences.weekStartOn}
+    weekStart={session.current.user.preferences.weekStartOn}
     onSelect={async (date) => {
-        await view.back();
+        open = false;
         onSelect?.(date);
     }}
 />

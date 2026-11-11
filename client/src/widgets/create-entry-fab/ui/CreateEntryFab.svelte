@@ -1,48 +1,38 @@
 <script lang="ts">
     import { Dialog } from "@ark-ui/svelte";
-    import { now, parseDate, toZoned } from "@internationalized/date";
     import { CalendarClock, Check, X } from "@lucide/svelte";
-    import { m } from "$/paraglide/messages";
-    import { TIMEZONE } from "$/shared/cfg/constants";
-    import {
-        HistoryView,
-        useSearchParams
-    } from "$/shared/integrations/inertia";
-    import { LastMatching } from "$/shared/lib/svelte/last-matching.svelte";
-    import AppPortal from "$/shared/ui/AppPortal.svelte";
-    import Sheet from "$/shared/ui/Sheet.svelte";
+    import { m } from "#paraglide/messages.js";
+    import { Dismissal } from "#shared/capabilities/dismissal/mod.svelte.ts";
+    import { LastMatching } from "#shared/lib/svelte/last-matching.svelte.ts";
+    import AppPortal from "#shared/ui/AppPortal.svelte";
+    import Sheet from "#shared/ui/Sheet.svelte";
 
     import ActionButton from "./ActionButton.svelte";
     import ActionRow from "./ActionRow.svelte";
     import EventForm from "./EventForm.svelte";
     import TodoForm from "./TodoForm.svelte";
 
-    const view = new HistoryView();
-    const searchParams = useSearchParams({ showProgress: true });
+    let open: "picker" | "todo" | "event" | false = $state(false);
 
-    const lastViewName = new LastMatching(
-        () => view.name,
-        (name) => name !== ""
+    const lastOpen = new LastMatching(
+        () => open,
+        () => open !== false
     );
 
-    let day = $derived(getCurrentDay());
-
-    function getCurrentDay() {
-        const day = searchParams["d"]
-            ? toZoned(parseDate(searchParams["d"]), TIMEZONE)
-            : now(TIMEZONE);
-        return day.set({ hour: 12, minute: 0, second: 0, millisecond: 0 });
-    }
+    Dismissal.use(
+        () => open === "picker",
+        () => (open = false)
+    );
 </script>
 
 <Dialog.Root
     bind:open={
-        () => view.isOpen("add"),
+        () => open === "picker",
         (v) => {
             if (v) {
-                void view.push("add");
+                open = "picker";
             } else {
-                void view.back();
+                open = false;
             }
         }
     }
@@ -76,14 +66,11 @@
         >
             <ActionRow
                 title={m["events.add"]()}
-                onclick={() => view.replace("add-event")}
+                onclick={() => (open = "event")}
             >
                 <CalendarClock />
             </ActionRow>
-            <ActionRow
-                title={m["todos.add"]()}
-                onclick={() => view.replace("add-todo")}
-            >
+            <ActionRow title={m["todos.add"]()} onclick={() => (open = "todo")}>
                 <Check />
             </ActionRow>
         </Dialog.Content>
@@ -91,25 +78,17 @@
 </Dialog.Root>
 
 <Sheet
-    bind:open={
-        () => view.isOpen("add-todo") || view.isOpen("add-event"),
-        (v) => {
-            if (!v) {
-                void view.back();
-            }
-        }
-    }
+    bind:open={() => open === "event" || open === "todo", () => (open = false)}
     maxHeight={0.9}
     snapPoints={[0.6, 0.9]}
     defaultSnapPoint={1}
     onExitComplete={() => {
-        day = getCurrentDay();
-        lastViewName.reset();
+        lastOpen.reset();
     }}
 >
-    {#if lastViewName.current === "add-todo"}
-        <TodoForm bind:day onClose={() => void view.back()} />
-    {:else if lastViewName.current === "add-event"}
-        <EventForm bind:day onClose={() => void view.back()} />
+    {#if lastOpen.current === "todo"}
+        <TodoForm onClose={() => (open = false)} />
+    {:else if lastOpen.current === "event"}
+        <EventForm onClose={() => (open = false)} />
     {/if}
 </Sheet>

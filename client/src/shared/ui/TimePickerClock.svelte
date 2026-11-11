@@ -1,8 +1,8 @@
 <script lang="ts">
     import { now, toTime } from "@internationalized/date";
     import { m } from "#paraglide/messages.js";
+    import { Haptics } from "#shared/capabilities/haptics/mod.ts";
     import { TIMEZONE } from "#shared/cfg/constants.ts";
-    import { Haptics } from "#shared/services/haptics/mod.ts";
     import { boolAttr } from "runed";
 
     import PromptDialog from "./PromptDialog.svelte";
@@ -129,10 +129,10 @@
 <PromptDialog
     bind:open
     {onAbort}
-    title={m["common.time-picker.title"]()}
+    title={m["time-picker.title"]()}
     label={{
-        abort: m["common.time-picker.cancel"](),
-        confirm: m["common.time-picker.ok"]()
+        abort: m["time-picker.cancel"](),
+        confirm: m["time-picker.ok"]()
     }}
     onConfirm={() => {
         open = false;

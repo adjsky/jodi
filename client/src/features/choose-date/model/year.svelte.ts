@@ -5,13 +5,13 @@ import {
     startOfYear,
     today
 } from "@internationalized/date";
-import { TIMEZONE, WEEK_START_MAP } from "$/shared/cfg/constants";
-import { getWeekDays } from "$/shared/lib/date/get-week-days";
+import { TIMEZONE, WEEK_START_MAP } from "#shared/cfg/constants.ts";
+import { getWeekDays } from "#shared/lib/date/get-week-days.ts";
 import { extract, watch } from "runed";
 
 import type { CalendarDate } from "@internationalized/date";
-import type { Locale } from "$/paraglide/runtime";
-import type { WeekStart } from "$/shared/lib/date/types";
+import type { Locale } from "#paraglide/runtime.js";
+import type { WeekStart } from "#shared/lib/date/types.ts";
 import type { Getter, MaybeGetter } from "runed";
 
 type Options = {

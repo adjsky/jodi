@@ -1,4 +1,4 @@
-<script lang="ts">
+<!-- <script lang="ts">
     import { Form } from "@inertiajs/svelte";
     import { toCalendarDate } from "@internationalized/date";
     import { Trash } from "@lucide/svelte";
@@ -141,4 +141,4 @@
             {/snippet}
         </Event.Fields>
     {/snippet}
-</Form>
+</Form> -->

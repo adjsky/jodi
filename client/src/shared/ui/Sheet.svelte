@@ -1,5 +1,6 @@
 <script lang="ts">
     import { Drawer, useDrawer } from "@ark-ui/svelte";
+    import { Dismissal } from "#shared/capabilities/dismissal/mod.svelte.ts";
     import { VirtualKeyboard } from "#shared/capabilities/virtual-keyboard/mod.ts";
     import { DEFER_FRAMES } from "#shared/cfg/constants.ts";
 
@@ -68,6 +69,11 @@
             return matched;
         }
     });
+
+    Dismissal.use(
+        () => open,
+        () => (open = false)
+    );
 </script>
 
 <Drawer.RootProvider value={drawer} {...drawerRootProps}>

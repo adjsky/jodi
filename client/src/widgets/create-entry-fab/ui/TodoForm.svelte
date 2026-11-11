@@ -1,41 +1,79 @@
 <script lang="ts">
-    import { Form } from "@inertiajs/svelte";
-    import { toCalendarDate } from "@internationalized/date";
-    import { Trash } from "@lucide/svelte";
-    import { Todo } from "$/entities/todo";
-    import { CalendarPicker } from "$/features/choose-date";
-    import { RescheduleItem } from "$/features/reschedule-item";
-    import { SaveOrClose } from "$/features/save-item";
-    import { TodoTime } from "$/features/schedule-todo-time";
-    import { Category } from "$/features/select-category";
-    import { Color } from "$/features/select-color";
-    import { Recurrence } from "$/features/select-recurrence";
-    import Reminder from "$/features/select-reminder/ui/Reminder.svelte";
-    import CreateTodo from "$/generated/actions/App/Domain/Todo/Actions/CreateTodo";
-    import { m } from "$/paraglide/messages";
+    import { toCalendarDate, toZoned } from "@internationalized/date";
+    import { Todo } from "#entities/todo/mod.ts";
+    import { SelectedDate } from "#features/choose-date/mod.ts";
+    import CalendarPicker from "#features/choose-date/ui/CalendarPicker.svelte";
+    import { SaveOrClose } from "#features/save-item/mod.ts";
+    import { TodoTime } from "#features/schedule-todo-time/mod.ts";
     import {
-        DEFER_FRAMES,
-        NOTIFICATION_DEFAULT_SUBHOURS
-    } from "$/shared/cfg/constants";
-    import { normalizeIsoString } from "$/shared/lib/date/normalize-iso-string";
-    import { timediff } from "$/shared/lib/date/timediff";
-    import { Push } from "$/shared/services/push";
-    import { toaster } from "$/shared/ui/toaster";
-    import ToolbarAction from "$/shared/ui/ToolbarAction.svelte";
+        NOTIFICATION_DEFAULT_SUBHOURS,
+        TIMEZONE
+    } from "#shared/cfg/constants.ts";
+    import { timediff } from "#shared/lib/date/timediff.ts";
 
     import type { ZonedDateTime } from "@internationalized/date";
 
     type Props = {
-        day: ZonedDateTime;
         onClose: VoidFunction;
     };
 
-    let { day: scheduledAt = $bindable(), onClose }: Props = $props();
+    let { onClose }: Props = $props();
 
+    let title = $state("");
+    let description = $state("");
+    let scheduledAt = $state(toZoned(SelectedDate.current, TIMEZONE));
     let hasTime = $state(false);
+
     let notifyAt = $state<ZonedDateTime | null>(null);
 </script>
 
+<Todo.Fields bind:title bind:description {scheduledAt}>
+    {#snippet calendar(trigger)}
+        <CalendarPicker
+            mode="single"
+            selected={[toCalendarDate(scheduledAt)]}
+            onSelect={([d]) => {
+                scheduledAt = scheduledAt.set(d);
+            }}
+        >
+            {#snippet children(props)}
+                {@render trigger(props)}
+            {/snippet}
+        </CalendarPicker>
+    {/snippet}
+    {#snippet close()}
+        <SaveOrClose variant="save" />
+    {/snippet}
+    {#snippet category()}{/snippet}
+    {#snippet time()}
+        <TodoTime
+            bind:hasTime
+            {scheduledAt}
+            onChange={(time, hasTime) => {
+                if (!hasTime) {
+                    notifyAt = null;
+                } else {
+                    if (notifyAt) {
+                        notifyAt = notifyAt.add(timediff(scheduledAt, time));
+                    } else {
+                        notifyAt = scheduledAt.set(time).subtract({
+                            hours: NOTIFICATION_DEFAULT_SUBHOURS
+                        });
+                    }
+                }
+
+                scheduledAt = scheduledAt.set(time);
+            }}
+        />
+    {/snippet}
+    {#snippet destroy()}{/snippet}
+    {#snippet repeat()}{/snippet}
+    {#snippet color()}{/snippet}
+    {#snippet notify()}{/snippet}
+    {#snippet more()}{/snippet}
+</Todo.Fields>
+
+<!--
 <Form
     action={CreateTodo()}
     options={{
@@ -62,26 +100,6 @@
 >
     {#snippet children({ processing })}
         <Todo.Fields {scheduledAt}>
-            {#snippet calendar(trigger)}
-                <CalendarPicker
-                    mode="single"
-                    selected={[toCalendarDate(scheduledAt)]}
-                    deferHistoryViewFrames={DEFER_FRAMES.SHEET + 1}
-                    onSelect={([d]) => {
-                        if (notifyAt) {
-                            notifyAt = notifyAt.set(d);
-                        }
-                        scheduledAt = scheduledAt.set(d);
-                    }}
-                >
-                    {#snippet children(props)}
-                        {@render trigger(props)}
-                    {/snippet}
-                </CalendarPicker>
-            {/snippet}
-            {#snippet close()}
-                <SaveOrClose variant="save" disabled={processing} />
-            {/snippet}
             {#snippet category()}
                 <Category
                     name="categoryId"
@@ -89,30 +107,7 @@
                     deferHistoryViewFrames={DEFER_FRAMES.SHEET + 1}
                 />
             {/snippet}
-            {#snippet time()}
-                <TodoTime
-                    {scheduledAt}
-                    bind:hasTime
-                    deferHistoryViewFrames={DEFER_FRAMES.SHEET + 1}
-                    onChange={(time, hasTime) => {
-                        if (!hasTime) {
-                            notifyAt = null;
-                        } else {
-                            if (notifyAt) {
-                                notifyAt = notifyAt.add(
-                                    timediff(scheduledAt, time)
-                                );
-                            } else {
-                                notifyAt = scheduledAt.set(time).subtract({
-                                    hours: NOTIFICATION_DEFAULT_SUBHOURS
-                                });
-                            }
-                        }
 
-                        scheduledAt = scheduledAt.set(time);
-                    }}
-                />
-            {/snippet}
             {#snippet destroy()}
                 <ToolbarAction
                     tooltip={m["todos.tooltips.delete"]()}
@@ -161,4 +156,4 @@
             {/snippet}
         </Todo.Fields>
     {/snippet}
-</Form>
+</Form> -->

@@ -1,10 +1,10 @@
 <script lang="ts">
     import { DateFormatter } from "@internationalized/date";
     import { Clock } from "@lucide/svelte";
-    import { m } from "$/paraglide/messages";
-    import { getLocale } from "$/paraglide/runtime";
-    import { getRandomInt } from "$/shared/lib/random/get-random-int";
-    import { tw } from "$/shared/lib/styles/tw";
+    import { m } from "#paraglide/messages.js";
+    import { getLocale } from "#paraglide/runtime.js";
+    import { getRandomInt } from "#shared/lib/random/get-random-int.ts";
+    import { tw } from "#shared/lib/styles/tw.ts";
 
     import type { ZonedDateTime } from "@internationalized/date";
     import type { Snippet } from "svelte";
@@ -12,8 +12,8 @@
 
     type Props = {
         scheduledAt: ZonedDateTime;
-        title?: string;
-        description?: string | null;
+        title: string;
+        description: string;
         isCompleted?: boolean;
         calendar: Snippet<[Snippet<[HTMLButtonAttributes]>]>;
         close: Snippet;
@@ -29,8 +29,8 @@
 
     let {
         scheduledAt,
-        title,
-        description,
+        title = $bindable(),
+        description = $bindable(),
         isCompleted,
         calendar,
         close,
@@ -100,7 +100,7 @@
 >
     {#snippet titleInput(classname?: string)}
         <input
-            name="title"
+            bind:value={title}
             class={tw(
                 "form-input w-full border-none bg-transparent p-0 text-xl font-bold text-cream-950 placeholder:text-cream-600 focus:ring-0",
                 classname
@@ -108,7 +108,6 @@
             placeholder={titlePlaceholder}
             defaultValue={title ?? ""}
             maxlength={120}
-            required
             data-expand-sheet
         />
     {/snippet}
@@ -133,13 +132,12 @@
     </div>
 
     <textarea
+        bind:value={description}
         name="description"
         placeholder={m["todos.placeholders.description"]()}
         class="mt-3 form-input min-h-34 w-full flex-1 resize-none overflow-y-auto overscroll-contain border-none bg-transparent p-0 text-lg font-semibold text-cream-950 placeholder:text-cream-600 focus:ring-0"
-        defaultValue={description ?? ""}
         maxlength={2000}
-        data-expand-sheet
-    ></textarea>
+        data-expand-sheet></textarea>
 </div>
 
 <div

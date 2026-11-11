@@ -6,11 +6,6 @@ export type OverlayName =
     | "login/get-started"
     | "login/email"
     | "login/verify"
-    | "create-entry"
-    | "create-todo"
-    | "create-event"
-    | "edit-todo"
-    | "edit-event"
     | "calendar"
     | "me"
     | "me/name"
@@ -24,8 +19,6 @@ export type OverlayName =
 
 export type OverlayMeta = {
     loginchallenge?: { email: string; id: string };
-    event?: { id: string };
-    todo?: { id: string };
     invitation?: { id: string };
 };
 

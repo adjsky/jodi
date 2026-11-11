@@ -1,7 +1,5 @@
 <script lang="ts">
-    import { HistoryView } from "../integrations/inertia/history-view.svelte";
     import { tw } from "../lib/styles/tw.ts";
-    import { DeferUntilNextFrame } from "../lib/svelte/defer-until-next-frame.svelte";
     import TimePickerClock from "./TimePickerClock.svelte";
 
     import type { ClassName } from "../lib/styles/tw.ts";
@@ -12,26 +10,20 @@
     type Props = {
         class?: ClassName;
         value: Time;
-        deferHistoryViewFrames?: number;
         trigger?: Snippet<[HTMLButtonAttributes]>;
         onAbort?: VoidFunction;
         onConfirm?: (time: Time) => void;
     };
 
-    let id = $props.id();
     let {
         class: classname,
         value = $bindable(),
-        deferHistoryViewFrames = 0,
         trigger,
         onAbort,
         onConfirm
     }: Props = $props();
 
-    const view = new HistoryView<{
-        __timepickerinput: { isPickerOpen: string };
-    }>();
-    const deferredView = new DeferUntilNextFrame(() => deferHistoryViewFrames);
+    let open = $state(false);
 
     const visibleValue = $derived.by(() => {
         const hours = value.hour.toString().padStart(2, "0");
@@ -39,48 +31,23 @@
 
         return hours + ":" + minutes;
     });
-
-    function showPicker() {
-        void view.push(view.name, {
-            meta: {
-                ...view.meta,
-                __timepickerinput: { isPickerOpen: id }
-            }
-        });
-    }
 </script>
 
 {#if trigger}
     {@render trigger({
         type: "button",
         onclick() {
-            showPicker();
+            open = true;
         }
     })}
 {:else}
     <button
         type="button"
         class={tw("rounded-md text-center font-bold", classname)}
-        onclick={() => showPicker()}
+        onclick={() => (open = true)}
     >
         {visibleValue}
     </button>
 {/if}
 
-<TimePickerClock
-    bind:value
-    bind:open={
-        () =>
-            deferredView.ready &&
-            view.meta?.__timepickerinput?.isPickerOpen === id,
-        (v) => {
-            if (v) {
-                showPicker();
-            } else {
-                void view.back();
-            }
-        }
-    }
-    {onAbort}
-    {onConfirm}
-/>
+<TimePickerClock bind:value bind:open {onAbort} {onConfirm} />

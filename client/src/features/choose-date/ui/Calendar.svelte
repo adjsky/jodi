@@ -1,24 +1,23 @@
 <script lang="ts">
     import { DateFormatter } from "@internationalized/date";
     import { ChevronLeft, ChevronRight } from "@lucide/svelte";
-    import { CalendarEvents, YearCalendar } from "#entities/event/mod.ts";
-    import { m } from "$/paraglide/messages";
-    import { getLocale } from "$/paraglide/runtime";
-    import { TIMEZONE } from "$/shared/cfg/constants";
-    import { ScreenView } from "$/shared/composites/screen-view";
-    import { scrollIntoView } from "$/shared/lib/dom/scroll-into-view";
-    import { useDragSelection } from "$/shared/lib/interaction/use-drag-selection";
-    import { tw } from "$/shared/lib/styles/tw";
-    import { Haptics } from "$/shared/services/haptics";
-    import Button from "$/shared/ui/Button.svelte";
-    import { toaster } from "$/shared/ui/toaster";
+    import { m } from "#paraglide/messages.js";
+    import { getLocale } from "#paraglide/runtime.js";
+    import { Haptics } from "#shared/capabilities/haptics/mod.ts";
+    import { TIMEZONE } from "#shared/cfg/constants.ts";
+    import { scrollIntoView } from "#shared/lib/dom/scroll-into-view.ts";
+    import { useDragSelection } from "#shared/lib/interaction/use-drag-selection.ts";
+    import { tw } from "#shared/lib/styles/tw.ts";
+    import Button from "#shared/ui/Button.svelte";
+    import { ScreenView } from "#shared/ui/composites/screen-view/mod.ts";
+    import { toaster } from "#shared/ui/toaster.ts";
 
-    import { Year } from "../model/year.svelte";
+    import { Year } from "../model/year.svelte.ts";
     import CalendarMonth from "./CalendarMonth.svelte";
 
     import type { CalendarMode } from "../model/types";
     import type { CalendarDate } from "@internationalized/date";
-    import type { WeekStart } from "$/shared/lib/date/types";
+    import type { WeekStart } from "#shared/lib/date/types.ts";
     import type { Attachment } from "svelte/attachments";
     import type { SvelteHTMLElements } from "svelte/elements";
     import type { Except } from "type-fest";
@@ -73,19 +72,19 @@
         () => ({ weekStart, locale: getLocale() })
     );
 
-    const calendar = new YearCalendar(() => ({
-        weekStart,
-        locale: getLocale()
-    }));
+    // const calendar = new YearCalendar(() => ({
+    //     weekStart,
+    //     locale: getLocale()
+    // }));
 
-    const events = new CalendarEvents({
-        onSuccess(year, months, events) {
-            calendar.prepare(year, months, events);
-        },
-        onError() {
-            toaster.error(m["calendar.request-error"]());
-        }
-    });
+    // const events = new CalendarEvents({
+    //     onSuccess(year, months, events) {
+    //         calendar.prepare(year, months, events);
+    //     },
+    //     onError() {
+    //         toaster.error(m["calendar.request-error"]());
+    //     }
+    // });
 
     const dragSelection = useDragSelection<CalendarDate>(() => ({
         enabled: mode === "range",
@@ -225,7 +224,6 @@
                     {year}
                     {mode}
                     {min}
-                    {calendar}
                     {onPress}
                     attachments={{
                         dateButton: attachment,
@@ -233,7 +231,6 @@
                     }}
                     selected={draftSelected}
                     container={monthsNode}
-                    onEventsRequest={(date) => events.request(date)}
                 />
             {/each}
         </div>

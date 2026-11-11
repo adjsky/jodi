@@ -1,8 +1,8 @@
 <script lang="ts">
     import { Time, toTime } from "@internationalized/date";
     import { Plus, X } from "@lucide/svelte";
-    import { m } from "$/paraglide/messages";
-    import TimePickerInput from "$/shared/ui/TimePickerInput.svelte";
+    import { m } from "#paraglide/messages.js";
+    import TimePickerInput from "#shared/ui/TimePickerInput.svelte";
 
     import type { ZonedDateTime } from "@internationalized/date";
     import type { HTMLButtonAttributes } from "svelte/elements";
@@ -10,14 +10,12 @@
     type Props = {
         scheduledAt: ZonedDateTime;
         hasTime: boolean;
-        deferHistoryViewFrames?: number;
         onChange?: (time: Time, hasTime: boolean) => void;
     };
 
     let {
         scheduledAt = $bindable(),
         hasTime = $bindable(),
-        deferHistoryViewFrames = 0,
         onChange
     }: Props = $props();
 </script>
@@ -35,7 +33,6 @@
         </button>
     {/snippet}
     <TimePickerInput
-        {deferHistoryViewFrames}
         bind:value={
             () => (hasTime ? toTime(scheduledAt) : new Time(12, 0)),
             (time) => (scheduledAt = scheduledAt.set(time))

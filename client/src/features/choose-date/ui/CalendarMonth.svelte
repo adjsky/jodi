@@ -1,15 +1,14 @@
 <script lang="ts">
     import { today } from "@internationalized/date";
-    import { m } from "$/paraglide/messages";
-    import { TIMEZONE } from "$/shared/cfg/constants";
-    import { tw } from "$/shared/lib/styles/tw";
-    import { Haptics } from "$/shared/services/haptics";
+    import { m } from "#paraglide/messages.js";
+    import { Haptics } from "#shared/capabilities/haptics/mod.ts";
+    import { TIMEZONE } from "#shared/cfg/constants.ts";
+    import { tw } from "#shared/lib/styles/tw.ts";
     import { boolAttr, useIntersectionObserver } from "runed";
 
     import type { CalendarMode } from "../model/types";
     import type { Year } from "../model/year.svelte";
     import type { CalendarDate } from "@internationalized/date";
-    import type { YearCalendar } from "$/entities/event";
     import type { Attachment } from "svelte/attachments";
 
     type Props = {
@@ -20,7 +19,7 @@
         min?: CalendarDate | null;
         name: string;
         container: HTMLElement;
-        calendar: YearCalendar;
+        // calendar: YearCalendar;
         attachments: {
             dateButton?: (date: CalendarDate) => Attachment<HTMLButtonElement>;
             dragSelection: (
@@ -28,7 +27,7 @@
             ) => Attachment<HTMLButtonElement>;
         };
         onPress?: (date: CalendarDate) => void;
-        onEventsRequest?: (date: CalendarDate) => void;
+        // onEventsRequest?: (date: CalendarDate) => void;
     };
 
     const {
@@ -39,23 +38,21 @@
         min,
         name,
         container,
-        calendar,
         attachments,
-        onPress,
-        onEventsRequest
+        onPress
     }: Props = $props();
 
     let table = $state<HTMLTableElement | null>(null);
 
-    useIntersectionObserver(
-        () => table,
-        (entries) => {
-            if (entries[0]?.isIntersecting) {
-                void onEventsRequest?.(date);
-            }
-        },
-        { root: () => container, threshold: 0, rootMargin: "100px 0px" }
-    );
+    // useIntersectionObserver(
+    //     () => table,
+    //     (entries) => {
+    //         if (entries[0]?.isIntersecting) {
+    //             void onEventsRequest?.(date);
+    //         }
+    //     },
+    //     { root: () => container, threshold: 0, rootMargin: "100px 0px" }
+    // );
 
     function getHighlight(date: CalendarDate) {
         const [from, to] = selected;
@@ -113,15 +110,15 @@
                 {#each week as { date, isWithinMonth }, columnIdx (date.day)}
                     {@render day(date, isWithinMonth, columnIdx)}
                 {/each}
-                {@render events(
+                <!-- {@render events(
                     week.map(({ date }) => date),
                     weekIdx
-                )}
+                )} -->
             </tr>
         {/each}
     </tbody>
 </table>
-
+<!--
 {#snippet events(week: CalendarDate[], weekIdx: number)}
     {@const segments = calendar.visibleSegments(
         date.year,
@@ -163,7 +160,7 @@
             {/if}
         {/each}
     </td>
-{/snippet}
+{/snippet} -->
 
 {#snippet day(date: CalendarDate, isWithinMonth: boolean, columnIdx: number)}
     {@const rangePosition = getRangePosition(date)}

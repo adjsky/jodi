@@ -1,5 +1,6 @@
 <script lang="ts">
     import { Dialog } from "@ark-ui/svelte";
+    import { Dismissal } from "#shared/capabilities/dismissal/mod.svelte.ts";
     import { tw } from "#shared/lib/styles/tw.ts";
 
     import AppPortal from "./AppPortal.svelte";
@@ -24,7 +25,7 @@
         };
 
     let {
-        open = $bindable(),
+        open = $bindable(false),
         title,
         portal = true,
         disabled,
@@ -36,6 +37,11 @@
         onExitComplete,
         ...props
     }: Props = $props();
+
+    Dismissal.use(
+        () => open,
+        () => (open = false)
+    );
 </script>
 
 <Dialog.Root bind:open {lazyMount} {onExitComplete}>

@@ -1,5 +1,5 @@
 <script lang="ts">
-    import { tw } from "$/shared/lib/styles/tw";
+    import { tw } from "#shared/lib/styles/tw.ts";
 
     import type { HTMLButtonAttributes } from "svelte/elements";
 
