@@ -13,6 +13,17 @@
 <button
     type="button"
     {...props}
+    onpointerdown={(e) => {
+        // Ark defers menu focus to the next frame. Focus the trigger now so
+        // WebView won't reopen the keyboard for the previously focused input.
+        if (
+            e.currentTarget.matches('[data-scope="menu"][data-part="trigger"]')
+        ) {
+            e.currentTarget.focus({ preventScroll: true });
+        }
+
+        props.onpointerdown?.(e);
+    }}
     class={tw(
         "flex size-12 items-center justify-center text-xl disabled:not-data-loading:text-cream-400",
         props.class

@@ -9,6 +9,7 @@
     import type { CalendarMode } from "../model/types";
     import type { Year } from "../model/year.svelte";
     import type { CalendarDate } from "@internationalized/date";
+    import type { DragSelection } from "#shared/lib/interaction/use-drag-selection.ts";
     import type { Attachment } from "svelte/attachments";
 
     type Props = {
@@ -20,12 +21,7 @@
         name: string;
         container: HTMLElement;
         // calendar: YearCalendar;
-        attachments: {
-            dateButton?: (date: CalendarDate) => Attachment<HTMLButtonElement>;
-            dragSelection: (
-                date: CalendarDate
-            ) => Attachment<HTMLButtonElement>;
-        };
+        dragSelection: DragSelection<CalendarDate>;
         onPress?: (date: CalendarDate) => void;
         // onEventsRequest?: (date: CalendarDate) => void;
     };
@@ -38,7 +34,7 @@
         min,
         name,
         container,
-        attachments,
+        dragSelection,
         onPress
     }: Props = $props();
 
@@ -166,8 +162,7 @@
     {@const rangePosition = getRangePosition(date)}
     <td>
         <button
-            {@attach attachments.dateButton?.(date)}
-            {@attach attachments.dragSelection(date)}
+            {@attach dragSelection.attachment(date)}
             disabled={min ? min.compare(date) > 0 : false}
             type="button"
             class={tw([
@@ -178,10 +173,7 @@
             data-highlight={getHighlight(date)}
             data-range={rangePosition}
             data-outside-month={boolAttr(!isWithinMonth)}
-            onclick={() => {
-                void Haptics.impact("medium");
-                onPress?.(date);
-            }}
+            onclick={() => onPress?.(date)}
         >
             <span
                 class={[

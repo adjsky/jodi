@@ -3,4 +3,4 @@ export { default as Calendar } from "./ui/Calendar.svelte";
 export { default as CalendarPicker } from "./ui/CalendarPicker.svelte";
 
 export * from "./model/types";
-export * from "./model/selected-date.ts";
+export * from "./model/selected-date.svelte.ts";

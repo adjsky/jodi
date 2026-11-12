@@ -18,7 +18,6 @@
     import type { CalendarMode } from "../model/types";
     import type { CalendarDate } from "@internationalized/date";
     import type { WeekStart } from "#shared/lib/date/types.ts";
-    import type { Attachment } from "svelte/attachments";
     import type { SvelteHTMLElements } from "svelte/elements";
     import type { Except } from "type-fest";
 
@@ -29,7 +28,6 @@
         selected: CalendarDate[];
         weekStart: WeekStart;
         min?: CalendarDate | null;
-        attachment?: (date: CalendarDate) => Attachment<HTMLButtonElement>;
         onSelect?: (date: CalendarDate[]) => void;
     };
 
@@ -39,7 +37,6 @@
         selected,
         weekStart,
         min,
-        attachment,
         onSelect,
         ...props
     }: Props = $props();
@@ -224,11 +221,8 @@
                     {year}
                     {mode}
                     {min}
+                    {dragSelection}
                     {onPress}
-                    attachments={{
-                        dateButton: attachment,
-                        dragSelection: dragSelection.attachment
-                    }}
                     selected={draftSelected}
                     container={monthsNode}
                 />

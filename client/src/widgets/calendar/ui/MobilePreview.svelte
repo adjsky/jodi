@@ -3,7 +3,7 @@
     import { Calendar as CalendarIcon } from "@lucide/svelte";
     import { SessionCache } from "#entities/user/mod.ts";
     import {
-        // Calendar,
+        Calendar,
         SelectedDate,
         WeekCarousel
     } from "#features/choose-date/mod.ts";
@@ -55,20 +55,14 @@
     bind:cursor
     weekStart={user.preferences.weekStartOn}
 />
-<!--
+
 <Calendar
     bind:open={() => Overlay.isOpen("calendar"), () => Overlay.close()}
-    // attachment={(date) =>
-    //     fromAction(inertia, () => ({
-    //         href: `?d=${date.toString()}`,
-    //         showProgress: true,
-    //         replace: true,
-    //         preserveScroll: true,
-    //         preserveState: true,
-    //         viewTransition: true,
-    //         only: ["todos", "events"]
-    //     }))}
     mode="single"
     selected={[SelectedDate.current]}
     weekStart={user.preferences.weekStartOn}
-/> -->
+    onSelect={async ([date]) => {
+        void Overlay.close();
+        SelectedDate.update(date);
+    }}
+/>

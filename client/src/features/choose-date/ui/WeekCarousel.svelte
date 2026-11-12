@@ -8,7 +8,7 @@
     import { TIMEZONE } from "#shared/cfg/constants.ts";
     import { tw } from "#shared/lib/styles/tw.ts";
 
-    import { SelectedDate } from "../model/selected-date.ts";
+    import { SelectedDate } from "../model/selected-date.svelte.ts";
     import { WeekSwiper } from "../model/week-swiper.svelte";
 
     import type { CalendarDate } from "@internationalized/date";

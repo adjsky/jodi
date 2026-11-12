@@ -14,7 +14,7 @@ type Options<T> = {
     onEnd?: VoidFunction;
 };
 
-type DragSelection<T> = {
+export type DragSelection<T> = {
     attachment: (value: T) => Attachment<HTMLElement>;
 };
 
