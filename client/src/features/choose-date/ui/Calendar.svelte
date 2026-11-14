@@ -24,6 +24,7 @@
     type Props = Except<SvelteHTMLElements["div"], "children" | "title"> & {
         open: boolean;
         portal?: boolean;
+        confirm: "manual" | "select";
         mode: CalendarMode;
         selected: CalendarDate[];
         weekStart: WeekStart;
@@ -33,6 +34,7 @@
 
     let {
         open = $bindable(),
+        confirm,
         mode,
         selected,
         weekStart,
@@ -124,25 +126,29 @@
     }
 
     function onPress(date: CalendarDate) {
+        if (confirm === "select") {
+            onSelect?.(getNextSelection(selected, date));
+        } else {
+            draftSelected = getNextSelection(draftSelected, date);
+        }
+    }
+
+    function getNextSelection(current: CalendarDate[], date: CalendarDate) {
         if (mode === "single") {
-            onSelect?.([date]);
-            return;
+            return [date];
         }
 
-        const [from, to] = draftSelected;
+        const [from, to] = current;
 
         if (from && to) {
-            draftSelected = [date];
-            return;
+            return [date];
         }
 
         if (from && !to) {
-            if (from.compare(date) > 0) {
-                draftSelected = [date, from];
-            } else {
-                draftSelected = [from, date];
-            }
+            return from.compare(date) > 0 ? [date, from] : [from, date];
         }
+
+        return [from, to];
     }
 
     function formatSelected([from, to]: CalendarDate[]) {
@@ -230,13 +236,18 @@
         </div>
     </ScreenView.Content>
 
-    {#if mode === "range"}
+    {#if confirm === "manual"}
         <ScreenView.Footer class="mt-4 mb-safe-offset-5">
             <Button
                 type="button"
                 onclick={() => {
-                    const [from, to] = draftSelected;
-                    onSelect?.([from, to ?? from]);
+                    if (mode === "range") {
+                        const [from, to] = draftSelected;
+                        onSelect?.([from, to ?? from]);
+                    } else {
+                        const [date] = draftSelected;
+                        onSelect?.([date]);
+                    }
                 }}
             >
                 {formatSelected(draftSelected)}

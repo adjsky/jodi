@@ -21,7 +21,7 @@ db.version(1).stores({
     sessions: "id",
     events: "id, [recurring+startsAt]",
     todos: "id, [recurring+scheduledAt]",
-    categories: "id, &name",
+    categories: "id, &name, createdAt",
     todoPositions: "id, date, &[todoId+date]",
     recurrenceExceptions: "id, &[recurrenceableType+recurrenceableId+occursAt]"
 });

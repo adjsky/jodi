@@ -5,6 +5,7 @@
     import { CalendarPicker, SelectedDate } from "#features/choose-date/mod.ts";
     import { SaveOrClose } from "#features/save-item/mod.ts";
     import { TodoTime } from "#features/schedule-todo-time/mod.ts";
+    import { Category } from "#features/select-category/mod.ts";
     import { Recurrence } from "#features/select-recurrence/mod.ts";
     import { m } from "#paraglide/messages.js";
     import { TIMEZONE } from "#shared/cfg/constants.ts";
@@ -21,6 +22,7 @@
     let scheduledAt = $state(toZoned(SelectedDate.current, TIMEZONE));
     let hasTime = $state(false);
     let rrule: string | null = $state(null);
+    let categoryId: string | null = $state(null);
 </script>
 
 <Todo.Fields bind:title bind:description {scheduledAt}>
@@ -40,7 +42,8 @@
     {#snippet close()}
         <SaveOrClose variant="save" />
     {/snippet}
-    {#snippet category()}{/snippet}
+    {#snippet category()}
+        <Category bind:current={categoryId} />{/snippet}
     {#snippet time()}
         <TodoTime
             {scheduledAt}
@@ -95,16 +98,6 @@
 >
     {#snippet children({ processing })}
         <Todo.Fields {scheduledAt}>
-            {#snippet category()}
-                <Category
-                    name="categoryId"
-                    current={null}
-                    deferHistoryViewFrames={DEFER_FRAMES.SHEET + 1}
-                />
-            {/snippet}
-
-
-
             {#snippet color()}
                 <Color name="color" tooltip={m["todos.tooltips.color"]()} />
             {/snippet}

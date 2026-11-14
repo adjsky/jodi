@@ -30,7 +30,7 @@
     {#snippet trigger(props)}
         <button
             {...props()}
-            type={variant === "save" ? "submit" : "button"}
+            type="button"
             class={tw(
                 "flex size-7 shrink-0 items-center justify-center rounded-full",
                 variant === "close" && "bg-cream-100",

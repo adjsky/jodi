@@ -1,145 +1,67 @@
 <script lang="ts">
-    import { useFilter, useListCollection } from "@ark-ui/svelte";
-    import { Search, Tag, X } from "@lucide/svelte";
-    import { createQuery, useQueryClient } from "@tanstack/svelte-query";
-    import { m } from "$/paraglide/messages";
-    import Jelly from "$/shared/assets/jelly.svg";
-    import { dispatchInput } from "$/shared/lib/dom/dispatch-input";
-    import { DeferUntilNextFrame } from "$/shared/lib/svelte/defer-until-next-frame.svelte";
-    import ResourceError from "$/shared/ui/ResourceError.svelte";
-    import SheetDialog from "$/shared/ui/SheetDialog.svelte";
-    import { tick, untrack } from "svelte";
+    import { Plus, Search, Tag, X } from "@lucide/svelte";
+    import { CategoryRepository } from "#entities/todo/mod.ts";
+    import { m } from "#paraglide/messages.js";
+    import Jelly from "#shared/assets/jelly.svg";
+    import Confirmable from "#shared/ui/Confirmable.svelte";
+    import SheetDialog from "#shared/ui/SheetDialog.svelte";
 
-    import { categoriesQueryOptions } from "../api/categories";
-    import { view } from "../model/view";
-    import AddCategory from "./AddCategory.svelte";
-    import Categories from "./Categories.svelte";
-    import DeleteCategory from "./DeleteCategory.svelte";
-
-    import type { CategoryData } from "$/entities/todo";
+    import List from "./List.svelte";
 
     type Props = {
-        name: string;
-        current: CategoryData | null;
-        deferHistoryViewFrames?: number;
+        current: string | null;
     };
 
-    let { name, current, deferHistoryViewFrames = 0 }: Props = $props();
-
-    const deferredView = new DeferUntilNextFrame(() => deferHistoryViewFrames);
-
-    // ------------------------------ COLLECTION -------------------------------
-
-    const { collection, filter, set } = useListCollection({
-        initialItems: [] as { id: number; name: string }[],
-        filter(itemString, filterText) {
-            return filters().contains(itemString, filterText);
-        },
-        itemToString({ name }) {
-            return name;
-        },
-        itemToValue({ name }) {
-            return name;
-        }
-    });
-
-    // ------------------------------- FILTERS ---------------------------------
+    let { current = $bindable() }: Props = $props();
 
     let search = $state("");
+    let open = $state(false);
+    let confirm = $state(false);
+    let confirmId: string | null = $state(null);
 
-    const filters = useFilter({ sensitivity: "base" });
+    const cquery = CategoryRepository.list();
 
-    $effect(() => {
-        filter(search);
-    });
+    const categories = $derived(cquery.current ?? []);
+    const filtered = $derived(categories.filter((c) => filter(c.name)));
 
-    // --------------------------------- QUERY ---------------------------------
+    const showAddButton = $derived(
+        search !== "" && filtered.findIndex((c) => filter(c.name)) === -1
+    );
+    const hasNoCategories = $derived(search === "" && filtered.length === 0);
 
-    const queryClient = useQueryClient();
-
-    const categories = createQuery(() => categoriesQueryOptions);
-
-    const isError = $derived(!categories.data && categories.error);
-    const isLoading = $derived(categories.isLoading);
-
-    $effect(() => {
-        if (categories.data) {
-            set(categories.data);
-        }
-    });
-
-    // -------------------------------- STATES ---------------------------------
-
-    let formInput = $state<HTMLInputElement | null>(null);
-    let selected = $state(untrack(() => current));
-
-    $effect(() => {
-        if (selected !== null && !collection().has(selected.name)) {
-            selected = null;
-        }
-    });
-
-    const showAddButton = $derived(search !== "" && !collection().has(search));
-    const hasNoCategories = $derived(search === "" && collection().size === 0);
-
-    // ------------------------------- CALLBACKS -------------------------------
-
-    async function onSelect(category: CategoryData | null) {
-        selected = category;
-        await tick();
-        dispatchInput(formInput);
+    function filter(name: string) {
+        return name.toLowerCase().includes(search);
     }
 </script>
 
-<input bind:this={formInput} type="number" value={selected?.id} {name} hidden />
-
 <SheetDialog
-    bind:open={
-        () =>
-            deferredView.ready &&
-            (view.meta?.__selectcategory?.isOpen ?? false),
-        (v) => {
-            if (v) {
-                void view.push(view.name, {
-                    meta: {
-                        ...view.meta,
-                        __selectcategory: { isOpen: true }
-                    }
-                });
-            } else {
-                void view.back();
-            }
-        }
-    }
+    bind:open
+    portal
     class="pb-0"
     height={75}
     title={m["todos.category.title"]()}
     onExitComplete={() => {
         search = "";
     }}
-    portal
-    lazyMount
 >
     {#snippet trigger(props)}
         <button
             {...props()}
             class={[
                 "w-fit max-w-full truncate rounded-full px-2.5 py-0.5 font-bold",
-                selected && "bg-peach",
-                !selected &&
+                current && "bg-peach",
+                !current &&
                     "text-cream-700 outline outline-cream-400 outline-dashed"
             ]}
         >
-            {#if selected}
+            {#if current}
                 <Tag class="inline text-sm" />
-                {selected.name}
+                {categories.find((c) => c.id === current)?.name}
             {:else}
                 {m["todos.category.trigger"]()}
             {/if}
         </button>
     {/snippet}
-
-    <DeleteCategory />
 
     <div class="relative mt-3 flex items-center">
         <Search
@@ -164,64 +86,68 @@
         />
     </div>
 
-    <div
-        class={[
-            "flex min-h-0 grow flex-col",
-            !isError && !hasNoCategories && "mt-2"
-        ]}
-        aria-live="polite"
-        aria-busy={categories.isFetching}
-    >
-        {#if isError}
-            <ResourceError
-                message={m["todos.category.error"]()}
-                onRetry={() => categories.refetch()}
-            />
-        {:else if isLoading}
-            <Categories isLoading />
-        {:else}
-            {#if showAddButton}
-                <AddCategory
-                    name={search}
-                    onAdd={async (category) => {
-                        queryClient.setQueryData(
-                            categoriesQueryOptions.queryKey,
-                            (categories) => [...(categories ?? []), category]
-                        );
-                        void onSelect(category);
-
-                        search = "";
-                    }}
-                />
-            {/if}
-
-            {#if showAddButton && collection().size > 0}
-                <hr class="mt-2 text-cream-300" />
-            {/if}
-
-            {#if hasNoCategories}
-                <img
-                    src={Jelly}
-                    width={82}
-                    height={85}
-                    alt=""
-                    decoding="async"
-                    class="mx-auto mt-[10vh] w-full max-w-28"
-                />
-                <p
-                    class="mx-auto mt-8 max-w-74 text-center text-lg font-medium"
-                >
-                    {m["todos.category.no-categories"]()}
-                </p>
-            {/if}
-
-            <Categories
-                list={collection().items}
-                selectedId={selected?.id ?? null}
-                onSelect={(category) => {
-                    void onSelect(category);
+    <div class={["flex min-h-0 grow flex-col", !hasNoCategories && "mt-2"]}>
+        {#if showAddButton}
+            <button
+                type="button"
+                class="flex h-14 w-full items-center gap-2 rounded-xl bg-brand/10 px-2 text-start text-lg font-medium disabled:cursor-not-allowed"
+                onclick={async () => {
+                    const id = await CategoryRepository.create(search);
+                    search = "";
+                    current = id;
                 }}
-            />
+            >
+                <span
+                    class="flex size-7 items-center justify-center rounded-full bg-brand"
+                >
+                    <Plus class="text-xl text-white" />
+                </span>
+                {m["todos.category.add"]()}
+            </button>
         {/if}
+
+        {#if showAddButton && filtered.length > 0}
+            <hr class="mt-2 text-cream-300" />
+        {/if}
+
+        {#if hasNoCategories}
+            <img
+                src={Jelly}
+                width={82}
+                height={85}
+                alt=""
+                decoding="async"
+                class="mx-auto mt-[10vh] w-full max-w-28"
+            />
+            <p class="mx-auto mt-8 max-w-74 text-center text-lg font-medium">
+                {m["todos.category.no-categories"]()}
+            </p>
+        {/if}
+
+        <List
+            {current}
+            list={filtered}
+            onSelect={(id) => (current = id)}
+            onDelete={(id) => {
+                confirm = true;
+                confirmId = id;
+            }}
+        />
     </div>
+
+    <Confirmable
+        bind:open={confirm}
+        title={m["todos.category.confirm-delete"]({
+            category: categories.find((c) => c.id === confirmId)?.name ?? ""
+        })}
+        onConfirm={async () => {
+            if (!confirmId) return;
+            await CategoryRepository.remove(confirmId);
+            if (confirmId === current) current = null;
+            confirm = false;
+        }}
+        onExitComplete={() => {
+            confirmId = null;
+        }}
+    />
 </SheetDialog>

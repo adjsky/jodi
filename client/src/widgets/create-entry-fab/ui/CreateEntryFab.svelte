@@ -52,7 +52,7 @@
     <AppPortal>
         <Dialog.Backdrop
             class={[
-                "fixed inset-0 z-15 bg-cream-950/60 duration-300",
+                "fixed inset-0 z-15 bg-cream-950/60 animation-duration-300",
                 "data-[state=closed]:animate-out data-[state=closed]:fade-out",
                 "data-[state=open]:animate-in data-[state=open]:fade-in"
             ]}

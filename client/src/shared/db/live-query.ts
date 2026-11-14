@@ -6,7 +6,8 @@ export type LiveQuery<T> = { current: T | undefined };
 export function liveQuery<T>(query: () => T | Promise<T>): LiveQuery<T> {
     const store = readable<T | undefined>(undefined, (set) => {
         const subscription = _liveQuery(query).subscribe({
-            next: set
+            next: set,
+            error: (e) => console.error("[liveQuery] Query failed: ", e)
         });
 
         return () => subscription.unsubscribe();

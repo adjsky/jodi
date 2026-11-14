@@ -59,10 +59,11 @@
 <Calendar
     bind:open={() => Overlay.isOpen("calendar"), () => Overlay.close()}
     mode="single"
+    confirm="select"
     selected={[SelectedDate.current]}
     weekStart={user.preferences.weekStartOn}
     onSelect={async ([date]) => {
-        void Overlay.close();
+        await Overlay.close();
         SelectedDate.update(date);
     }}
 />

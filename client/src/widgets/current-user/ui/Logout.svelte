@@ -21,7 +21,7 @@
             await api(url, { method });
             await LocalSession.end();
         } catch (e) {
-            console.error(e);
+            console.error("Failed to log out: ", e);
             toaster.error(m["common.errors.unexpected"]());
         } finally {
             isLoading = false;

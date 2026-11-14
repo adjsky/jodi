@@ -20,7 +20,7 @@ async function end(): Promise<boolean> {
         ]);
         await goto(resolve("login"));
     } catch (e) {
-        console.error(e);
+        console.error("[LocalSession] Failed to end the session: ", e);
         return false;
     } finally {
         isEndingSession = false;

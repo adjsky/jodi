@@ -172,7 +172,6 @@
         "errors": {
             "complete": "Couldn't complete task. Please try again.",
             "edit": "Couldn't update task. Please try again.",
-            "delete-category": "Couldn't delete category. Please try again.",
             "reorder": "Couldn't reorder tasks. Please try again.",
             "destroy": "Couldn't delete task. Please try again."
         },
