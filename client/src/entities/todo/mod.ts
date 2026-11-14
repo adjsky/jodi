@@ -5,3 +5,6 @@ export const Todo = {
     Row,
     Fields
 };
+
+export * from "./model/category-repository.ts";
+export * from "./model/types.ts";
