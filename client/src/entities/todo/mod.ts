@@ -11,6 +11,7 @@ export const Todo = {
 export type Todo = MTodo;
 
 export * from "./model/category-repository.ts";
+export * from "./model/todo-position-repository.ts";
 export * from "./model/todo-repository.ts";
 export * from "./model/todo-service.ts";
 export * from "./model/types.ts";

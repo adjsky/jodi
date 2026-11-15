@@ -1,3 +1,5 @@
+/// <reference types="vitest/config" />
+
 import { paraglideVitePlugin } from "@inlang/paraglide-js";
 import { wayfinder } from "@laravel/vite-plugin-wayfinder";
 import adapter from "@sveltejs/adapter-static";

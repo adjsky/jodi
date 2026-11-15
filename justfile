@@ -18,7 +18,7 @@ client-install:
     npm install
 
 client-test:
-    npm test
+    npm test --workspace=client
 
 [parallel]
 client-dev: client-serve api-types

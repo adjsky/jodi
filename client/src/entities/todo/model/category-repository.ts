@@ -1,17 +1,13 @@
 import { db } from "#shared/db/dexie.ts";
-import { liveQuery } from "#shared/db/live-query.ts";
 
 import type { Category } from "./types.ts";
-import type { LiveQuery } from "#shared/db/live-query.ts";
 
-function list(): LiveQuery<Category[]> {
-    return liveQuery(() =>
-        db.categories.orderBy("createdAt").toArray((categories) =>
-            categories.map((c) => ({
-                id: c.id,
-                name: c.name
-            }))
-        )
+function list(): Promise<Category[]> {
+    return db.categories.orderBy("createdAt").toArray((categories) =>
+        categories.map((c) => ({
+            id: c.id,
+            name: c.name
+        }))
     );
 }
 

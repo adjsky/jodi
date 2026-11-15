@@ -1,20 +1,40 @@
+import { fromAbsolute } from "@internationalized/date";
 import { TIMEZONE } from "#shared/cfg/constants.ts";
-import { toDbBoolean } from "#shared/db/boolean.ts";
+import { fromDbBoolean, toDbBoolean } from "#shared/db/boolean.ts";
 import { db } from "#shared/db/dexie.ts";
-import { liveQuery } from "#shared/db/live-query.ts";
+import Dexie from "dexie";
 
 import type { Todo, TodoDraft } from "./types.ts";
-import type { LiveQuery } from "#shared/db/live-query.ts";
+import type { CalendarDate } from "@internationalized/date";
 
-function list(): LiveQuery<Todo[]> {
-    // return liveQuery(() =>
-    //     db.todos.orderBy("createdAt").toArray((todos) =>
-    //         todos.map((t) => ({
-    //             id: c.id,
-    //             name: c.name
-    //         }))
-    //     )
-    // );
+function list(date: CalendarDate): Promise<Todo[]> {
+    const start = date.toDate(TIMEZONE).getTime();
+    const end = date.add({ days: 1 }).toDate(TIMEZONE).getTime();
+
+    return db.todos
+        .where("[recurring+scheduledAt]")
+        .between([0, start], [0, end], true, false)
+        .or("[recurring+scheduledAt]")
+        .between([1, Dexie.minKey], [1, end], true, false)
+        .toArray((todos) =>
+            todos.map((t) => ({
+                id: t.id,
+                title: t.title,
+                description: t.description,
+                categoryId: t.categoryId,
+                color: t.color,
+                rrule: t.rrule,
+                scheduledAt: fromAbsolute(t.scheduledAt, t.timezone),
+                hasTime: fromDbBoolean(t.hasTime),
+                completedAt:
+                    t.completedAt !== null
+                        ? fromAbsolute(t.completedAt, t.timezone)
+                        : null,
+                createdAt: fromAbsolute(t.createdAt, TIMEZONE),
+                notifyBefore: t.notifyBefore,
+                timezone: t.timezone
+            }))
+        );
 }
 
 function create(draft: TodoDraft): Promise<string> {
