@@ -1,3 +1,7 @@
+import {
+    RecurrenceExceptionRepository,
+    RecurrenceExpander
+} from "#entities/recurrence/mod.ts";
 import { db } from "#shared/db/dexie.ts";
 import { liveQuery } from "#shared/db/live-query.ts";
 import { sortBy } from "remeda";
@@ -12,23 +16,42 @@ import type { LiveQuery } from "#shared/db/live-query.ts";
 
 function list(date: CalendarDate): LiveQuery<Todo[]> {
     return liveQuery(async () => {
-        const [todos, positions, categories] = await db.transaction(
+        const [todos, exceptions, positions, categories] = await db.transaction(
             "r",
-            [db.todos, db.todoPositions, db.categories],
-            () =>
-                Promise.all([
+            [
+                db.todos,
+                db.recurrenceExceptions,
+                db.todoPositions,
+                db.categories
+            ],
+            async () => {
+                const [todos, ...rest] = await Promise.all([
                     TodoRepository.list(date),
                     TodoPositionRepository.list(date),
                     CategoryRepository.list()
-                ])
+                ]);
+
+                const exceptions = await RecurrenceExceptionRepository.list(
+                    "todo",
+                    todos.map((t) => t.id)
+                );
+
+                return [todos, exceptions, ...rest];
+            }
         );
 
         const category = new Map(categories.map((c) => [c.id, c.name]));
         const position = new Map(positions.map((p) => [p.todoId, p.position]));
 
+        const expander = new RecurrenceExpander<Todo>({
+            startKey: "scheduledAt",
+            endKey: null,
+            shiftedDateKeys: []
+        });
+
         return sortBy(
-            todos,
-            (t) => category.get(t.id) ?? "",
+            expander.on(date, todos, exceptions),
+            (t) => (t.categoryId ? (category.get(t.categoryId) ?? "") : ""),
             (t) => position.get(t.id) ?? Infinity,
             (t) => t.createdAt.toDate().getTime()
         );
