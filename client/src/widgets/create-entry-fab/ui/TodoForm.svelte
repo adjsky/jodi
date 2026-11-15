@@ -3,13 +3,19 @@
     import { Trash } from "@lucide/svelte";
     import { Todo } from "#entities/todo/mod.ts";
     import { CalendarPicker, SelectedDate } from "#features/choose-date/mod.ts";
+    import { RescheduleItem } from "#features/reschedule-item/mod.ts";
     import { SaveOrClose } from "#features/save-item/mod.ts";
     import { TodoTime } from "#features/schedule-todo-time/mod.ts";
     import { Category } from "#features/select-category/mod.ts";
+    import { Color } from "#features/select-color/mod.ts";
     import { Recurrence } from "#features/select-recurrence/mod.ts";
+    import { Reminder } from "#features/select-reminder/mod.ts";
     import { m } from "#paraglide/messages.js";
     import { TIMEZONE } from "#shared/cfg/constants.ts";
+    import { toaster } from "#shared/ui/toaster.ts";
     import ToolbarAction from "#shared/ui/ToolbarAction.svelte";
+
+    import type { TodoDraft } from "#entities/todo/mod.ts";
 
     type Props = {
         onClose: VoidFunction;
@@ -17,21 +23,29 @@
 
     let { onClose }: Props = $props();
 
-    let title = $state("");
-    let description = $state("");
-    let scheduledAt = $state(toZoned(SelectedDate.current, TIMEZONE));
-    let hasTime = $state(false);
-    let rrule: string | null = $state(null);
-    let categoryId: string | null = $state(null);
+    const draft: TodoDraft = $state({
+        title: "",
+        description: "",
+        categoryId: null,
+        color: null,
+        rrule: null,
+        scheduledAt: toZoned(SelectedDate.current, TIMEZONE),
+        hasTime: false,
+        notifyBefore: "PT1H"
+    });
 </script>
 
-<Todo.Fields bind:title bind:description {scheduledAt}>
+<Todo.Fields
+    bind:title={draft.title}
+    bind:description={draft.description}
+    scheduledAt={draft.scheduledAt}
+>
     {#snippet calendar(trigger)}
         <CalendarPicker
             mode="single"
-            selected={[toCalendarDate(scheduledAt)]}
+            selected={[toCalendarDate(draft.scheduledAt)]}
             onSelect={([d]) => {
-                scheduledAt = scheduledAt.set(d);
+                draft.scheduledAt = draft.scheduledAt.set(d);
             }}
         >
             {#snippet children(props)}
@@ -43,14 +57,14 @@
         <SaveOrClose variant="save" />
     {/snippet}
     {#snippet category()}
-        <Category bind:current={categoryId} />{/snippet}
+        <Category bind:categoryId={draft.categoryId} />{/snippet}
     {#snippet time()}
         <TodoTime
-            {scheduledAt}
-            {hasTime}
+            scheduledAt={draft.scheduledAt}
+            hasTime={draft.hasTime}
             onChange={(time, ht) => {
-                hasTime = ht;
-                scheduledAt = scheduledAt.set(time);
+                draft.hasTime = ht;
+                draft.scheduledAt = draft.scheduledAt.set(time);
             }}
         />
     {/snippet}
@@ -61,14 +75,33 @@
     {/snippet}
     {#snippet repeat()}
         <Recurrence
-            bind:rrule
-            day={scheduledAt}
+            bind:rrule={draft.rrule}
+            day={draft.scheduledAt}
             tooltip={m["todos.tooltips.repeat"]()}
         />
     {/snippet}
-    {#snippet color()}{/snippet}
-    {#snippet notify()}{/snippet}
-    {#snippet more()}{/snippet}
+    {#snippet color()}
+        <Color bind:color={draft.color} tooltip={m["todos.tooltips.color"]()} />
+    {/snippet}
+    {#snippet notify()}
+        <Reminder
+            bind:notifyBefore={draft.notifyBefore}
+            tooltip={m["todos.tooltips.notification"]()}
+            disabled={!draft.hasTime}
+            onDisabledAttempt={() => {
+                toaster.info(m["todos.reminder.select-time"]());
+            }}
+        />
+    {/snippet}
+    {#snippet more()}
+        <RescheduleItem
+            startsAt={toCalendarDate(draft.scheduledAt)}
+            tooltip={m["todos.tooltips.more"]()}
+            onReschedule={(d) => {
+                draft.scheduledAt = draft.scheduledAt.set(d);
+            }}
+        />
+    {/snippet}
 </Todo.Fields>
 
 <!--
@@ -98,36 +131,7 @@
 >
     {#snippet children({ processing })}
         <Todo.Fields {scheduledAt}>
-            {#snippet color()}
-                <Color name="color" tooltip={m["todos.tooltips.color"]()} />
-            {/snippet}
-            {#snippet notify()}
-                <Reminder
-                    bind:notifyAt
-                    startsAt={scheduledAt}
-                    name="notifyAt"
-                    tooltip={m["todos.tooltips.notification"]()}
-                    beforeOpen={() => {
-                        if (!hasTime) {
-                            toaster.info(m["todos.reminder.select-time"]());
-                            return false;
-                        }
-                    }}
-                    deferHistoryViewFrames={DEFER_FRAMES.SHEET + 1}
-                />
-            {/snippet}
-            {#snippet more()}
-                <RescheduleItem
-                    startsAt={toCalendarDate(scheduledAt)}
-                    tooltip={m["todos.tooltips.more"]()}
-                    onReschedule={(d) => {
-                        if (notifyAt) {
-                            notifyAt = notifyAt.set(d);
-                        }
-                        scheduledAt = scheduledAt.set(d);
-                    }}
-                />
-            {/snippet}
+
         </Todo.Fields>
     {/snippet}
 </Form> -->

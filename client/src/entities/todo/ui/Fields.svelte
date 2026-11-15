@@ -3,6 +3,7 @@
     import { Clock } from "@lucide/svelte";
     import { m } from "#paraglide/messages.js";
     import { getLocale } from "#paraglide/runtime.js";
+    import { TIMEZONE } from "#shared/cfg/constants.ts";
     import { getRandomInt } from "#shared/lib/random/get-random-int.ts";
     import { tw } from "#shared/lib/styles/tw.ts";
 
@@ -86,7 +87,8 @@
                 day: "2-digit",
                 year: "numeric",
                 month: "short",
-                weekday: "short"
+                weekday: "short",
+                timeZone: TIMEZONE
             }).format(scheduledAt.toDate())}
         </button>
     {/snippet}

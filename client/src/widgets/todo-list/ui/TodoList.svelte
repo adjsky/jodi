@@ -1,62 +1,46 @@
 <script lang="ts">
     import { Check, GripVertical } from "@lucide/svelte";
-    import { Todo } from "$/entities/todo";
-    import Checkbox from "$/features/complete-todo/ui/Checkbox.svelte";
-    import CompleteTodo from "$/generated/actions/App/Domain/Todo/Actions/CompleteTodo";
-    import { m } from "$/paraglide/messages";
-    import PencilNote from "$/shared/assets/pencil-note.svg";
-    import { useSearchParams } from "$/shared/integrations/inertia";
-    import { needsLightContrast } from "$/shared/lib/color/needs-light-contrast";
-    import { formatToHHMM } from "$/shared/lib/date/format-to-hh-mm";
-    import { tw } from "$/shared/lib/styles/tw";
-    import { Haptics } from "$/shared/services/haptics";
-    import { toaster } from "$/shared/ui/toaster";
+    import { Todo } from "#entities/todo/mod.ts";
+    import { Checkbox } from "#features/complete-todo/mod.ts";
+    import { m } from "#paraglide/messages.js";
+    import PencilNote from "#shared/assets/pencil-note.svg";
+    import { Haptics } from "#shared/capabilities/haptics/mod.ts";
+    import { needsLightContrast } from "#shared/lib/color/needs-light-contrast.ts";
+    import { formatToHHMM } from "#shared/lib/date/format-to-hh-mm.ts";
+    import { tw } from "#shared/lib/styles/tw.ts";
     import { isDeepEqual } from "remeda";
     import { untrack } from "svelte";
     import { dragHandle, dragHandleZone, TRIGGERS } from "svelte-dnd-action";
 
-    import { complete } from "../api/complete";
-    import { useReorder } from "../api/reorder.svelte";
     import { UNGROUPED_KEY } from "../cfg/constants";
-    import { visitOptions } from "../cfg/inertia";
     import { groupTodos } from "../helpers/group-todos";
     import { id } from "../helpers/id";
     import { editView } from "../model/view";
     import EditSheet from "./EditSheet.svelte";
 
-    import type { TodoData } from "$/entities/todo";
     import type { DndEvent } from "svelte-dnd-action";
     import type { SvelteHTMLElements } from "svelte/elements";
 
     type Props = SvelteHTMLElements["section"] & {
-        todos: TodoData[];
+        todos: Todo[];
     };
 
     const { todos, ...rest }: Props = $props();
 
-    const reorder = useReorder(() => todos, {
-        onError() {
-            isDragging = false;
-            toaster.error(m["todos.errors.reorder"]());
-        }
-    });
+    // $effect(() => {
+    //     if (searchParams["target"] !== "todo") return;
 
-    const searchParams = useSearchParams();
+    //     const sid = searchParams["id"];
+    //     if (!sid || isNaN(Number(sid))) return;
 
-    $effect(() => {
-        if (searchParams["target"] !== "todo") return;
+    //     const todo = todos.find((t) => t.id === Number(sid));
+    //     if (!todo) return;
 
-        const sid = searchParams["id"];
-        if (!sid || isNaN(Number(sid))) return;
-
-        const todo = todos.find((t) => t.id === Number(sid));
-        if (!todo) return;
-
-        void editView.replace({
-            meta: { __todo: { id: id(todo) } },
-            search: { d: searchParams["d"] }
-        });
-    });
+    //     void editView.replace({
+    //         meta: { __todo: { id: id(todo) } },
+    //         search: { d: searchParams["d"] }
+    //     });
+    // });
 
     let groups = $state(untrack(() => groupTodos(todos)));
     let isDragging = $state(false);

@@ -154,7 +154,8 @@
     function formatSelected([from, to]: CalendarDate[]) {
         const f = new DateFormatter(getLocale(), {
             day: "numeric",
-            month: "short"
+            month: "short",
+            timeZone: TIMEZONE
         });
 
         if (to && from.compare(to) !== 0) {

@@ -31,7 +31,8 @@
         {#each getOrderedWeekdays(start) as { weekday, date } (weekday)}
             {@const selected = byweekday.includes(weekday)}
             {@const formatter = new DateFormatter(getLocale(), {
-                weekday: "narrow"
+                weekday: "narrow",
+                timeZone: TIMEZONE
             })}
             <button
                 type="button"

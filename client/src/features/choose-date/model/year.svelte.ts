@@ -51,7 +51,8 @@ export class Year {
     months(): Month[] {
         const start = startOfYear(this.#cursor);
         const formatter = new DateFormatter(extract(this.#options).locale, {
-            month: "long"
+            month: "long",
+            timeZone: TIMEZONE
         });
 
         return Array.from({ length: 12 }).map((_, idx) => {
@@ -77,7 +78,8 @@ export class Year {
 
     weekdays(): string[] {
         const formatter = new DateFormatter(extract(this.#options).locale, {
-            weekday: "short"
+            weekday: "short",
+            timeZone: TIMEZONE
         });
 
         return getWeekDays(this.#startOfWeek(today(TIMEZONE))).map((date) =>

@@ -9,10 +9,10 @@
     import List from "./List.svelte";
 
     type Props = {
-        current: string | null;
+        categoryId: string | null;
     };
 
-    let { current = $bindable() }: Props = $props();
+    let { categoryId: current = $bindable() }: Props = $props();
 
     let search = $state("");
     let open = $state(false);
@@ -37,6 +37,7 @@
 <SheetDialog
     bind:open
     portal
+    lazyMount
     class="pb-0"
     height={75}
     title={m["todos.category.title"]()}
@@ -142,7 +143,7 @@
         })}
         onConfirm={async () => {
             if (!confirmId) return;
-            await CategoryRepository.remove(confirmId);
+            await CategoryRepository.destroy(confirmId);
             if (confirmId === current) current = null;
             confirm = false;
         }}

@@ -27,7 +27,7 @@ function update(id: string, name: string): Promise<number> {
     return db.categories.update(id, { name });
 }
 
-function remove(id: string): Promise<void> {
+function destroy(id: string): Promise<void> {
     return db.categories.delete(id);
 }
 
@@ -35,5 +35,5 @@ export const CategoryRepository = {
     list,
     create,
     update,
-    remove
+    destroy
 };

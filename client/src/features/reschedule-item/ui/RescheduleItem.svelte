@@ -7,8 +7,8 @@
         Ellipsis,
         Sunrise
     } from "@lucide/svelte";
-    import { m } from "$/paraglide/messages";
-    import ToolbarAction from "$/shared/ui/ToolbarAction.svelte";
+    import { m } from "#paraglide/messages.js";
+    import ToolbarAction from "#shared/ui/ToolbarAction.svelte";
 
     import type { CalendarDate } from "@internationalized/date";
 

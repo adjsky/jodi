@@ -34,14 +34,16 @@
         onclick={() => SelectedDate.update(today(TIMEZONE))}
     >
         <span class="text-center text-xl font-bold">
-            {new DateFormatter(getLocale(), { weekday: "long" }).format(
-                SelectedDate.current.toDate(TIMEZONE)
-            )}
+            {new DateFormatter(getLocale(), {
+                weekday: "long",
+                timeZone: TIMEZONE
+            }).format(SelectedDate.current.toDate(TIMEZONE))}
         </span>
         <span class="text-center text-sm text-cream-600">
             {new DateFormatter(getLocale(), {
                 year: "numeric",
-                month: "long"
+                month: "long",
+                timeZone: TIMEZONE
             }).format(SelectedDate.current.toDate(TIMEZONE))}
         </span>
     </button>

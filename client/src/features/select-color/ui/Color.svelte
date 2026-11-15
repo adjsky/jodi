@@ -1,19 +1,15 @@
 <script lang="ts">
     import { Popover } from "@ark-ui/svelte";
     import { Circle } from "@lucide/svelte";
-    import { dispatchInput } from "$/shared/lib/dom/dispatch-input";
-    import ToolbarAction from "$/shared/ui/ToolbarAction.svelte";
-    import { tick } from "svelte";
+    import ToolbarAction from "#shared/ui/ToolbarAction.svelte";
 
     type Props = {
         tooltip: string;
-        current?: string | null;
-        name: string;
+        color?: string | null;
     };
 
-    let { tooltip, current = $bindable(), name }: Props = $props();
+    let { tooltip, color: current = $bindable() }: Props = $props();
 
-    let announcerInput = $state<HTMLInputElement | null>(null);
     let open = $state(false);
 
     const colors = [
@@ -54,11 +50,9 @@
                 <button
                     type="button"
                     aria-label="Update color"
-                    onclick={async () => {
+                    onclick={() => {
                         current = color === "transparent" ? null : color;
                         open = false;
-                        await tick();
-                        dispatchInput(announcerInput);
                     }}
                     class="flex h-10 w-11.25 items-center justify-center"
                 >
@@ -74,5 +68,3 @@
         </Popover.Content>
     </Popover.Positioner>
 </Popover.Root>
-
-<input bind:this={announcerInput} hidden value={current} {name} />

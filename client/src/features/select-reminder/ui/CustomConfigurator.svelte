@@ -1,60 +1,52 @@
 <script lang="ts">
-    import { page } from "@inertiajs/svelte";
-    import { m } from "$/paraglide/messages";
-    import { VirtualKeyboard } from "$/shared/services/virtual-keyboard";
-    import Button from "$/shared/ui/Button.svelte";
-    import Checkbox from "$/shared/ui/Checkbox.svelte";
-    import NumericInput from "$/shared/ui/NumericInput.svelte";
-    import SheetDialog from "$/shared/ui/SheetDialog.svelte";
-
-    import type { ZonedDateTime } from "@internationalized/date";
+    import { parseDuration } from "@internationalized/date";
+    import { m } from "#paraglide/messages.js";
+    import { VirtualKeyboard } from "#shared/capabilities/virtual-keyboard/mod.ts";
+    import Button from "#shared/ui/Button.svelte";
+    import Checkbox from "#shared/ui/Checkbox.svelte";
+    import NumericInput from "#shared/ui/NumericInput.svelte";
+    import SheetDialog from "#shared/ui/SheetDialog.svelte";
 
     type Props = {
         open: boolean;
-        notifyAt: ZonedDateTime | null;
-        startsAt: ZonedDateTime;
+        current: string;
         onSelect?: (duration: string) => void;
     };
 
-    let { open = $bindable(), notifyAt, startsAt, onSelect }: Props = $props();
+    let { open = $bindable(), current, onSelect }: Props = $props();
 
     let [selectedIdx, amount] = $derived(getNotifyOffset());
-
-    const reminderWindow = $derived(page.props.config.reminders.window);
 
     const durations = $derived([
         {
             label: m["common.intervals.minutes"]({ a: amount }),
             template: "PT{A}M",
-            max: reminderWindow.minutes
+            max: 600
         },
         {
             label: m["common.intervals.hours"]({ a: amount }),
             template: "PT{A}H",
-            max: reminderWindow.hours
+            max: 120
         },
         {
             label: m["common.intervals.days"]({ a: amount }),
             template: "P{A}D",
-            max: reminderWindow.days
+            max: 31
         }
     ]);
 
     function getNotifyOffset(): [number, string] {
-        if (!notifyAt) {
-            return [0, "10"];
+        const { days, hours, minutes } = parseDuration(current);
+
+        if (days) {
+            return [2, days.toString()];
         }
 
-        const diffMs =
-            startsAt.toDate().getTime() - notifyAt.toDate().getTime();
-        const diffM = diffMs / (1000 * 60);
-        const diffH = diffM / 60;
-        const diffD = diffH / 24;
+        if (hours) {
+            return [1, hours.toString()];
+        }
 
-        if (diffD >= 1) return [2, Math.round(diffD).toString()];
-        if (diffH >= 1) return [1, Math.round(diffH).toString()];
-
-        return [0, Math.round(diffM).toString()];
+        return [0, minutes.toString()];
     }
 </script>
 

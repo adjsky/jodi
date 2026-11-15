@@ -1,6 +1,6 @@
 import { DateFormatter, toCalendarDate } from "@internationalized/date";
-import { getLocale } from "$/paraglide/runtime";
-import { TIMEZONE } from "$/shared/cfg/constants";
+import { getLocale } from "#paraglide/runtime.js";
+import { TIMEZONE } from "#shared/cfg/constants.ts";
 
 import type { ZonedDateTime } from "@internationalized/date";
 
@@ -11,13 +11,15 @@ export function formatDateRange(
     const f = new DateFormatter(getLocale(), {
         day: "2-digit",
         month: "short",
-        weekday: "short"
+        weekday: "short",
+        timeZone: TIMEZONE
     });
     const yearf = new DateFormatter(getLocale(), {
         day: "2-digit",
         year: "numeric",
         month: "short",
-        weekday: "short"
+        weekday: "short",
+        timeZone: TIMEZONE
     });
 
     const s = toCalendarDate(startsAt);

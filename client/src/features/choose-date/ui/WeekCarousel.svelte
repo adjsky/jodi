@@ -82,7 +82,8 @@
                             data-part="day-name"
                         >
                             {new DateFormatter(getLocale(), {
-                                weekday: "short"
+                                weekday: "short",
+                                timeZone: TIMEZONE
                             }).format(date.toDate(TIMEZONE))}
                         </span>
                         <span

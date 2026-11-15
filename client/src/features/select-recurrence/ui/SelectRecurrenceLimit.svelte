@@ -4,6 +4,7 @@
     import { CalendarPicker } from "#features/choose-date/mod.ts";
     import { m } from "#paraglide/messages.js";
     import { getLocale } from "#paraglide/runtime.js";
+    import { TIMEZONE } from "#shared/cfg/constants.ts";
     import Checkbox from "#shared/ui/Checkbox.svelte";
     import NumericInput from "#shared/ui/NumericInput.svelte";
 
@@ -58,7 +59,8 @@
                                 day: "2-digit",
                                 year: "numeric",
                                 month: "short",
-                                weekday: "short"
+                                weekday: "short",
+                                timeZone: TIMEZONE
                             }).format(until.toDate("UTC"))}
                         </div>
                     {/snippet}

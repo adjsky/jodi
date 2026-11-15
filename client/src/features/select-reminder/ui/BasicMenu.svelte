@@ -1,22 +1,18 @@
 <script lang="ts">
     import { Menu } from "@ark-ui/svelte";
     import { Bell, BellDot, Check } from "@lucide/svelte";
-    import { m } from "$/paraglide/messages";
-    import AppPortal from "$/shared/ui/AppPortal.svelte";
-    import ToolbarAction from "$/shared/ui/ToolbarAction.svelte";
+    import { m } from "#paraglide/messages.js";
+    import AppPortal from "#shared/ui/AppPortal.svelte";
+    import ToolbarAction from "#shared/ui/ToolbarAction.svelte";
     import { boolAttr } from "runed";
-
-    import { durationToZonedDT } from "../helpers/duration";
-
-    import type { ZonedDateTime } from "@internationalized/date";
 
     const CUSTOM_TRIGGER_VALUE = "__custom_trigger";
 
     type Props = {
         open: boolean;
         tooltip: string;
-        notifyAt: ZonedDateTime | null;
-        startsAt: ZonedDateTime;
+        current: string;
+        disabled: boolean;
         onSelect?: (duration: string) => void;
         onCustomTrigger?: VoidFunction;
     };
@@ -24,8 +20,8 @@
     let {
         open = $bindable(),
         tooltip,
-        notifyAt,
-        startsAt,
+        current,
+        disabled,
         onSelect,
         onCustomTrigger
     }: Props = $props();
@@ -41,15 +37,7 @@
     ];
 
     const selectedIdx = $derived(
-        reminders.findIndex(({ duration }) => {
-            if (!notifyAt || duration === CUSTOM_TRIGGER_VALUE) {
-                return false;
-            }
-
-            return (
-                durationToZonedDT(startsAt, duration).compare(notifyAt) === 0
-            );
-        })
+        reminders.findIndex(({ duration }) => duration === current)
     );
 </script>
 
@@ -67,7 +55,7 @@
     <Menu.Trigger>
         {#snippet asChild(props)}
             <ToolbarAction {...props()} {tooltip}>
-                {#if notifyAt}
+                {#if !disabled}
                     <BellDot />
                 {:else}
                     <Bell />
