@@ -1,8 +1,8 @@
 import { FirebaseMessaging } from "@capacitor-firebase/messaging";
 import { page } from "@inertiajs/svelte";
+import { PLATFORM } from "#shared/cfg/capacitor.ts";
 import UpsertPushSubscription from "$/generated/actions/App/Domain/Identity/Actions/UpsertPushSubscription";
 import { m } from "$/paraglide/messages";
-import { PLATFORM } from "$/shared/cfg/constants";
 import { visit } from "$/shared/integrations/inertia/visit";
 import { destroyActionBanner } from "$/shared/ui/ActionBanner.svelte";
 import { toaster } from "$/shared/ui/toaster";

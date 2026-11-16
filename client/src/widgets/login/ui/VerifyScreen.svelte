@@ -8,7 +8,7 @@
     import { AuthTokenStorage } from "#shared/capabilities/auth-token-storage/mod.ts";
     import { Overlay } from "#shared/capabilities/overlay/mod.svelte.ts";
     import { VirtualKeyboard } from "#shared/capabilities/virtual-keyboard/mod.ts";
-    import { PLATFORM } from "#shared/cfg/constants.ts";
+    import { PLATFORM } from "#shared/cfg/capacitor.ts";
     import { raise } from "#shared/lib/exception/raise.ts";
     import { LastMatching } from "#shared/lib/svelte/last-matching.svelte.ts";
     import { Timer } from "#shared/lib/svelte/timer.svelte.ts";

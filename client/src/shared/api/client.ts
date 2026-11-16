@@ -2,7 +2,8 @@ import { m } from "#paraglide/messages.js";
 import { getLocale } from "#paraglide/runtime.js";
 import { AuthTokenStorage } from "#shared/capabilities/auth-token-storage/mod.ts";
 import { LocalSession } from "#shared/capabilities/local-session/mod.ts";
-import { DEVICE_ID, PLATFORM, TIMEZONE } from "#shared/cfg/constants.ts";
+import { DEVICE_ID, PLATFORM } from "#shared/cfg/capacitor.ts";
+import { TIMEZONE } from "#shared/cfg/constants.ts";
 import Cookies from "js-cookie";
 import ky, { isHTTPError, isNetworkError } from "ky";
 

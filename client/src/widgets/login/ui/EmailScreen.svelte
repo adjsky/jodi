@@ -4,7 +4,7 @@
     import { m } from "#paraglide/messages.js";
     import { Overlay } from "#shared/capabilities/overlay/mod.svelte.ts";
     import { VirtualKeyboard } from "#shared/capabilities/virtual-keyboard/mod.ts";
-    import { PLATFORM } from "#shared/cfg/constants.ts";
+    import { PLATFORM } from "#shared/cfg/capacitor.ts";
     import { Timer } from "#shared/lib/svelte/timer.svelte.ts";
     import ApiForm from "#shared/ui/ApiForm.svelte";
     import Button from "#shared/ui/Button.svelte";

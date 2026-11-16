@@ -2,7 +2,7 @@ import {
     Haptics as CapHaptics,
     ImpactStyle as CapImpactStyle
 } from "@capawesome/capacitor-haptics";
-import { PLATFORM } from "#shared/cfg/constants.ts";
+import { PLATFORM } from "#shared/cfg/capacitor.ts";
 import { match } from "ts-pattern";
 
 import { isAvailable } from "./is-available.ts";
