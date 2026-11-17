@@ -4,12 +4,12 @@ import { resolve } from "$app/paths";
 
 import { AuthTokenStorage } from "../auth-token-storage/mod.ts";
 
-let isEndingSession = false;
+let is_ending_session = false;
 
 async function end(): Promise<boolean> {
-    if (isEndingSession) return false;
+    if (is_ending_session) return false;
 
-    isEndingSession = true;
+    is_ending_session = true;
 
     try {
         await Promise.all([
@@ -23,7 +23,7 @@ async function end(): Promise<boolean> {
         console.error("[LocalSession] Failed to end the session: ", e);
         return false;
     } finally {
-        isEndingSession = false;
+        is_ending_session = false;
     }
 
     return true;

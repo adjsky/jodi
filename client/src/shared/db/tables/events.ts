@@ -9,11 +9,11 @@ export type Event = {
     rrule: string | null;
     recurring: 0 | 1;
 
-    startsAt: number;
-    endsAt: number;
-    createdAt: number;
+    starts_at: number;
+    ends_at: number;
+    created_at: number;
 
-    notifyBefore: string;
+    notify_before: string;
 
     timezone: string;
 };

@@ -3,8 +3,8 @@ import { raf } from "#shared/lib/dom/raf.ts";
 import { onMount } from "svelte";
 
 import { OVERLAYS_CONTENT } from "./overlays-content.ts";
-import { revealCaret } from "./reveal-caret.ts";
-import { revealFocusedElement } from "./reveal-focused-element.ts";
+import { reveal_caret } from "./reveal-caret.ts";
+import { reveal_focused_element } from "./reveal-focused-element.ts";
 
 export function init(): void {
     onMount(() => {
@@ -13,15 +13,12 @@ export function init(): void {
         }
 
         void CapVirtualKeyboard.addListener("heightChange", ({ height }) => {
-            document.documentElement.style.setProperty(
-                "--keyboard-inset-height",
-                `${height}px`
-            );
+            document.documentElement.style.setProperty("--keyboard-inset-height", `${height}px`);
 
             if (height > 0) {
                 raf(() => {
-                    revealFocusedElement();
-                    revealCaret();
+                    reveal_focused_element();
+                    reveal_caret();
                 });
             }
         });

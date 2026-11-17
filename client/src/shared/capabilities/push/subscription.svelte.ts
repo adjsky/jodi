@@ -11,47 +11,44 @@ import { handleAction } from "./handle-action";
 
 type StoreOptions = {
     async?: boolean;
-    onSuccess?: VoidFunction;
-    onInvalid?: VoidFunction;
+    on_success?: VoidFunction;
+    on_invalid?: VoidFunction;
 };
 
-type Warnings = { needsConfiguration: boolean };
+type Warnings = { needs_configuration: boolean };
 
 type Listener = () => Promise<void>;
 
 export class Subscription {
-    #warnings: Warnings = $state({ needsConfiguration: false });
-    #isSubscribing = $state(false);
+    #warnings: Warnings = $state({ needs_configuration: false });
+    #is_subscribing = $state(false);
 
-    get needsConfiguration(): boolean {
+    get needs_configuration(): boolean {
         const { user } = page.props.auth;
 
-        return (
-            user?.preferences.notifications === "push" &&
-            this.#warnings.needsConfiguration
-        );
+        return user?.preferences.notifications === "push" && this.#warnings.needs_configuration;
     }
 
-    get isSubscribing(): boolean {
-        return this.#isSubscribing;
+    get is_subscribing(): boolean {
+        return this.#is_subscribing;
     }
 
     async synchronize(): Promise<void> {
         const { fcm, user } = page.props.auth;
         if (!user) {
-            this.#warnings.needsConfiguration = false;
+            this.#warnings.needs_configuration = false;
             return;
         }
 
-        const hasPermission = await this.#checkPermission();
-        if (!hasPermission) {
-            this.#warnings.needsConfiguration = true;
+        const has_permission = await this.#check_permission();
+        if (!has_permission) {
+            this.#warnings.needs_configuration = true;
             return;
         }
 
-        this.#warnings.needsConfiguration = false;
+        this.#warnings.needs_configuration = false;
 
-        const token = await this.#getToken();
+        const token = await this.#get_token();
 
         if (token !== fcm?.token) {
             await this.#store(token, { async: true });
@@ -60,37 +57,25 @@ export class Subscription {
 
     async listen(): Promise<Listener> {
         const handles = await Promise.all([
-            FirebaseMessaging.addListener(
-                "tokenReceived",
-                async ({ token }) => {
-                    if (this.#isSubscribing) return;
-                    await this.#store(token, { async: true });
-                }
-            ),
+            FirebaseMessaging.addListener("tokenReceived", async ({ token }) => {
+                if (this.#is_subscribing) return;
+                await this.#store(token, { async: true });
+            }),
 
-            FirebaseMessaging.addListener(
-                "notificationReceived",
-                ({ notification }) => {
-                    const { title, ...options } = notification;
-                    if (!title) return;
+            FirebaseMessaging.addListener("notificationReceived", ({ notification }) => {
+                const { title, ...options } = notification;
+                if (!title) return;
 
-                    if (
-                        typeof Notification !== "undefined" &&
-                        Notification.permission === "granted"
-                    ) {
-                        new Notification(title, options);
-                    } else {
-                        toaster.info(title, options.body);
-                    }
+                if (typeof Notification !== "undefined" && Notification.permission === "granted") {
+                    new Notification(title, options);
+                } else {
+                    toaster.info(title, options.body);
                 }
-            ),
+            }),
 
-            FirebaseMessaging.addListener(
-                "notificationActionPerformed",
-                (event) => {
-                    handleAction(event.notification.data);
-                }
-            )
+            FirebaseMessaging.addListener("notificationActionPerformed", (event) => {
+                handleAction(event.notification.data);
+            })
         ]);
 
         return async () => {
@@ -99,10 +84,10 @@ export class Subscription {
     }
 
     async subscribe(): Promise<void> {
-        if (this.#isSubscribing) return;
+        if (this.#is_subscribing) return;
 
         try {
-            this.#isSubscribing = true;
+            this.#is_subscribing = true;
 
             const permission = await FirebaseMessaging.requestPermissions();
 
@@ -111,41 +96,37 @@ export class Subscription {
                 return;
             }
 
-            const token = await this.#getToken();
+            const token = await this.#get_token();
 
             await this.#store(token, {
-                onSuccess: () => {
-                    toaster.success(
-                        m["push-notifications.success-subscribe"]()
-                    );
+                on_success: () => {
+                    toaster.success(m["push-notifications.success-subscribe"]());
                     destroyActionBanner("configure-push-notifications");
-                    this.#warnings.needsConfiguration = false;
+                    this.#warnings.needs_configuration = false;
                 },
-                onInvalid: () => {
-                    toaster.error(
-                        m["push-notifications.failed-to-subscribe"]()
-                    );
+                on_invalid: () => {
+                    toaster.error(m["push-notifications.failed-to-subscribe"]());
                 }
             });
         } catch (e) {
             toaster.error(m["common.unexpected-error"]());
             throw e;
         } finally {
-            this.#isSubscribing = false;
+            this.#is_subscribing = false;
         }
     }
 
     ahtung(message: string): void {
-        if (!this.needsConfiguration) return;
+        if (!this.needs_configuration) return;
         toaster.info(message);
     }
 
-    async #checkPermission() {
+    async #check_permission() {
         const permission = await FirebaseMessaging.checkPermissions();
         return permission.receive === "granted";
     }
 
-    async #getToken() {
+    async #get_token() {
         const { token } = await FirebaseMessaging.getToken({
             vapidKey: page.props.config.firebase.vapidKey
         });
@@ -167,10 +148,10 @@ export class Subscription {
             preserveScroll: true,
             only: ["auth"],
             onSuccess() {
-                options?.onSuccess?.();
+                options?.on_success?.();
             },
             onHttpException() {
-                options?.onInvalid?.();
+                options?.on_invalid?.();
                 return false;
             }
         });

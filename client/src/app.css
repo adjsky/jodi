@@ -11,19 +11,18 @@
 }
 
 @theme {
-    /* ------------------------------- FONTS -------------------------------- */
+    /* ------------------------------------- FONTS ---------------------------------------------- */
 
     --font-*: initial;
 
     --font-sans:
-        "Nunito Variable", ui-sans-serif, system-ui, sans-serif,
-        "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol",
-        "Noto Color Emoji";
+        "Nunito Variable", ui-sans-serif, system-ui, sans-serif, "Apple Color Emoji",
+        "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
     --font-mono:
-        ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas,
-        "Liberation Mono", "Courier New", monospace;
+        ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New",
+        monospace;
 
-    /* ----------------------------- FONT SIZES ----------------------------- */
+    /* ----------------------------------- FONT SIZES ------------------------------------------- */
 
     --text-*: initial;
 
@@ -60,7 +59,7 @@
     --text-5xl: 3rem;
     --text-5xl--line-height: 1;
 
-    /* ---------------------------- FONT WEIGHTS ---------------------------- */
+    /* ---------------------------------- FONT WEIGHTS ------------------------------------------ */
 
     --font-weight-*: initial;
 
@@ -71,7 +70,7 @@
     --font-weight-extrabold: 800;
     --font-weight-black: 900;
 
-    /* ------------------------------- COLORS ------------------------------- */
+    /* ------------------------------------- COLORS --------------------------------------------- */
 
     --color-*: initial;
 
@@ -95,7 +94,7 @@
     --color-cream-900: hsl(40, 6%, 10%);
     --color-cream-950: hsl(30, 7%, 6%);
 
-    /* --------------------------- BORDER RADIUS ---------------------------- */
+    /* --------------------------------- BORDER RADIUS ------------------------------------------ */
 
     --radius-*: initial;
 
@@ -110,7 +109,7 @@
     --radius-4xl: 1.5rem;
     --radius-5xl: 1.875rem;
 
-    /* ---------------------------- TRANSITIONS ----------------------------- */
+    /* ---------------------------------- TRANSITIONS ------------------------------------------- */
 
     --default-transition-duration: 150ms;
     --default-transition-timing-function: var(--ease-in-out);
@@ -250,15 +249,11 @@
 }
 
 @utility pb-keyboard-or-* {
-    padding-bottom: max(
-        var(--keyboard-inset-height, 0px),
-        --spacing(--value(integer, [integer]))
-    );
+    padding-bottom: max(var(--keyboard-inset-height, 0px), --spacing(--value(integer, [integer])));
 }
 
 @utility pb-keyboard-offset-* {
     padding-bottom: calc(
-        var(--keyboard-inset-height, 0px) +
-            --spacing(--value(integer, [integer]))
+        var(--keyboard-inset-height, 0px) + --spacing(--value(integer, [integer]))
     );
 }

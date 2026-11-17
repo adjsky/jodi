@@ -1,4 +1,4 @@
-export function getCaretBottomOffset(textarea: HTMLTextAreaElement): number {
+export function get_caret_bottom_offset(textarea: HTMLTextAreaElement): number {
     const div = document.createElement("div");
     const span = document.createElement("span");
     const style = getComputedStyle(textarea);
@@ -44,12 +44,12 @@ export function getCaretBottomOffset(textarea: HTMLTextAreaElement): number {
 
     document.body.appendChild(div);
 
-    const divRect = div.getBoundingClientRect();
-    const spanRect = span.getBoundingClientRect();
+    const div_rect = div.getBoundingClientRect();
+    const span_rect = span.getBoundingClientRect();
 
-    const bottomOffset = spanRect.bottom - divRect.top - textarea.scrollTop;
+    const bottom_offset = span_rect.bottom - div_rect.top - textarea.scrollTop;
 
     document.body.removeChild(div);
 
-    return bottomOffset;
+    return bottom_offset;
 }

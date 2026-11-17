@@ -4,38 +4,38 @@ export type RecurrenceScope = "this" | "following" | "all";
 
 export type RecurrenceException = {
     id: string;
-    recurrenceableId: string;
-    occursAt: string;
-    isCancelled: boolean;
+    recurrenceable_id: string;
+    occurs_at: string;
+    is_cancelled: boolean;
 } & (
     | {
-          recurrenceableType: "todo";
+          recurrenceable_type: "todo";
           overrides: Partial<{
               title: string;
               description: string;
-              categoryId: string | null;
+              category_id: string | null;
               color: string | null;
-              scheduledAt: ZonedDateTime;
-              hasTime: boolean;
-              completedAt: ZonedDateTime | null;
-              notifyBefore: string;
+              scheduled_at: ZonedDateTime;
+              has_time: boolean;
+              completed_at: ZonedDateTime | null;
+              notify_before: string;
           }>;
       }
     | {
-          recurrenceableType: "event";
+          recurrenceable_type: "event";
           overrides: Partial<{
               title: string;
               description: string;
               location: string | null;
               color: string | null;
-              startsAt: ZonedDateTime;
-              endsAt: ZonedDateTime;
-              notifyBefore: string;
+              starts_at: ZonedDateTime;
+              ends_at: ZonedDateTime;
+              notify_before: string;
           }>;
       }
 );
 
 export type WithRecurrence<T> = T & {
-    occursAt: CalendarDate | null;
-    recurringSince: CalendarDate | null;
+    occurs_at: CalendarDate | null;
+    recurring_since: CalendarDate | null;
 };

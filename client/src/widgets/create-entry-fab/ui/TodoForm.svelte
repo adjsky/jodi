@@ -18,34 +18,34 @@
     import type { TodoDraft } from "#entities/todo/mod.ts";
 
     type Props = {
-        onClose: VoidFunction;
+        on_close: VoidFunction;
     };
 
-    let { onClose }: Props = $props();
+    let { on_close }: Props = $props();
 
     const draft: TodoDraft = $state({
         title: "",
         description: "",
-        categoryId: null,
+        category_id: null,
         color: null,
         rrule: null,
-        scheduledAt: toZoned(SelectedDate.current, TIMEZONE),
-        hasTime: false,
-        notifyBefore: "PT1H"
+        scheduled_at: toZoned(SelectedDate.current, TIMEZONE),
+        has_time: false,
+        notify_before: "PT1H"
     });
 </script>
 
 <Todo.Fields
     bind:title={draft.title}
     bind:description={draft.description}
-    scheduledAt={draft.scheduledAt}
+    scheduled_at={draft.scheduled_at}
 >
     {#snippet calendar(trigger)}
         <CalendarPicker
             mode="single"
-            selected={[toCalendarDate(draft.scheduledAt)]}
-            onSelect={([d]) => {
-                draft.scheduledAt = draft.scheduledAt.set(d);
+            selected={[toCalendarDate(draft.scheduled_at)]}
+            on_select={([d]) => {
+                draft.scheduled_at = draft.scheduled_at.set(d);
             }}
         >
             {#snippet children(props)}
@@ -56,34 +56,34 @@
     {#snippet close()}
         <SaveOrClose
             variant="save"
-            onSave={async () => {
+            on_save={async () => {
                 await TodoService.create(draft);
                 //  Push.subscription.ahtung(m["todos.reminder-ahtung"]());
-                onClose();
+                on_close();
             }}
         />
     {/snippet}
     {#snippet category()}
-        <Category bind:categoryId={draft.categoryId} />{/snippet}
+        <Category bind:category_id={draft.category_id} />{/snippet}
     {#snippet time()}
         <TodoTime
-            scheduledAt={draft.scheduledAt}
-            hasTime={draft.hasTime}
-            onChange={(time, ht) => {
-                draft.hasTime = ht;
-                draft.scheduledAt = draft.scheduledAt.set(time);
+            scheduled_at={draft.scheduled_at}
+            has_time={draft.has_time}
+            on_change={(time, ht) => {
+                draft.has_time = ht;
+                draft.scheduled_at = draft.scheduled_at.set(time);
             }}
         />
     {/snippet}
     {#snippet destroy()}
-        <ToolbarAction tooltip={m["todos.tooltips.delete"]()} onclick={onClose}>
+        <ToolbarAction tooltip={m["todos.tooltips.delete"]()} onclick={on_close}>
             <Trash />
         </ToolbarAction>
     {/snippet}
     {#snippet repeat()}
         <Recurrence
             bind:rrule={draft.rrule}
-            day={draft.scheduledAt}
+            day={draft.scheduled_at}
             tooltip={m["todos.tooltips.repeat"]()}
         />
     {/snippet}
@@ -92,20 +92,20 @@
     {/snippet}
     {#snippet notify()}
         <Reminder
-            bind:notifyBefore={draft.notifyBefore}
+            bind:notify_before={draft.notify_before}
             tooltip={m["todos.tooltips.notification"]()}
-            disabled={!draft.hasTime}
-            onDisabledAttempt={() => {
+            disabled={!draft.has_time}
+            on_disabled_attempt={() => {
                 toaster.info(m["todos.reminder.select-time"]());
             }}
         />
     {/snippet}
     {#snippet more()}
         <RescheduleItem
-            startsAt={toCalendarDate(draft.scheduledAt)}
+            starts_at={toCalendarDate(draft.scheduled_at)}
             tooltip={m["todos.tooltips.more"]()}
-            onReschedule={(d) => {
-                draft.scheduledAt = draft.scheduledAt.set(d);
+            on_reschedule={(d) => {
+                draft.scheduled_at = draft.scheduled_at.set(d);
             }}
         />
     {/snippet}

@@ -3,20 +3,20 @@ import { toCalendarDate } from "@internationalized/date";
 import type { DayPosition } from "../model/types";
 import type { CalendarDate, ZonedDateTime } from "@internationalized/date";
 
-export function getEventDayPosition(
-    startsAt: ZonedDateTime,
-    endsAt: ZonedDateTime,
-    currentDate: CalendarDate
+export function get_event_day_position(
+    starts_at: ZonedDateTime,
+    ends_at: ZonedDateTime,
+    current_date: CalendarDate
 ): DayPosition {
-    const startDate = toCalendarDate(startsAt);
-    const endDate = toCalendarDate(endsAt.subtract({ milliseconds: 1 }));
+    const start_date = toCalendarDate(starts_at);
+    const end_date = toCalendarDate(ends_at.subtract({ milliseconds: 1 }));
 
     return {
-        day: daysBetween(startDate, currentDate) + 1,
-        total: daysBetween(startDate, endDate) + 1
+        day: days_between(start_date, current_date) + 1,
+        total: days_between(start_date, end_date) + 1
     };
 }
 
-function daysBetween(start: CalendarDate, end: CalendarDate) {
+function days_between(start: CalendarDate, end: CalendarDate) {
     return end.calendar.toJulianDay(end) - start.calendar.toJulianDay(start);
 }

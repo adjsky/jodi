@@ -43,9 +43,7 @@
         {/snippet}
     </Popover.Trigger>
     <Popover.Positioner>
-        <Popover.Content
-            class="flex rounded-full bg-white px-1 outline outline-cream-950"
-        >
+        <Popover.Content class="flex rounded-full bg-white px-1 outline outline-cream-950">
             {#each colors as color (color)}
                 <button
                     type="button"

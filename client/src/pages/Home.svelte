@@ -18,9 +18,7 @@
 
     const { todos, events }: Props = $props();
 
-    const hasNoEventsAndTodos = $derived(
-        todos?.length === 0 && events?.length === 0
-    );
+    const has_no_events_and_todos = $derived(todos?.length === 0 && events?.length === 0);
 </script>
 
 <ActionBanner />
@@ -30,7 +28,7 @@
         <CurrentUser />
     </MobileCalendarPreview>
 
-    {#if hasNoEventsAndTodos}
+    {#if has_no_events_and_todos}
         <img
             src={CalendarCat}
             width={300}
@@ -44,8 +42,8 @@
         </p>
     {/if}
 
-    <EventList {events} class="mt-4" hidden={hasNoEventsAndTodos} />
-    <TodoList {todos} class="mt-4" hidden={hasNoEventsAndTodos} />
+    <EventList {events} class="mt-4" hidden={has_no_events_and_todos} />
+    <TodoList {todos} class="mt-4" hidden={has_no_events_and_todos} />
 
     <CreateEntryFab />
 </main>

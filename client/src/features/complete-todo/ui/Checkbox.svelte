@@ -11,11 +11,11 @@
     type Props = {
         class?: ClassName;
         id: string;
-        completedAt: ZonedDateTime | null;
-        occursAt: CalendarDate | null;
+        completed_at: ZonedDateTime | null;
+        occurs_at: CalendarDate | null;
     };
 
-    const { id, completedAt, occursAt, ...props }: Props = $props();
+    const { id, completed_at, occurs_at, ...props }: Props = $props();
 </script>
 
 <button
@@ -24,10 +24,10 @@
         "group flex size-5.5 shrink-0 items-center justify-center rounded-full border border-cream-950 text-ms data-completed:bg-cream-950 data-completed:text-cream-50",
         props.class
     )}
-    data-completed={boolAttr(completedAt)}
+    data-completed={boolAttr(completed_at)}
     onclick={() => {
         void Haptics.impact("medium");
-        void TodoService.complete(id, occursAt);
+        void TodoService.complete(id, occurs_at);
     }}
 >
     <Check class="group-not-data-completed:hidden" />

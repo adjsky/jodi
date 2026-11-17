@@ -1,7 +1,6 @@
-import { scrollIntoView } from "#shared/lib/dom/scroll-into-view.ts";
+import { scroll_into_view } from "#shared/lib/dom/scroll-into-view.ts";
 
-export function revealFocusedElement(): void {
+export function reveal_focused_element(): void {
     if (!document.activeElement) return;
-
-    scrollIntoView(document.activeElement, { block: "nearest" });
+    scroll_into_view(document.activeElement, { block: "nearest" });
 }

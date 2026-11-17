@@ -23,69 +23,58 @@ const INTERACTIVE_SELECTOR = [
     "[contenteditable]"
 ].join(", ");
 
-const EDITABLE_INPUT_TYPES = [
-    "email",
-    "number",
-    "password",
-    "search",
-    "tel",
-    "text",
-    "url"
-];
+const EDITABLE_INPUT_TYPES = ["email", "number", "password", "search", "tel", "text", "url"];
 
 type RetainFocusOptions = {
-    blurOnScroll?: boolean;
+    blur_on_scroll?: boolean;
 };
 
-export const retainFocus =
+export const retain_focus =
     (options?: RetainFocusOptions): Attachment<HTMLElement> =>
     (element) => {
         if (!OVERLAYS_CONTENT) {
             return;
         }
 
-        return options?.blurOnScroll
-            ? retainFocusWithBlurOnScroll(element)
-            : retainFocusWithoutBlurOnScroll(element);
+        return options?.blur_on_scroll
+            ? retain_focus_with_blur_on_scroll(element)
+            : retain_focus_without_blur_on_scroll(element);
     };
 
-function retainFocusWithBlurOnScroll(element: HTMLElement) {
+function retain_focus_with_blur_on_scroll(element: HTMLElement) {
     let touch: RetainFocusTouch | null = null;
 
-    function handleTouchStart(event: TouchEvent) {
+    function handle_touch_start(event: TouchEvent) {
         const editable = document.activeElement;
         const target = event.target;
-        const startedTouch = event.changedTouches[0];
+        const started_touch = event.changedTouches[0];
 
         if (
             !(editable instanceof HTMLElement) ||
             !(target instanceof HTMLElement) ||
-            !isKeyboardEditable(editable) ||
-            !startedTouch
+            !is_keyboard_editable(editable) ||
+            !started_touch
         ) {
             touch = null;
             return;
         }
 
         touch = {
-            x: startedTouch.clientX,
-            y: startedTouch.clientY,
-            identifier: startedTouch.identifier,
+            x: started_touch.clientX,
+            y: started_touch.clientY,
+            identifier: started_touch.identifier,
             target,
             editable
         };
     }
 
-    function handleTouchMove(event: TouchEvent) {
+    function handle_touch_move(event: TouchEvent) {
         if (!touch) return;
 
-        const movedTouch = findTouch(event.changedTouches, touch.identifier);
-        if (!movedTouch) return;
+        const moved_touch = find_touch(event.changedTouches, touch.identifier);
+        if (!moved_touch) return;
 
-        const distance = Math.hypot(
-            movedTouch.clientX - touch.x,
-            movedTouch.clientY - touch.y
-        );
+        const distance = Math.hypot(moved_touch.clientX - touch.x, moved_touch.clientY - touch.y);
         if (distance < TOUCH_SLOP) return;
 
         if (!touch.editable.contains(touch.target)) {
@@ -95,8 +84,8 @@ function retainFocusWithBlurOnScroll(element: HTMLElement) {
         touch = null;
     }
 
-    function handleTouchEnd(event: TouchEvent) {
-        if (!touch || !findTouch(event.changedTouches, touch.identifier)) {
+    function handle_touch_end(event: TouchEvent) {
+        if (!touch || !find_touch(event.changedTouches, touch.identifier)) {
             return;
         }
 
@@ -107,30 +96,30 @@ function retainFocusWithBlurOnScroll(element: HTMLElement) {
         touch = null;
     }
 
-    function handleTouchCancel() {
+    function handle_touch_cancel() {
         touch = null;
     }
 
-    element.addEventListener("touchstart", handleTouchStart);
-    element.addEventListener("touchmove", handleTouchMove);
-    element.addEventListener("touchend", handleTouchEnd, { passive: false });
-    element.addEventListener("touchcancel", handleTouchCancel);
+    element.addEventListener("touchstart", handle_touch_start);
+    element.addEventListener("touchmove", handle_touch_move);
+    element.addEventListener("touchend", handle_touch_end, { passive: false });
+    element.addEventListener("touchcancel", handle_touch_cancel);
 
     return () => {
-        element.removeEventListener("touchstart", handleTouchStart);
-        element.removeEventListener("touchmove", handleTouchMove);
-        element.removeEventListener("touchend", handleTouchEnd);
-        element.removeEventListener("touchcancel", handleTouchCancel);
+        element.removeEventListener("touchstart", handle_touch_start);
+        element.removeEventListener("touchmove", handle_touch_move);
+        element.removeEventListener("touchend", handle_touch_end);
+        element.removeEventListener("touchcancel", handle_touch_cancel);
     };
 }
 
-function retainFocusWithoutBlurOnScroll(element: HTMLElement) {
-    function handleTouchEnd(event: TouchEvent) {
+function retain_focus_without_blur_on_scroll(element: HTMLElement) {
+    function handle_touch_end(event: TouchEvent) {
         const editable = document.activeElement;
 
         if (
             editable instanceof HTMLElement &&
-            isKeyboardEditable(editable) &&
+            is_keyboard_editable(editable) &&
             event.target instanceof Element &&
             !event.target.closest(INTERACTIVE_SELECTOR)
         ) {
@@ -138,14 +127,14 @@ function retainFocusWithoutBlurOnScroll(element: HTMLElement) {
         }
     }
 
-    element.addEventListener("touchend", handleTouchEnd, { passive: false });
+    element.addEventListener("touchend", handle_touch_end, { passive: false });
 
     return () => {
-        element.removeEventListener("touchend", handleTouchEnd);
+        element.removeEventListener("touchend", handle_touch_end);
     };
 }
 
-function isKeyboardEditable(element: HTMLElement | null): boolean {
+function is_keyboard_editable(element: HTMLElement | null): boolean {
     if (element === null) {
         return false;
     }
@@ -161,7 +150,7 @@ function isKeyboardEditable(element: HTMLElement | null): boolean {
     return element.isContentEditable;
 }
 
-function findTouch(touches: TouchList, identifier: number) {
+function find_touch(touches: TouchList, identifier: number) {
     for (const touch of touches) {
         if (touch.identifier === identifier) {
             return touch;

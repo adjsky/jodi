@@ -3,7 +3,7 @@ import { LastMatching } from "#shared/lib/svelte/last-matching.svelte.ts";
 import { liveQuery } from "dexie";
 import { isHTTPError } from "ky";
 
-import { getCurrentSession } from "../api/session.ts";
+import { get_current_session } from "../api/session.ts";
 
 import type { Session } from "#shared/db/tables/session.ts";
 import type { UpdateSpec } from "dexie";
@@ -42,7 +42,7 @@ async function hydrate(): Promise<void> {
     }
 
     try {
-        const session = await getCurrentSession();
+        const session = await get_current_session();
         await set(session);
     } catch (e) {
         if (isHTTPError(e) && e.response.status === 401) {

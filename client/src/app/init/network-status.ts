@@ -2,28 +2,28 @@ import { m } from "#paraglide/messages.js";
 import { toaster } from "#shared/ui/toaster.ts";
 import { onMount } from "svelte";
 
-let toastId: string | number | null = null;
+let toast_id: string | number | null = null;
 
-function handleOnline() {
-    if (!toastId) return;
+function handle_online() {
+    if (!toast_id) return;
 
-    toaster.drop(toastId);
+    toaster.drop(toast_id);
     toaster.success(m["common.network.online"]());
 }
 
-function handleOffline() {
-    if (toastId) return;
-    toastId = toaster.error(m["common.network.offline"]());
+function handle_offline() {
+    if (toast_id) return;
+    toast_id = toaster.error(m["common.network.offline"]());
 }
 
 export function init(): void {
     onMount(() => {
         if (!navigator.onLine) {
-            handleOffline();
+            handle_offline();
         }
 
-        window.addEventListener("online", handleOnline);
+        window.addEventListener("online", handle_online);
 
-        return window.addEventListener("online", handleOffline);
+        return window.addEventListener("online", handle_offline);
     });
 }

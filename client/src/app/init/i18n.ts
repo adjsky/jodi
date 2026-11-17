@@ -1,9 +1,5 @@
 import { SessionCache } from "#entities/user/mod.ts";
-import {
-    baseLocale,
-    defineCustomClientStrategy,
-    isLocale
-} from "#paraglide/runtime.js";
+import { baseLocale, defineCustomClientStrategy, isLocale } from "#paraglide/runtime.js";
 
 export function init(): void {
     defineCustomClientStrategy("custom-preference", {

@@ -5,8 +5,8 @@
     import { getLocale } from "#paraglide/runtime.js";
     import { Haptics } from "#shared/capabilities/haptics/mod.ts";
     import { TIMEZONE } from "#shared/cfg/constants.ts";
-    import { scrollIntoView } from "#shared/lib/dom/scroll-into-view.ts";
-    import { useDragSelection } from "#shared/lib/interaction/use-drag-selection.ts";
+    import { scroll_into_view } from "#shared/lib/dom/scroll-into-view.ts";
+    import { use_drag_selection } from "#shared/lib/interaction/use-drag-selection.ts";
     import { tw } from "#shared/lib/styles/tw.ts";
     import Button from "#shared/ui/Button.svelte";
     import { ScreenView } from "#shared/ui/composites/screen-view/mod.ts";
@@ -27,9 +27,9 @@
         confirm: "manual" | "select";
         mode: CalendarMode;
         selected: CalendarDate[];
-        weekStart: WeekStart;
+        week_start: WeekStart;
         min?: CalendarDate | null;
-        onSelect?: (date: CalendarDate[]) => void;
+        on_select?: (date: CalendarDate[]) => void;
     };
 
     let {
@@ -37,16 +37,16 @@
         confirm,
         mode,
         selected,
-        weekStart,
+        week_start,
         min,
-        onSelect,
+        on_select,
         ...props
     }: Props = $props();
 
-    let monthsNode = $state<HTMLElement | null>(null);
+    let months_node = $state<HTMLElement | null>(null);
 
     $effect(() => {
-        if (!monthsNode) return;
+        if (!months_node) return;
 
         const selectors = [
             'button[data-highlight="selected"]',
@@ -55,20 +55,20 @@
         ];
 
         for (const selector of selectors) {
-            const element = monthsNode.querySelector(selector);
+            const element = months_node.querySelector(selector);
 
             if (element) {
-                scrollIntoView(element, { block: "center" });
+                scroll_into_view(element, { block: "center" });
                 break;
             }
         }
     });
 
-    let draftSelected = $derived(selected);
+    let draft_selected = $derived(selected);
 
     const year = new Year(
         () => selected[0],
-        () => ({ weekStart, locale: getLocale() })
+        () => ({ week_start, locale: getLocale() })
     );
 
     // const calendar = new YearCalendar(() => ({
@@ -85,55 +85,55 @@
     //     }
     // });
 
-    const dragSelection = useDragSelection<CalendarDate>(() => ({
+    const drag_selection = use_drag_selection<CalendarDate>(() => ({
         enabled: mode === "range",
-        isSelectable(value) {
+        is_selectable(value) {
             if (!min) {
                 return true;
             }
 
             return min.compare(value) <= 0;
         },
-        onStart() {
-            void Haptics.selectionStart();
+        on_start() {
+            void Haptics.selection_start();
         },
-        onSelect(date, anchor, phase) {
+        on_select(date, anchor, phase) {
             if (phase === "start") {
                 void Haptics.impact("medium");
             } else {
-                void Haptics.selectionChanged();
+                void Haptics.selection_changed();
             }
 
             if (date.compare(anchor) > 0) {
-                draftSelected = [anchor, date];
+                draft_selected = [anchor, date];
             } else {
-                draftSelected = [date, anchor];
+                draft_selected = [date, anchor];
             }
         },
-        onEnd() {
-            void Haptics.selectionEnd();
+        on_end() {
+            void Haptics.selection_end();
         }
     }));
 
-    function gotoYear(direction: "next" | "previous") {
+    function goto_year(direction: "next" | "previous") {
         year[direction]();
-        monthsNode?.scrollTo({ top: 0, left: 0, behavior: "smooth" });
+        months_node?.scrollTo({ top: 0, left: 0, behavior: "smooth" });
     }
 
-    function gotoCurrentYear() {
+    function goto_current_year() {
         year.current = new Date().getFullYear();
-        monthsNode?.scrollTo({ top: 0, left: 0, behavior: "smooth" });
+        months_node?.scrollTo({ top: 0, left: 0, behavior: "smooth" });
     }
 
-    function onPress(date: CalendarDate) {
+    function on_press(date: CalendarDate) {
         if (confirm === "select") {
-            onSelect?.(getNextSelection(selected, date));
+            on_select?.(get_next_selection(selected, date));
         } else {
-            draftSelected = getNextSelection(draftSelected, date);
+            draft_selected = get_next_selection(draft_selected, date);
         }
     }
 
-    function getNextSelection(current: CalendarDate[], date: CalendarDate) {
+    function get_next_selection(current: CalendarDate[], date: CalendarDate) {
         if (mode === "single") {
             return [date];
         }
@@ -151,7 +151,7 @@
         return [from, to];
     }
 
-    function formatSelected([from, to]: CalendarDate[]) {
+    function format_selected([from, to]: CalendarDate[]) {
         const f = new DateFormatter(getLocale(), {
             day: "numeric",
             month: "short",
@@ -170,11 +170,7 @@
     <ScreenView.Header shape="flat">
         {#snippet action()}
             <div class="flex items-center gap-4 text-xl">
-                <button
-                    type="button"
-                    class="text-2xl font-bold"
-                    onclick={gotoCurrentYear}
-                >
+                <button type="button" class="text-2xl font-bold" onclick={goto_current_year}>
                     {year.current}
                 </button>
 
@@ -183,7 +179,7 @@
                         type="button"
                         variant="secondary"
                         class="h-auto rounded-full bg-transparent p-2"
-                        onclick={() => gotoYear("previous")}
+                        onclick={() => goto_year("previous")}
                     >
                         <ChevronLeft />
                     </Button>
@@ -191,7 +187,7 @@
                         type="button"
                         variant="secondary"
                         class="h-auto rounded-full bg-transparent p-2"
-                        onclick={() => gotoYear("next")}
+                        onclick={() => goto_year("next")}
                     >
                         <ChevronRight />
                     </Button>
@@ -216,7 +212,7 @@
             {/each}
         </div>
         <div
-            bind:this={monthsNode}
+            bind:this={months_node}
             class={[
                 "-mx-4 mt-2 min-h-0 grow overflow-y-scroll overscroll-contain",
                 mode === "single" && "pb-safe"
@@ -228,10 +224,10 @@
                     {year}
                     {mode}
                     {min}
-                    {dragSelection}
-                    {onPress}
-                    selected={draftSelected}
-                    container={monthsNode}
+                    {drag_selection}
+                    {on_press}
+                    selected={draft_selected}
+                    container={months_node}
                 />
             {/each}
         </div>
@@ -243,15 +239,15 @@
                 type="button"
                 onclick={() => {
                     if (mode === "range") {
-                        const [from, to] = draftSelected;
-                        onSelect?.([from, to ?? from]);
+                        const [from, to] = draft_selected;
+                        on_select?.([from, to ?? from]);
                     } else {
-                        const [date] = draftSelected;
-                        onSelect?.([date]);
+                        const [date] = draft_selected;
+                        on_select?.([date]);
                     }
                 }}
             >
-                {formatSelected(draftSelected)}
+                {format_selected(draft_selected)}
             </Button>
         </ScreenView.Footer>
     {/if}

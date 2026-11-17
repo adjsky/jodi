@@ -13,19 +13,17 @@
     import CreateLoginChallenge from "#wayfinder/actions/App/Domain/Identity/Actions/CreateLoginChallenge.ts";
     import z from "zod";
 
-    const throttleTimer = new Timer();
+    const throttle_timer = new Timer();
 
-    async function getDeviceName() {
-        const name = await Device.getInfo().then(
-            (info) => info.name ?? info.model
-        );
+    async function get_device_name() {
+        const name = await Device.getInfo().then((info) => info.name ?? info.model);
         return name.trim().slice(0, 255);
     }
 </script>
 
 <ScreenView.Overlay
-    bind:open={() => Overlay.isOpen("login/email"), () => Overlay.close()}
-    {@attach VirtualKeyboard.retainFocus()}
+    bind:open={() => Overlay.is_open("login/email"), () => Overlay.close()}
+    {@attach VirtualKeyboard.retain_focus()}
 >
     <ScreenView.Header shape="flat" />
     <ScreenView.Content class="mt-2">
@@ -34,22 +32,22 @@
         <ApiForm
             action={CreateLoginChallenge()}
             class="mt-7 flex grow flex-col"
-            inputSchema={z.object({
+            input_schema={z.object({
                 email: z.email({ error: m["common.errors.email"]() })
             })}
-            dataSchema={z.object({ id: z.string(), email: z.string() })}
+            data_schema={z.object({ id: z.string(), email: z.string() })}
             transform={async (input) => ({
                 email: input.email,
                 credential: PLATFORM === "web" ? "cookie" : "token",
-                ...(PLATFORM !== "web" && { deviceName: await getDeviceName() })
+                ...(PLATFORM !== "web" && { deviceName: await get_device_name() })
             })}
-            onRateLimit={(retryAfter) => {
-                throttleTimer.start(retryAfter);
+            on_rate_limit={(retry_after) => {
+                throttle_timer.start(retry_after);
             }}
-            onSuccess={({ id, email }) =>
+            on_success={({ id, email }) =>
                 Overlay.open("login/verify", { loginchallenge: { id, email } })}
         >
-            {#snippet children({ errors, submitting, isDirty })}
+            {#snippet children({ errors, submitting, is_dirty })}
                 <TextField
                     type="email"
                     name="email"
@@ -64,12 +62,12 @@
                 <Button
                     type="submit"
                     class="mt-auto shrink-0"
-                    disabled={throttleTimer.isRunning || !isDirty}
+                    disabled={throttle_timer.is_running || !is_dirty}
                     loading={submitting}
                 >
-                    {#if throttleTimer.isRunning}
+                    {#if throttle_timer.is_running}
                         {m["login/email.continue-in"]({
-                            seconds: throttleTimer.secondsLeft
+                            seconds: throttle_timer.seconds_left
                         })}
                     {:else}
                         {m["login/email.continue"]()}

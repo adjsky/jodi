@@ -5,11 +5,9 @@ import { api } from "#shared/api/client.ts";
 import { toaster } from "#shared/ui/toaster.ts";
 import UpdateUserPreferences from "#wayfinder/actions/App/Domain/Identity/Actions/UpdateUserPreferences.ts";
 
-export const updateUserPreferencesMutationOptions = mutationOptions({
+export const update_user_preferences_mutation_options = mutationOptions({
     mutationKey: ["preferences", "update"],
-    mutationFn(
-        preferences: App.Domain.Identity.Data.Input.UpdateUserPreferencesData
-    ) {
+    mutationFn(preferences: App.Domain.Identity.Data.Input.UpdateUserPreferencesData) {
         const { url, method } = UpdateUserPreferences();
         return api(url, { method, json: preferences });
     },
@@ -22,10 +20,10 @@ export const updateUserPreferencesMutationOptions = mutationOptions({
             "user.preferences": { ...previous, ...changes }
         });
 
-        return { userId: user.id, previous };
+        return { user_id: user.id, previous };
     },
-    async onError(_, __, result) {
-        if (!result || SessionCache.current?.user.id !== result.userId) {
+    async onError(_error, _preferences, result) {
+        if (!result || SessionCache.current?.user.id !== result.user_id) {
             return;
         }
 

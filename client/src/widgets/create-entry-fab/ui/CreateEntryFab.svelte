@@ -14,7 +14,7 @@
 
     let open: "picker" | "todo" | "event" | false = $state(false);
 
-    const lastOpen = new LastMatching(
+    const last_open = new LastMatching(
         () => open,
         () => open !== false
     );
@@ -43,9 +43,7 @@
                 {...props()}
                 class="group pointer-events-auto fixed right-4 bottom-safe-offset-4 z-20 rounded-2xl transition-[border-radius] data-[state=open]:rounded-[50%]"
             >
-                <X
-                    class="transition-transform group-data-[state=closed]:rotate-45"
-                />
+                <X class="transition-transform group-data-[state=closed]:rotate-45" />
             </ActionButton>
         {/snippet}
     </Dialog.Trigger>
@@ -64,10 +62,7 @@
                 "data-[state=open]:animate-in data-[state=open]:fade-in data-[state=open]:slide-in-from-right"
             ]}
         >
-            <ActionRow
-                title={m["events.add"]()}
-                onclick={() => (open = "event")}
-            >
+            <ActionRow title={m["events.add"]()} onclick={() => (open = "event")}>
                 <CalendarClock />
             </ActionRow>
             <ActionRow title={m["todos.add"]()} onclick={() => (open = "todo")}>
@@ -79,16 +74,16 @@
 
 <Sheet
     bind:open={() => open === "event" || open === "todo", () => (open = false)}
-    maxHeight={0.9}
-    snapPoints={[0.6, 0.9]}
-    defaultSnapPoint={1}
-    onExitComplete={() => {
-        lastOpen.reset();
+    max_height={0.9}
+    snap_points={[0.6, 0.9]}
+    default_snap_point={1}
+    on_exit_complete={() => {
+        last_open.reset();
     }}
 >
-    {#if lastOpen.current === "todo"}
-        <TodoForm onClose={() => (open = false)} />
-    {:else if lastOpen.current === "event"}
-        <EventForm onClose={() => (open = false)} />
+    {#if last_open.current === "todo"}
+        <TodoForm on_close={() => (open = false)} />
+    {:else if last_open.current === "event"}
+        <EventForm on_close={() => (open = false)} />
     {/if}
 </Sheet>

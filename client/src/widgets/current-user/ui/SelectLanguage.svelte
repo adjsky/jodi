@@ -6,14 +6,14 @@
     import { LANGUAGES } from "#shared/cfg/constants.ts";
     import { ScreenView } from "#shared/ui/composites/screen-view/mod.ts";
 
-    import { updateUserPreferencesMutationOptions } from "../api/preferences.ts";
+    import { update_user_preferences_mutation_options } from "../api/preferences.ts";
 
     import type { ViewProps } from "../model/types.ts";
 
     let { open = $bindable(), user }: ViewProps = $props();
 
-    const updateUserPreferencesMutation = createMutation(
-        () => updateUserPreferencesMutationOptions
+    const update_user_preferences_mutation = createMutation(
+        () => update_user_preferences_mutation_options
     );
 </script>
 
@@ -25,7 +25,7 @@
                 <User.Info.SelectRow
                     selected={locale === user.preferences.locale}
                     onclick={() => {
-                        updateUserPreferencesMutation.mutate({ locale });
+                        update_user_preferences_mutation.mutate({ locale });
                     }}
                 >
                     {#snippet icon()}

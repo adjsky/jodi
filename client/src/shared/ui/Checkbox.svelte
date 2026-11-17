@@ -19,10 +19,7 @@
         checked = !checked;
     }}
     {...props}
-    class={tw(
-        "flex w-full min-w-0 items-center gap-2 py-2.5 font-medium",
-        props.class
-    )}
+    class={tw("flex w-full min-w-0 items-center gap-2 py-2.5 font-medium", props.class)}
 >
     <span
         class={[

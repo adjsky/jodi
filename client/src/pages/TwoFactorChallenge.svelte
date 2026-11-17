@@ -6,10 +6,7 @@
     import ResendTwoFactorChallengeCode from "$/generated/actions/App/Domain/Identity/Actions/ResendTwoFactorChallengeCode";
     import { m } from "$/paraglide/messages";
     import Froggy from "$/shared/assets/froggy.svg";
-    import {
-        ActionRateLimit,
-        HistoryView
-    } from "$/shared/integrations/inertia";
+    import { ActionRateLimit, HistoryView } from "$/shared/integrations/inertia";
     import { Push } from "$/shared/services/push";
     import { createActionBanner } from "$/shared/ui/ActionBanner.svelte";
     import Button from "$/shared/ui/Button.svelte";
@@ -18,21 +15,17 @@
 
     const id = $props.id();
 
-    let isResending = $state(false);
+    let is_resending = $state(false);
 
-    const resendTimer = new ActionRateLimit(
-        ResendTwoFactorChallengeCode.definition
-    );
-    const consumeTimer = new ActionRateLimit(
-        CompleteTwoFactorChallenge.definition
-    );
+    const resend_timer = new ActionRateLimit(ResendTwoFactorChallengeCode.definition);
+    const consume_timer = new ActionRateLimit(CompleteTwoFactorChallenge.definition);
 
     const view = new HistoryView(null, { viewTransition: true });
 
-    async function handleSuccessfulLogin() {
+    async function handle_successful_login() {
         await Push.subscription.synchronize();
 
-        if (Push.subscription.needsConfiguration) {
+        if (Push.subscription.needs_configuration) {
             createActionBanner(m["push-notifications.configure.title"](), {
                 id: "configure-push-notifications",
                 action: m["push-notifications.configure.action"](),
@@ -47,14 +40,7 @@
 <AuthLayout>
     <Intro title={m["2fa.title"]()}>
         {#snippet icon()}
-            <img
-                src={Froggy}
-                width={90}
-                height={85}
-                alt=""
-                decoding="async"
-                fetchpriority="high"
-            />
+            <img src={Froggy} width={90} height={85} alt="" decoding="async" fetchpriority="high" />
         {/snippet}
     </Intro>
 
@@ -63,10 +49,10 @@
         id="{id}-resend-form"
         showProgress={false}
         onStart={() => {
-            isResending = true;
+            is_resending = true;
         }}
         onFinish={() => {
-            isResending = false;
+            is_resending = false;
         }}
         hidden
     ></Form>
@@ -80,28 +66,25 @@
             }
         }}
         showProgress={false}
-        onSuccess={handleSuccessfulLogin}
+        onSuccess={handle_successful_login}
     >
         {#snippet children({ processing, errors })}
-            <OneTimePasswordInput
-                name="password"
-                error={Boolean(errors.password)}
-            />
+            <OneTimePasswordInput name="password" error={Boolean(errors.password)} />
 
             <p class="text-center text-ms">
                 {m["2fa.no-code"]()}
                 <button
                     class={[
                         "font-semibold text-brand disabled:cursor-not-allowed",
-                        isResending && "animate-pulse"
+                        is_resending && "animate-pulse"
                     ]}
                     form="{id}-resend-form"
-                    disabled={resendTimer.isRunning || isResending}
-                    aria-busy={isResending}
+                    disabled={resend_timer.is_running || is_resending}
+                    aria-busy={is_resending}
                 >
-                    {#if resendTimer.isRunning}
+                    {#if resend_timer.is_running}
                         {m["2fa.resend-in"]({
-                            seconds: resendTimer.secondsLeft
+                            seconds: resend_timer.seconds_left
                         })}
                     {:else}
                         {m["2fa.resend"]()}
@@ -109,14 +92,10 @@
                 </button>
             </p>
 
-            <Button
-                type="submit"
-                disabled={consumeTimer.isRunning}
-                loading={processing}
-            >
-                {#if consumeTimer.isRunning}
+            <Button type="submit" disabled={consume_timer.is_running} loading={processing}>
+                {#if consume_timer.is_running}
                     {m["2fa.continue-in"]({
-                        seconds: consumeTimer.secondsLeft
+                        seconds: consume_timer.seconds_left
                     })}
                 {:else}
                     {m["2fa.continue"]()}

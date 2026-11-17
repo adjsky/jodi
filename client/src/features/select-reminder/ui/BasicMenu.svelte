@@ -13,8 +13,8 @@
         tooltip: string;
         current: string;
         disabled: boolean;
-        onSelect?: (duration: string) => void;
-        onCustomTrigger?: VoidFunction;
+        on_select?: (duration: string) => void;
+        on_custom_trigger?: VoidFunction;
     };
 
     let {
@@ -22,8 +22,8 @@
         tooltip,
         current,
         disabled,
-        onSelect,
-        onCustomTrigger
+        on_select,
+        on_custom_trigger
     }: Props = $props();
 
     const reminders = [
@@ -36,9 +36,7 @@
         }
     ];
 
-    const selectedIdx = $derived(
-        reminders.findIndex(({ duration }) => duration === current)
-    );
+    const selected_idx = $derived(reminders.findIndex(({ duration }) => duration === current));
 </script>
 
 <Menu.Root
@@ -46,9 +44,9 @@
     positioning={{ placement: "top" }}
     onSelect={({ value }) => {
         if (value === CUSTOM_TRIGGER_VALUE) {
-            onCustomTrigger?.();
+            on_custom_trigger?.();
         } else {
-            onSelect?.(value);
+            on_select?.(value);
         }
     }}
 >
@@ -74,17 +72,15 @@
                         class="group cursor-pointer px-3"
                         data-selected={boolAttr(
                             duration === CUSTOM_TRIGGER_VALUE
-                                ? selectedIdx === -1
-                                : selectedIdx === idx
+                                ? selected_idx === -1
+                                : selected_idx === idx
                         )}
                     >
                         <div
                             class="flex items-center justify-between border-b border-cream-300 py-3.5"
                         >
                             <span>{label}</span>
-                            <Check
-                                class="text-xl not-group-data-selected:hidden"
-                            />
+                            <Check class="text-xl not-group-data-selected:hidden" />
                         </div>
                     </Menu.Item>
                 {/each}

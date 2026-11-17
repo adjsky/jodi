@@ -15,7 +15,7 @@
 
     const { children } = $props();
 
-    const queryClient = new QueryClient({
+    const query_client = new QueryClient({
         defaultOptions: {
             queries: {
                 staleTime: 60_000,
@@ -31,7 +31,7 @@
     });
 
     onMount(() => {
-        window.__TANSTACK_QUERY_CLIENT__ = queryClient;
+        window.__TANSTACK_QUERY_CLIENT__ = query_client;
         void SessionCache.hydrate();
         void SplashScreen.hide();
     });
@@ -53,7 +53,7 @@
     <title>{m["common.app-title"]()}</title>
 </svelte:head>
 
-<QueryClientProvider client={queryClient}>
+<QueryClientProvider client={query_client}>
     <Portal>
         <Toaster />
     </Portal>

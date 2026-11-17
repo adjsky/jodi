@@ -5,7 +5,7 @@ import {
     toCalendarDate
 } from "@internationalized/date";
 import { WEEK_START_MAP } from "#shared/cfg/constants.ts";
-import { getWeekIdxInMonth } from "#shared/lib/date/get-week-idx-in-month.ts";
+import { get_week_idx_in_month } from "#shared/lib/date/get-week-idx-in-month.ts";
 import { extract } from "runed";
 import { SvelteMap } from "svelte/reactivity";
 
@@ -18,16 +18,16 @@ import type { MaybeGetter } from "runed";
 const DEFAULT_MAX_LANES = 2;
 
 type Options = {
-    weekStart: WeekStart;
+    week_start: WeekStart;
     locale: Locale;
-    maxLanes?: number;
+    max_lanes?: number;
 };
 
 type SegmentPosition = {
     column: number;
     span: number;
-    startsInWeek: boolean;
-    endsInWeek: boolean;
+    starts_in_week: boolean;
+    ends_in_week: boolean;
 };
 
 type Segment = SegmentPosition & {
@@ -49,98 +49,85 @@ export class YearCalendar {
         return this.#segments.get(year)?.get(month)?.[week - 1] ?? [];
     }
 
-    visibleSegments(year: number, month: number, week: number): Segment[] {
-        const maxLanes = extract(this.#options).maxLanes ?? DEFAULT_MAX_LANES;
+    visible_segments(year: number, month: number, week: number): Segment[] {
+        const max_lanes = extract(this.#options).max_lanes ?? DEFAULT_MAX_LANES;
         const segments = this.segments(year, month, week);
-        return segments.filter((segment) => segment.lane < maxLanes);
+        return segments.filter((segment) => segment.lane < max_lanes);
     }
 
-    overflow(
-        year: number,
-        month: number,
-        week: number,
-        column: number
-    ): number {
-        const maxLanes = extract(this.#options).maxLanes ?? DEFAULT_MAX_LANES;
+    overflow(year: number, month: number, week: number, column: number): number {
+        const max_lanes = extract(this.#options).max_lanes ?? DEFAULT_MAX_LANES;
         const segments = this.segments(year, month, week).filter(
-            (segment) =>
-                segment.lane >= maxLanes &&
-                this.#segmentCoversColumn(segment, column)
+            (segment) => segment.lane >= max_lanes && this.#segment_covers_column(segment, column)
         );
         return segments.length;
     }
 
     prepare(year: number, months: number[], events: CalendarEventData[]): void {
-        const preparedMonths = this.#createMonths(months);
+        const prepared_months = this.#create_months(months);
 
         for (const event of events) {
-            this.#addEvent(year, months, preparedMonths, event);
+            this.#add_event(year, months, prepared_months, event);
         }
 
-        this.#store(year, preparedMonths);
+        this.#store(year, prepared_months);
     }
 
-    #createMonths(months: number[]) {
-        const preparedMonths = new Map<number, Segment[][]>();
+    #create_months(months: number[]) {
+        const prepared_months = new Map<number, Segment[][]>();
 
         for (const month of months) {
-            preparedMonths.set(month, []);
+            prepared_months.set(month, []);
         }
 
-        return preparedMonths;
+        return prepared_months;
     }
 
-    #addEvent(
+    #add_event(
         year: number,
         months: number[],
-        preparedMonths: Map<number, Segment[][]>,
+        prepared_months: Map<number, Segment[][]>,
         event: CalendarEventData
     ) {
         const options = extract(this.#options);
-        const firstDayOfWeek = WEEK_START_MAP[options.weekStart];
+        const first_day_of_week = WEEK_START_MAP[options.week_start];
 
-        const eventStart = toCalendarDate(parseAbsoluteToLocal(event.startsAt));
-        const eventEnd = toCalendarDate(
+        const event_start = toCalendarDate(parseAbsoluteToLocal(event.startsAt));
+        const event_end = toCalendarDate(
             parseAbsoluteToLocal(event.endsAt).subtract({ milliseconds: 1 })
         );
 
-        let weekStart = startOfWeek(eventStart, options.locale, firstDayOfWeek);
+        let week_start = startOfWeek(event_start, options.locale, first_day_of_week);
 
-        while (weekStart.compare(eventEnd) <= 0) {
-            const weekEnd = weekStart.add({ days: 6 });
+        while (week_start.compare(event_end) <= 0) {
+            const week_end = week_start.add({ days: 6 });
 
-            const position = this.#calculateSegmentPosition(
-                eventStart,
-                eventEnd,
-                weekStart,
-                weekEnd
+            const position = this.#calculate_segment_position(
+                event_start,
+                event_end,
+                week_start,
+                week_end
             );
 
-            for (const month of new Set([weekStart.month, weekEnd.month])) {
-                const date = weekStart.month === month ? weekStart : weekEnd;
+            for (const month of new Set([week_start.month, week_end.month])) {
+                const date = week_start.month === month ? week_start : week_end;
 
                 if (date.year !== year || !months.includes(month)) {
                     continue;
                 }
 
-                const weeklySegments = preparedMonths.get(month)!;
+                const weekly_segments = prepared_months.get(month)!;
 
-                const weekIdx = getWeekIdxInMonth(
-                    date,
-                    options.locale,
-                    options.weekStart
-                );
+                const week_idx = get_week_idx_in_month(date, options.locale, options.week_start);
 
-                weeklySegments[weekIdx] ??= [];
+                weekly_segments[week_idx] ??= [];
 
-                const weekSegments = weeklySegments[weekIdx];
+                const week_segments = weekly_segments[week_idx];
 
-                const lane = this.#calculateSegmentLane(weekSegments, position);
+                const lane = this.#calculate_segment_lane(week_segments, position);
 
-                weekSegments.push({
-                    id: event.occursAt
-                        ? `${event.id}:${event.occursAt}`
-                        : `${event.id}`,
+                week_segments.push({
+                    id: event.occursAt ? `${event.id}:${event.occursAt}` : `${event.id}`,
                     title: event.title,
                     color: event.color,
                     ...position,
@@ -148,83 +135,74 @@ export class YearCalendar {
                 });
             }
 
-            weekStart = weekStart.add({ weeks: 1 });
+            week_start = week_start.add({ weeks: 1 });
         }
     }
 
-    #calculateSegmentPosition(
-        eventStart: CalendarDate,
-        eventEnd: CalendarDate,
-        weekStart: CalendarDate,
-        weekEnd: CalendarDate
+    #calculate_segment_position(
+        event_start: CalendarDate,
+        event_end: CalendarDate,
+        week_start: CalendarDate,
+        week_end: CalendarDate
     ) {
         const options = extract(this.#options);
-        const firstDayOfWeek = WEEK_START_MAP[options.weekStart];
+        const first_day_of_week = WEEK_START_MAP[options.week_start];
 
-        const segmentStart =
-            eventStart.compare(weekStart) > 0 ? eventStart : weekStart;
-        const segmentEnd = eventEnd.compare(weekEnd) < 0 ? eventEnd : weekEnd;
+        const segment_start = event_start.compare(week_start) > 0 ? event_start : week_start;
+        const segment_end = event_end.compare(week_end) < 0 ? event_end : week_end;
 
-        const startColumn = getDayOfWeek(
-            segmentStart,
-            options.locale,
-            firstDayOfWeek
-        );
-        const endColumn = getDayOfWeek(
-            segmentEnd,
-            options.locale,
-            firstDayOfWeek
-        );
+        const start_column = getDayOfWeek(segment_start, options.locale, first_day_of_week);
+        const end_column = getDayOfWeek(segment_end, options.locale, first_day_of_week);
 
         const position: SegmentPosition = {
-            column: startColumn + 1,
-            span: endColumn - startColumn + 1,
-            startsInWeek: eventStart.compare(weekStart) >= 0,
-            endsInWeek: eventEnd.compare(weekEnd) <= 0
+            column: start_column + 1,
+            span: end_column - start_column + 1,
+            starts_in_week: event_start.compare(week_start) >= 0,
+            ends_in_week: event_end.compare(week_end) <= 0
         };
 
         return position;
     }
 
-    #calculateSegmentLane(weekSegments: Segment[], position: SegmentPosition) {
-        const occupiedLanes = new Set(
-            weekSegments
-                .filter((segment) => this.#segmentsOverlap(segment, position))
+    #calculate_segment_lane(week_segments: Segment[], position: SegmentPosition) {
+        const occupied_lanes = new Set(
+            week_segments
+                .filter((segment) => this.#segments_overlap(segment, position))
                 .map((segment) => segment.lane)
         );
 
         let lane = 0;
 
-        while (occupiedLanes.has(lane)) {
+        while (occupied_lanes.has(lane)) {
             lane++;
         }
 
         return lane;
     }
 
-    #segmentsOverlap(a: SegmentPosition, b: SegmentPosition) {
-        const aEnd = a.column + a.span - 1;
-        const bEnd = b.column + b.span - 1;
+    #segments_overlap(a: SegmentPosition, b: SegmentPosition) {
+        const a_end = a.column + a.span - 1;
+        const b_end = b.column + b.span - 1;
 
-        return a.column <= bEnd && b.column <= aEnd;
+        return a.column <= b_end && b.column <= a_end;
     }
 
-    #segmentCoversColumn(segment: Segment, column: number) {
-        const endColumn = segment.column + segment.span - 1;
+    #segment_covers_column(segment: Segment, column: number) {
+        const end_column = segment.column + segment.span - 1;
 
-        return column >= segment.column && column <= endColumn;
+        return column >= segment.column && column <= end_column;
     }
 
-    #store(year: number, preparedMonths: Map<number, Segment[][]>) {
-        let segmentsByMonth = this.#segments.get(year);
+    #store(year: number, prepared_months: Map<number, Segment[][]>) {
+        let segments_by_month = this.#segments.get(year);
 
-        if (!segmentsByMonth) {
-            segmentsByMonth = new SvelteMap();
-            this.#segments.set(year, segmentsByMonth);
+        if (!segments_by_month) {
+            segments_by_month = new SvelteMap();
+            this.#segments.set(year, segments_by_month);
         }
 
-        for (const [month, weeklySegments] of preparedMonths) {
-            segmentsByMonth.set(month, weeklySegments);
+        for (const [month, weekly_segments] of prepared_months) {
+            segments_by_month.set(month, weekly_segments);
         }
     }
 }

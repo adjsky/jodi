@@ -1,20 +1,16 @@
 <script lang="ts">
-    import {
-        parseAbsoluteToLocal,
-        parseDate,
-        today
-    } from "@internationalized/date";
+    import { parseAbsoluteToLocal, parseDate, today } from "@internationalized/date";
     import { CalendarClock } from "@lucide/svelte";
     import { Event } from "$/entities/event";
     import { m } from "$/paraglide/messages";
     import { TIMEZONE } from "$/shared/cfg/constants";
     import { useSearchParams } from "$/shared/integrations/inertia";
-    import { formatToHHMM } from "$/shared/lib/date/format-to-hh-mm";
+    import { format_to_hhmm } from "$/shared/lib/date/format-to-hh-mm";
     import { tw } from "$/shared/lib/styles/tw";
 
-    import { getEventDayPosition } from "../helpers/get-event-day-position";
+    import { get_event_day_position } from "../helpers/get-event-day-position";
     import { id } from "../helpers/id";
-    import { editView } from "../model/view";
+    import { edit_view } from "../model/view";
     import EditSheet from "./EditSheet.svelte";
 
     import type { EventData } from "$/entities/event";
@@ -26,14 +22,14 @@
 
     const { events, ...rest }: Props = $props();
 
-    const searchParams = useSearchParams();
+    const search_params = useSearchParams();
 
-    const selectedDate = $derived(
-        searchParams["d"] ? parseDate(searchParams["d"]) : today(TIMEZONE)
+    const selected_date = $derived(
+        search_params["d"] ? parseDate(search_params["d"]) : today(TIMEZONE)
     );
 
     const event = $derived.by(() => {
-        const vid = editView.meta?.__event?.id;
+        const vid = edit_view.meta?._event?.id;
         if (!vid) return null;
 
         const event = events.find((e) => id(e) === vid);
@@ -43,22 +39,22 @@
     });
 
     $effect(() => {
-        if (searchParams["target"] !== "event") return;
+        if (search_params["target"] !== "event") return;
 
-        const sid = searchParams["id"];
+        const sid = search_params["id"];
         if (!sid || isNaN(Number(sid))) return;
 
         const event = events.find((t) => t.id === Number(sid));
         if (!event) return;
 
-        void editView.replace({
-            meta: { __event: { id: id(event) } },
-            search: { d: searchParams["d"] }
+        void edit_view.replace({
+            meta: { _event: { id: id(event) } },
+            search: { d: search_params["d"] }
         });
     });
 </script>
 
-<EditSheet bind:open={() => editView.isOpen(), () => editView.back()} {event} />
+<EditSheet bind:open={() => edit_view.isOpen(), () => edit_view.back()} {event} />
 
 <section {...rest} class={tw("px-4", rest.class)}>
     <div class="flex items-center gap-1.5">
@@ -73,16 +69,15 @@
             </p>
         {:else}
             {#each events as event (id(event))}
-                {@const { day, total } = getEventDayPosition(
+                {@const { day, total } = get_event_day_position(
                     parseAbsoluteToLocal(event.startsAt),
                     parseAbsoluteToLocal(event.endsAt),
-                    selectedDate
+                    selected_date
                 )}
                 <Event.Row
-                    onclick={() =>
-                        editView.push({ meta: { __event: { id: id(event) } } })}
+                    onclick={() => edit_view.push({ meta: { _event: { id: id(event) } } })}
                     color={event.color}
-                    disabled={editView.isOpen()}
+                    disabled={edit_view.isOpen()}
                 >
                     {#snippet time()}
                         {#if day === 1}
@@ -90,7 +85,7 @@
                                 datetime={event?.startsAt}
                                 class="text-xl font-bold text-cream-950"
                             >
-                                {formatToHHMM(new Date(event.startsAt))}
+                                {format_to_hhmm(new Date(event.startsAt))}
                             </time>
                         {:else}
                             <span class="text-xl font-bold text-cream-950">

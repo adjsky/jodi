@@ -21,14 +21,14 @@
 
 <Sheet
     bind:open
-    maxHeight={0.9}
-    snapPoints={[0.6, 1]}
-    defaultSnapPoint={0.6}
-    onExitComplete={() => {
+    max_height={0.9}
+    snap_points={[0.6, 1]}
+    default_snap_point={0.6}
+    on_exit_complete={() => {
         event.reset();
     }}
 >
     {#if event.current}
-        <EditForm event={event.current} onClose={() => (open = false)} />
+        <EditForm event={event.current} on_close={() => (open = false)} />
     {/if}
 </Sheet>

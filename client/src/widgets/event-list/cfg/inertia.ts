@@ -1,6 +1,6 @@
 import type { VisitOptions } from "@inertiajs/core";
 
-export const visitOptions: VisitOptions = {
+export const visit_options: VisitOptions = {
     only: ["events"],
     preserveState: true,
     preserveScroll: true,

@@ -3,28 +3,28 @@ import { extract, watch } from "runed";
 import type { Getter } from "runed";
 
 export class LastMatching<T> {
-    #lastMatch: T | null;
+    #last_match: T | null;
 
     constructor(value: Getter<T>, matcher: (value: T) => boolean) {
-        const initialValue = extract(value);
+        const initial_value = extract(value);
 
-        this.#lastMatch = $state(matcher(initialValue) ? initialValue : null);
+        this.#last_match = $state(matcher(initial_value) ? initial_value : null);
 
         watch(
             () => [extract(value)],
             () => {
-                const newValue = extract(value);
-                if (matcher(newValue)) this.#lastMatch = newValue;
+                const new_value = extract(value);
+                if (matcher(new_value)) this.#last_match = new_value;
             },
             { lazy: true }
         );
     }
 
     get current(): T | null {
-        return this.#lastMatch;
+        return this.#last_match;
     }
 
     reset(): void {
-        this.#lastMatch = null;
+        this.#last_match = null;
     }
 }

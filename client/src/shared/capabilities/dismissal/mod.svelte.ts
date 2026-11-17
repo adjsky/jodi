@@ -7,7 +7,7 @@ declare global {
         oncancel: ((this: CloseWatcher, event: Event) => void) | null;
         onclose: ((this: CloseWatcher, event: Event) => void) | null;
 
-        requestClose(): void;
+        request_close(): void;
         close(): void;
         destroy(): void;
     }
@@ -18,25 +18,24 @@ declare global {
 }
 
 type Registration = {
-    requestClose: VoidFunction;
+    request_close: VoidFunction;
 };
 
 const registrations: Registration[] = [];
 
-function register(onClose: VoidFunction): VoidFunction {
-    const watcher =
-        typeof CloseWatcher !== "undefined" ? new CloseWatcher() : undefined;
+function register(on_close: VoidFunction): VoidFunction {
+    const watcher = typeof CloseWatcher !== "undefined" ? new CloseWatcher() : undefined;
 
     if (watcher) {
-        watcher.onclose = onClose;
+        watcher.onclose = on_close;
     }
 
     const registration: Registration = {
-        requestClose() {
+        request_close() {
             if (watcher) {
-                watcher.requestClose();
+                watcher.request_close();
             } else {
-                onClose();
+                on_close();
             }
         }
     };
@@ -54,21 +53,21 @@ function register(onClose: VoidFunction): VoidFunction {
     };
 }
 
-function use(isOpen: Getter<boolean>, onClose: VoidFunction): void {
+function use(is_open: Getter<boolean>, on_close: VoidFunction): void {
     $effect(() => {
-        if (!isOpen()) return;
-        return register(onClose);
+        if (!is_open()) return;
+        return register(on_close);
     });
 }
 
-function requestClose(): boolean {
+function request_close(): boolean {
     const registration = registrations.at(-1);
 
     if (!registration) {
         return false;
     }
 
-    registration.requestClose();
+    registration.request_close();
 
     return true;
 }
@@ -76,5 +75,5 @@ function requestClose(): boolean {
 export const Dismissal = {
     register,
     use,
-    requestClose
+    request_close
 };

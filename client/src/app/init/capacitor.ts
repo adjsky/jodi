@@ -8,7 +8,7 @@ export async function init(): Promise<void> {
     }
 
     await App.addListener("backButton", (e) => {
-        if (Dismissal.requestClose()) {
+        if (Dismissal.request_close()) {
             return;
         }
 

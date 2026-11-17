@@ -3,7 +3,7 @@
     generics="InputSchema extends z.ZodType | undefined = undefined, DataSchema extends StandardSchemaV1 | undefined = undefined"
 >
     import { m } from "#paraglide/messages.js";
-    import { useLoadingDebounce } from "#shared/lib/svelte/use-loading-debounce.svelte.ts";
+    import { use_loading_debounce } from "#shared/lib/svelte/use-loading-debounce.svelte.ts";
     import { isHTTPError, isNetworkError } from "ky";
     import { isShallowEqual } from "remeda";
     import { onMount } from "svelte";
@@ -25,9 +25,7 @@
 
     type FormErrors = Record<string, [string, ...string[]] | undefined>;
 
-    type Input = InputSchema extends z.ZodType
-        ? z.infer<InputSchema>
-        : Record<string, unknown>;
+    type Input = InputSchema extends z.ZodType ? z.infer<InputSchema> : Record<string, unknown>;
 
     type Data = DataSchema extends StandardSchemaV1
         ? StandardSchemaV1InferOutput<DataSchema>
@@ -37,7 +35,7 @@
         errors: FormErrors;
         submitting: boolean;
         delayed: boolean;
-        isDirty: boolean;
+        is_dirty: boolean;
     };
 
     type Props = Except<
@@ -46,61 +44,61 @@
     > & {
         action: RouteDefinition<"post" | "put" | "patch" | "delete">;
         children?: Snippet<[FormState]>;
-        inputSchema?: InputSchema;
-        dataSchema?: DataSchema;
-        disableWhileProcessing?: boolean;
+        input_schema?: InputSchema;
+        data_schema?: DataSchema;
+        disable_while_processing?: boolean;
         transform?: (input: Input) => MaybePromise<unknown>;
-        onBefore?: () => boolean | void;
-        onSubmit?: VoidFunction;
-        onValidationError?: (errors: FormErrors) => void;
-        onRateLimit?: (retryAfter: number) => void;
-        onSuccess?: (data: Data, input: Input) => MaybePromise<void>;
-        onHttpError?: (status: number, message: string) => void;
-        onFinish?: VoidFunction;
+        on_before?: () => boolean | void;
+        on_submit?: VoidFunction;
+        on_validation_error?: (errors: FormErrors) => void;
+        on_rate_limit?: (retry_after: number) => void;
+        on_success?: (data: Data, input: Input) => MaybePromise<void>;
+        on_http_error?: (status: number, message: string) => void;
+        on_finish?: VoidFunction;
     };
 
     let {
         action,
         children,
-        inputSchema,
-        dataSchema,
-        disableWhileProcessing = false,
+        input_schema,
+        data_schema,
+        disable_while_processing = false,
         transform,
-        onBefore,
-        onSubmit,
-        onValidationError,
-        onRateLimit,
-        onSuccess,
-        onHttpError,
-        onFinish,
+        on_before,
+        on_submit,
+        on_validation_error,
+        on_rate_limit,
+        on_success,
+        on_http_error,
+        on_finish,
         ...props
     }: Props = $props();
 
     let form: HTMLFormElement | null = $state(null);
-    let defaultData: Record<string, FormDataEntryValue> = {};
+    let default_data: Record<string, FormDataEntryValue> = {};
 
     let submitting = $state(false);
-    let delayed = useLoadingDebounce(() => submitting, 200);
+    let delayed = use_loading_debounce(() => submitting, 200);
     let errors = $state.raw<FormErrors>({});
-    let isDirty = $state(false);
+    let is_dirty = $state(false);
 
     onMount(() => {
-        defaultData = getFormData();
+        default_data = get_form_data();
 
         const events = ["input", "change", "reset"];
 
-        events.map((event) => form?.addEventListener(event, updateDirtyState));
+        events.map((event) => form?.addEventListener(event, update_dirty_state));
     });
 
-    function updateDirtyState(e: Event) {
+    function update_dirty_state(e: Event) {
         if (e.type === "reset") {
-            isDirty = false;
+            is_dirty = false;
         } else {
-            isDirty = !isShallowEqual(defaultData, getFormData());
+            is_dirty = !isShallowEqual(default_data, get_form_data());
         }
     }
 
-    function getFormData(submitter?: HTMLElement | null) {
+    function get_form_data(submitter?: HTMLElement | null) {
         if (!form) {
             throw new Error("Can't get form data with no form element set.");
         }
@@ -108,23 +106,23 @@
         return Object.fromEntries(new FormData(form, submitter).entries());
     }
 
-    async function handleSubmit(e: SubmitEvent): Promise<void> {
+    async function handle_submit(e: SubmitEvent): Promise<void> {
         e.preventDefault();
 
-        if (submitting || onBefore?.() === false) {
+        if (submitting || on_before?.() === false) {
             return;
         }
 
         errors = {};
 
-        let json: unknown = getFormData(e.submitter);
+        let json: unknown = get_form_data(e.submitter);
 
-        if (inputSchema) {
-            const result = z.safeParse(inputSchema, json);
+        if (input_schema) {
+            const result = z.safeParse(input_schema, json);
 
             if (!result.success) {
                 errors = z.flattenError(result.error).fieldErrors;
-                onValidationError?.(errors);
+                on_validation_error?.(errors);
                 return;
             }
 
@@ -136,7 +134,7 @@
         }
 
         submitting = true;
-        onSubmit?.();
+        on_submit?.();
 
         try {
             const request = api(action.url, {
@@ -148,28 +146,25 @@
             let data;
 
             if (response.status !== 204) {
-                if (dataSchema) {
-                    data = await request.json(dataSchema);
+                if (data_schema) {
+                    data = await request.json(data_schema);
                 } else {
                     data = await request.json();
                 }
             }
 
-            await onSuccess?.(data as Data, json as Input);
+            await on_success?.(data as Data, json as Input);
         } catch (e) {
             if (isHTTPError(e)) {
                 const { response } = e;
 
                 switch (response.status) {
                     case 422: {
-                        const result = z.safeParse(
-                            ApiErrorValidationSchema,
-                            e.data
-                        );
+                        const result = z.safeParse(ApiErrorValidationSchema, e.data);
 
                         if (result.success) {
                             errors = result.data.errors;
-                            onValidationError?.(errors);
+                            on_validation_error?.(errors);
                         }
 
                         break;
@@ -182,11 +177,9 @@
                     }
 
                     case 429: {
-                        const retryAfter = Number(
-                            response.headers.get("retry-after")
-                        );
+                        const retry_after = Number(response.headers.get("retry-after"));
 
-                        onRateLimit?.(retryAfter);
+                        on_rate_limit?.(retry_after);
 
                         break;
                     }
@@ -200,8 +193,8 @@
                                 ? e.data.message
                                 : m["common.errors.unexpected"]();
 
-                        if (onHttpError) {
-                            onHttpError(response.status, message);
+                        if (on_http_error) {
+                            on_http_error(response.status, message);
                         } else {
                             toaster.error(message);
                         }
@@ -212,7 +205,7 @@
             }
         } finally {
             submitting = false;
-            onFinish?.();
+            on_finish?.();
         }
     }
 </script>
@@ -221,14 +214,14 @@
     bind:this={form}
     {...props}
     aria-busy={submitting}
-    novalidate={Boolean(inputSchema) || props.novalidate}
-    inert={disableWhileProcessing && submitting ? true : props.inert}
-    onsubmit={handleSubmit}
+    novalidate={Boolean(input_schema) || props.novalidate}
+    inert={disable_while_processing && submitting ? true : props.inert}
+    onsubmit={handle_submit}
 >
     {@render children?.({
         submitting,
         errors,
-        isDirty,
+        is_dirty,
         get delayed() {
             return delayed.current;
         }

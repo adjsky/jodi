@@ -6,7 +6,7 @@ import {
     today
 } from "@internationalized/date";
 import { TIMEZONE, WEEK_START_MAP } from "#shared/cfg/constants.ts";
-import { getWeekDays } from "#shared/lib/date/get-week-days.ts";
+import { get_week_days } from "#shared/lib/date/get-week-days.ts";
 import { extract, watch } from "runed";
 
 import type { CalendarDate } from "@internationalized/date";
@@ -15,13 +15,13 @@ import type { WeekStart } from "#shared/lib/date/types.ts";
 import type { Getter, MaybeGetter } from "runed";
 
 type Options = {
-    weekStart: WeekStart;
+    week_start: WeekStart;
     locale: Locale;
 };
 
 type Month = { name: string; date: CalendarDate };
 
-type Day = { isWithinMonth: boolean; date: CalendarDate };
+type Day = { is_within_month: boolean; date: CalendarDate };
 
 export class Year {
     #options: MaybeGetter<Options>;
@@ -65,12 +65,12 @@ export class Year {
     }
 
     weeks(date: CalendarDate): Day[][] {
-        const nWeeks = this.#weeksInMonth(date);
-        const start = this.#startOfWeek(date);
+        const nweeks = this.#weeks_in_month(date);
+        const start = this.#start_of_week(date);
 
-        return Array.from({ length: nWeeks }).map((_, idx) =>
-            getWeekDays(start.add({ weeks: idx })).map((d) => ({
-                isWithinMonth: d.month === date.month,
+        return Array.from({ length: nweeks }).map((_, idx) =>
+            get_week_days(start.add({ weeks: idx })).map((d) => ({
+                is_within_month: d.month === date.month,
                 date: d
             }))
         );
@@ -82,7 +82,7 @@ export class Year {
             timeZone: TIMEZONE
         });
 
-        return getWeekDays(this.#startOfWeek(today(TIMEZONE))).map((date) =>
+        return get_week_days(this.#start_of_week(today(TIMEZONE))).map((date) =>
             formatter.format(date.toDate(TIMEZONE))
         );
     }
@@ -95,19 +95,19 @@ export class Year {
         this.#cursor = startOfYear(this.#cursor.subtract({ years: 1 }));
     }
 
-    #startOfWeek(date: CalendarDate) {
+    #start_of_week(date: CalendarDate) {
         return startOfWeek(
             date,
             extract(this.#options).locale,
-            WEEK_START_MAP[extract(this.#options).weekStart]
+            WEEK_START_MAP[extract(this.#options).week_start]
         );
     }
 
-    #weeksInMonth(date: CalendarDate) {
+    #weeks_in_month(date: CalendarDate) {
         return getWeeksInMonth(
             date,
             extract(this.#options).locale,
-            WEEK_START_MAP[extract(this.#options).weekStart]
+            WEEK_START_MAP[extract(this.#options).week_start]
         );
     }
 }

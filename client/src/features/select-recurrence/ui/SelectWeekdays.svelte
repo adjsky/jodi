@@ -6,7 +6,7 @@
     import { TIMEZONE, WEEK_START_MAP } from "#shared/cfg/constants.ts";
     import { boolAttr } from "runed";
 
-    import { getOrderedWeekdays } from "../helpers/weekday";
+    import { get_ordered_weekdays } from "../helpers/weekday";
     import CustomConfiguratorBlock from "./CustomConfiguratorBlock.svelte";
 
     type Props = {
@@ -28,7 +28,7 @@
 
 <CustomConfiguratorBlock title={m["recurrence.custom.select-weekdays"]()}>
     <div class="mt-3 flex gap-1.5">
-        {#each getOrderedWeekdays(start) as { weekday, date } (weekday)}
+        {#each get_ordered_weekdays(start) as { weekday, date } (weekday)}
             {@const selected = byweekday.includes(weekday)}
             {@const formatter = new DateFormatter(getLocale(), {
                 weekday: "narrow",

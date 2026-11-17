@@ -1,9 +1,5 @@
 <script lang="ts">
-    import {
-        DateFormatter,
-        getDayOfWeek,
-        today
-    } from "@internationalized/date";
+    import { DateFormatter, getDayOfWeek, today } from "@internationalized/date";
     import { getLocale } from "#paraglide/runtime.js";
     import { TIMEZONE } from "#shared/cfg/constants.ts";
     import { tw } from "#shared/lib/styles/tw.ts";
@@ -18,23 +14,19 @@
     type Props = {
         selected: CalendarDate;
         cursor: CalendarDate;
-        weekStart: WeekStart;
+        week_start: WeekStart;
     };
 
-    let {
-        selected = $bindable(),
-        cursor = $bindable(),
-        weekStart
-    }: Props = $props();
+    let { selected = $bindable(), cursor = $bindable(), week_start }: Props = $props();
 
-    let swiperContainer: SwiperContainer | null = $state(null);
+    let swiper_container: SwiperContainer | null = $state(null);
 
     const swiper = new WeekSwiper(
-        () => swiperContainer,
+        () => swiper_container,
         () => ({
             cursor,
-            weekStart,
-            onCursorChange: (date) => (cursor = date)
+            week_start: week_start,
+            on_cursor_change: (date) => (cursor = date)
         })
     );
 
@@ -57,30 +49,23 @@
     }
 </script>
 
-<swiper-container
-    bind:this={swiperContainer}
-    init="false"
-    class="border-b border-cream-300 py-3"
->
-    {#each swiper.weeks as week, weekIdx (weekIdx)}
+<swiper-container bind:this={swiper_container} init="false" class="border-b border-cream-300 py-3">
+    {#each swiper.weeks as week, week_idx (week_idx)}
         <swiper-slide class="week-grid-12.5 h-14 pb-2">
-            {#each week as date, columnIdx (columnIdx)}
+            {#each week as date, column_idx (column_idx)}
                 <button
                     data-highlight={highlight(date)}
                     class={tw([
                         "flex min-w-0 justify-center",
-                        columnIdx === 0 && "justify-start",
-                        columnIdx === 6 && "justify-end"
+                        column_idx === 0 && "justify-start",
+                        column_idx === 6 && "justify-end"
                     ])}
                     onclick={() => SelectedDate.update(date)}
                 >
                     <span
                         class="flex h-full w-full max-w-12.5 flex-col items-center justify-between"
                     >
-                        <span
-                            class="text-xs font-semibold text-cream-500"
-                            data-part="day-name"
-                        >
+                        <span class="text-xs font-semibold text-cream-500" data-part="day-name">
                             {new DateFormatter(getLocale(), {
                                 weekday: "short",
                                 timeZone: TIMEZONE

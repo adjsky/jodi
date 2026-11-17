@@ -13,17 +13,11 @@
         open: boolean;
         tooltip: string;
         rrule?: string | null;
-        onSelect?: (rrule: string | null) => void;
-        onCustomTrigger?: VoidFunction;
+        on_select?: (rrule: string | null) => void;
+        on_custom_trigger?: VoidFunction;
     };
 
-    let {
-        open = $bindable(),
-        tooltip,
-        rrule,
-        onSelect,
-        onCustomTrigger
-    }: Props = $props();
+    let { open = $bindable(), tooltip, rrule, on_select, on_custom_trigger }: Props = $props();
 
     const recurrences = [
         { label: m["recurrence.never"](), rule: NEVER_TRIGGER_VALUE },
@@ -49,7 +43,7 @@
         }
     ];
 
-    const selectedIdx = $derived(
+    const selected_idx = $derived(
         recurrences.findIndex(({ rule }) => {
             if (!rrule && rule === NEVER_TRIGGER_VALUE) {
                 return true;
@@ -65,9 +59,9 @@
     positioning={{ placement: "top" }}
     onSelect={({ value }) => {
         if (value === CUSTOM_TRIGGER_VALUE) {
-            onCustomTrigger?.();
+            on_custom_trigger?.();
         } else {
-            onSelect?.(value === NEVER_TRIGGER_VALUE ? null : value);
+            on_select?.(value === NEVER_TRIGGER_VALUE ? null : value);
         }
     }}
 >
@@ -87,13 +81,9 @@
                         stroke-linejoin="round"
                         class="lucide lucide-refresh-ccw-icon lucide-refresh-ccw-dot"
                     >
-                        <path
-                            d="M13.04 3.06A9 9 0 0 0 12 3a9.75 9.75 0 0 0-6.74 2.74L3 8"
-                        />
+                        <path d="M13.04 3.06A9 9 0 0 0 12 3a9.75 9.75 0 0 0-6.74 2.74L3 8" />
                         <path d="M3 3v5h5" />
-                        <path
-                            d="M3 12a9 9 0 0 0 9 9 9.75 9.75 0 0 0 6.74-2.74L21 16"
-                        />
+                        <path d="M3 12a9 9 0 0 0 9 9 9.75 9.75 0 0 0 6.74-2.74L21 16" />
                         <path d="M16 16h5v5" />
                         <circle cx="18" cy="8" r="3"></circle>
                     </svg>
@@ -114,17 +104,15 @@
                         class="group cursor-pointer px-3"
                         data-selected={boolAttr(
                             rule === CUSTOM_TRIGGER_VALUE
-                                ? selectedIdx === -1
-                                : selectedIdx === idx
+                                ? selected_idx === -1
+                                : selected_idx === idx
                         )}
                     >
                         <div
                             class="flex items-center justify-between border-b border-cream-300 py-3.5"
                         >
                             <span>{label}</span>
-                            <Check
-                                class="text-xl not-group-data-selected:hidden"
-                            />
+                            <Check class="text-xl not-group-data-selected:hidden" />
                         </div>
                     </Menu.Item>
                 {/each}

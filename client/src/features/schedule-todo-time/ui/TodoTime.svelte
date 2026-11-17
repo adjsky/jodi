@@ -8,47 +8,42 @@
     import type { HTMLButtonAttributes } from "svelte/elements";
 
     type Props = {
-        scheduledAt: ZonedDateTime;
-        hasTime: boolean;
-        onChange?: (time: Time, hasTime: boolean) => void;
+        scheduled_at: ZonedDateTime;
+        has_time: boolean;
+        on_change?: (time: Time, has_time: boolean) => void;
     };
 
-    let { scheduledAt = $bindable(), hasTime, onChange }: Props = $props();
+    let { scheduled_at = $bindable(), has_time, on_change }: Props = $props();
 </script>
 
-<div
-    class="relative flex h-10 items-center rounded-lg border border-cream-300 text-lg"
->
+<div class="relative flex h-10 items-center rounded-lg border border-cream-300 text-lg">
     {#snippet trigger(props: HTMLButtonAttributes)}
-        <button
-            {...props}
-            class="flex h-full items-center gap-1.5 px-3 font-semibold"
-        >
+        <button {...props} class="flex h-full items-center gap-1.5 px-3 font-semibold">
             <Plus class="text-xl" />
             {m["todos.time.add"]()}
         </button>
     {/snippet}
     <TimePickerInput
         bind:value={
-            () => (hasTime ? toTime(scheduledAt) : new Time(12, 0)),
-            (time) => (scheduledAt = scheduledAt.set(time))
+            () => (has_time ? toTime(scheduled_at) : new Time(12, 0)),
+            (time) => (scheduled_at = scheduled_at.set(time))
         }
         class="h-full w-max pr-10 pl-3"
-        trigger={hasTime ? undefined : trigger}
-        onConfirm={async (time) => {
-            onChange?.(time, true);
+        trigger={has_time ? undefined : trigger}
+        on_confirm={async (time) => {
+            on_change?.(time, true);
         }}
     />
 
-    {#if hasTime}
+    {#if has_time}
         <button
             class="absolute right-1.5 p-1 font-bold"
             onclick={async (e) => {
                 e.stopPropagation();
 
                 const time = new Time(0, 0, 0, 0);
-                scheduledAt.set(time);
-                onChange?.(time, false);
+                scheduled_at.set(time);
+                on_change?.(time, false);
             }}
         >
             <X class="text-xl" />

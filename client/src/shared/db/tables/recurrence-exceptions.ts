@@ -3,28 +3,28 @@ import type { Todo } from "./todos.ts";
 
 export type RecurrenceException = {
     id: string;
-    recurrenceableId: string;
-    occursAt: string;
-    isCancelled: 0 | 1;
+    recurrenceable_id: string;
+    occurs_at: string;
+    is_cancelled: 0 | 1;
 } & (
     | {
-          recurrenceableType: "todo";
+          recurrenceable_type: "todo";
           overrides: Partial<
               Pick<
                   Todo,
                   | "title"
                   | "description"
-                  | "categoryId"
+                  | "category_id"
                   | "color"
-                  | "scheduledAt"
-                  | "hasTime"
-                  | "completedAt"
-                  | "notifyBefore"
+                  | "scheduled_at"
+                  | "has_time"
+                  | "completed_at"
+                  | "notify_before"
               >
           >;
       }
     | {
-          recurrenceableType: "event";
+          recurrenceable_type: "event";
           overrides: Partial<
               Pick<
                   Event,
@@ -32,9 +32,9 @@ export type RecurrenceException = {
                   | "description"
                   | "location"
                   | "color"
-                  | "startsAt"
-                  | "endsAt"
-                  | "notifyBefore"
+                  | "starts_at"
+                  | "ends_at"
+                  | "notify_before"
               >
           >;
       }

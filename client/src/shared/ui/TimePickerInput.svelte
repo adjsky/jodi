@@ -11,21 +11,15 @@
         class?: ClassName;
         value: Time;
         trigger?: Snippet<[HTMLButtonAttributes]>;
-        onAbort?: VoidFunction;
-        onConfirm?: (time: Time) => void;
+        on_abort?: VoidFunction;
+        on_confirm?: (time: Time) => void;
     };
 
-    let {
-        class: classname,
-        value = $bindable(),
-        trigger,
-        onAbort,
-        onConfirm
-    }: Props = $props();
+    let { value = $bindable(), trigger, on_abort, on_confirm, ...props }: Props = $props();
 
     let open = $state(false);
 
-    const visibleValue = $derived.by(() => {
+    const visible_value = $derived.by(() => {
         const hours = value.hour.toString().padStart(2, "0");
         const minutes = value.minute.toString().padStart(2, "0");
 
@@ -43,11 +37,11 @@
 {:else}
     <button
         type="button"
-        class={tw("rounded-md text-center font-bold", classname)}
+        class={tw("rounded-md text-center font-bold", props.class)}
         onclick={() => (open = true)}
     >
-        {visibleValue}
+        {visible_value}
     </button>
 {/if}
 
-<TimePickerClock bind:value bind:open {onAbort} {onConfirm} />
+<TimePickerClock bind:value bind:open {on_abort} {on_confirm} />

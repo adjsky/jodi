@@ -1,4 +1,4 @@
-import { useSwiper } from "./use-swiper.svelte";
+import { use_swiper } from "./use-swiper.svelte";
 
 import type { Getter } from "runed";
 import type { Swiper } from "swiper";
@@ -6,19 +6,16 @@ import type { SwiperContainer } from "swiper/element";
 import type { SwiperParams } from "swiper/types";
 
 export type SlidingWindowSwiperOptions<T> = SwiperParams & {
-    edgeBuffer: number;
-    onSlideChange: (offset: number) => void;
-    getDataAt: (offset: number) => T;
+    edge_buffer: number;
+    on_slide_change: (offset: number) => void;
+    get_data_at: (offset: number) => T;
 };
 
 export class SlidingWindowSwiper<T> {
     #container: Getter<SwiperContainer | null>;
     #options: SlidingWindowSwiperOptions<T>;
 
-    constructor(
-        container: Getter<SwiperContainer | null>,
-        options: SlidingWindowSwiperOptions<T>
-    ) {
+    constructor(container: Getter<SwiperContainer | null>, options: SlidingWindowSwiperOptions<T>) {
         this.#container = container;
         this.#options = options;
 
@@ -26,18 +23,18 @@ export class SlidingWindowSwiper<T> {
     }
 
     get data(): T[] {
-        const windowSize = this.#options.edgeBuffer * 2 + 1;
+        const window_size = this.#options.edge_buffer * 2 + 1;
 
-        return Array.from({ length: windowSize }, (_, index) =>
-            this.#options.getDataAt(index - this.#options.edgeBuffer)
+        return Array.from({ length: window_size }, (_, index) =>
+            this.#options.get_data_at(index - this.#options.edge_buffer)
         );
     }
 
     #init() {
-        useSwiper(this.#container, {
+        use_swiper(this.#container, {
             ...this.#options,
             slidesPerView: 1,
-            initialSlide: this.#options.edgeBuffer,
+            initialSlide: this.#options.edge_buffer,
             touchStartForcePreventDefault: true,
             on: {
                 transitionEnd: (swiper) => this.#recenter(swiper)
@@ -46,22 +43,21 @@ export class SlidingWindowSwiper<T> {
     }
 
     #recenter(swiper: Swiper): void {
-        const offset = swiper.activeIndex - this.#options.edgeBuffer;
+        const offset = swiper.activeIndex - this.#options.edge_buffer;
         if (offset === 0) return;
 
         const translate = swiper.getTranslate();
-        const translateOffset =
-            swiper.slidesGrid[swiper.activeIndex] -
-            swiper.slidesGrid[this.#options.edgeBuffer];
+        const translate_offset =
+            swiper.slidesGrid[swiper.activeIndex] - swiper.slidesGrid[this.#options.edge_buffer];
 
-        this.#options.onSlideChange(offset);
+        this.#options.on_slide_change(offset);
 
-        swiper.setTranslate(translate + translateOffset);
-        swiper.updateActiveIndex(this.#options.edgeBuffer);
+        swiper.setTranslate(translate + translate_offset);
+        swiper.updateActiveIndex(this.#options.edge_buffer);
         swiper.updateSlidesClasses();
 
         if (swiper.touchEventsData.isTouched) {
-            swiper.touchEventsData.startTranslate = translate + translateOffset;
+            swiper.touchEventsData.startTranslate = translate + translate_offset;
         }
     }
 }

@@ -1,6 +1,6 @@
 <script lang="ts">
     import { toCalendarDate } from "@internationalized/date";
-    import { Todo } from "#entities/todo/mod.ts";
+    import { Todo, TodoService } from "#entities/todo/mod.ts";
     import { CalendarPicker } from "#features/choose-date/mod.ts";
     import { Checkbox } from "#features/complete-todo/mod.ts";
     import { DeleteItem } from "#features/delete-item/mod.ts";
@@ -20,42 +20,42 @@
 
     type Props = {
         todo: TodoOccurrence;
-        onClose?: VoidFunction;
+        on_close?: VoidFunction;
     };
 
-    const { todo, onClose }: Props = $props();
+    const { todo, on_close }: Props = $props();
 
     const draft: TodoDraft = $state(
         untrack(() => ({
             title: todo.title,
             description: todo.description,
-            categoryId: todo.categoryId,
+            category_id: todo.category_id,
             color: todo.color,
             rrule: todo.rrule,
-            scheduledAt: todo.scheduledAt,
-            hasTime: todo.hasTime,
-            notifyBefore: todo.notifyBefore
+            scheduled_at: todo.scheduled_at,
+            has_time: todo.has_time,
+            notify_before: todo.notify_before
         }))
     );
-    const initialDraft = { ...draft };
+    const initial_draft = { ...draft };
 
-    const isDirty = $derived(!isDeepEqual(initialDraft, draft));
-    const isRRuleDirty = $derived(todo.rrule !== draft.rrule);
+    const is_dirty = $derived(!isDeepEqual(initial_draft, draft));
+    const is_r_rule_dirty = $derived(todo.rrule !== draft.rrule);
 </script>
 
 <Todo.Fields
     bind:title={draft.title}
     bind:description={draft.description}
-    scheduledAt={draft.scheduledAt}
-    isCompleted={todo.completedAt !== null}
+    scheduled_at={draft.scheduled_at}
+    is_completed={todo.completed_at !== null}
 >
     {#snippet calendar(trigger)}
         <CalendarPicker
             mode="single"
-            selected={[toCalendarDate(draft.scheduledAt)]}
-            min={todo.recurringSince}
-            onSelect={([d]) => {
-                draft.scheduledAt = draft.scheduledAt.set(d);
+            selected={[toCalendarDate(draft.scheduled_at)]}
+            min={todo.recurring_since}
+            on_select={([d]) => {
+                draft.scheduled_at = draft.scheduled_at.set(d);
             }}
         >
             {#snippet children(props)}
@@ -65,35 +65,38 @@
     {/snippet}
     {#snippet close()}
         <SaveOrClose
-            {onClose}
+            {on_close}
             title={m["todos.recurrence-action.edit-title"]()}
-            variant={isDirty ? "save" : "close"}
-            scopeLabels={{
+            variant={is_dirty ? "save" : "close"}
+            scope_labels={{
                 this: m["todos.recurrence-action.this"](),
                 all: m["todos.recurrence-action.all"]()
             }}
-            confirm={todo.rrule !== null && !isRRuleDirty}
-            onSave={async (scope) => {}}
+            confirm={todo.rrule !== null && !is_r_rule_dirty}
+            on_save={async (scope) => {
+                await TodoService.update(todo.id, draft, todo.occurs_at, scope);
+                on_close?.();
+            }}
         />
     {/snippet}
     {#snippet category()}
-        <Category bind:categoryId={draft.categoryId} />
+        <Category bind:category_id={draft.category_id} />
     {/snippet}
     {#snippet checkbox()}
         <Checkbox
             id={todo.id}
-            completedAt={todo.completedAt}
-            occursAt={todo.occursAt}
+            completed_at={todo.completed_at}
+            occurs_at={todo.occurs_at}
             class="size-6 text-lg"
         />
     {/snippet}
     {#snippet time()}
         <TodoTime
-            scheduledAt={draft.scheduledAt}
-            hasTime={draft.hasTime}
-            onChange={async (time, ht) => {
-                draft.hasTime = ht;
-                draft.scheduledAt = draft.scheduledAt.set(time);
+            scheduled_at={draft.scheduled_at}
+            has_time={draft.has_time}
+            on_change={async (time, ht) => {
+                draft.has_time = ht;
+                draft.scheduled_at = draft.scheduled_at.set(time);
             }}
         />
     {/snippet}
@@ -105,20 +108,26 @@
             }}
             tooltip={m["todos.tooltips.delete"]()}
             recurring={todo.rrule !== null}
-            scopeLabels={{
+            scope_labels={{
                 this: m["todos.recurrence-action.this"](),
                 following: m["todos.recurrence-action.following"](),
                 all: m["todos.recurrence-action.all"]()
             }}
-            onDelete={(scope) => {
-                console.log(scope);
+            on_delete={async (scope) => {
+                await TodoService.destroy(
+                    todo.id,
+                    todo.occurs_at,
+                    toCalendarDate(todo.scheduled_at),
+                    scope
+                );
+                on_close?.();
             }}
         />
     {/snippet}
     {#snippet repeat()}
         <Recurrence
             bind:rrule={draft.rrule}
-            day={draft.scheduledAt}
+            day={draft.scheduled_at}
             tooltip={m["todos.tooltips.repeat"]()}
         />
     {/snippet}
@@ -127,20 +136,20 @@
     {/snippet}
     {#snippet notify()}
         <Reminder
-            bind:notifyBefore={draft.notifyBefore}
+            bind:notify_before={draft.notify_before}
             tooltip={m["todos.tooltips.notification"]()}
-            disabled={!draft.hasTime}
-            onDisabledAttempt={() => {
+            disabled={!draft.has_time}
+            on_disabled_attempt={() => {
                 toaster.info(m["todos.reminder.select-time"]());
             }}
         />
     {/snippet}
     {#snippet more()}
         <RescheduleItem
-            startsAt={toCalendarDate(draft.scheduledAt)}
+            starts_at={toCalendarDate(draft.scheduled_at)}
             tooltip={m["todos.tooltips.more"]()}
-            onReschedule={async (d) => {
-                draft.scheduledAt = draft.scheduledAt.set(d);
+            on_reschedule={async (d) => {
+                draft.scheduled_at = draft.scheduled_at.set(d);
             }}
         />
     {/snippet}

@@ -7,20 +7,19 @@
     import AppPortal from "./AppPortal.svelte";
     import Button from "./Button.svelte";
 
-    import type { DialogRootProps } from "@ark-ui/svelte/dialog";
     import type { Snippet } from "svelte";
     import type { HTMLAttributes, SvelteHTMLElements } from "svelte/elements";
 
-    type Props = Pick<DialogRootProps, "onExitComplete"> &
-        SvelteHTMLElements["div"] & {
-            title: string;
-            open?: boolean;
-            portal?: boolean;
-            trigger?: Snippet<[() => HTMLAttributes<HTMLElement>]>;
-            content?: Snippet;
-            onConfirm?: VoidFunction;
-            onAbort?: VoidFunction;
-        };
+    type Props = SvelteHTMLElements["div"] & {
+        title: string;
+        open?: boolean;
+        portal?: boolean;
+        trigger?: Snippet<[() => HTMLAttributes<HTMLElement>]>;
+        content?: Snippet;
+        on_confirm?: VoidFunction;
+        on_abort?: VoidFunction;
+        on_exit_complete?: VoidFunction;
+    };
 
     let {
         title,
@@ -28,9 +27,9 @@
         portal = true,
         trigger,
         content,
-        onConfirm,
-        onAbort,
-        onExitComplete,
+        on_confirm,
+        on_abort,
+        on_exit_complete,
         ...props
     }: Props = $props();
 
@@ -40,7 +39,7 @@
     );
 </script>
 
-<Dialog.Root bind:open role="alertdialog" {onExitComplete}>
+<Dialog.Root bind:open role="alertdialog" onExitComplete={on_exit_complete}>
     {#if trigger}
         <Dialog.Trigger>
             {#snippet asChild(props)}{@render trigger(props)}{/snippet}
@@ -70,18 +69,14 @@
             {@render content?.()}
 
             <div class="mt-5 flex gap-2">
-                <Dialog.CloseTrigger onclick={onAbort}>
+                <Dialog.CloseTrigger onclick={on_abort}>
                     {#snippet asChild(props)}
-                        <Button
-                            {...props({ onclick: onAbort })}
-                            type="button"
-                            variant="secondary"
-                        >
+                        <Button {...props({ onclick: on_abort })} type="button" variant="secondary">
                             {m["common.no"]()}
                         </Button>
                     {/snippet}
                 </Dialog.CloseTrigger>
-                <Button type="button" onclick={onConfirm}>
+                <Button type="button" onclick={on_confirm}>
                     {m["common.yes"]()}
                 </Button>
             </div>

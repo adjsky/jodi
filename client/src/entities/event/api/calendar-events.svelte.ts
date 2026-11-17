@@ -6,12 +6,8 @@ import type { CalendarEventData } from "../model/types";
 import type { DateValue } from "@internationalized/date";
 
 type Options = {
-    onError?: VoidFunction;
-    onSuccess?: (
-        year: number,
-        months: number[],
-        events: CalendarEventData[]
-    ) => void;
+    on_error?: VoidFunction;
+    on_success?: (year: number, months: number[], events: CalendarEventData[]) => void;
 };
 
 type PendingRequests = {
@@ -22,38 +18,38 @@ type PendingRequests = {
 
 export class CalendarEvents {
     #options: Options;
-    #abortController: AbortController | null = null;
-    #pendingRequests: PendingRequests | null = null;
-    #requestCounter = 0;
+    #abort_controller: AbortController | null = null;
+    #pending_requests: PendingRequests | null = null;
+    #request_counter = 0;
 
     constructor(options: Options) {
         this.#options = options;
     }
 
     request(date: DateValue): void {
-        const version = ++this.#requestCounter;
+        const version = ++this.#request_counter;
 
-        if (this.#pendingRequests && this.#pendingRequests.year === date.year) {
-            this.#pendingRequests.months.add(date.month);
-            this.#pendingRequests.version = version;
+        if (this.#pending_requests && this.#pending_requests.year === date.year) {
+            this.#pending_requests.months.add(date.month);
+            this.#pending_requests.version = version;
         } else {
-            this.#pendingRequests = {
+            this.#pending_requests = {
                 version,
                 year: date.year,
                 months: new Set([date.month])
             };
         }
 
-        void this.#request(structuredClone(this.#pendingRequests));
+        void this.#request(structuredClone(this.#pending_requests));
     }
 
     #request = useDebounce(async (requests: PendingRequests) => {
-        if (this.#pendingRequests?.version === requests.version) {
-            this.#pendingRequests = null;
+        if (this.#pending_requests?.version === requests.version) {
+            this.#pending_requests = null;
         }
 
-        this.#abortController?.abort();
-        this.#abortController = new AbortController();
+        this.#abort_controller?.abort();
+        this.#abort_controller = new AbortController();
 
         try {
             const { url, method } = ListCalendarEvents(
@@ -63,18 +59,14 @@ export class CalendarEvents {
 
             const events: CalendarEventData[] = await ky(url, {
                 method,
-                signal: this.#abortController.signal
+                signal: this.#abort_controller.signal
             }).json();
 
-            this.#options.onSuccess?.(
-                requests.year,
-                Array.from(requests.months),
-                events
-            );
+            this.#options.on_success?.(requests.year, Array.from(requests.months), events);
         } catch (e) {
             if (e instanceof DOMException && e.name === "AbortError") return;
             console.error(e);
-            this.#options.onError?.();
+            this.#options.on_error?.();
         }
     }, 50);
 }

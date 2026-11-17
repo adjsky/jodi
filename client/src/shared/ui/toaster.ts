@@ -24,9 +24,6 @@ export const toaster = {
             };
             return acc;
         },
-        {} as Record<
-            ToastTypes,
-            (title: string, description?: string) => string | number
-        >
+        {} as Record<ToastTypes, (title: string, description?: string) => string | number>
     )
 };

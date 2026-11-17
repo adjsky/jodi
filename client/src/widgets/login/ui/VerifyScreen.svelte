@@ -1,9 +1,5 @@
 <script lang="ts">
-    import {
-        PushSubscriptionSchema,
-        SessionCache,
-        UserSchema
-    } from "#entities/user/mod.ts";
+    import { PushSubscriptionSchema, SessionCache, UserSchema } from "#entities/user/mod.ts";
     import { m } from "#paraglide/messages.js";
     import { AuthTokenStorage } from "#shared/capabilities/auth-token-storage/mod.ts";
     import { Overlay } from "#shared/capabilities/overlay/mod.svelte.ts";
@@ -30,16 +26,16 @@
         (challenge) => challenge !== undefined
     );
 
-    const resendThrottleTimer = new Timer();
-    const completeThrottleTimer = new Timer();
+    const resend_throttle_timer = new Timer();
+    const complete_throttle_timer = new Timer();
 
-    let isResendingLoginChallenge = $state(false);
+    let is_resending_login_challenge = $state(false);
 </script>
 
 <ScreenView.Overlay
-    bind:open={() => Overlay.isOpen("login/verify"), () => Overlay.close()}
-    {@attach VirtualKeyboard.retainFocus()}
-    onExitComplete={() => challenge.reset()}
+    bind:open={() => Overlay.is_open("login/verify"), () => Overlay.close()}
+    {@attach VirtualKeyboard.retain_focus()}
+    on_exit_complete={() => challenge.reset()}
 >
     <ScreenView.Header shape="flat" />
     <ScreenView.Content class="mt-2">
@@ -51,30 +47,26 @@
 
         <ApiForm
             action={CompleteLoginChallenge({
-                id:
-                    challenge.current?.id ??
-                    raise("Invalid login/verify metadata.")
+                id: challenge.current?.id ?? raise("Invalid login/verify metadata.")
             })}
             class="mt-7 flex grow flex-col"
-            inputSchema={z.object({
-                code: z
-                    .string()
-                    .length(6, { error: m["login/verify.errors.code"]() })
+            input_schema={z.object({
+                code: z.string().length(6, { error: m["login/verify.errors.code"]() })
             })}
-            dataSchema={z.object({
+            data_schema={z.object({
                 token: PLATFORM === "web" ? z.null() : z.string(),
                 user: UserSchema,
                 pushSubscription: PushSubscriptionSchema.nullable()
             })}
-            onValidationError={(errors) => {
+            on_validation_error={(errors) => {
                 if (errors.code) {
                     toaster.error(errors.code[0]);
                 }
             }}
-            onRateLimit={(retryAfter) => {
-                completeThrottleTimer.start(retryAfter);
+            on_rate_limit={(retry_after) => {
+                complete_throttle_timer.start(retry_after);
             }}
-            onSuccess={async (data) => {
+            on_success={async (data) => {
                 await SessionCache.set({
                     user: data.user,
                     pushSubscription: data.pushSubscription
@@ -87,11 +79,8 @@
                 await goto(resolve("/(app)"));
             }}
         >
-            {#snippet children({ errors, submitting, isDirty })}
-                <OneTimePasswordInput
-                    name="code"
-                    error={Boolean(errors.code)}
-                />
+            {#snippet children({ errors, submitting, is_dirty })}
+                <OneTimePasswordInput name="code" error={Boolean(errors.code)} />
 
                 <p class="mt-6 text-ms">
                     <span class="font-medium text-cream-700">
@@ -100,16 +89,15 @@
                     <button
                         class={[
                             "font-bold text-brand disabled:cursor-not-allowed",
-                            isResendingLoginChallenge && "animate-pulse"
+                            is_resending_login_challenge && "animate-pulse"
                         ]}
                         form="{id}-resend-form"
-                        disabled={resendThrottleTimer.isRunning ||
-                            isResendingLoginChallenge}
-                        aria-busy={isResendingLoginChallenge}
+                        disabled={resend_throttle_timer.is_running || is_resending_login_challenge}
+                        aria-busy={is_resending_login_challenge}
                     >
-                        {#if resendThrottleTimer.isRunning}
+                        {#if resend_throttle_timer.is_running}
                             {m["login/verify.resend-in"]({
-                                seconds: resendThrottleTimer.secondsLeft
+                                seconds: resend_throttle_timer.seconds_left
                             })}
                         {:else}
                             {m["login/verify.resend"]()}
@@ -120,12 +108,12 @@
                 <Button
                     type="submit"
                     class="mt-auto shrink-0"
-                    disabled={completeThrottleTimer.isRunning || !isDirty}
+                    disabled={complete_throttle_timer.is_running || !is_dirty}
                     loading={submitting}
                 >
-                    {#if completeThrottleTimer.isRunning}
+                    {#if complete_throttle_timer.is_running}
                         {m["login/verify.continue-in"]({
-                            seconds: completeThrottleTimer.secondsLeft
+                            seconds: complete_throttle_timer.seconds_left
                         })}
                     {:else}
                         {m["login/verify.continue"]()}
@@ -136,21 +124,19 @@
 
         <ApiForm
             action={ResendLoginChallenge({
-                id:
-                    challenge.current?.id ??
-                    raise("Invalid login/verify metadata.")
+                id: challenge.current?.id ?? raise("Invalid login/verify metadata.")
             })}
             id="{id}-resend-form"
-            onSubmit={() => {
-                isResendingLoginChallenge = true;
+            on_submit={() => {
+                is_resending_login_challenge = true;
             }}
-            onFinish={() => {
-                isResendingLoginChallenge = false;
+            on_finish={() => {
+                is_resending_login_challenge = false;
             }}
-            onSuccess={() => {
+            on_success={() => {
                 toaster.success(m["login/verify.sent-code"]());
             }}
-            onRateLimit={(retryAfter) => resendThrottleTimer.start(retryAfter)}
+            on_rate_limit={(retry_after) => resend_throttle_timer.start(retry_after)}
             hidden
         ></ApiForm>
     </ScreenView.Content>

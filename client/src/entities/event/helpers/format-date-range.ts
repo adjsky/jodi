@@ -4,10 +4,7 @@ import { TIMEZONE } from "#shared/cfg/constants.ts";
 
 import type { ZonedDateTime } from "@internationalized/date";
 
-export function formatDateRange(
-    startsAt: ZonedDateTime,
-    endsAt: ZonedDateTime
-): string {
+export function format_date_range(starts_at: ZonedDateTime, ends_at: ZonedDateTime): string {
     const f = new DateFormatter(getLocale(), {
         day: "2-digit",
         month: "short",
@@ -22,8 +19,8 @@ export function formatDateRange(
         timeZone: TIMEZONE
     });
 
-    const s = toCalendarDate(startsAt);
-    const e = toCalendarDate(endsAt);
+    const s = toCalendarDate(starts_at);
+    const e = toCalendarDate(ends_at);
 
     if (s.compare(e) === 0) {
         return yearf.format(s.toDate(TIMEZONE));

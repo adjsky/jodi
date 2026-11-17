@@ -7,7 +7,7 @@
 
     // import Button from "#shared/ui/Button.svelte";
 
-    import { updateUserPreferencesMutationOptions } from "../api/preferences.ts";
+    import { update_user_preferences_mutation_options } from "../api/preferences.ts";
 
     import type { ViewProps } from "../model/types.ts";
 
@@ -18,8 +18,8 @@
         { channel: "mail", icon: Mail }
     ] as const;
 
-    const updateUserPreferencesMutation = createMutation(
-        () => updateUserPreferencesMutationOptions
+    const update_user_preferences_mutation = createMutation(
+        () => update_user_preferences_mutation_options
     );
 </script>
 
@@ -31,7 +31,7 @@
                 <User.Info.SelectRow
                     selected={user.preferences.notifications === channel}
                     onclick={() => {
-                        updateUserPreferencesMutation.mutate({
+                        update_user_preferences_mutation.mutate({
                             notifications: channel
                         });
                     }}

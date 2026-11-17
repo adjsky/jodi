@@ -21,6 +21,7 @@
 
         "eslint.validate": ["javascript", "typescript", "svelte"],
 
+        "editor.rulers": [100],
         "editor.quickSuggestions": {
             "strings": true
         },

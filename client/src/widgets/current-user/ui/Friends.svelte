@@ -8,7 +8,7 @@
     import ResourceError from "#shared/ui/ResourceError.svelte";
     import Skeleton from "#shared/ui/Skeleton.svelte";
 
-    import { friendsQueryOptions } from "../api/friends";
+    import { friends_query_options } from "../api/friends";
 
     import type { ViewProps } from "../model/types.ts";
     import type { FriendData } from "#entities/user/mod.ts";
@@ -16,12 +16,12 @@
     let { open = $bindable() }: ViewProps = $props();
 
     const friends = createQuery(() => ({
-        ...friendsQueryOptions,
+        ...friends_query_options,
         enabled: open
     }));
 
-    const isError = $derived(!friends.data && friends.error);
-    const isLoading = $derived(friends.isLoading);
+    const is_error = $derived(!friends.data && friends.error);
+    const is_loading = $derived(friends.isLoading);
 </script>
 
 <ScreenView.Overlay bind:open>
@@ -29,18 +29,18 @@
     <ScreenView.Content
         class={[
             "overflow-y-auto overscroll-contain",
-            !isError && "pt-5",
-            friends.data?.length === 0 || isError ? "justify-center" : "gap-2"
+            !is_error && "pt-5",
+            friends.data?.length === 0 || is_error ? "justify-center" : "gap-2"
         ]}
         aria-live="polite"
         aria-busy={friends.isFetching}
     >
-        {#if isError}
+        {#if is_error}
             <ResourceError
                 message={m["current-user.friends.errors.list"]()}
-                onRetry={() => friends.refetch()}
+                on_retry={() => friends.refetch()}
             />
-        {:else if isLoading}
+        {:else if is_loading}
             {#each Array.from({ length: 5 }) as _, idx (idx)}
                 {@render row()}
             {/each}
@@ -56,9 +56,7 @@
                     decoding="async"
                     class="mx-auto w-full max-w-28"
                 />
-                <p
-                    class="mx-auto mt-4 max-w-3/4 text-center text-lg font-medium"
-                >
+                <p class="mx-auto mt-4 max-w-3/4 text-center text-lg font-medium">
                     {m["current-user.friends.no-friends"]()}
                 </p>
             {/each}
@@ -72,9 +70,7 @@
 </ScreenView.Overlay>
 
 {#snippet row(friend?: FriendData)}
-    <div
-        class="border-gray-950 flex items-center gap-3 rounded-xl border bg-white px-4 py-3"
-    >
+    <div class="border-gray-950 flex items-center gap-3 rounded-xl border bg-white px-4 py-3">
         {#if !friend}
             <Skeleton class="size-9 rounded-full" />
         {:else}

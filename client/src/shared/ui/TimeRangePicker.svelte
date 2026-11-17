@@ -12,64 +12,54 @@
     type Props = {
         label: Snippet;
         class?: ClassName;
-        startsAt: Time;
-        endsAt: Time;
-        deferHistoryViewFrames?: number;
-        isValid?: boolean;
-        onStartsAtChange?: (time: Time) => void;
-        onEndsAtChange?: (time: Time) => void;
+        starts_at: Time;
+        ends_at: Time;
+        is_valid?: boolean;
+        on_starts_at_change?: (time: Time) => void;
+        on_ends_at_change?: (time: Time) => void;
     };
 
     let {
         label,
-        class: classname,
-        startsAt = $bindable(),
-        endsAt = $bindable(),
-        deferHistoryViewFrames = 0,
-        isValid,
-        onStartsAtChange,
-        onEndsAtChange
+        starts_at = $bindable(),
+        ends_at = $bindable(),
+        is_valid,
+        on_starts_at_change,
+        on_ends_at_change,
+        ...props
     }: Props = $props();
 </script>
 
-<div class={tw("group flex w-full items-center gap-4 text-lg", classname)}>
+<div class={tw("group flex w-full items-center gap-4 text-lg", props.class)}>
     <span class="flex items-center gap-1.5 select-none">
         {@render label?.()}
     </span>
     <div
         class={[
             "flex h-10 w-max items-center rounded-lg border border-cream-300 bg-white px-4 select-none",
-            !isValid && "border-red"
+            !is_valid && "border-red"
         ]}
     >
         <TimePickerInput
-            {deferHistoryViewFrames}
-            bind:value={startsAt}
-            onConfirm={(time) => {
+            bind:value={starts_at}
+            on_confirm={(time) => {
                 if (time.hour === 23) {
-                    endsAt = time.set({ hour: 23, minute: 59 });
+                    ends_at = time.set({ hour: 23, minute: 59 });
                 } else {
-                    endsAt = time.set({
+                    ends_at = time.set({
                         hour: time.hour + 1,
                         minute: time.minute
                     });
                 }
 
-                onStartsAtChange?.(time);
+                on_starts_at_change?.(time);
             }}
         />
-        <div
-            aria-hidden="true"
-            class="px-1.5 text-md font-semibold text-cream-600"
-        >
+        <div aria-hidden="true" class="px-1.5 text-md font-semibold text-cream-600">
             {m["common.to"]()}
         </div>
-        <TimePickerInput
-            {deferHistoryViewFrames}
-            bind:value={endsAt}
-            onConfirm={onEndsAtChange}
-        />
-        {#if !isValid}
+        <TimePickerInput bind:value={ends_at} on_confirm={on_ends_at_change} />
+        {#if !is_valid}
             <TriangleAlert class="ml-2 text-2xl text-red" />
         {/if}
     </div>

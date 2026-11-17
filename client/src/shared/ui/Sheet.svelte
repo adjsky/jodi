@@ -3,30 +3,30 @@
     import { Dismissal } from "#shared/capabilities/dismissal/mod.svelte.ts";
     import { VirtualKeyboard } from "#shared/capabilities/virtual-keyboard/mod.ts";
 
-    import type { DrawerRootProps } from "@ark-ui/svelte";
     import type { Snippet } from "svelte";
 
-    type Props = Pick<DrawerRootProps, "onExitComplete"> & {
+    type Props = {
         open?: boolean;
-        maxHeight: number;
-        snapPoints: number[];
-        defaultSnapPoint: number;
+        max_height: number;
+        snap_points: number[];
+        default_snap_point: number;
         children: Snippet;
+        on_exit_complete?: VoidFunction;
     };
 
     const id = $props.id();
     let {
         open = $bindable(false),
-        maxHeight,
-        snapPoints,
-        defaultSnapPoint,
+        max_height,
+        snap_points,
+        default_snap_point,
         children,
-        ...drawerRootProps
+        on_exit_complete
     }: Props = $props();
 
-    let isAnimating = $state(false);
-    let sheetContent: HTMLElement | null = $state(null);
-    let userContent: HTMLDivElement | null = $state(null);
+    let is_animating = $state(false);
+    let sheet_content: HTMLElement | null = $state(null);
+    let user_content: HTMLDivElement | null = $state(null);
 
     const drawer = useDrawer({
         get id() {
@@ -40,22 +40,25 @@
                 open = details.open;
             }
         },
+        // eslint-disable-next-line @typescript-eslint/naming-convention -- Ark UI option name.
         get defaultSnapPoint() {
-            return defaultSnapPoint;
+            return default_snap_point;
         },
+        // eslint-disable-next-line @typescript-eslint/naming-convention -- Ark UI option name.
         get snapPoints() {
-            return snapPoints;
+            return snap_points;
         },
+        // eslint-disable-next-line @typescript-eslint/naming-convention -- Ark UI option name.
         get closeOnInteractOutside() {
-            return !isAnimating;
+            return !is_animating;
         },
         initialFocusEl() {
-            const matched = userContent?.querySelector<HTMLElement>(
+            const matched = user_content?.querySelector<HTMLElement>(
                 "[data-autofocus], [autofocus]"
             );
 
             if (!matched) {
-                return userContent;
+                return user_content;
             }
 
             return matched;
@@ -68,40 +71,38 @@
     );
 </script>
 
-<Drawer.RootProvider value={drawer} {...drawerRootProps}>
+<Drawer.RootProvider value={drawer} onExitComplete={on_exit_complete}>
     <Drawer.Backdrop
         class="fixed inset-0 z-[calc(100+var(--layer-index,0))] bg-cream-950/60"
         onanimationstart={() => {
-            isAnimating = true;
+            is_animating = true;
         }}
         onanimationend={() => {
-            isAnimating = false;
+            is_animating = false;
         }}
     />
     <Drawer.Positioner
         class="fixed inset-0 z-[calc(100+var(--layer-index,0))] flex items-end justify-center"
     >
         <Drawer.Content
-            {@attach VirtualKeyboard.retainFocus({ blurOnScroll: true })}
-            bind:ref={sheetContent}
+            {@attach VirtualKeyboard.retain_focus({ blur_on_scroll: true })}
+            bind:ref={sheet_content}
             class="relative flex size-full min-h-0 flex-col rounded-t-2xl bg-white shadow-none outline-none"
-            style="max-height: {maxHeight * 100}svh"
+            style="max-height: {max_height * 100}svh"
         >
             <Drawer.Grabber
                 class="flex h-(--grabber-height) w-full shrink-0 touch-none items-center justify-center select-none"
             >
-                <Drawer.GrabberIndicator
-                    class="h-1 w-10 rounded-full bg-cream-300"
-                />
+                <Drawer.GrabberIndicator class="h-1 w-10 rounded-full bg-cream-300" />
             </Drawer.Grabber>
             <div
-                bind:this={userContent}
+                bind:this={user_content}
                 class="relative flex min-h-0 flex-col pt-2 px-safe-offset-4 pb-safe-offset-2 outline-none"
                 tabindex="-1"
                 data-scope="drawer"
                 data-part="user-content"
                 onfocusin={(event) => {
-                    if (!VirtualKeyboard.overlaysContent) return;
+                    if (!VirtualKeyboard.overlays_content) return;
                     if (!(event.target instanceof HTMLElement)) return;
                     if (!event.target.closest("[data-expand-sheet]")) return;
 
@@ -109,9 +110,9 @@
                         '[data-scope="drawer"][data-part="content"]'
                     );
 
-                    if (owner !== sheetContent) return;
+                    if (owner !== sheet_content) return;
 
-                    drawer().setSnapPoint(Math.max(...snapPoints));
+                    drawer().setSnapPoint(Math.max(...snap_points));
                 }}
             >
                 {@render children()}
@@ -163,15 +164,12 @@
     }
 
     :global([data-scope="drawer"][data-part="user-content"]) {
-        height: calc(
-            100% - var(--drawer-translate-y, 0px) - var(--grabber-height)
-        );
+        height: calc(100% - var(--drawer-translate-y, 0px) - var(--grabber-height));
 
         min-height: 0;
         flex-shrink: 0;
 
-        transition: height var(--user-content-transition-duration)
-            cubic-bezier(0.32, 0.72, 0, 1);
+        transition: height var(--user-content-transition-duration) cubic-bezier(0.32, 0.72, 0, 1);
     }
 
     @keyframes slide-in-bottom {
@@ -181,21 +179,13 @@
         }
         to {
             --user-content-transition-duration: 0s;
-            transform: translate3d(
-                var(--drawer-translate-x, 0),
-                var(--drawer-translate-y, 0),
-                0
-            );
+            transform: translate3d(var(--drawer-translate-x, 0), var(--drawer-translate-y, 0), 0);
         }
     }
 
     @keyframes slide-out-bottom {
         from {
-            transform: translate3d(
-                var(--drawer-translate-x, 0),
-                var(--drawer-translate-y, 0),
-                0
-            );
+            transform: translate3d(var(--drawer-translate-x, 0), var(--drawer-translate-y, 0), 0);
         }
         to {
             transform: translate3d(0, 100%, 0);

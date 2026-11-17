@@ -1,8 +1,6 @@
 <script lang="ts">
-    import { parseAbsolute, toCalendarDate } from "@internationalized/date";
     import { Trash } from "@lucide/svelte";
     import { Recurrence } from "#entities/recurrence/mod.ts";
-    import { TIMEZONE } from "#shared/cfg/constants.ts";
     import ToolbarAction from "#shared/ui/ToolbarAction.svelte";
 
     import type { RecurrenceScope } from "#entities/recurrence/mod.ts";
@@ -14,22 +12,21 @@
         };
         tooltip: string;
         recurring: boolean;
-        scopeLabels: { this: string; following: string; all: string };
-        onDelete?: (scope: RecurrenceScope) => void;
+        scope_labels: { this: string; following: string; all: string };
+        on_delete?: (scope: RecurrenceScope) => void;
     };
 
-    const { title, tooltip, recurring, scopeLabels, onDelete }: Props =
-        $props();
+    const { title, tooltip, recurring, scope_labels, on_delete }: Props = $props();
 
     let open = $state(false);
 </script>
 
 <Recurrence.ScopeDialog
     bind:open
-    {scopeLabels}
+    {scope_labels}
     title={recurring ? title.recurring : title.general}
     fallback={!recurring}
-    onConfirm={(scope) => onDelete?.(scope)}
+    on_confirm={(scope) => on_delete?.(scope)}
 >
     {#snippet trigger(props)}
         <ToolbarAction {...props()} {tooltip}>

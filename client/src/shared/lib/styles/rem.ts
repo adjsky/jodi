@@ -1,7 +1,5 @@
 export function rem(value: number): number {
-    const fontSize = Number.parseFloat(
-        getComputedStyle(document.documentElement).fontSize
-    );
+    const font_size = Number.parseFloat(getComputedStyle(document.documentElement).fontSize);
 
-    return fontSize * value;
+    return font_size * value;
 }

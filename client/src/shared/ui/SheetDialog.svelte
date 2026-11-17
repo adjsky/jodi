@@ -6,22 +6,20 @@
 
     import AppPortal from "./AppPortal.svelte";
 
-    import type { DialogRootProps } from "@ark-ui/svelte";
     import type { Snippet } from "svelte";
     import type { HTMLAttributes, SvelteHTMLElements } from "svelte/elements";
 
-    type Props = Pick<
-        DialogRootProps,
-        "onExitComplete" | "lazyMount" | "unmountOnExit"
-    > &
-        SvelteHTMLElements["div"] & {
-            open: boolean;
-            title?: string;
-            height: number;
-            portal?: boolean;
-            trigger?: Snippet<[() => HTMLAttributes<HTMLElement>]>;
-            children: Snippet;
-        };
+    type Props = SvelteHTMLElements["div"] & {
+        open: boolean;
+        title?: string;
+        height: number;
+        portal?: boolean;
+        lazy_mount?: boolean;
+        unmount_on_exit?: boolean;
+        trigger?: Snippet<[() => HTMLAttributes<HTMLElement>]>;
+        children: Snippet;
+        on_exit_complete?: VoidFunction;
+    };
 
     let {
         open = $bindable(),
@@ -30,9 +28,9 @@
         trigger,
         children,
         portal = false,
-        lazyMount,
-        unmountOnExit,
-        onExitComplete,
+        lazy_mount,
+        unmount_on_exit,
+        on_exit_complete,
         ...props
     }: Props = $props();
 
@@ -42,7 +40,12 @@
     );
 </script>
 
-<Dialog.Root bind:open {lazyMount} {unmountOnExit} {onExitComplete}>
+<Dialog.Root
+    bind:open
+    lazyMount={lazy_mount}
+    unmountOnExit={unmount_on_exit}
+    onExitComplete={on_exit_complete}
+>
     {#if trigger}
         <Dialog.Trigger>
             {#snippet asChild(props)}
@@ -71,16 +74,10 @@
         >
             {#if title}
                 <div class="relative flex items-center justify-between">
-                    <button
-                        class="p-2"
-                        type="button"
-                        onclick={() => (open = false)}
-                    >
+                    <button class="p-2" type="button" onclick={() => (open = false)}>
                         <ChevronLeft class="text-4xl" />
                     </button>
-                    <span
-                        class="absolute left-1/2 -translate-x-1/2 text-xl font-bold"
-                    >
+                    <span class="absolute left-1/2 -translate-x-1/2 text-xl font-bold">
                         {title}
                     </span>
                 </div>

@@ -1,46 +1,40 @@
 <script lang="ts">
     import { tw } from "#shared/lib/styles/tw.ts";
-    import { useLoadingDebounce } from "#shared/lib/svelte/use-loading-debounce.svelte.ts";
+    import { use_loading_debounce } from "#shared/lib/svelte/use-loading-debounce.svelte.ts";
     import Loader from "#shared/ui/Loader.svelte";
 
     import type { Snippet } from "svelte";
     import type { HTMLButtonAttributes } from "svelte/elements";
 
     type Props = HTMLButtonAttributes & {
-        startIcon?: Snippet;
-        endIcon?: Snippet;
+        start_icon?: Snippet;
+        end_icon?: Snippet;
         children?: Snippet;
-        isLoading?: boolean;
+        is_loading?: boolean;
     };
 
-    const {
-        startIcon,
-        endIcon,
-        children,
-        isLoading = false,
-        ...props
-    }: Props = $props();
+    const { start_icon, end_icon, children, is_loading = false, ...props }: Props = $props();
 
-    const isLoaderVisible = useLoadingDebounce(() => isLoading);
+    const is_loader_visible = use_loading_debounce(() => is_loading);
 </script>
 
 <button
     type="button"
-    aria-busy={isLoading}
-    disabled={isLoading}
+    aria-busy={is_loading}
+    disabled={is_loading}
     {...props}
     class={tw(
         "flex h-14 w-full items-center justify-between border-cream-300 text-lg font-medium not-last:border-b disabled:cursor-not-allowed",
         props.class
     )}
 >
-    {#if isLoaderVisible.current}
+    {#if is_loader_visible.current}
         <Loader />
     {:else}
         <span class="flex items-center gap-2">
-            {@render startIcon?.()}
+            {@render start_icon?.()}
             {@render children?.()}
         </span>
-        {@render endIcon?.()}
+        {@render end_icon?.()}
     {/if}
 </button>

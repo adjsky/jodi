@@ -8,7 +8,7 @@
         SELECTABLE_TO_RRULE_FREQUENCY_MAP,
         SelectableFrequency
     } from "../cfg/frequency";
-    import { dateToWeekday } from "../helpers/weekday";
+    import { date_to_weekday } from "../helpers/weekday";
     import CustomConfiguratorBlock from "./CustomConfiguratorBlock.svelte";
 
     import type { ZonedDateTime } from "@internationalized/date";
@@ -63,7 +63,7 @@
             }
             onSelect={({ value }) => {
                 if (value === SelectableFrequency.WEEKLY) {
-                    byweekday = [dateToWeekday(day.toDate())];
+                    byweekday = [date_to_weekday(day.toDate())];
                 } else {
                     byweekday = [];
                 }
@@ -74,19 +74,13 @@
             <Select.Control
                 class="relative flex h-full items-center gap-2 rounded-xl bg-cream-500/10"
             >
-                <Select.Trigger
-                    class="flex h-full items-center ps-4 pe-7 text-lg font-medium"
-                >
+                <Select.Trigger class="flex h-full items-center ps-4 pe-7 text-lg font-medium">
                     <Select.ValueText />
                 </Select.Trigger>
-                <Select.Indicator
-                    class="triangle pointer-events-none absolute right-3"
-                />
+                <Select.Indicator class="triangle pointer-events-none absolute right-3" />
             </Select.Control>
             <Select.Positioner>
-                <Select.Content
-                    class="min-w-30 rounded-xl border border-cream-950 bg-white"
-                >
+                <Select.Content class="min-w-30 rounded-xl border border-cream-950 bg-white">
                     {#each intervals.items as item (item.value)}
                         <Select.Item
                             {item}

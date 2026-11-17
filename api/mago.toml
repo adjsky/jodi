@@ -15,7 +15,7 @@ literal-separator = true
 
 [formatter]
 preset = "pint"
-print-width = 80
+print-width = 100
 
 [linter]
 integrations = ["symfony", "laravel", "pest"]

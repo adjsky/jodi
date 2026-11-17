@@ -4,7 +4,7 @@ import z from "zod";
 
 import { PushSubscriptionSchema, UserSchema } from "../model/schemas.ts";
 
-export function getCurrentSession(): Promise<App.Domain.Identity.Data.Output.AuthSessionData> {
+export function get_current_session(): Promise<App.Domain.Identity.Data.Output.AuthSessionData> {
     const { url, method } = GetCurrentSession();
 
     return api(url, { method }).json(

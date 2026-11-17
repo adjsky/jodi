@@ -7,15 +7,15 @@
     import { m } from "#paraglide/messages.js";
     import PencilNote from "#shared/assets/pencil-note.svg";
     import { Haptics } from "#shared/capabilities/haptics/mod.ts";
-    import { needsLightContrast } from "#shared/lib/color/needs-light-contrast.ts";
-    import { formatToHHMM } from "#shared/lib/date/format-to-hh-mm.ts";
+    import { needs_light_contrast } from "#shared/lib/color/needs-light-contrast.ts";
+    import { format_to_hhmm } from "#shared/lib/date/format-to-hh-mm.ts";
     import { tw } from "#shared/lib/styles/tw.ts";
     import { isDeepEqual } from "remeda";
     import { untrack } from "svelte";
     import { dragHandle, dragHandleZone, TRIGGERS } from "svelte-dnd-action";
 
     import { UNGROUPED_KEY } from "../cfg/constants";
-    import { groupTodos } from "../helpers/group-todos";
+    import { group_todos } from "../helpers/group-todos";
     import { id } from "../helpers/id";
     import EditSheet from "./EditSheet.svelte";
 
@@ -44,9 +44,9 @@
     //     });
     // });
 
-    let editOpen = $state(false);
+    let edit_open = $state(false);
 
-    let groups = $derived(groupTodos(todos));
+    let groups = $derived(group_todos(todos));
     // let isDragging = $state(false);
 
     const todo = $derived.by(() => {
@@ -61,7 +61,7 @@
 
     // $effect(() => {
     //     if (!isDragging && !reorder.isMutating) {
-    //         groups = groupTodos(todos);
+    //         groups = group_todos(todos);
     //     }
     // });
 
@@ -73,7 +73,7 @@
     //         e.detail.info.trigger === TRIGGERS.DRAGGED_OVER_INDEX
     //     ) {
     //         if (!isDeepEqual(groups[group], e.detail.items)) {
-    //             void Haptics.selectionChanged();
+    //             void Haptics.selection_changed();
     //         }
     //     }
 
@@ -87,11 +87,7 @@
     // }
 </script>
 
-<EditSheet
-    bind:open={editOpen}
-    {todo}
-    onExitComplete={() => SelectedEntry.update(null)}
-/>
+<EditSheet bind:open={edit_open} {todo} />
 
 <section {...rest} class={tw("px-4", rest.class)}>
     <div class="flex items-center gap-1.5">
@@ -117,18 +113,14 @@
                 {#if Object.keys(groups).length === 1 && group === UNGROUPED_KEY}
                     {@render list(group, todos)}
                 {:else}
-                    {@const nCompleted = todos.filter(
-                        (todo) => todo.completedAt !== null
-                    ).length}
+                    {@const n_completed = todos.filter((todo) => todo.completed_at !== null).length}
                     <div class="mb-1 font-medium">
                         <span class="text-cream-500">
-                            {nCompleted}/{todos.length}
+                            {n_completed}/{todos.length}
                         </span>
                         <span class="text-cream-500">•</span>
                         <span>
-                            {group === UNGROUPED_KEY
-                                ? m["todos.ungrouped"]()
-                                : group}
+                            {group === UNGROUPED_KEY ? m["todos.ungrouped"]() : group}
                         </span>
                     </div>
                     {@render list(group, todos)}
@@ -148,39 +140,38 @@
         onfinalize={(e) => finalize(e, group)}
     >
         {#each todos as todo (id(todo))}
-            <Todo.Row class={[todo.completedAt && "opacity-40"]}>
+            <Todo.Row class={[todo.completed_at && "opacity-40"]}>
                 {#snippet checkbox()}
                     <Checkbox
                         id={todo.id}
-                        completedAt={todo.completedAt}
-                        occursAt={todo.occursAt}
+                        completed_at={todo.completed_at}
+                        occurs_at={todo.occurs_at}
                     />
                 {/snippet}
                 {#snippet edit()}
-                    {@const time = todo.hasTime
-                        ? formatToHHMM(todo.scheduledAt.toDate())
+                    {@const time = todo.has_time
+                        ? format_to_hhmm(todo.scheduled_at.toDate())
                         : null}
                     {@const title = todo.title || m["todos.no-title"]()}
                     <button
                         class="relative w-full min-w-0 text-start text-lg font-medium"
                         data-part="edit"
                         onclick={() => {
-                            editOpen = true;
+                            edit_open = true;
                             SelectedEntry.update({
                                 type: "todo",
                                 id: id(todo)
                             });
                         }}
-                        disabled={editOpen}
+                        disabled={edit_open}
                     >
                         <span
                             class={[
                                 "block w-fit max-w-full truncate",
-                                todo.completedAt && "line-through",
+                                todo.completed_at && "line-through",
                                 todo.color && [
                                     "rounded-xl px-1.5",
-                                    needsLightContrast(todo.color) &&
-                                        "text-white"
+                                    needs_light_contrast(todo.color) && "text-white"
                                 ]
                             ]}
                             style="background: {todo.color ?? 'transparent'};"
@@ -195,11 +186,11 @@
                         aria-label="Drag"
                         class="shrink-0"
                         onpointerdown={() => {
-                            void Haptics.selectionStart();
+                            void Haptics.selection_start();
                             void Haptics.impact("medium");
                         }}
                         onpointerup={() => {
-                            void Haptics.selectionEnd();
+                            void Haptics.selection_end();
                         }}
                     >
                         <GripVertical class="text-2xl text-cream-400" />

@@ -4,7 +4,7 @@ import ListFriends from "#wayfinder/actions/App/Domain/Identity/Actions/ListFrie
 
 import type { FriendData } from "#entities/user/mod.ts";
 
-export const friendsQueryOptions = queryOptions<FriendData[]>({
+export const friends_query_options = queryOptions<FriendData[]>({
     queryKey: ["friends"],
     queryFn({ signal }) {
         const { url, method } = ListFriends();

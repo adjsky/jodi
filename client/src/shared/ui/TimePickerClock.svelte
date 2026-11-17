@@ -14,57 +14,55 @@
     type Props = {
         value?: Time;
         open: boolean;
-        onAbort?: VoidFunction;
-        onConfirm?: (time: Time) => void;
+        on_abort?: VoidFunction;
+        on_confirm?: (time: Time) => void;
     };
 
     let {
         value = $bindable(toTime(now(TIMEZONE))),
         open = $bindable(),
-        onAbort,
-        onConfirm
+        on_abort,
+        on_confirm
     }: Props = $props();
 
-    let clockRef = $state<Element | null>(null);
-    let isDragging = $state(false);
+    let clock_ref = $state<Element | null>(null);
+    let is_dragging = $state(false);
     let view = $state<"hour" | "minutes">("hour");
 
-    let internalValue = $derived(value);
-    let handlePosition = $derived(
+    let internal_value = $derived(value);
+    let handle_position = $derived(
         view === "hour"
-            ? hourPosition(internalValue.hour)
-            : minutePosition(internalValue.minute)
+            ? hour_position(internal_value.hour)
+            : minute_position(internal_value.minute)
     );
-    let handleAngle = $derived(
-        view === "hour"
-            ? (internalValue.hour % 12) * 30 - 90
-            : internalValue.minute * 6 - 90
+    let handle_angle = $derived(
+        view === "hour" ? (internal_value.hour % 12) * 30 - 90 : internal_value.minute * 6 - 90
     );
 
     function onpointerdown(e: PointerEvent) {
         e.preventDefault();
-        isDragging = true;
-        void Haptics.selectionStart();
-        handlePointer(e);
+        is_dragging = true;
+        void Haptics.selection_start();
+        handle_pointer(e);
     }
 
     function onpointerup(e: PointerEvent) {
-        if (isDragging) {
+        if (is_dragging) {
             e.preventDefault();
-            isDragging = false;
-            void Haptics.selectionEnd();
+            is_dragging = false;
+            void Haptics.selection_end();
             if (view === "hour") view = "minutes";
         }
     }
 
     function onpointermove(e: PointerEvent) {
-        if (isDragging) {
+        if (is_dragging) {
             e.preventDefault();
-            handlePointer(e);
+            handle_pointer(e);
         }
     }
 
-    function hourPosition(n: number) {
+    function hour_position(n: number) {
         const radius = n >= 12 ? RADIUS * 0.7 : RADIUS;
         const angle = ((n % 12) * (360 / 12) - 90) * (Math.PI / 180);
 
@@ -74,7 +72,7 @@
         return { x, y };
     }
 
-    function minutePosition(n: number) {
+    function minute_position(n: number) {
         const angle = (n * (360 / 60) - 90) * (Math.PI / 180);
 
         const x = Math.cos(angle) * RADIUS;
@@ -83,43 +81,39 @@
         return { x, y };
     }
 
-    function handlePointer(e: PointerEvent) {
-        if (!clockRef) return;
+    function handle_pointer(e: PointerEvent) {
+        if (!clock_ref) return;
         if (!e.clientX || !e.clientY) return;
 
-        const rect = clockRef.getBoundingClientRect();
-        const centerX = rect.left + rect.width / 2;
-        const centerY = rect.top + rect.height / 2;
-        const x = e.clientX - centerX;
-        const y = e.clientY - centerY;
+        const rect = clock_ref.getBoundingClientRect();
+        const center_x = rect.left + rect.width / 2;
+        const center_y = rect.top + rect.height / 2;
+        const x = e.clientX - center_x;
+        const y = e.clientY - center_y;
 
         let angle = Math.atan2(y, x) * (180 / Math.PI);
         angle = (angle + 90 + 360) % 360;
 
         if (view === "hour") {
             const distance = Math.sqrt(x * x + y * y);
-            const isInnerCircle = distance < RADIUS * 0.85;
+            const is_inner_circle = distance < RADIUS * 0.85;
 
-            const baseHour = Math.round(angle / 30) % 12;
-            const newHour = isInnerCircle
-                ? baseHour === 0
-                    ? 12
-                    : baseHour + 12
-                : baseHour;
+            const base_hour = Math.round(angle / 30) % 12;
+            const new_hour = is_inner_circle ? (base_hour === 0 ? 12 : base_hour + 12) : base_hour;
 
-            if (newHour !== internalValue.hour) {
-                void Haptics.selectionChanged();
+            if (new_hour !== internal_value.hour) {
+                void Haptics.selection_changed();
             }
 
-            internalValue = internalValue.set({ hour: newHour });
+            internal_value = internal_value.set({ hour: new_hour });
         } else {
-            const newMinute = Math.round(angle / 6) % 60;
+            const new_minute = Math.round(angle / 6) % 60;
 
-            if (newMinute !== internalValue.minute) {
-                void Haptics.selectionChanged();
+            if (new_minute !== internal_value.minute) {
+                void Haptics.selection_changed();
             }
 
-            internalValue = internalValue.set({ minute: newMinute });
+            internal_value = internal_value.set({ minute: new_minute });
         }
     }
 </script>
@@ -128,19 +122,19 @@
 
 <PromptDialog
     bind:open
-    {onAbort}
+    {on_abort}
     title={m["time-picker.title"]()}
     label={{
         abort: m["time-picker.cancel"](),
         confirm: m["time-picker.ok"]()
     }}
-    onConfirm={() => {
+    on_confirm={() => {
         open = false;
-        value = internalValue;
-        onConfirm?.(internalValue);
+        value = internal_value;
+        on_confirm?.(internal_value);
     }}
-    onExitComplete={() => {
-        internalValue = value;
+    on_exit_complete={() => {
+        internal_value = value;
         view = "hour";
     }}
 >
@@ -150,7 +144,7 @@
             data-selected={boolAttr(view === "hour")}
             onclick={() => (view = "hour")}
         >
-            {internalValue.hour.toString().padStart(2, "0")}
+            {internal_value.hour.toString().padStart(2, "0")}
         </button>
         :
         <button
@@ -158,11 +152,11 @@
             data-selected={boolAttr(view === "minutes")}
             onclick={() => (view = "minutes")}
         >
-            {internalValue.minute.toString().padStart(2, "0")}
+            {internal_value.minute.toString().padStart(2, "0")}
         </button>
     </div>
     <div
-        bind:this={clockRef}
+        bind:this={clock_ref}
         class="relative mt-5 aspect-square w-full touch-none rounded-full bg-cream-50 select-none"
         role="group"
         {onpointerdown}
@@ -175,34 +169,34 @@
             aria-hidden="true"
             class="absolute top-1/2 left-1/2 origin-left bg-brand"
             style="width: {Math.sqrt(
-                handlePosition.x ** 2 + handlePosition.y ** 2
-            )}px; height: 2px; margin-top: -1px; transform: rotate({handleAngle}deg);"
+                handle_position.x ** 2 + handle_position.y ** 2
+            )}px; height: 2px; margin-top: -1px; transform: rotate({handle_angle}deg);"
         ></div>
         <div
             aria-hidden="true"
             class="absolute size-10 rounded-full bg-brand"
-            style="left: calc(50% + {handlePosition.x}px - 20px); top: calc(50% + {handlePosition.y}px - 20px);"
+            style="left: calc(50% + {handle_position.x}px - 20px); top: calc(50% + {handle_position.y}px - 20px);"
         ></div>
         <div role="listbox">
             {#if view === "hour"}
-                {@render clockHH()}
+                {@render clock_hh()}
             {:else}
-                {@render clockMM()}
+                {@render clock_mm()}
             {/if}
         </div>
     </div>
 </PromptDialog>
 
-{#snippet clockHH()}
+{#snippet clock_hh()}
     {#each Array.from({ length: 24 }, (_, i) => i) as hour (hour)}
-        {@const { x, y } = hourPosition(hour)}
-        {@const isSelected = internalValue.hour === hour}
+        {@const { x, y } = hour_position(hour)}
+        {@const selected = internal_value.hour === hour}
         <span
             class="absolute flex h-8 w-8 cursor-pointer items-center justify-center font-medium data-selected:font-semibold data-selected:text-white"
             style="left: calc(50% + {x}px - 16px); top: calc(50% + {y}px - 16px);"
             role="option"
-            aria-selected={isSelected}
-            data-selected={boolAttr(isSelected)}
+            aria-selected={selected}
+            data-selected={boolAttr(selected)}
             tabindex="0"
         >
             {hour.toString().padStart(2, "0")}
@@ -210,16 +204,16 @@
     {/each}
 {/snippet}
 
-{#snippet clockMM()}
+{#snippet clock_mm()}
     {#each Array.from({ length: 12 }, (_, i) => i * 5) as minute (minute)}
-        {@const { x, y } = minutePosition(minute)}
-        {@const isSelected = internalValue.minute === minute}
+        {@const { x, y } = minute_position(minute)}
+        {@const selected = internal_value.minute === minute}
         <span
             class="absolute flex h-8 w-8 cursor-pointer items-center justify-center font-medium data-selected:font-semibold data-selected:text-white"
             style="left: calc(50% + {x}px - 16px); top: calc(50% + {y}px - 16px);"
             role="option"
-            aria-selected={isSelected}
-            data-selected={boolAttr(isSelected)}
+            aria-selected={selected}
+            data-selected={boolAttr(selected)}
             tabindex="0"
         >
             {minute.toString().padStart(2, "0")}

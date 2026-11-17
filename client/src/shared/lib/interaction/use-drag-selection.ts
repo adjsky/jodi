@@ -8,44 +8,41 @@ const SELECTION_DELAY = 350;
 
 type Options<T> = {
     enabled: boolean;
-    isSelectable?: (value: T) => boolean;
-    onStart?: VoidFunction;
-    onSelect?: (value: T, anchor: T, phase: "start" | "move") => void;
-    onEnd?: VoidFunction;
+    is_selectable?: (value: T) => boolean;
+    on_start?: VoidFunction;
+    on_select?: (value: T, anchor: T, phase: "start" | "move") => void;
+    on_end?: VoidFunction;
 };
 
 export type DragSelection<T> = {
     attachment: (value: T) => Attachment<HTMLElement>;
 };
 
-export function useDragSelection<T>(
-    options: MaybeGetter<Options<T>>
-): DragSelection<T> {
+export function use_drag_selection<T>(options: MaybeGetter<Options<T>>): DragSelection<T> {
     const values = new WeakMap<Element, T>();
 
     let timer: NodeJS.Timeout | null = null;
-    let anchorElement: HTMLElement | null = null;
-    let anchorValue: T | null = null;
-    let currentValue: T | null = null;
-    let pointerId: number | null = null;
-    let isSelecting = false;
-    let suppressClick = false;
-    let startPosition = [0, 0];
+    let anchor_element: HTMLElement | null = null;
+    let anchor_value: T | null = null;
+    let current_value: T | null = null;
+    let pointer_id: number | null = null;
+    let is_selecting = false;
+    let suppress_click = false;
+    let start_position = [0, 0];
 
     return {
         attachment: (value) => (element) => {
             values.set(element, value);
 
             function onpointerdown(e: PointerEvent) {
-                const { enabled, isSelectable, onStart, onSelect } =
-                    extract(options);
+                const { enabled, is_selectable, on_start, on_select } = extract(options);
 
                 if (
                     e.pointerType !== "touch" ||
                     !enabled ||
-                    isSelectable?.(value) === false ||
+                    is_selectable?.(value) === false ||
                     !e.isPrimary ||
-                    pointerId !== null
+                    pointer_id !== null
                 ) {
                     return;
                 }
@@ -56,49 +53,46 @@ export function useDragSelection<T>(
                     passive: false
                 });
 
-                anchorElement = element;
-                anchorValue = value;
-                currentValue = value;
-                pointerId = e.pointerId;
-                startPosition = [e.clientX, e.clientY];
+                anchor_element = element;
+                anchor_value = value;
+                current_value = value;
+                pointer_id = e.pointerId;
+                start_position = [e.clientX, e.clientY];
 
                 timer = setTimeout(() => {
-                    if (anchorValue === null) return;
+                    if (anchor_value === null) return;
 
                     timer = null;
-                    isSelecting = true;
-                    suppressClick = true;
+                    is_selecting = true;
+                    suppress_click = true;
 
-                    onStart?.();
-                    onSelect?.(value, anchorValue, "start");
+                    on_start?.();
+                    on_select?.(value, anchor_value, "start");
                 }, SELECTION_DELAY);
             }
 
             function onpointermove(e: PointerEvent) {
-                const { isSelectable, onSelect } = extract(options);
+                const { is_selectable, on_select } = extract(options);
 
-                if (e.pointerId !== pointerId) return;
+                if (e.pointerId !== pointer_id) return;
 
-                if (!isSelecting) {
-                    const [x, y] = startPosition;
+                if (!is_selecting) {
+                    const [x, y] = start_position;
                     const distance = Math.hypot(e.clientX - x, e.clientY - y);
                     if (distance >= TOUCH_SLOP) reset();
                     return;
                 }
 
-                if (anchorValue === null) return;
+                if (anchor_value === null) return;
 
                 let element = document.elementFromPoint(e.clientX, e.clientY);
 
                 while (element) {
                     const value = values.get(element);
                     if (value !== undefined) {
-                        if (
-                            value !== currentValue &&
-                            isSelectable?.(value) !== false
-                        ) {
-                            currentValue = value;
-                            onSelect?.(value, anchorValue, "move");
+                        if (value !== current_value && is_selectable?.(value) !== false) {
+                            current_value = value;
+                            on_select?.(value, anchor_value, "move");
                         }
                         break;
                     }
@@ -107,37 +101,37 @@ export function useDragSelection<T>(
             }
 
             function onpointerend(e: PointerEvent) {
-                const { onEnd } = extract(options);
+                const { on_end } = extract(options);
 
-                if (e.pointerId !== pointerId) return;
+                if (e.pointerId !== pointer_id) return;
 
-                const wasSelecting = isSelecting;
-                const wasCancelled = e.type === "pointercancel";
+                const was_selecting = is_selecting;
+                const was_cancelled = e.type === "pointercancel";
 
                 reset();
 
-                if (wasSelecting) {
-                    onEnd?.();
+                if (was_selecting) {
+                    on_end?.();
                 }
 
-                if (wasCancelled) {
-                    suppressClick = false;
-                } else if (wasSelecting) {
-                    setTimeout(() => (suppressClick = false), 0);
+                if (was_cancelled) {
+                    suppress_click = false;
+                } else if (was_selecting) {
+                    setTimeout(() => (suppress_click = false), 0);
                 }
             }
 
             function onclick(e: PointerEvent) {
-                if (!suppressClick) return;
+                if (!suppress_click) return;
 
-                suppressClick = false;
+                suppress_click = false;
 
                 e.preventDefault();
                 e.stopImmediatePropagation();
             }
 
             function ontouchmove(e: TouchEvent) {
-                if (isSelecting && e.cancelable) {
+                if (is_selecting && e.cancelable) {
                     e.preventDefault();
                 }
             }
@@ -152,12 +146,12 @@ export function useDragSelection<T>(
                     timer = null;
                 }
 
-                anchorElement = null;
-                anchorValue = null;
-                currentValue = null;
-                pointerId = null;
-                isSelecting = false;
-                startPosition = [0, 0];
+                anchor_element = null;
+                anchor_value = null;
+                current_value = null;
+                pointer_id = null;
+                is_selecting = false;
+                start_position = [0, 0];
             }
 
             element.addEventListener("click", onclick, { capture: true });
@@ -165,9 +159,9 @@ export function useDragSelection<T>(
             element.addEventListener("pointermove", onpointermove);
 
             return () => {
-                if (anchorElement === element) {
-                    if (isSelecting) extract(options).onEnd?.();
-                    suppressClick = false;
+                if (anchor_element === element) {
+                    if (is_selecting) extract(options).on_end?.();
+                    suppress_click = false;
                     reset();
                 }
 

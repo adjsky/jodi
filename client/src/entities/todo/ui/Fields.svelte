@@ -4,7 +4,7 @@
     import { m } from "#paraglide/messages.js";
     import { getLocale } from "#paraglide/runtime.js";
     import { TIMEZONE } from "#shared/cfg/constants.ts";
-    import { getRandomInt } from "#shared/lib/random/get-random-int.ts";
+    import { get_random_int } from "#shared/lib/random/get-random-int.ts";
     import { tw } from "#shared/lib/styles/tw.ts";
 
     import type { ZonedDateTime } from "@internationalized/date";
@@ -12,10 +12,10 @@
     import type { HTMLButtonAttributes } from "svelte/elements";
 
     type Props = {
-        scheduledAt: ZonedDateTime;
+        scheduled_at: ZonedDateTime;
         title: string;
         description: string;
-        isCompleted?: boolean;
+        is_completed?: boolean;
         calendar: Snippet<[Snippet<[HTMLButtonAttributes]>]>;
         close: Snippet;
         category: Snippet;
@@ -29,10 +29,10 @@
     };
 
     let {
-        scheduledAt,
+        scheduled_at,
         title = $bindable(),
         description = $bindable(),
-        isCompleted,
+        is_completed,
         calendar,
         close,
         category,
@@ -45,7 +45,7 @@
         more
     }: Props = $props();
 
-    const titleSuggestions = [
+    const title_suggestions = [
         m["todos.placeholders.title.reply-later"](),
         m["todos.placeholders.title.important-email"](),
         m["todos.placeholders.title.laundry-chair"](),
@@ -76,8 +76,7 @@
         m["todos.placeholders.title.remember-why"]()
     ];
 
-    const titlePlaceholder =
-        titleSuggestions[getRandomInt(0, titleSuggestions.length - 1)];
+    const title_placeholder = title_suggestions[get_random_int(0, title_suggestions.length - 1)];
 </script>
 
 <div class="grid grid-cols-[auto_1fr_auto] items-center gap-3">
@@ -89,7 +88,7 @@
                 month: "short",
                 weekday: "short",
                 timeZone: TIMEZONE
-            }).format(scheduledAt.toDate())}
+            }).format(scheduled_at.toDate())}
         </button>
     {/snippet}
     {@render calendar(trigger)}
@@ -97,17 +96,15 @@
     {@render close()}
 </div>
 
-<div
-    class="flex min-h-0 grow flex-col overflow-y-auto overscroll-contain pb-keyboard-or-18"
->
-    {#snippet titleInput(classname?: string)}
+<div class="flex min-h-0 grow flex-col overflow-y-auto overscroll-contain pb-keyboard-or-18">
+    {#snippet title_input(classname?: string)}
         <input
             bind:value={title}
             class={tw(
                 "form-input w-full border-none bg-transparent p-0 text-xl font-bold text-cream-950 placeholder:text-cream-600 focus:ring-0",
                 classname
             )}
-            placeholder={titlePlaceholder}
+            placeholder={title_placeholder}
             defaultValue={title ?? ""}
             maxlength={120}
             data-expand-sheet
@@ -115,17 +112,12 @@
     {/snippet}
 
     {#if checkbox}
-        <div
-            class={[
-                "mt-5 flex items-center gap-2",
-                isCompleted && "opacity-40"
-            ]}
-        >
+        <div class={["mt-5 flex items-center gap-2", is_completed && "opacity-40"]}>
             {@render checkbox()}
-            {@render titleInput()}
+            {@render title_input()}
         </div>
     {:else}
-        {@render titleInput("mt-5")}
+        {@render title_input("mt-5")}
     {/if}
 
     <div class="mt-4 flex items-center gap-2">

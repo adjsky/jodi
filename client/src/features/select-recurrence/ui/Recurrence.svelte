@@ -12,24 +12,19 @@
 
     let { tooltip, day, rrule = $bindable() }: Props = $props();
 
-    let isBasicOpen = $state(false);
-    let isCustomOpen = $state(false);
+    let is_basic_open = $state(false);
+    let is_custom_open = $state(false);
 </script>
 
 <BasicMenu
-    bind:open={isBasicOpen}
+    bind:open={is_basic_open}
     {tooltip}
     {rrule}
-    onSelect={(r) => (rrule = r)}
-    onCustomTrigger={() => {
-        isBasicOpen = false;
-        isCustomOpen = true;
+    on_select={(r) => (rrule = r)}
+    on_custom_trigger={() => {
+        is_basic_open = false;
+        is_custom_open = true;
     }}
 />
 
-<CustomConfigurator
-    bind:open={isCustomOpen}
-    {day}
-    {rrule}
-    onSelect={(r) => (rrule = r)}
-/>
+<CustomConfigurator bind:open={is_custom_open} {day} {rrule} on_select={(r) => (rrule = r)} />

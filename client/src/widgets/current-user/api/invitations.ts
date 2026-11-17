@@ -8,9 +8,7 @@ import z from "zod";
 
 import type { RegistrationInvitationData } from "#entities/user/mod.ts";
 
-export const invitationsQueryOptions = queryOptions<
-    RegistrationInvitationData[]
->({
+export const invitations_query_options = queryOptions<RegistrationInvitationData[]>({
     queryKey: ["invitations"],
     queryFn({ signal }) {
         const { url, method } = ListRegistrationInvitations();
@@ -27,7 +25,7 @@ export const invitationsQueryOptions = queryOptions<
     }
 });
 
-export const deleteInvitationMutationOptions = mutationOptions({
+export const delete_invitation_mutation_options = mutationOptions({
     mutationKey: ["invitations", "delete"],
     mutationFn(id: string) {
         const { url, method } = DestroyRegistrationInvitation(id);
@@ -35,30 +33,30 @@ export const deleteInvitationMutationOptions = mutationOptions({
     },
     async onMutate(id, context) {
         await context.client.cancelQueries({
-            queryKey: invitationsQueryOptions.queryKey
+            queryKey: invitations_query_options.queryKey
         });
 
-        const previousInvitations = context.client.getQueryData(
-            invitationsQueryOptions.queryKey
+        const previous_invitations = context.client.getQueryData(
+            invitations_query_options.queryKey
         );
 
-        context.client.setQueryData(invitationsQueryOptions.queryKey, (prev) =>
+        context.client.setQueryData(invitations_query_options.queryKey, (prev) =>
             prev?.filter((invitation) => invitation.id !== id)
         );
 
-        return { previousInvitations };
+        return { previous_invitations };
     },
-    onError(_, __, result, context) {
+    onError(_error, _id, result, context) {
         context.client.setQueryData(
-            invitationsQueryOptions.queryKey,
-            result?.previousInvitations
+            invitations_query_options.queryKey,
+            result?.previous_invitations
         );
 
         toaster.error(m["current-user.invitations.errors.delete"]());
     },
-    onSettled(_, __, ___, ____, context) {
+    onSettled(_data, _error, _id, _result, context) {
         return context.client.invalidateQueries({
-            queryKey: invitationsQueryOptions.queryKey
+            queryKey: invitations_query_options.queryKey
         });
     }
 });

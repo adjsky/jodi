@@ -8,45 +8,45 @@
 
     type Props = {
         title?: string;
-        scopeLabels?: { this: string; following?: string; all: string };
+        scope_labels?: { this: string; following?: string; all: string };
         open?: boolean;
         portal?: boolean;
         fallback?: boolean;
         skip?: boolean;
         trigger?: Snippet<[() => HTMLAttributes<HTMLElement>]>;
-        onConfirm?: (scope: RecurrenceScope) => boolean | void;
-        onExitComplete?: VoidFunction;
-        onAbort?: VoidFunction;
+        on_confirm?: (scope: RecurrenceScope) => boolean | void;
+        on_exit_complete?: VoidFunction;
+        on_abort?: VoidFunction;
     };
 
     let {
         title = "",
-        scopeLabels,
+        scope_labels,
         open = $bindable(),
         portal,
         fallback,
         skip,
         trigger,
-        onConfirm,
-        onExitComplete,
-        onAbort
+        on_confirm,
+        on_exit_complete,
+        on_abort
     }: Props = $props();
 
-    let selectedScope: RecurrenceScope = $state("this");
+    let selected_scope: RecurrenceScope = $state("this");
 </script>
 
 {#if skip}
     {@render trigger?.(() => ({}))}
 {:else}
     <Confirmable
+        bind:open
         {title}
         {portal}
-        {onAbort}
-        bind:open
-        onConfirm={() => onConfirm?.(selectedScope)}
-        onExitComplete={() => {
-            selectedScope = "this";
-            onExitComplete?.();
+        {on_abort}
+        on_confirm={() => on_confirm?.(selected_scope)}
+        on_exit_complete={() => {
+            selected_scope = "this";
+            on_exit_complete?.();
         }}
     >
         {#snippet trigger(props)}
@@ -56,12 +56,12 @@
             {#if !fallback}
                 <div class="mt-2">
                     {#each ["this", "following", "all"] as const as scope (scope)}
-                        {@const label = scopeLabels?.[scope]}
+                        {@const label = scope_labels?.[scope]}
                         {#if label}
                             <Checkbox
                                 {label}
-                                checked={selectedScope === scope}
-                                onclick={() => (selectedScope = scope)}
+                                checked={selected_scope === scope}
+                                onclick={() => (selected_scope = scope)}
                             />
                         {/if}
                     {/each}

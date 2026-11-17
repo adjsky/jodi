@@ -19,7 +19,7 @@
 
     const { children }: { children: Snippet } = $props();
 
-    const queryClient = new QueryClient({
+    const query_client = new QueryClient({
         defaultOptions: {
             queries: {
                 staleTime: 60_000,
@@ -75,7 +75,7 @@
     VirtualKeyboard.init();
 </script>
 
-<QueryClientProvider client={queryClient}>
+<QueryClientProvider client={query_client}>
     <Portal>
         <ToastProvider />
     </Portal>

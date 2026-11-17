@@ -1,24 +1,19 @@
 <script lang="ts">
     import { Menu } from "@ark-ui/svelte";
     import { parseDuration } from "@internationalized/date";
-    import {
-        CalendarDays,
-        CalendarRange,
-        Ellipsis,
-        Sunrise
-    } from "@lucide/svelte";
+    import { CalendarDays, CalendarRange, Ellipsis, Sunrise } from "@lucide/svelte";
     import { m } from "#paraglide/messages.js";
     import ToolbarAction from "#shared/ui/ToolbarAction.svelte";
 
     import type { CalendarDate } from "@internationalized/date";
 
     type Props = {
-        startsAt: CalendarDate;
+        starts_at: CalendarDate;
         tooltip: string;
-        onReschedule?: (date: CalendarDate) => void;
+        on_reschedule?: (date: CalendarDate) => void;
     };
 
-    let { startsAt, tooltip, onReschedule }: Props = $props();
+    let { starts_at, tooltip, on_reschedule }: Props = $props();
 
     const options = [
         {
@@ -42,7 +37,7 @@
 <Menu.Root
     positioning={{ placement: "top" }}
     onSelect={({ value }) => {
-        onReschedule?.(startsAt.add(parseDuration(value)));
+        on_reschedule?.(starts_at.add(parseDuration(value)));
     }}
 >
     <Menu.Trigger>

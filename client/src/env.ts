@@ -5,7 +5,7 @@ import z from "zod";
 export const variables = defineEnvVars({
     APP_URL: {
         public: true,
-        schema: z.url().optional()
+        schema: z.url()
     },
     APP_ENV: {
         public: true,
@@ -17,10 +17,10 @@ export const variables = defineEnvVars({
     },
     FIREBASE_WEB_CONFIG: {
         public: true,
-        schema: FirebaseConfigSchema.optional()
+        schema: FirebaseConfigSchema
     },
     FIREBASE_VAPID_KEY: {
         public: true,
-        schema: z.string().optional()
+        schema: z.string()
     }
 });

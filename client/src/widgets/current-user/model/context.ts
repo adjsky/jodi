@@ -1,9 +1,6 @@
 import { Context } from "runed";
 
-import type {
-    FriendData,
-    RegistrationInvitationData
-} from "#entities/user/mod.ts";
+import type { FriendData, RegistrationInvitationData } from "#entities/user/mod.ts";
 import type { ResourceReturn } from "runed";
 
 export const context = new Context<{

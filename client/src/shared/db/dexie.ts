@@ -13,15 +13,15 @@ export const db = new Dexie("jodi") as Dexie & {
     events: EntityTable<Event, "id">;
     todos: EntityTable<Todo, "id">;
     categories: EntityTable<Category, "id">;
-    todoPositions: EntityTable<TodoPosition, "id">;
-    recurrenceExceptions: EntityTable<RecurrenceException, "id">;
+    todo_positions: EntityTable<TodoPosition, "id">;
+    recurrence_exceptions: EntityTable<RecurrenceException, "id">;
 };
 
 db.version(1).stores({
     sessions: "id",
-    events: "id, [recurring+startsAt]",
-    todos: "id, [recurring+scheduledAt]",
-    categories: "id, &name, createdAt",
-    todoPositions: "id, date, &[todoId+date]",
-    recurrenceExceptions: "id, &[recurrenceableType+recurrenceableId+occursAt]"
+    events: "id, [recurring+starts_at]",
+    todos: "id, [recurring+scheduled_at]",
+    categories: "id, &name, created_at",
+    todo_positions: "id, date, &[todo_id+date]",
+    recurrence_exceptions: "id, &[recurrenceable_type+recurrenceable_id+occurs_at]"
 });

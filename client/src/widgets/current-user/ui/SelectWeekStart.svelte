@@ -5,7 +5,7 @@
     import { m } from "#paraglide/messages.js";
     import { ScreenView } from "#shared/ui/composites/screen-view/mod.ts";
 
-    import { updateUserPreferencesMutationOptions } from "../api/preferences.ts";
+    import { update_user_preferences_mutation_options } from "../api/preferences.ts";
 
     import type { ViewProps } from "../model/types.ts";
 
@@ -13,8 +13,8 @@
 
     const days = ["monday", "sunday"] as const;
 
-    const updateUserPreferencesMutation = createMutation(
-        () => updateUserPreferencesMutationOptions
+    const update_user_preferences_mutation = createMutation(
+        () => update_user_preferences_mutation_options
     );
 </script>
 
@@ -26,7 +26,7 @@
                 <User.Info.SelectRow
                     selected={day === user.preferences.weekStartOn}
                     onclick={() => {
-                        updateUserPreferencesMutation.mutate({
+                        update_user_preferences_mutation.mutate({
                             weekStartOn: day
                         });
                     }}

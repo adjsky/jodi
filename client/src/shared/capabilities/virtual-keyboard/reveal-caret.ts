@@ -1,11 +1,11 @@
-import { getCaretBottomOffset } from "#shared/lib/dom/get-caret-bottom-offset.ts";
+import { get_caret_bottom_offset } from "#shared/lib/dom/get-caret-bottom-offset.ts";
 
-export function revealCaret(): void {
+export function reveal_caret(): void {
     if (!(document.activeElement instanceof HTMLTextAreaElement)) return;
 
     const textarea = document.activeElement;
-    const caretBottomOffset = getCaretBottomOffset(textarea);
-    const delta = Math.max(caretBottomOffset - textarea.clientHeight, 0);
+    const caret_bottom_offset = get_caret_bottom_offset(textarea);
+    const delta = Math.max(caret_bottom_offset - textarea.clientHeight, 0);
 
     textarea.scrollBy({ top: delta, behavior: "instant" });
 }

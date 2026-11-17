@@ -14,7 +14,7 @@
     import CreateRegistrationInvitation from "#wayfinder/actions/App/Domain/Identity/Actions/CreateRegistrationInvitation.ts";
     import z from "zod";
 
-    import { invitationsQueryOptions } from "../api/invitations";
+    import { invitations_query_options } from "../api/invitations";
     import Invitation from "./Invitation.svelte";
 
     import type { ViewProps } from "../model/types.ts";
@@ -22,16 +22,16 @@
 
     let { open = $bindable() }: ViewProps = $props();
 
-    const queryClient = useQueryClient();
+    const query_client = useQueryClient();
     const invitations = createQuery(() => ({
-        ...invitationsQueryOptions,
+        ...invitations_query_options,
         enabled: open
     }));
 
-    let inviteInput = $state<HTMLInputElement | null>(null);
+    let invite_input = $state<HTMLInputElement | null>(null);
 
-    const isError = $derived(!invitations.data && invitations.error);
-    const isLoading = $derived(invitations.isLoading);
+    const is_error = $derived(!invitations.data && invitations.error);
+    const is_loading = $derived(invitations.isLoading);
 </script>
 
 <ScreenView.Overlay bind:open>
@@ -39,20 +39,18 @@
     <ScreenView.Content
         class={[
             "overflow-y-auto overscroll-contain",
-            !isError && "pt-5",
-            invitations.data?.length === 0 || isError
-                ? "justify-center"
-                : "gap-2"
+            !is_error && "pt-5",
+            invitations.data?.length === 0 || is_error ? "justify-center" : "gap-2"
         ]}
         aria-live="polite"
         aria-busy={invitations.isFetching}
     >
-        {#if isError}
+        {#if is_error}
             <ResourceError
                 message={m["current-user.invitations.errors.list"]()}
-                onRetry={() => invitations.refetch()}
+                on_retry={() => invitations.refetch()}
             />
-        {:else if isLoading}
+        {:else if is_loading}
             {#each Array.from({ length: 5 }) as _, idx (idx)}
                 {@render row()}
             {/each}
@@ -68,9 +66,7 @@
                     decoding="async"
                     class="mx-auto w-full max-w-28"
                 />
-                <p
-                    class="mx-auto mt-4 max-w-3/4 text-center text-lg font-medium"
-                >
+                <p class="mx-auto mt-4 max-w-3/4 text-center text-lg font-medium">
                     {m["current-user.invitations.no-invitations"]()}
                 </p>
             {/each}
@@ -81,7 +77,7 @@
             type="button"
             onclick={async () => {
                 await Overlay.open("me/invitations/add");
-                inviteInput?.focus();
+                invite_input?.focus();
             }}
             disabled={!invitations.data}
         >
@@ -91,36 +87,34 @@
 </ScreenView.Overlay>
 
 <ScreenView.Overlay
-    bind:open={
-        () => Overlay.isOpen("me/invitations/add"), () => Overlay.close()
-    }
-    {@attach VirtualKeyboard.retainFocus()}
+    bind:open={() => Overlay.is_open("me/invitations/add"), () => Overlay.close()}
+    {@attach VirtualKeyboard.retain_focus()}
 >
     <ScreenView.Header title={m["current-user.invitations.invite"]()} />
     <ScreenView.Content class="mt-5">
         <ApiForm
             action={CreateRegistrationInvitation()}
             class="flex grow flex-col"
-            inputSchema={z.object({
+            input_schema={z.object({
                 email: z.email({ error: m["common.errors.email"]() })
             })}
-            dataSchema={z.object({
+            data_schema={z.object({
                 id: z.string(),
                 email: z.string(),
                 expiresAt: z.iso.datetime({ offset: true }),
                 shareUrl: z.string()
             })}
-            onSuccess={(invitation) => {
-                queryClient.setQueryData(
-                    invitationsQueryOptions.queryKey,
-                    (invitations) => [...(invitations ?? []), invitation]
-                );
+            on_success={(invitation) => {
+                query_client.setQueryData(invitations_query_options.queryKey, (invitations) => [
+                    ...(invitations ?? []),
+                    invitation
+                ]);
                 void Overlay.close();
             }}
         >
-            {#snippet children({ submitting, errors, isDirty })}
+            {#snippet children({ submitting, errors, is_dirty })}
                 <TextField
-                    bind:input={inviteInput}
+                    bind:input={invite_input}
                     type="email"
                     name="email"
                     placeholder={m["current-user.account.email"]()}
@@ -135,7 +129,7 @@
                     type="submit"
                     class="mt-auto shrink-0"
                     loading={submitting}
-                    disabled={!isDirty}
+                    disabled={!is_dirty}
                 >
                     {m["current-user.invitations.invite"]()}
                 </Button>

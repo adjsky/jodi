@@ -13,10 +13,10 @@
         selected: CalendarDate[];
         min?: CalendarDate | null;
         children: Snippet<[HTMLAttributes<HTMLElement>]>;
-        onSelect?: (date: CalendarDate[]) => void;
+        on_select?: (date: CalendarDate[]) => void;
     };
 
-    const { mode, selected, min, children, onSelect }: Props = $props();
+    const { mode, selected, min, children, on_select }: Props = $props();
 
     const session = SessionCache.retain();
 
@@ -39,10 +39,10 @@
         "data-[state=open]:animate-in data-[state=open]:ease-out data-[state=open]:animation-duration-300 data-[state=open]:zoom-in-90 data-[state=open]:fade-in",
         "data-[state=closed]:animate-out data-[state=closed]:ease-in-out data-[state=closed]:animation-duration-200 data-[state=closed]:fade-out"
     ]}
-    weekStart={session.current.user.preferences.weekStartOn}
+    week_start={session.current.user.preferences.weekStartOn}
     confirm="manual"
-    onSelect={async (date) => {
+    on_select={async (date) => {
         open = false;
-        onSelect?.(date);
+        on_select?.(date);
     }}
 />

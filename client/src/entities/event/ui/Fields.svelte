@@ -3,18 +3,18 @@
     import { Calendar, Clock } from "@lucide/svelte";
     import { m } from "$/paraglide/messages";
     import { DEFER_FRAMES } from "$/shared/cfg/constants";
-    import { getRandomInt } from "$/shared/lib/random/get-random-int";
+    import { get_random_int } from "$/shared/lib/random/get-random-int";
     import TimeRangePicker from "$/shared/ui/TimeRangePicker.svelte";
 
-    import { formatDateRange } from "../helpers/format-date-range";
+    import { format_date_range } from "../helpers/format-date-range";
 
     import type { Time, ZonedDateTime } from "@internationalized/date";
     import type { Snippet } from "svelte";
     import type { HTMLButtonAttributes } from "svelte/elements";
 
     type Props = {
-        startsAt: ZonedDateTime;
-        endsAt: ZonedDateTime;
+        starts_at: ZonedDateTime;
+        ends_at: ZonedDateTime;
         title?: string;
         description?: string | null;
         calendar: Snippet<[Snippet<[HTMLButtonAttributes]>]>;
@@ -24,13 +24,13 @@
         color: Snippet;
         notify: Snippet;
         more: Snippet;
-        onStartsAtChange?: (time: Time) => void;
-        onEndsAtChange?: (time: Time) => void;
+        on_starts_at_change?: (time: Time) => void;
+        on_ends_at_change?: (time: Time) => void;
     };
 
     let {
-        startsAt = $bindable(),
-        endsAt = $bindable(),
+        starts_at = $bindable(),
+        ends_at = $bindable(),
         title,
         description,
         calendar,
@@ -40,11 +40,11 @@
         color,
         notify,
         more,
-        onStartsAtChange,
-        onEndsAtChange
+        on_starts_at_change,
+        on_ends_at_change
     }: Props = $props();
 
-    const titleSuggestions = [
+    const title_suggestions = [
         m["events.placeholders.title.second-date"](),
         m["events.placeholders.title.games-night"](),
         m["events.placeholders.title.beach-day"](),
@@ -65,31 +65,24 @@
         m["events.placeholders.title.survive-monday"]()
     ];
 
-    const titlePlaceholder =
-        titleSuggestions[getRandomInt(0, titleSuggestions.length - 1)];
+    const title_placeholder = title_suggestions[get_random_int(0, title_suggestions.length - 1)];
 </script>
 
 <div class="flex items-center justify-between">
     {#snippet trigger(props: HTMLButtonAttributes)}
-        <button
-            {...props}
-            class="flex items-center gap-1.5 text-lg font-bold"
-            type="button"
-        >
+        <button {...props} class="flex items-center gap-1.5 text-lg font-bold" type="button">
             <Calendar />
-            {formatDateRange(startsAt, endsAt)}
+            {format_date_range(starts_at, ends_at)}
         </button>
     {/snippet}
     {@render calendar(trigger)}
     {@render close()}
 </div>
 
-<div
-    class="flex min-h-0 grow flex-col overflow-y-auto overscroll-contain pb-keyboard-or-18"
->
+<div class="flex min-h-0 grow flex-col overflow-y-auto overscroll-contain pb-keyboard-or-18">
     <input
         class="mt-5 form-input w-full border-none bg-transparent p-0 text-xl font-bold text-cream-950 placeholder:text-cream-600 focus:ring-0"
-        placeholder={titlePlaceholder}
+        placeholder={title_placeholder}
         name="title"
         defaultValue={title ?? ""}
         maxlength={120}
@@ -98,17 +91,13 @@
     />
 
     <TimeRangePicker
-        bind:startsAt={
-            () => toTime(startsAt), (time) => (startsAt = startsAt.set(time))
-        }
-        bind:endsAt={
-            () => toTime(endsAt), (time) => (endsAt = endsAt.set(time))
-        }
-        {onStartsAtChange}
-        {onEndsAtChange}
+        bind:starts_at={() => toTime(starts_at), (time) => (starts_at = starts_at.set(time))}
+        bind:ends_at={() => toTime(ends_at), (time) => (ends_at = ends_at.set(time))}
+        {on_starts_at_change}
+        {on_ends_at_change}
         class="mt-4"
-        deferHistoryViewFrames={DEFER_FRAMES.SHEET + 1}
-        isValid={startsAt.compare(endsAt) < 0}
+        defer_history_view_frames={DEFER_FRAMES.SHEET + 1}
+        is_valid={starts_at.compare(ends_at) < 0}
     >
         {#snippet label()}
             <Clock class="text-2xl" />

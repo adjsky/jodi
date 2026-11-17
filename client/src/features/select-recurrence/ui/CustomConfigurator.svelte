@@ -1,10 +1,5 @@
 <script lang="ts">
-    import {
-        fromDate,
-        Time,
-        toCalendarDate,
-        toCalendarDateTime
-    } from "@internationalized/date";
+    import { fromDate, Time, toCalendarDate, toCalendarDateTime } from "@internationalized/date";
     import { m } from "#paraglide/messages.js";
     import { VirtualKeyboard } from "#shared/capabilities/virtual-keyboard/mod.ts";
     import { UTC } from "#shared/cfg/constants.ts";
@@ -12,7 +7,7 @@
     import SheetDialog from "#shared/ui/SheetDialog.svelte";
     import { Frequency, RRule, rrulestr } from "rrule";
 
-    import { dateToWeekday } from "../helpers/weekday";
+    import { date_to_weekday } from "../helpers/weekday";
     import SelectFrequency from "./SelectFrequency.svelte";
     import SelectRecurrenceLimit from "./SelectRecurrenceLimit.svelte";
     import SelectWeekdays from "./SelectWeekdays.svelte";
@@ -23,27 +18,26 @@
         open: boolean;
         day: ZonedDateTime;
         rrule?: string | null;
-        onSelect?: (rrule: string) => void;
+        on_select?: (rrule: string) => void;
     };
 
-    let { open = $bindable(), day, rrule, onSelect }: Props = $props();
+    let { open = $bindable(), day, rrule, on_select }: Props = $props();
 
     const DEFAULT_INTERVAL = "1";
     const DEFAULT_FREQ = Frequency.WEEKLY;
-    const DEFAULT_BYWEEKDAY = $derived([dateToWeekday(day.toDate())]);
+    const DEFAULT_BYWEEKDAY = $derived([date_to_weekday(day.toDate())]);
     const DEFAULT_COUNT = "1";
     const DEFAULT_UNTIL = $derived(toCalendarDate(day).add({ months: 1 }));
 
     let rule = $derived(rrule ? rrulestr(rrule) : null);
 
-    let { interval, freq, byweekday, count, until, limit } =
-        $derived(getParts());
+    let { interval, freq, byweekday, count, until, limit } = $derived(get_parts());
 
     function reset() {
-        ({ interval, freq, byweekday, count, until, limit } = getParts());
+        ({ interval, freq, byweekday, count, until, limit } = get_parts());
     }
 
-    function getParts() {
+    function get_parts() {
         return {
             interval: rule?.options.interval.toString() ?? DEFAULT_INTERVAL,
             freq: rule?.options.freq ?? DEFAULT_FREQ,
@@ -60,17 +54,14 @@
         };
     }
 
-    function onApply() {
-        onSelect?.(
+    function on_apply() {
+        on_select?.(
             new RRule({
                 freq,
                 interval: Number(interval),
                 ...(freq === Frequency.WEEKLY && { byweekday }),
                 ...(limit === "until" && {
-                    until: toCalendarDateTime(
-                        until,
-                        new Time(23, 59, 59)
-                    ).toDate(UTC)
+                    until: toCalendarDateTime(until, new Time(23, 59, 59)).toDate(UTC)
                 }),
                 ...(limit === "count" && { count: Number(count) })
             }).toString()
@@ -80,14 +71,14 @@
 </script>
 
 <SheetDialog
-    {@attach VirtualKeyboard.retainFocus()}
+    {@attach VirtualKeyboard.retain_focus()}
     bind:open
     class="pb-0"
     height={80}
     title={m["recurrence.custom.title"]()}
-    onExitComplete={reset}
+    on_exit_complete={reset}
     portal
-    lazyMount
+    lazy_mount
 >
     <div class="flex min-h-0 flex-col overflow-y-auto overscroll-contain">
         <SelectFrequency {day} bind:freq bind:interval bind:byweekday />
@@ -102,9 +93,8 @@
     <div class="mt-4 mb-safe-offset-5 flex grow items-end safe-area-keyboard">
         <Button
             type="button"
-            disabled={Number(interval) === 0 ||
-                (limit === "count" && Number(count) === 0)}
-            onclick={onApply}
+            disabled={Number(interval) === 0 || (limit === "count" && Number(count) === 0)}
+            onclick={on_apply}
         >
             {m["recurrence.custom.apply"]()}
         </Button>

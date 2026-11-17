@@ -4,42 +4,42 @@
 
     type Props = {
         tooltip: string;
-        notifyBefore: string;
+        notify_before: string;
         disabled?: boolean;
-        onDisabledAttempt?: () => void | boolean;
+        on_disabled_attempt?: () => void | boolean;
     };
 
     let {
         tooltip,
-        notifyBefore: current = $bindable(),
+        notify_before: current = $bindable(),
         disabled = false,
-        onDisabledAttempt
+        on_disabled_attempt
     }: Props = $props();
 
-    let isBasicOpen = $state(false);
-    let isCustomOpen = $state(false);
+    let is_basic_open = $state(false);
+    let is_custom_open = $state(false);
 </script>
 
 <BasicMenu
     bind:open={
-        () => isBasicOpen,
+        () => is_basic_open,
         (v) => {
-            if (disabled) return onDisabledAttempt?.();
-            isBasicOpen = v;
+            if (disabled) return on_disabled_attempt?.();
+            is_basic_open = v;
         }
     }
     {current}
     {tooltip}
     {disabled}
-    onSelect={(duration) => (current = duration)}
-    onCustomTrigger={() => {
-        isBasicOpen = false;
-        isCustomOpen = true;
+    on_select={(duration) => (current = duration)}
+    on_custom_trigger={() => {
+        is_basic_open = false;
+        is_custom_open = true;
     }}
 />
 
 <CustomConfigurator
-    bind:open={isCustomOpen}
+    bind:open={is_custom_open}
     {current}
-    onSelect={(duration) => (current = duration)}
+    on_select={(duration) => (current = duration)}
 />

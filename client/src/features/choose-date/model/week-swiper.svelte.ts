@@ -12,21 +12,18 @@ import type { SwiperContainer } from "swiper/element";
 
 type Options = {
     cursor: CalendarDate;
-    weekStart: WeekStart;
-    onCursorChange: (date: CalendarDate) => void;
+    week_start: WeekStart;
+    on_cursor_change: (date: CalendarDate) => void;
 };
 
 export class WeekSwiper {
     #swiper: SlidingWindowSwiper<CalendarDate[]>;
 
-    constructor(
-        container: Getter<SwiperContainer | null>,
-        options: MaybeGetter<Options>
-    ) {
+    constructor(container: Getter<SwiperContainer | null>, options: MaybeGetter<Options>) {
         const week = new Week(
             () => extract(options).cursor,
             () => ({
-                weekStart: extract(options).weekStart,
+                week_start: extract(options).week_start,
                 locale: getLocale()
             })
         );
@@ -35,12 +32,12 @@ export class WeekSwiper {
             slidesOffsetBefore: rem(0.5),
             slidesOffsetAfter: rem(0.5),
             spaceBetween: rem(0.5),
-            edgeBuffer: 2,
-            onSlideChange(offset) {
-                const { cursor, onCursorChange } = extract(options);
-                onCursorChange(cursor.add({ weeks: offset }));
+            edge_buffer: 2,
+            on_slide_change(offset) {
+                const { cursor, on_cursor_change } = extract(options);
+                on_cursor_change(cursor.add({ weeks: offset }));
             },
-            getDataAt(offset) {
+            get_data_at(offset) {
                 return week.at(offset);
             }
         });

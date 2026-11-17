@@ -5,24 +5,24 @@
 
     import AppPortal from "./AppPortal.svelte";
 
-    import type { DialogRootProps } from "@ark-ui/svelte";
     import type { Snippet } from "svelte";
     import type { SvelteHTMLElements } from "svelte/elements";
 
-    type Props = Pick<DialogRootProps, "onExitComplete" | "lazyMount"> &
-        SvelteHTMLElements["div"] & {
-            open?: boolean;
-            title: string;
-            portal?: boolean;
-            disabled?: boolean;
-            label: {
-                abort: string;
-                confirm: string;
-            };
-            children?: Snippet;
-            onAbort?: VoidFunction;
-            onConfirm?: VoidFunction;
+    type Props = SvelteHTMLElements["div"] & {
+        open?: boolean;
+        title: string;
+        portal?: boolean;
+        disabled?: boolean;
+        label: {
+            abort: string;
+            confirm: string;
         };
+        lazy_mount?: boolean;
+        children?: Snippet;
+        on_abort?: VoidFunction;
+        on_confirm?: VoidFunction;
+        on_exit_complete?: VoidFunction;
+    };
 
     let {
         open = $bindable(false),
@@ -30,11 +30,11 @@
         portal = true,
         disabled,
         label,
-        lazyMount,
+        lazy_mount,
         children,
-        onAbort,
-        onConfirm,
-        onExitComplete,
+        on_abort,
+        on_confirm,
+        on_exit_complete,
         ...props
     }: Props = $props();
 
@@ -44,7 +44,7 @@
     );
 </script>
 
-<Dialog.Root bind:open {lazyMount} {onExitComplete}>
+<Dialog.Root bind:open lazyMount={lazy_mount} onExitComplete={on_exit_complete}>
     <AppPortal disabled={!portal}>
         <Dialog.Backdrop
             class={[
@@ -71,7 +71,7 @@
             <div class="mt-5 flex justify-end gap-8">
                 <Dialog.CloseTrigger
                     class="text-ms font-bold text-brand"
-                    onclick={onAbort}
+                    onclick={on_abort}
                     data-autofocus
                 >
                     {label.abort}
@@ -79,7 +79,7 @@
                 <button
                     {disabled}
                     class="text-ms font-bold text-brand disabled:opacity-60"
-                    onclick={onConfirm}
+                    onclick={on_confirm}
                 >
                     {label.confirm}
                 </button>

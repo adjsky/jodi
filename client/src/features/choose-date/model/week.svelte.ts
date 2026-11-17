@@ -1,6 +1,6 @@
 import { startOfWeek } from "@internationalized/date";
 import { WEEK_START_MAP } from "#shared/cfg/constants.ts";
-import { getWeekDays } from "#shared/lib/date/get-week-days.ts";
+import { get_week_days } from "#shared/lib/date/get-week-days.ts";
 import { extract } from "runed";
 
 import type { CalendarDate } from "@internationalized/date";
@@ -9,7 +9,7 @@ import type { WeekStart } from "#shared/lib/date/types.ts";
 import type { Getter, MaybeGetter } from "runed";
 
 type Options = {
-    weekStart: WeekStart;
+    week_start: WeekStart;
     locale: Locale;
 };
 
@@ -23,16 +23,14 @@ export class Week {
     }
 
     at(offset: number): CalendarDate[] {
-        return getWeekDays(
-            this.#startOfWeek(extract(this.#cursor).add({ weeks: offset }))
-        );
+        return get_week_days(this.#start_of_week(extract(this.#cursor).add({ weeks: offset })));
     }
 
-    #startOfWeek(date: CalendarDate) {
+    #start_of_week(date: CalendarDate) {
         return startOfWeek(
             date,
             extract(this.#options).locale,
-            WEEK_START_MAP[extract(this.#options).weekStart]
+            WEEK_START_MAP[extract(this.#options).week_start]
         );
     }
 }

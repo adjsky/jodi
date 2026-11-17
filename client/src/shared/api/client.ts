@@ -9,7 +9,7 @@ import ky, { isHTTPError, isNetworkError } from "ky";
 
 import { toaster } from "../ui/toaster.ts";
 
-let csrfRefresh: Promise<unknown> | null = null;
+let csrf_refresh: Promise<unknown> | null = null;
 
 export const api = ky.create({
     baseUrl: "/api/",
@@ -26,10 +26,10 @@ export const api = ky.create({
                     return;
                 }
 
-                const xsrfToken = Cookies.get("XSRF-TOKEN");
+                const xsrf_token = Cookies.get("XSRF-TOKEN");
 
-                if (xsrfToken) {
-                    request.headers.set("X-XSRF-TOKEN", xsrfToken);
+                if (xsrf_token) {
+                    request.headers.set("X-XSRF-TOKEN", xsrf_token);
                 }
             },
             async ({ request }) => {
@@ -37,10 +37,10 @@ export const api = ky.create({
                     return;
                 }
 
-                const authToken = await AuthTokenStorage.get();
-                if (!authToken) return;
+                const auth_token = await AuthTokenStorage.get();
+                if (!auth_token) return;
 
-                request.headers.set("Authorization", `Bearer ${authToken}`);
+                request.headers.set("Authorization", `Bearer ${auth_token}`);
             }
         ],
         afterResponse: [
@@ -53,17 +53,15 @@ export const api = ky.create({
                     return;
                 }
 
-                csrfRefresh ??= ky
-                    .get("/api/sanctum/csrf-cookie")
-                    .finally(() => {
-                        csrfRefresh = null;
-                    });
+                csrf_refresh ??= ky.get("/api/sanctum/csrf-cookie").finally(() => {
+                    csrf_refresh = null;
+                });
 
-                await csrfRefresh;
+                await csrf_refresh;
 
-                const xsrfToken = Cookies.get("XSRF-TOKEN");
+                const xsrf_token = Cookies.get("XSRF-TOKEN");
 
-                if (!xsrfToken) {
+                if (!xsrf_token) {
                     console.warn(
                         "No XSRF-TOKEN cookie found after calling `sanctum/csrf-cookie` endpoint."
                     );
@@ -71,7 +69,7 @@ export const api = ky.create({
                     return;
                 }
 
-                request.headers.set("X-XSRF-TOKEN", xsrfToken);
+                request.headers.set("X-XSRF-TOKEN", xsrf_token);
 
                 return ky.retry({ request, delay: 0 });
             }
@@ -98,9 +96,7 @@ export const api = ky.create({
                         }
 
                         case 429: {
-                            toaster.error(
-                                m["common.errors.too-many-requests"]()
-                            );
+                            toaster.error(m["common.errors.too-many-requests"]());
                             break;
                         }
                     }

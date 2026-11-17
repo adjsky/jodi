@@ -12,48 +12,42 @@
     import Skeleton from "#shared/ui/Skeleton.svelte";
 
     import {
-        deleteInvitationMutationOptions,
-        invitationsQueryOptions
+        delete_invitation_mutation_options,
+        invitations_query_options
     } from "../api/invitations";
 
-    let isConfirmingDeletion = $state(false);
+    let is_confirming_deletion = $state(false);
 
     const id = $derived(Overlay.meta?.invitation?.id);
 
     const invitations = createQuery(() => ({
-        ...invitationsQueryOptions,
+        ...invitations_query_options,
         enabled: Boolean(id)
     }));
 
-    const deleteInvitationMutation = createMutation(
-        () => deleteInvitationMutationOptions
-    );
+    const delete_invitation_mutation = createMutation(() => delete_invitation_mutation_options);
 
-    const invitation = $derived(
-        invitations.data?.find((invitation) => invitation.id === id)
-    );
+    const invitation = $derived(invitations.data?.find((invitation) => invitation.id === id));
 
-    const isError = $derived(!invitations.data && invitations.error);
-    const isLoading = $derived(invitations.isLoading);
-    const isNotFound = $derived(invitations.data && !invitation);
+    const is_error = $derived(!invitations.data && invitations.error);
+    const is_loading = $derived(invitations.isLoading);
+    const is_not_found = $derived(invitations.data && !invitation);
 </script>
 
 <ScreenView.Overlay bind:open={() => Boolean(id), () => Overlay.close()}>
     <ScreenView.Header title={m["current-user.invitations.invitation"]()} />
     <ScreenView.Content
-        class={[isError || isNotFound ? "justify-center" : "mt-5"]}
+        class={[is_error || is_not_found ? "justify-center" : "mt-5"]}
         aria-live="polite"
         aria-busy={invitations.isFetching}
     >
-        {#if isError}
+        {#if is_error}
             <ResourceError
                 message={m["current-user.invitations.errors.list"]()}
-                onRetry={() => invitations.refetch()}
+                on_retry={() => invitations.refetch()}
             />
-        {:else if isNotFound}
-            <ResourceError
-                message={m["current-user.invitations.errors.not-found"]()}
-            />
+        {:else if is_not_found}
+            <ResourceError message={m["current-user.invitations.errors.not-found"]()} />
         {:else}
             <!-- TODO: maybe use web share API? -->
             <Clipboard.Root value={invitation?.shareUrl ?? ""}>
@@ -63,15 +57,12 @@
                 <Clipboard.Control
                     class="mt-2 flex items-center gap-1 rounded-lg border border-cream-950 bg-white p-2"
                 >
-                    {#if isLoading}
+                    {#if is_loading}
                         <Skeleton grow inline={false} />
                     {:else}
                         <Clipboard.ValueText class="truncate font-medium" />
                     {/if}
-                    <Clipboard.Trigger
-                        class="shrink-0 p-1"
-                        disabled={isLoading}
-                    >
+                    <Clipboard.Trigger class="shrink-0 p-1" disabled={is_loading}>
                         <Clipboard.Indicator>
                             {#snippet copied()}
                                 <CheckIcon class="text-xl text-green" />
@@ -84,26 +75,21 @@
         {/if}
     </ScreenView.Content>
 
-    {#if !isNotFound}
+    {#if !is_not_found}
         <ScreenView.Footer class="mt-5">
             <Confirmable
-                bind:open={isConfirmingDeletion}
+                bind:open={is_confirming_deletion}
                 title={m["current-user.invitations.delete-ahtung"]()}
-                onConfirm={async () => {
+                on_confirm={async () => {
                     if (!invitation) raise("No invitation available.");
                     const id = invitation.id;
                     await Overlay.close();
-                    isConfirmingDeletion = false;
-                    deleteInvitationMutation.mutate(id);
+                    is_confirming_deletion = false;
+                    delete_invitation_mutation.mutate(id);
                 }}
             >
                 {#snippet trigger(props)}
-                    <Button
-                        {...props()}
-                        type="button"
-                        class="shrink-0"
-                        disabled={!invitation}
-                    >
+                    <Button {...props()} type="button" class="shrink-0" disabled={!invitation}>
                         {m["current-user.invitations.delete"]()}
                     </Button>
                 {/snippet}

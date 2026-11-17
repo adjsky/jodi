@@ -2,7 +2,7 @@ import { Debounced } from "runed";
 
 import type { Getter, MaybeGetter } from "runed";
 
-export function useLoadingDebounce(
+export function use_loading_debounce(
     getter: Getter<boolean>,
     wait: MaybeGetter<number> = 200
 ): Debounced<boolean> {

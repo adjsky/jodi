@@ -22,10 +22,7 @@
 
 <div
     {...props}
-    class={tw(
-        "relative flex shrink-0 items-center justify-between px-safe-offset-4",
-        props.class
-    )}
+    class={tw("relative flex shrink-0 items-center justify-between px-safe-offset-4", props.class)}
     data-shape={shape}
 >
     {#if back}

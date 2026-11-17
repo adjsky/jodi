@@ -7,17 +7,17 @@ export function init(): void {
             return;
         }
 
-        const wentBack = navigation.delta !== undefined && navigation.delta < 0;
-        const fromSkip = page.state.skipViewTransition;
+        const went_back = navigation.delta !== undefined && navigation.delta < 0;
+        const from_skip = page.state.skip_view_transition;
 
         return new Promise((resolve) => {
             const transition = document.startViewTransition({
-                types: [wentBack ? "back" : "forward"],
+                types: [went_back ? "back" : "forward"],
                 async update() {
                     resolve();
                     await navigation.complete;
 
-                    if (wentBack ? fromSkip : page.state.skipViewTransition) {
+                    if (went_back ? from_skip : page.state.skip_view_transition) {
                         transition.skipTransition();
                     }
                 }

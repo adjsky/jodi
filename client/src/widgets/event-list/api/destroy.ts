@@ -2,7 +2,7 @@ import { m } from "$/paraglide/messages";
 import { optimistic } from "$/shared/integrations/inertia";
 
 import { id } from "../helpers/id";
-import { editView } from "../model/view";
+import { edit_view } from "../model/view";
 
 import type { EventData } from "$/entities/event";
 
@@ -14,7 +14,7 @@ export const destroy = (event: EventData) =>
         {
             rollbackError: m["events.errors.destroy"](),
             onStart() {
-                void editView.back();
+                void edit_view.back();
             }
         }
     );

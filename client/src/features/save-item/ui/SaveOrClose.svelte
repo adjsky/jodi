@@ -9,13 +9,12 @@
         title?: string;
         variant: "save" | "close";
         confirm?: boolean;
-        scopeLabels?: { this: string; all: string };
-        onSave?: (scope: RecurrenceScope) => void;
-        onClose?: VoidFunction;
+        scope_labels?: { this: string; all: string };
+        on_save?: (scope: RecurrenceScope) => void;
+        on_close?: VoidFunction;
     };
 
-    const { title, variant, confirm, scopeLabels, onSave, onClose }: Props =
-        $props();
+    const { title, variant, confirm, scope_labels, on_save, on_close }: Props = $props();
 
     let open = $state(false);
 </script>
@@ -23,8 +22,8 @@
 <Recurrence.ScopeDialog
     bind:open
     {title}
-    {scopeLabels}
-    onConfirm={(scope) => onSave?.(scope)}
+    {scope_labels}
+    on_confirm={(scope) => on_save?.(scope)}
     skip={!confirm}
 >
     {#snippet trigger(props)}
@@ -38,7 +37,7 @@
             )}
             onclick={(e) => {
                 if (variant === "close") {
-                    onClose?.();
+                    on_close?.();
                     return;
                 }
 
@@ -46,7 +45,7 @@
                     e.preventDefault();
                     open = true;
                 } else {
-                    onSave?.("this");
+                    on_save?.("this");
                 }
             }}
         >

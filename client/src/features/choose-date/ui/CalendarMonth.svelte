@@ -21,22 +21,13 @@
         name: string;
         container: HTMLElement;
         // calendar: YearCalendar;
-        dragSelection: DragSelection<CalendarDate>;
-        onPress?: (date: CalendarDate) => void;
+        drag_selection: DragSelection<CalendarDate>;
+        on_press?: (date: CalendarDate) => void;
         // onEventsRequest?: (date: CalendarDate) => void;
     };
 
-    const {
-        mode,
-        selected,
-        year,
-        date,
-        min,
-        name,
-        container,
-        dragSelection,
-        onPress
-    }: Props = $props();
+    const { mode, selected, year, date, min, name, container, drag_selection, on_press }: Props =
+        $props();
 
     let table = $state<HTMLTableElement | null>(null);
 
@@ -50,7 +41,7 @@
     //     { root: () => container, threshold: 0, rootMargin: "100px 0px" }
     // );
 
-    function getHighlight(date: CalendarDate) {
+    function get_highlight(date: CalendarDate) {
         const [from, to] = selected;
 
         if (mode === "single" || !to || from.compare(to) === 0) {
@@ -66,7 +57,7 @@
         return null;
     }
 
-    function getRangePosition(date: CalendarDate) {
+    function get_range_position(date: CalendarDate) {
         if (mode === "single") {
             return null;
         }
@@ -77,18 +68,18 @@
             return null;
         }
 
-        const diffFrom = from.compare(date);
-        const diffTo = to.compare(date);
+        const diff_from = from.compare(date);
+        const diff_to = to.compare(date);
 
-        if (diffFrom === 0) {
+        if (diff_from === 0) {
             return "start";
         }
 
-        if (diffTo === 0) {
+        if (diff_to === 0) {
             return "end";
         }
 
-        if (diffTo > 0 && diffFrom < 0) {
+        if (diff_to > 0 && diff_from < 0) {
             return "middle";
         }
 
@@ -101,25 +92,25 @@
         {name}
     </caption>
     <tbody>
-        {#each year.weeks(date) as week, weekIdx (weekIdx)}
+        {#each year.weeks(date) as week, week_idx (week_idx)}
             <tr class="relative week-grid-17 border-t border-cream-200">
-                {#each week as { date, isWithinMonth }, columnIdx (date.day)}
-                    {@render day(date, isWithinMonth, columnIdx)}
+                {#each week as { date, is_within_month }, column_idx (date.day)}
+                    {@render day(date, is_within_month, column_idx)}
                 {/each}
                 <!-- {@render events(
                     week.map(({ date }) => date),
-                    weekIdx
+                    week_idx
                 )} -->
             </tr>
         {/each}
     </tbody>
 </table>
 <!--
-{#snippet events(week: CalendarDate[], weekIdx: number)}
-    {@const segments = calendar.visibleSegments(
+{#snippet events(week: CalendarDate[], week_idx: number)}
+    {@const segments = calendar.visible_segments(
         date.year,
         date.month,
-        weekIdx + 1
+        week_idx + 1
     )}
     <td class="event-week-grid pointer-events-none">
         {#each segments as segment (segment.id)}
@@ -133,23 +124,23 @@
                 style:grid-row={segment.lane + 1}
                 style:background-color="color-mix(in srgb, {color} 15%, transparent)"
                 style:border-color={color}
-                data-starts-in-week={boolAttr(segment.startsInWeek)}
-                data-ends-in-week={boolAttr(segment.endsInWeek)}
+                data-starts-in-week={boolAttr(segment.starts_in_week)}
+                data-ends-in-week={boolAttr(segment.ends_in_week)}
             >
                 {segment.title}
             </div>
         {/each}
-        {#each week as weekday, columnIdx (weekday.day)}
+        {#each week as weekday, column_idx (weekday.day)}
             {@const count = calendar.overflow(
                 date.year,
                 date.month,
-                weekIdx + 1,
-                columnIdx + 1
+                week_idx + 1,
+                column_idx + 1
             )}
             {#if count > 0}
                 <span
                     class="text-center text-2xs font-bold text-cream-500"
-                    style:grid-column={columnIdx + 1}
+                    style:grid-column={column_idx + 1}
                 >
                     {m["calendar.more"]({ count })}
                 </span>
@@ -158,22 +149,22 @@
     </td>
 {/snippet} -->
 
-{#snippet day(date: CalendarDate, isWithinMonth: boolean, columnIdx: number)}
-    {@const rangePosition = getRangePosition(date)}
+{#snippet day(date: CalendarDate, is_within_month: boolean, column_idx: number)}
+    {@const range_position = get_range_position(date)}
     <td>
         <button
-            {@attach dragSelection.attachment(date)}
+            {@attach drag_selection.attachment(date)}
             disabled={min ? min.compare(date) > 0 : false}
             type="button"
             class={tw([
                 "group relative flex h-25 w-full flex-col items-center pt-1 text-lg disabled:cursor-not-allowed disabled:line-through disabled:opacity-40 data-outside-month:opacity-60",
-                columnIdx === 0 && "items-start ps-4",
-                columnIdx === 6 && "items-end pe-4"
+                column_idx === 0 && "items-start ps-4",
+                column_idx === 6 && "items-end pe-4"
             ])}
-            data-highlight={getHighlight(date)}
-            data-range={rangePosition}
-            data-outside-month={boolAttr(!isWithinMonth)}
-            onclick={() => onPress?.(date)}
+            data-highlight={get_highlight(date)}
+            data-range={range_position}
+            data-outside-month={boolAttr(!is_within_month)}
+            onclick={() => on_press?.(date)}
         >
             <span
                 class={[
@@ -186,13 +177,13 @@
             >
                 {date.day}
             </span>
-            {#if rangePosition !== null}
+            {#if range_position !== null}
                 <span
                     class={[
                         "pointer-events-none absolute -inset-x-1 top-0.5 h-10 border-y border-brand",
-                        rangePosition === "start" &&
+                        range_position === "start" &&
                             "left-[calc(50%-1.25rem)] rounded-s-full border-s",
-                        rangePosition === "end" &&
+                        range_position === "end" &&
                             "right-[calc(50%-1.25rem)] rounded-e-full border-e"
                     ]}
                 ></span>

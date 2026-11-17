@@ -10,28 +10,17 @@
     import Button from "$/shared/ui/Button.svelte";
     import TextField from "$/shared/ui/TextField.svelte";
 
-    const requestTimer = new ActionRateLimit(AuthenticateUser.definition);
+    const request_timer = new ActionRateLimit(AuthenticateUser.definition);
 </script>
 
 <AuthLayout>
     <Intro title={m["login.title"]()}>
         {#snippet icon()}
-            <img
-                src={Cat}
-                width={94}
-                height={85}
-                alt=""
-                decoding="async"
-                fetchpriority="high"
-            />
+            <img src={Cat} width={94} height={85} alt="" decoding="async" fetchpriority="high" />
         {/snippet}
     </Intro>
 
-    <Form
-        action={AuthenticateUser()}
-        showProgress={false}
-        class="mt-13 space-y-4"
-    >
+    <Form action={AuthenticateUser()} showProgress={false} class="mt-13 space-y-4">
         {#snippet children({ processing, errors })}
             <TextField
                 type="email"
@@ -45,14 +34,10 @@
             </TextField>
 
             <div class="space-y-1.25">
-                <Button
-                    type="submit"
-                    disabled={requestTimer.isRunning}
-                    loading={processing}
-                >
-                    {#if requestTimer.isRunning}
+                <Button type="submit" disabled={request_timer.is_running} loading={processing}>
+                    {#if request_timer.is_running}
                         {m["login.submit-in"]({
-                            seconds: requestTimer.secondsLeft
+                            seconds: request_timer.seconds_left
                         })}
                     {:else}
                         {m["login.submit"]()}

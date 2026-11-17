@@ -34,10 +34,7 @@ export default defineConfig(
             "@typescript-eslint/explicit-module-boundary-types": "error",
             "@typescript-eslint/no-import-type-side-effects": "error",
             "@typescript-eslint/no-floating-promises": "error",
-            "@typescript-eslint/no-misused-promises": [
-                "error",
-                { checksVoidReturn: false }
-            ],
+            "@typescript-eslint/no-misused-promises": ["error", { checksVoidReturn: false }],
             "@typescript-eslint/consistent-type-imports": [
                 "error",
                 { disallowTypeAnnotations: false }
@@ -48,6 +45,30 @@ export default defineConfig(
                     varsIgnorePattern: "^_",
                     argsIgnorePattern: "^_",
                     caughtErrorsIgnorePattern: "^_"
+                }
+            ],
+            "@typescript-eslint/naming-convention": [
+                "warn",
+                {
+                    selector: "variable",
+                    format: ["snake_case", "UPPER_CASE", "PascalCase"],
+                    leadingUnderscore: "allowSingleOrDouble",
+                    trailingUnderscore: "allowSingleOrDouble"
+                },
+                {
+                    selector: ["variableLike", "classMethod", "typeMethod", "accessor", "property"],
+                    format: ["snake_case", "UPPER_CASE"],
+                    leadingUnderscore: "allowSingleOrDouble",
+                    trailingUnderscore: "allowSingleOrDouble"
+                },
+                {
+                    selector: "objectLiteralProperty",
+                    format: null
+                },
+                {
+                    selector: ["parameter", "variable"],
+                    modifiers: ["destructured"],
+                    format: null
                 }
             ],
 
@@ -77,6 +98,12 @@ export default defineConfig(
         rules: {
             "no-undef": "error",
             "resulto/must-use-result": "off"
+        }
+    },
+    {
+        files: ["client/capacitor/**/*"],
+        rules: {
+            "@typescript-eslint/naming-convention": "off"
         }
     }
 );

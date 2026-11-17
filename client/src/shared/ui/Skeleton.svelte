@@ -24,12 +24,12 @@
         inline?: boolean;
     };
 
-    const { class: className, style, grow, inline = true }: Props = $props();
+    const { style, grow, inline = true, ...props }: Props = $props();
 
-    const skeletonClass: ClassName = $derived(
+    const skeleton_class: ClassName = $derived(
         tw(
             "relative inline-flex w-full animate-pulse overflow-hidden rounded-lg bg-cream-900/10 leading-none select-none",
-            className
+            props.class
         )
     );
 </script>
@@ -40,7 +40,7 @@
     aria-busy="true"
     class={[grow && "grow"]}
 >
-    <span class={skeletonClass} {style}>&zwnj;</span>
+    <span class={skeleton_class} {style}>&zwnj;</span>
 
     {#if inline}
         <br />

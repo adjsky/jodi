@@ -6,14 +6,14 @@
     import { toaster } from "#shared/ui/toaster.ts";
     import LogoutUser from "#wayfinder/actions/App/Domain/Identity/Actions/LogoutUser.ts";
 
-    let isLoading = $state(false);
+    let is_loading = $state(false);
 </script>
 
 <User.Info.ActionRow
-    {isLoading}
+    {is_loading}
     class="justify-center text-red"
     onclick={async () => {
-        isLoading = true;
+        is_loading = true;
 
         try {
             const { url, method } = LogoutUser();
@@ -24,7 +24,7 @@
             console.error("Failed to log out: ", e);
             toaster.error(m["common.errors.unexpected"]());
         } finally {
-            isLoading = false;
+            is_loading = false;
         }
     }}
 >

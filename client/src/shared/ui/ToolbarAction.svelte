@@ -16,9 +16,7 @@
     onpointerdown={(e) => {
         // Ark defers menu focus to the next frame. Focus the trigger now so
         // WebView won't reopen the keyboard for the previously focused input.
-        if (
-            e.currentTarget.matches('[data-scope="menu"][data-part="trigger"]')
-        ) {
+        if (e.currentTarget.matches('[data-scope="menu"][data-part="trigger"]')) {
             e.currentTarget.focus({ preventScroll: true });
         }
 

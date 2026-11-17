@@ -2,11 +2,7 @@
     import { DateFormatter, today } from "@internationalized/date";
     import { Calendar as CalendarIcon } from "@lucide/svelte";
     import { SessionCache } from "#entities/user/mod.ts";
-    import {
-        Calendar,
-        SelectedDate,
-        WeekCarousel
-    } from "#features/choose-date/mod.ts";
+    import { Calendar, SelectedDate, WeekCarousel } from "#features/choose-date/mod.ts";
     import { getLocale } from "#paraglide/runtime.js";
     import { Overlay } from "#shared/capabilities/overlay/mod.svelte.ts";
     import { TIMEZONE } from "#shared/cfg/constants.ts";
@@ -51,20 +47,18 @@
 </header>
 
 <WeekCarousel
-    bind:selected={
-        () => SelectedDate.current, (date) => SelectedDate.update(date)
-    }
+    bind:selected={() => SelectedDate.current, (date) => SelectedDate.update(date)}
     bind:cursor
-    weekStart={user.preferences.weekStartOn}
+    week_start={user.preferences.weekStartOn}
 />
 
 <Calendar
-    bind:open={() => Overlay.isOpen("calendar"), () => Overlay.close()}
+    bind:open={() => Overlay.is_open("calendar"), () => Overlay.close()}
     mode="single"
     confirm="select"
     selected={[SelectedDate.current]}
-    weekStart={user.preferences.weekStartOn}
-    onSelect={async ([date]) => {
+    week_start={user.preferences.weekStartOn}
+    on_select={async ([date]) => {
         await Overlay.close();
         SelectedDate.update(date);
     }}

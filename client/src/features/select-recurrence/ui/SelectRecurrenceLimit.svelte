@@ -19,12 +19,7 @@
         count: string;
     };
 
-    let {
-        day,
-        limit = $bindable(),
-        until = $bindable(),
-        count = $bindable()
-    }: Props = $props();
+    let { day, limit = $bindable(), until = $bindable(), count = $bindable() }: Props = $props();
 </script>
 
 <CustomConfiguratorBlock title={m["recurrence.custom.select-when-to-end"]()}>
@@ -46,7 +41,7 @@
                 <CalendarPicker
                     mode="single"
                     selected={[toCalendarDate(day)]}
-                    onSelect={([date]) => {
+                    on_select={([date]) => {
                         until = date;
                     }}
                 >

@@ -27,10 +27,7 @@ export type OverlayState = {
     meta: OverlayMeta | null;
 };
 
-function isOpen(
-    name: OverlayName,
-    predicate?: (meta: OverlayMeta | null) => boolean
-): boolean {
+function is_open(name: OverlayName, predicate?: (meta: OverlayMeta | null) => boolean): boolean {
     const overlay = page.state.overlay;
 
     return overlay?.name === name && (!predicate || predicate(overlay.meta));
@@ -39,7 +36,7 @@ function isOpen(
 async function open(
     name: OverlayName,
     meta: OverlayMeta | null = null,
-    options?: { replace?: boolean; skipViewTransition?: boolean }
+    options?: { replace?: boolean; skip_view_transition?: boolean }
 ): Promise<void> {
     return goto("", {
         shallow: true,
@@ -47,7 +44,7 @@ async function open(
         state: {
             ...page.state,
             overlay: { name, meta },
-            skipViewTransition: options?.skipViewTransition ?? false
+            skip_view_transition: options?.skip_view_transition ?? false
         },
         replace: options?.replace
     });
@@ -58,7 +55,7 @@ async function close(levels = 1): Promise<void> {
         return;
     }
 
-    const previousState = page.state;
+    const previous_state = page.state;
     let dispose = noop;
     let timeout: number | undefined;
 
@@ -68,7 +65,7 @@ async function close(levels = 1): Promise<void> {
             timeout = window.setTimeout(resolve, 5_000);
             dispose = $effect.root(() => {
                 $effect(() => {
-                    if (observed || page.state === previousState) return;
+                    if (observed || page.state === previous_state) return;
                     observed = true;
                     resolve();
                 });
@@ -82,7 +79,7 @@ async function close(levels = 1): Promise<void> {
 }
 
 export const Overlay = {
-    isOpen,
+    is_open,
     open,
     close,
     get name(): OverlayName | null {

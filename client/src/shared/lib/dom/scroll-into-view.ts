@@ -8,7 +8,7 @@ type Options = {
 
 // TODO: Use native scrollIntoWith with container=nearest when it will be
 //       supported in all major browsers.
-export function scrollIntoView(target: Element, options?: Options): void {
+export function scroll_into_view(target: Element, options?: Options): void {
     const { block, inline, behavior = "instant" } = options ?? {};
 
     const actions = compute(target, {

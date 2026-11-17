@@ -7,7 +7,7 @@ import type { MaybeGetter } from "runed";
 import type { SwiperContainer } from "swiper/element";
 import type { SwiperParams } from "swiper/types";
 
-export function useSwiper(
+export function use_swiper(
     container: MaybeGetter<SwiperContainer | null>,
     options?: SwiperParams
 ): void {
@@ -21,10 +21,7 @@ export function useSwiper(
         Object.assign(c, {
             ...options,
             modules: options?.modules ?? [Navigation, A11y],
-            injectStylesUrls: options?.injectStylesUrls ?? [
-                navigationCssUrl,
-                a11yCssUrl
-            ]
+            injectStylesUrls: options?.injectStylesUrls ?? [navigationCssUrl, a11yCssUrl]
         });
 
         c.initialize();

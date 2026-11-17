@@ -1,5 +1,3 @@
 import { HistoryView } from "$/shared/integrations/inertia";
 
-export const editView = new HistoryView<{ __event: { id: string } }>(
-    "edit-event"
-);
+export const edit_view = new HistoryView<{ _event: { id: string } }>("edit-event");

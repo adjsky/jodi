@@ -11,9 +11,7 @@
     const todos = TodoService.list(() => SelectedDate.current);
     const events = [];
 
-    const hasNoEventsAndTodos = $derived(
-        todos.current?.length === 0 && events?.length === 0
-    );
+    const has_no_events_and_todos = $derived(todos.current?.length === 0 && events?.length === 0);
 </script>
 
 <main>
@@ -21,7 +19,7 @@
         <CurrentUser />
     </MobileCalendarPreview>
 
-    {#if hasNoEventsAndTodos}
+    {#if has_no_events_and_todos}
         <img
             src={CalendarCat}
             width={300}
@@ -36,11 +34,7 @@
     {/if}
 
     {#if todos.current}
-        <TodoList
-            class="mt-4"
-            hidden={hasNoEventsAndTodos}
-            todos={todos.current}
-        />
+        <TodoList class="mt-4" hidden={has_no_events_and_todos} todos={todos.current} />
     {/if}
 
     <CreateEntryFab />

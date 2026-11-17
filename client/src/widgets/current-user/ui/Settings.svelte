@@ -8,8 +8,8 @@
     import { ScreenView } from "#shared/ui/composites/screen-view/mod.ts";
     import Loader from "#shared/ui/Loader.svelte";
 
-    import { friendsQueryOptions } from "../api/friends";
-    import { invitationsQueryOptions } from "../api/invitations";
+    import { friends_query_options } from "../api/friends";
+    import { invitations_query_options } from "../api/invitations";
     import EditEmail from "./EditEmail.svelte";
     import EditName from "./EditName.svelte";
     import Friends from "./Friends.svelte";
@@ -20,40 +20,40 @@
     import SelectWeekStart from "./SelectWeekStart.svelte";
     import Warning from "./Warning.svelte";
 
-    const invitations = createQuery(() => invitationsQueryOptions);
-    const friends = createQuery(() => friendsQueryOptions);
+    const invitations = createQuery(() => invitations_query_options);
+    const friends = createQuery(() => friends_query_options);
 
     const session = SessionCache.retain();
     const user = $derived(session.current.user);
 
-    const accountRows = $derived([
+    const account_rows = $derived([
         {
             name: "name",
             value: user.name,
-            isLoading: false,
+            is_loading: false,
             view: EditName
         },
         {
             name: "email",
             value: user.email,
-            isLoading: false,
+            is_loading: false,
             view: EditEmail
         },
         {
             name: "friends",
             value: friends.data?.length ?? 0,
-            isLoading: friends.isLoading,
+            is_loading: friends.isLoading,
             view: Friends
         },
         {
             name: "invitations",
             value: invitations.data?.length ?? 0,
-            isLoading: invitations.isLoading,
+            is_loading: invitations.isLoading,
             view: Invitations
         }
     ] as const);
 
-    const preferencesRows = $derived([
+    const preferences_rows = $derived([
         {
             name: "language",
             value: LANGUAGES[getLocale()],
@@ -62,17 +62,13 @@
         },
         {
             name: "week-start",
-            value: m[
-                `current-user.week-start.${user.preferences.weekStartOn}`
-            ](),
+            value: m[`current-user.week-start.${user.preferences.weekStartOn}`](),
             view: SelectWeekStart,
             warning: false
         },
         {
             name: "notifications",
-            value: m[
-                `current-user.notifications.${user.preferences.notifications}`
-            ](),
+            value: m[`current-user.notifications.${user.preferences.notifications}`](),
             view: SelectNotification,
             warning: false
             // warning: Push.subscription.needsConfiguration
@@ -81,22 +77,18 @@
 </script>
 
 <ScreenView.Overlay
-    bind:open={
-        () => Overlay.name?.startsWith("me") ?? false, () => Overlay.close()
-    }
+    bind:open={() => Overlay.name?.startsWith("me") ?? false, () => Overlay.close()}
     class="pb-0"
 >
     <ScreenView.Header title={m["current-user.settings"]()} />
-    <ScreenView.Content
-        class="overflow-y-auto overscroll-y-contain pt-5 pb-safe-offset-8"
-    >
+    <ScreenView.Content class="overflow-y-auto overscroll-y-contain pt-5 pb-safe-offset-8">
         <User.Info.Block title={m["current-user.account.title"]()}>
-            {#each accountRows as { name, value, isLoading } (name)}
+            {#each account_rows as { name, value, is_loading } (name)}
                 <User.Info.SettingRow
                     title={m[`current-user.account.${name}`]()}
                     onclick={() => Overlay.open(`me/${name}`)}
                 >
-                    {#if isLoading}
+                    {#if is_loading}
                         <Loader />
                     {:else}
                         {value}
@@ -104,11 +96,8 @@
                 </User.Info.SettingRow>
             {/each}
         </User.Info.Block>
-        <User.Info.Block
-            title={m["current-user.preferences.title"]()}
-            class="mt-10"
-        >
-            {#each preferencesRows as { name, value, warning } (name)}
+        <User.Info.Block title={m["current-user.preferences.title"]()} class="mt-10">
+            {#each preferences_rows as { name, value, warning } (name)}
                 <User.Info.SettingRow
                     title={m[`current-user.preferences.${name}`]()}
                     onclick={() => Overlay.open(`me/${name}`)}
@@ -131,9 +120,6 @@
     </ScreenView.Content>
 </ScreenView.Overlay>
 
-{#each [...accountRows, ...preferencesRows] as { name, view: View } (name)}
-    <View
-        bind:open={() => Overlay.isOpen(`me/${name}`), () => Overlay.close()}
-        {user}
-    />
+{#each [...account_rows, ...preferences_rows] as { name, view: View } (name)}
+    <View bind:open={() => Overlay.is_open(`me/${name}`), () => Overlay.close()} {user} />
 {/each}

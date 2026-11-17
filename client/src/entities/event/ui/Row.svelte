@@ -11,9 +11,9 @@
         color: string | null;
     };
 
-    const { time, title, color: providedColor, ...props }: Props = $props();
+    const { time, title, color: provided_color, ...props }: Props = $props();
 
-    const color = $derived(providedColor || "var(--color-tangerine)");
+    const color = $derived(provided_color || "var(--color-tangerine)");
 </script>
 
 <button

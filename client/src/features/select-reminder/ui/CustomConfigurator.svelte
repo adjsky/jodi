@@ -10,12 +10,12 @@
     type Props = {
         open: boolean;
         current: string;
-        onSelect?: (duration: string) => void;
+        on_select?: (duration: string) => void;
     };
 
-    let { open = $bindable(), current, onSelect }: Props = $props();
+    let { open = $bindable(), current, on_select }: Props = $props();
 
-    let [selectedIdx, amount] = $derived(getNotifyOffset());
+    let [selected_idx, amount] = $derived(get_notify_offset());
 
     const durations = $derived([
         {
@@ -35,7 +35,7 @@
         }
     ]);
 
-    function getNotifyOffset(): [number, string] {
+    function get_notify_offset(): [number, string] {
         const { days, hours, minutes } = parseDuration(current);
 
         if (days) {
@@ -51,31 +51,26 @@
 </script>
 
 <SheetDialog
-    {@attach VirtualKeyboard.retainFocus()}
+    {@attach VirtualKeyboard.retain_focus()}
     bind:open
     class="pb-0"
     height={80}
     title={m["reminders.custom.title"]()}
-    onExitComplete={() => {
-        [selectedIdx, amount] = getNotifyOffset();
+    on_exit_complete={() => {
+        [selected_idx, amount] = get_notify_offset();
     }}
     portal
-    lazyMount
+    lazy_mount
 >
     <div class="flex min-h-0 flex-col overflow-y-auto overscroll-contain">
-        <NumericInput
-            bind:value={amount}
-            class="mt-4"
-            min={0}
-            max={durations[selectedIdx].max}
-        />
+        <NumericInput bind:value={amount} class="mt-4" min={0} max={durations[selected_idx].max} />
 
         <div class="mt-0.5">
             {#each durations as { label, template }, idx (template)}
                 <Checkbox
                     {label}
-                    checked={selectedIdx === idx}
-                    onclick={() => (selectedIdx = idx)}
+                    checked={selected_idx === idx}
+                    onclick={() => (selected_idx = idx)}
                 />
             {/each}
         </div>
@@ -83,17 +78,8 @@
         <hr class="mt-4 h-px text-cream-300" />
 
         <div class="mt-4">
-            <Checkbox
-                class="opacity-60"
-                label={m["reminders.custom.as-push"]()}
-                checked
-                disabled
-            />
-            <Checkbox
-                class="opacity-60"
-                label={m["reminders.custom.as-email"]()}
-                disabled
-            />
+            <Checkbox class="opacity-60" label={m["reminders.custom.as-push"]()} checked disabled />
+            <Checkbox class="opacity-60" label={m["reminders.custom.as-email"]()} disabled />
         </div>
     </div>
 
@@ -102,9 +88,7 @@
             type="button"
             disabled={Number(amount) === 0}
             onclick={() => {
-                onSelect?.(
-                    durations[selectedIdx].template.replace("{A}", amount)
-                );
+                on_select?.(durations[selected_idx].template.replace("{A}", amount));
                 open = false;
             }}
         >

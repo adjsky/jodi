@@ -9,25 +9,25 @@
     import List from "./List.svelte";
 
     type Props = {
-        categoryId: string | null;
+        category_id: string | null;
     };
 
-    let { categoryId: current = $bindable() }: Props = $props();
+    let { category_id: current = $bindable() }: Props = $props();
 
     let search = $state("");
     let open = $state(false);
     let confirm = $state(false);
-    let confirmId: string | null = $state(null);
+    let confirm_id: string | null = $state(null);
 
     const cquery = CategoryRepository.list();
 
     const categories = $derived(cquery.current ?? []);
     const filtered = $derived(categories.filter((c) => filter(c.name)));
 
-    const showAddButton = $derived(
+    const show_add_button = $derived(
         search !== "" && filtered.findIndex((c) => filter(c.name)) === -1
     );
-    const hasNoCategories = $derived(search === "" && filtered.length === 0);
+    const has_no_categories = $derived(search === "" && filtered.length === 0);
 
     function filter(name: string) {
         return name.toLowerCase().includes(search);
@@ -37,11 +37,11 @@
 <SheetDialog
     bind:open
     portal
-    lazyMount
+    lazy_mount
     class="pb-0"
     height={75}
     title={m["todos.category.title"]()}
-    onExitComplete={() => {
+    on_exit_complete={() => {
         search = "";
     }}
 >
@@ -51,8 +51,7 @@
             class={[
                 "w-fit max-w-full truncate rounded-full px-2.5 py-0.5 font-bold",
                 current && "bg-peach",
-                !current &&
-                    "text-cream-700 outline outline-cream-400 outline-dashed"
+                !current && "text-cream-700 outline outline-cream-400 outline-dashed"
             ]}
         >
             {#if current}
@@ -65,16 +64,10 @@
     {/snippet}
 
     <div class="relative mt-3 flex items-center">
-        <Search
-            class="pointer-events-none absolute left-3 text-xl text-cream-600"
-        />
+        <Search class="pointer-events-none absolute left-3 text-xl text-cream-600" />
 
         {#if search !== ""}
-            <button
-                type="button"
-                class="absolute right-0 p-3"
-                onclick={() => (search = "")}
-            >
+            <button type="button" class="absolute right-0 p-3" onclick={() => (search = "")}>
                 <X class="text-2xl" />
             </button>
         {/if}
@@ -87,8 +80,8 @@
         />
     </div>
 
-    <div class={["flex min-h-0 grow flex-col", !hasNoCategories && "mt-2"]}>
-        {#if showAddButton}
+    <div class={["flex min-h-0 grow flex-col", !has_no_categories && "mt-2"]}>
+        {#if show_add_button}
             <button
                 type="button"
                 class="flex h-14 w-full items-center gap-2 rounded-xl bg-brand/10 px-2 text-start text-lg font-medium disabled:cursor-not-allowed"
@@ -98,20 +91,18 @@
                     current = id;
                 }}
             >
-                <span
-                    class="flex size-7 items-center justify-center rounded-full bg-brand"
-                >
+                <span class="flex size-7 items-center justify-center rounded-full bg-brand">
                     <Plus class="text-xl text-white" />
                 </span>
                 {m["todos.category.add"]()}
             </button>
         {/if}
 
-        {#if showAddButton && filtered.length > 0}
+        {#if show_add_button && filtered.length > 0}
             <hr class="mt-2 text-cream-300" />
         {/if}
 
-        {#if hasNoCategories}
+        {#if has_no_categories}
             <img
                 src={Jelly}
                 width={82}
@@ -128,10 +119,10 @@
         <List
             {current}
             list={filtered}
-            onSelect={(id) => (current = id)}
-            onDelete={(id) => {
+            on_select={(id) => (current = id)}
+            on_delete={(id) => {
                 confirm = true;
-                confirmId = id;
+                confirm_id = id;
             }}
         />
     </div>
@@ -139,16 +130,16 @@
     <Confirmable
         bind:open={confirm}
         title={m["todos.category.confirm-delete"]({
-            category: categories.find((c) => c.id === confirmId)?.name ?? ""
+            category: categories.find((c) => c.id === confirm_id)?.name ?? ""
         })}
-        onConfirm={async () => {
-            if (!confirmId) return;
-            await CategoryRepository.destroy(confirmId);
-            if (confirmId === current) current = null;
+        on_confirm={async () => {
+            if (!confirm_id) return;
+            await CategoryRepository.destroy(confirm_id);
+            if (confirm_id === current) current = null;
             confirm = false;
         }}
-        onExitComplete={() => {
-            confirmId = null;
+        on_exit_complete={() => {
+            confirm_id = null;
         }}
     />
 </SheetDialog>

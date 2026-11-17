@@ -1,11 +1,11 @@
 export function init(): void {
-    const { needRefresh: _needRefresh, updateServiceWorker } = useRegisterSW();
-    const needRefresh = fromStore(_needRefresh);
+    const { needRefresh, updateServiceWorker } = useRegisterSW();
+    const need_refresh = fromStore(needRefresh);
 
     watch(
-        () => [needRefresh.current],
+        () => [need_refresh.current],
         () => {
-            if (!needRefresh.current) {
+            if (!need_refresh.current) {
                 return;
             }
 
@@ -26,7 +26,7 @@ export function init(): void {
             return;
         }
 
-        function handleMessage(event: MessageEvent) {
+        function handle_message(event: MessageEvent) {
             if (
                 typeof event.data !== "object" ||
                 event.data === null ||
@@ -38,12 +38,8 @@ export function init(): void {
             this.action.handle(event.data.data);
         }
 
-        navigator.serviceWorker.addEventListener("message", handleMessage);
+        navigator.serviceWorker.addEventListener("message", handle_message);
 
-        return () =>
-            navigator.serviceWorker.removeEventListener(
-                "message",
-                handleMessage
-            );
+        return () => navigator.serviceWorker.removeEventListener("message", handle_message);
     });
 }

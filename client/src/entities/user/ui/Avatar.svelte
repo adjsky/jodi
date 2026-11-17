@@ -23,8 +23,6 @@
 >
     {name[0].toLocaleUpperCase()}
     {#if warn}
-        <ExclamationMark
-            class="absolute -right-1 -bottom-1 z-1 text-xl text-cream-950"
-        />
+        <ExclamationMark class="absolute -right-1 -bottom-1 z-1 text-xl text-cream-950" />
     {/if}
 </svelte:element>

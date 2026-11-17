@@ -3,13 +3,13 @@ import { expect, it } from "vitest";
 import { YearCalendar } from "./year-calendar.svelte";
 
 it("returns no weeks for a month that has not been prepared", () => {
-    const calendar = new YearCalendar({ locale: "en", weekStart: "monday" });
+    const calendar = new YearCalendar({ locale: "en", week_start: "monday" });
 
     expect(calendar.segments(2026, 1, 1)).toEqual([]);
 });
 
 it("positions a single-day event in its weekday column", () => {
-    const calendar = new YearCalendar({ locale: "en", weekStart: "monday" });
+    const calendar = new YearCalendar({ locale: "en", week_start: "monday" });
 
     calendar.prepare(
         2026,
@@ -34,14 +34,14 @@ it("positions a single-day event in its weekday column", () => {
             column: 4,
             span: 1,
             lane: 0,
-            startsInWeek: true,
-            endsInWeek: true
+            starts_in_week: true,
+            ends_in_week: true
         }
     ]);
 });
 
 it("positions a multi-day event in its weekday column", () => {
-    const calendar = new YearCalendar({ locale: "en", weekStart: "monday" });
+    const calendar = new YearCalendar({ locale: "en", week_start: "monday" });
 
     calendar.prepare(
         2026,
@@ -66,14 +66,14 @@ it("positions a multi-day event in its weekday column", () => {
             column: 4,
             span: 3,
             lane: 0,
-            startsInWeek: true,
-            endsInWeek: true
+            starts_in_week: true,
+            ends_in_week: true
         }
     ]);
 });
 
 it("splits a cross-week event into separate segments", () => {
-    const calendar = new YearCalendar({ locale: "en", weekStart: "monday" });
+    const calendar = new YearCalendar({ locale: "en", week_start: "monday" });
 
     calendar.prepare(
         2026,
@@ -98,8 +98,8 @@ it("splits a cross-week event into separate segments", () => {
             column: 5,
             span: 3,
             lane: 0,
-            startsInWeek: true,
-            endsInWeek: false
+            starts_in_week: true,
+            ends_in_week: false
         }
     ]);
     expect(calendar.segments(2026, 1, 3)).toEqual([
@@ -110,8 +110,8 @@ it("splits a cross-week event into separate segments", () => {
             column: 1,
             span: 7,
             lane: 0,
-            startsInWeek: false,
-            endsInWeek: false
+            starts_in_week: false,
+            ends_in_week: false
         }
     ]);
     expect(calendar.segments(2026, 1, 4)).toEqual([
@@ -122,8 +122,8 @@ it("splits a cross-week event into separate segments", () => {
             column: 1,
             span: 2,
             lane: 0,
-            startsInWeek: false,
-            endsInWeek: true
+            starts_in_week: false,
+            ends_in_week: true
         }
     ]);
 });
@@ -131,7 +131,7 @@ it("splits a cross-week event into separate segments", () => {
 it("positions events when weeks start on Sunday", () => {
     const calendar = new YearCalendar({
         locale: "en",
-        weekStart: "sunday"
+        week_start: "sunday"
     });
 
     calendar.prepare(
@@ -155,7 +155,7 @@ it("positions events when weeks start on Sunday", () => {
 });
 
 it("includes events from outside the month in its rendered week grid", () => {
-    const calendar = new YearCalendar({ locale: "en", weekStart: "monday" });
+    const calendar = new YearCalendar({ locale: "en", week_start: "monday" });
 
     calendar.prepare(
         2026,
@@ -176,14 +176,14 @@ it("includes events from outside the month in its rendered week grid", () => {
         expect.objectContaining({
             column: 2,
             span: 2,
-            startsInWeek: true,
-            endsInWeek: true
+            starts_in_week: true,
+            ends_in_week: true
         })
     ]);
 });
 
 it("renders a cross-month event when only its ending month is requested", () => {
-    const calendar = new YearCalendar({ locale: "en", weekStart: "monday" });
+    const calendar = new YearCalendar({ locale: "en", week_start: "monday" });
 
     calendar.prepare(
         2026,
@@ -209,7 +209,7 @@ it("renders a cross-month event when only its ending month is requested", () => 
 });
 
 it("renders a cross-month event when only its starting month is requested", () => {
-    const calendar = new YearCalendar({ locale: "en", weekStart: "monday" });
+    const calendar = new YearCalendar({ locale: "en", week_start: "monday" });
 
     calendar.prepare(
         2026,
@@ -232,8 +232,8 @@ it("renders a cross-month event when only its starting month is requested", () =
 });
 
 it("renders a cross-year event in both requested years", () => {
-    const calendar = new YearCalendar({ locale: "en", weekStart: "monday" });
-    const crossYearEvent = {
+    const calendar = new YearCalendar({ locale: "en", week_start: "monday" });
+    const cross_year_event = {
         id: 1,
         title: "Winter vacation",
         color: null,
@@ -242,8 +242,8 @@ it("renders a cross-year event in both requested years", () => {
         occursAt: null
     };
 
-    calendar.prepare(2025, [12], [crossYearEvent]);
-    calendar.prepare(2026, [1], [crossYearEvent]);
+    calendar.prepare(2025, [12], [cross_year_event]);
+    calendar.prepare(2026, [1], [cross_year_event]);
 
     expect(calendar.segments(2025, 12, 5)).toEqual([
         expect.objectContaining({ column: 2, span: 6 })
@@ -257,7 +257,7 @@ it("renders a cross-year event in both requested years", () => {
 });
 
 it("does not add segments from the same month in another year", () => {
-    const calendar = new YearCalendar({ locale: "en", weekStart: "monday" });
+    const calendar = new YearCalendar({ locale: "en", week_start: "monday" });
 
     calendar.prepare(
         2030,
@@ -278,7 +278,7 @@ it("does not add segments from the same month in another year", () => {
 });
 
 it("handles events ending on the last day of a week", () => {
-    const calendar = new YearCalendar({ locale: "en", weekStart: "monday" });
+    const calendar = new YearCalendar({ locale: "en", week_start: "monday" });
 
     calendar.prepare(
         2026,
@@ -299,14 +299,14 @@ it("handles events ending on the last day of a week", () => {
         expect.objectContaining({
             column: 1,
             span: 7,
-            startsInWeek: true,
-            endsInWeek: true
+            starts_in_week: true,
+            ends_in_week: true
         })
     ]);
 });
 
 it("handles events crossing from the last day into the first day of a week", () => {
-    const calendar = new YearCalendar({ locale: "en", weekStart: "monday" });
+    const calendar = new YearCalendar({ locale: "en", week_start: "monday" });
 
     calendar.prepare(
         2026,
@@ -332,7 +332,7 @@ it("handles events crossing from the last day into the first day of a week", () 
 });
 
 it("excludes the day at an event's midnight end boundary", () => {
-    const calendar = new YearCalendar({ locale: "en", weekStart: "monday" });
+    const calendar = new YearCalendar({ locale: "en", week_start: "monday" });
 
     calendar.prepare(
         2026,
@@ -355,7 +355,7 @@ it("excludes the day at an event's midnight end boundary", () => {
 });
 
 it("assigns lanes and replaces stale overflow values", () => {
-    const calendar = new YearCalendar({ locale: "en", weekStart: "monday" });
+    const calendar = new YearCalendar({ locale: "en", week_start: "monday" });
 
     calendar.prepare(
         2026,
@@ -418,7 +418,7 @@ it("assigns lanes and replaces stale overflow values", () => {
 });
 
 it("reuses a lane only when events do not share a day", () => {
-    const calendar = new YearCalendar({ locale: "en", weekStart: "monday" });
+    const calendar = new YearCalendar({ locale: "en", week_start: "monday" });
 
     calendar.prepare(
         2026,
@@ -459,7 +459,7 @@ it("reuses a lane only when events do not share a day", () => {
 });
 
 it("clears an empty requested month and preserves other months", () => {
-    const calendar = new YearCalendar({ locale: "en", weekStart: "monday" });
+    const calendar = new YearCalendar({ locale: "en", week_start: "monday" });
 
     calendar.prepare(
         2026,
@@ -497,7 +497,7 @@ it("clears an empty requested month and preserves other months", () => {
 });
 
 it("replaces repeated and updated month data without duplicates", () => {
-    const calendar = new YearCalendar({ locale: "en", weekStart: "monday" });
+    const calendar = new YearCalendar({ locale: "en", week_start: "monday" });
 
     calendar.prepare(
         2026,
@@ -551,7 +551,7 @@ it("replaces repeated and updated month data without duplicates", () => {
 });
 
 it("removes an event from its old month when it moves to another month", () => {
-    const calendar = new YearCalendar({ locale: "en", weekStart: "monday" });
+    const calendar = new YearCalendar({ locale: "en", week_start: "monday" });
 
     calendar.prepare(
         2026,
@@ -588,7 +588,7 @@ it("removes an event from its old month when it moves to another month", () => {
 });
 
 it("prepares month-specific segments from a batched response", () => {
-    const calendar = new YearCalendar({ locale: "en", weekStart: "monday" });
+    const calendar = new YearCalendar({ locale: "en", week_start: "monday" });
 
     calendar.prepare(
         2026,
@@ -621,9 +621,7 @@ it("prepares month-specific segments from a batched response", () => {
         ]
     );
 
-    expect(calendar.segments(2026, 1, 3)).toEqual([
-        expect.objectContaining({ title: "January" })
-    ]);
+    expect(calendar.segments(2026, 1, 3)).toEqual([expect.objectContaining({ title: "January" })]);
     expect(calendar.segments(2026, 1, 5)).toEqual([
         expect.objectContaining({ title: "Cross-month" })
     ]);
@@ -633,13 +631,11 @@ it("prepares month-specific segments from a batched response", () => {
     expect(calendar.segments(2026, 2, 2)).toEqual([
         expect.objectContaining({ title: "Cross-month" })
     ]);
-    expect(calendar.segments(2026, 2, 3)).toEqual([
-        expect.objectContaining({ title: "February" })
-    ]);
+    expect(calendar.segments(2026, 2, 3)).toEqual([expect.objectContaining({ title: "February" })]);
 });
 
 it("preserves prepared months from other years", () => {
-    const calendar = new YearCalendar({ locale: "en", weekStart: "monday" });
+    const calendar = new YearCalendar({ locale: "en", week_start: "monday" });
 
     calendar.prepare(
         2025,

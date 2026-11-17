@@ -6,11 +6,7 @@ import { SecureStorage } from "#shared/capabilities/secure-storage/mod.ts";
 import type { ClientInit } from "@sveltejs/kit";
 
 export const init: ClientInit = async () => {
-    await Promise.all([
-        SecureStorage.init(),
-        SessionCache.init(),
-        Capacitor.init()
-    ]);
+    await Promise.all([SecureStorage.init(), SessionCache.init(), Capacitor.init()]);
 
     i18n.init();
 };

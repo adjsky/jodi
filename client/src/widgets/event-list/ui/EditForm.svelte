@@ -1,10 +1,6 @@
 <script lang="ts">
     import { Form } from "@inertiajs/svelte";
-    import {
-        parseAbsoluteToLocal,
-        parseDate,
-        toCalendarDate
-    } from "@internationalized/date";
+    import { parseAbsoluteToLocal, parseDate, toCalendarDate } from "@internationalized/date";
     import { Event } from "$/entities/event";
     import { CalendarPicker } from "$/features/choose-date";
     import { DeleteItem } from "$/features/delete-item";
@@ -24,41 +20,41 @@
 
     import { destroy as optimistic_destroy } from "../api/destroy";
     import { edit } from "../api/edit";
-    import { visitOptions } from "../cfg/inertia";
+    import { visit_options } from "../cfg/inertia";
 
     import type { EventData } from "$/entities/event";
     import type { RecurrenceScope } from "$/entities/recurrence";
 
     type Props = {
         event: EventData;
-        onClose?: VoidFunction;
+        on_close?: VoidFunction;
     };
 
-    const { event, onClose }: Props = $props();
+    const { event, on_close }: Props = $props();
 
-    let startsAtAnnouncerInput: HTMLInputElement | null = $state(null);
-    let endsAtAnnouncerInput: HTMLInputElement | null = $state(null);
+    let starts_at_announcer_input: HTMLInputElement | null = $state(null);
+    let ends_at_announcer_input: HTMLInputElement | null = $state(null);
     let scope: RecurrenceScope = $state("this");
 
     const draft = $state(
         untrack(() => ({
-            startsAt: parseAbsoluteToLocal(event.startsAt),
-            endsAt: parseAbsoluteToLocal(event.endsAt),
-            notifyAt: parseAbsoluteToLocal(event.notifyAt),
+            starts_at: parseAbsoluteToLocal(event.startsAt),
+            ends_at: parseAbsoluteToLocal(event.endsAt),
+            notify_at: parseAbsoluteToLocal(event.notifyAt),
             color: event.color,
             rrule: event.rrule
         }))
     );
 
-    const isRRuleDirty = $derived(event.rrule !== draft.rrule);
+    const is_r_rule_dirty = $derived(event.rrule !== draft.rrule);
 </script>
 
 <Form
     {...edit(event, draft)}
     action={UpdateEvent(event.id, {
-        query: { scope: isRRuleDirty ? "all" : scope }
+        query: { scope: is_r_rule_dirty ? "all" : scope }
     })}
-    options={visitOptions}
+    options={visit_options}
     transform={(data) => ({
         ...data,
         occursAt: event.occursAt
@@ -66,46 +62,39 @@
     showProgress={false}
     class="flex min-h-0 grow flex-col"
 >
-    {#snippet children({ isDirty, submit })}
+    {#snippet children({ isDirty: is_dirty, submit })}
         <Event.Fields
-            bind:startsAt={
-                () => draft.startsAt,
+            bind:starts_at={
+                () => draft.starts_at,
                 (d) => {
-                    draft.notifyAt = draft.notifyAt.add(
-                        timediff(draft.startsAt, d)
-                    );
-                    draft.startsAt = d;
+                    draft.notify_at = draft.notify_at.add(timediff(draft.starts_at, d));
+                    draft.starts_at = d;
                 }
             }
-            bind:endsAt={draft.endsAt}
+            bind:ends_at={draft.ends_at}
             title={event.title}
             description={event.description}
-            onStartsAtChange={async () => {
+            on_starts_at_change={async () => {
                 await tick();
-                dispatchInput(startsAtAnnouncerInput);
+                dispatchInput(starts_at_announcer_input);
             }}
-            onEndsAtChange={async () => {
+            on_ends_at_change={async () => {
                 await tick();
-                dispatchInput(endsAtAnnouncerInput);
+                dispatchInput(ends_at_announcer_input);
             }}
         >
             {#snippet calendar(trigger)}
                 <CalendarPicker
                     mode="range"
-                    selected={[
-                        toCalendarDate(draft.startsAt),
-                        toCalendarDate(draft.endsAt)
-                    ]}
-                    min={event.recurringSince
-                        ? parseDate(event.recurringSince)
-                        : null}
-                    deferHistoryViewFrames={DEFER_FRAMES.SHEET + 1}
-                    onSelect={async (date) => {
-                        draft.notifyAt = draft.notifyAt.set(date[0]);
-                        draft.startsAt = draft.startsAt.set(date[0]);
-                        draft.endsAt = draft.endsAt.set(date[1]);
+                    selected={[toCalendarDate(draft.starts_at), toCalendarDate(draft.ends_at)]}
+                    min={event.recurringSince ? parseDate(event.recurringSince) : null}
+                    defer_history_view_frames={DEFER_FRAMES.SHEET + 1}
+                    on_select={async (date) => {
+                        draft.notify_at = draft.notify_at.set(date[0]);
+                        draft.starts_at = draft.starts_at.set(date[0]);
+                        draft.ends_at = draft.ends_at.set(date[1]);
                         await tick();
-                        dispatchInput(startsAtAnnouncerInput);
+                        dispatchInput(starts_at_announcer_input);
                     }}
                 >
                     {#snippet children(props)}
@@ -115,15 +104,15 @@
             {/snippet}
             {#snippet close()}
                 <SaveOrClose
-                    {onClose}
+                    {on_close}
                     title={m["events.recurrence-action.edit-title"]()}
-                    variant={isDirty ? "save" : "close"}
-                    scopeLabels={{
+                    variant={is_dirty ? "save" : "close"}
+                    scope_labels={{
                         this: m["events.recurrence-action.this"](),
                         all: m["events.recurrence-action.all"]()
                     }}
-                    confirm={event.rrule !== null && !isRRuleDirty}
-                    onConfirm={async (s) => {
+                    confirm={event.rrule !== null && !is_r_rule_dirty}
+                    on_confirm={async (s) => {
                         scope = s;
                         await tick();
                         submit();
@@ -133,7 +122,7 @@
             {#snippet destroy()}
                 <DeleteItem
                     {...optimistic_destroy(event)}
-                    {...visitOptions}
+                    {...visit_options}
                     href={DestroyEvent(event.id)}
                     title={{
                         recurring: m["events.recurrence-action.delete-title"](),
@@ -141,23 +130,23 @@
                     }}
                     tooltip={m["events.tooltips.delete"]()}
                     recurring={event.rrule !== null}
-                    occursAt={event.occursAt}
+                    occurs_at={event.occursAt}
                     date={event.startsAt}
-                    scopeLabels={{
+                    scope_labels={{
                         this: m["events.recurrence-action.this"](),
                         following: m["events.recurrence-action.following"](),
                         all: m["events.recurrence-action.all"]()
                     }}
-                    deferHistoryViewFrames={DEFER_FRAMES.SHEET + 1}
+                    defer_history_view_frames={DEFER_FRAMES.SHEET + 1}
                 />
             {/snippet}
             {#snippet repeat()}
                 <Recurrence
                     bind:rrule={draft.rrule}
-                    day={draft.startsAt}
+                    day={draft.starts_at}
                     name="rrule"
                     tooltip={m["events.tooltips.repeat"]()}
-                    deferHistoryViewFrames={DEFER_FRAMES.SHEET + 1}
+                    defer_history_view_frames={DEFER_FRAMES.SHEET + 1}
                 />
             {/snippet}
             {#snippet color()}
@@ -169,39 +158,39 @@
             {/snippet}
             {#snippet notify()}
                 <Reminder
-                    bind:notifyAt={draft.notifyAt}
-                    startsAt={draft.startsAt}
+                    bind:notify_at={draft.notify_at}
+                    starts_at={draft.starts_at}
                     name="notifyAt"
                     tooltip={m["events.tooltips.notification"]()}
-                    deferHistoryViewFrames={DEFER_FRAMES.SHEET + 1}
+                    defer_history_view_frames={DEFER_FRAMES.SHEET + 1}
                 />
             {/snippet}
             {#snippet more()}
                 <RescheduleItem
-                    startsAt={toCalendarDate(draft.startsAt)}
+                    starts_at={toCalendarDate(draft.starts_at)}
                     tooltip={m["events.tooltips.more"]()}
-                    onReschedule={async (d) => {
-                        draft.notifyAt = draft.notifyAt.set(d);
-                        draft.startsAt = draft.startsAt.set(d);
-                        draft.endsAt = draft.endsAt.set(d);
+                    on_reschedule={async (d) => {
+                        draft.notify_at = draft.notify_at.set(d);
+                        draft.starts_at = draft.starts_at.set(d);
+                        draft.ends_at = draft.ends_at.set(d);
                         await tick();
-                        dispatchInput(startsAtAnnouncerInput);
+                        dispatchInput(starts_at_announcer_input);
                     }}
                 />
             {/snippet}
         </Event.Fields>
 
         <input
-            bind:this={startsAtAnnouncerInput}
+            bind:this={starts_at_announcer_input}
             hidden
             name="startsAt"
-            value={normalizeIsoString(draft.startsAt.toAbsoluteString())}
+            value={normalizeIsoString(draft.starts_at.toAbsoluteString())}
         />
         <input
-            bind:this={endsAtAnnouncerInput}
+            bind:this={ends_at_announcer_input}
             hidden
             name="endsAt"
-            value={normalizeIsoString(draft.endsAt.toAbsoluteString())}
+            value={normalizeIsoString(draft.ends_at.toAbsoluteString())}
         />
     {/snippet}
 </Form>

@@ -3,7 +3,7 @@ import { db } from "#shared/db/dexie.ts";
 import type { Category } from "./types.ts";
 
 function list(): Promise<Category[]> {
-    return db.categories.orderBy("createdAt").toArray((categories) =>
+    return db.categories.orderBy("created_at").toArray((categories) =>
         categories.map((c) => ({
             id: c.id,
             name: c.name
@@ -15,7 +15,7 @@ function create(name: string): Promise<string> {
     return db.categories.add({
         id: crypto.randomUUID(),
         name,
-        createdAt: Date.now()
+        created_at: Date.now()
     });
 }
 

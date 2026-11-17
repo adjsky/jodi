@@ -12,17 +12,17 @@ export type Todo = {
     title: string;
     description: string;
 
-    categoryId: string | null;
+    category_id: string | null;
     color: string | null;
 
     rrule: string | null;
 
-    scheduledAt: ZonedDateTime;
-    hasTime: boolean;
-    completedAt: ZonedDateTime | null;
-    createdAt: ZonedDateTime;
+    scheduled_at: ZonedDateTime;
+    has_time: boolean;
+    completed_at: ZonedDateTime | null;
+    created_at: ZonedDateTime;
 
-    notifyBefore: string;
+    notify_before: string;
 
     timezone: string;
 };
@@ -31,15 +31,16 @@ export type TodoDraft = {
     title: string;
     description: string;
 
-    categoryId: string | null;
+    category_id: string | null;
     color: string | null;
 
     rrule: string | null;
 
-    scheduledAt: ZonedDateTime;
-    hasTime: boolean;
+    completed_at?: ZonedDateTime | null;
+    scheduled_at: ZonedDateTime;
+    has_time: boolean;
 
-    notifyBefore: string;
+    notify_before: string;
 };
 
 export type TodoOccurrence = WithRecurrence<Todo>;

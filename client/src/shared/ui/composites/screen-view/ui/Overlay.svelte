@@ -12,9 +12,9 @@
     type Props = SvelteHTMLElements["div"] & {
         open?: boolean;
         portal?: boolean;
-        lazyMount?: boolean;
-        unmountOnExit?: boolean;
-        onExitComplete?: VoidFunction;
+        lazy_mount?: boolean;
+        unmount_on_exit?: boolean;
+        on_exit_complete?: VoidFunction;
     };
 
     const id = $props.id();
@@ -22,8 +22,8 @@
         children,
         open = $bindable(false),
         portal = true,
-        lazyMount = true,
-        unmountOnExit = true,
+        lazy_mount = true,
+        unmount_on_exit = true,
         ...props
     }: Props = $props();
 
@@ -70,8 +70,8 @@
             "fixed inset-0 z-[calc(100+var(--layer-index,0))] flex flex-col overflow-hidden bg-cream-50 pt-safe-offset-3 pb-safe-offset-5 safe-area-keyboard",
             props.class
         )}
+        lazyMount={lazy_mount}
+        unmountOnExit={unmount_on_exit}
         {children}
-        {lazyMount}
-        {unmountOnExit}
     />
 </AppPortal>

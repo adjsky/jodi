@@ -11,7 +11,7 @@ import { UTC } from "#shared/cfg/constants.ts";
 import { groupBy, prop } from "remeda";
 import { RRule } from "rrule";
 
-import { getDiffInDays } from "../helpers/get-diff-in-days.ts";
+import { get_diff_in_days } from "../helpers/get-diff-in-days.ts";
 
 import type { WithRecurrence } from "./types.ts";
 import type { CalendarDate, ZonedDateTime } from "@internationalized/date";
@@ -27,16 +27,16 @@ type Expandable<
     Record<ShiftedDateKeys[number], ZonedDateTime | null>;
 
 type RecurrenceException<T> = {
-    recurrenceableId: string;
-    occursAt: string;
-    isCancelled: boolean;
+    recurrenceable_id: string;
+    occurs_at: string;
+    is_cancelled: boolean;
     overrides: Partial<T>;
 };
 
 type RecurrenceConfig<StartKey, EndKey, ShiftedDateKeys> = {
-    startKey: StartKey;
-    endKey: EndKey;
-    shiftedDateKeys: ShiftedDateKeys;
+    start_key: StartKey;
+    end_key: EndKey;
+    shifted_date_keys: ShiftedDateKeys;
     timezone: string;
 };
 
@@ -65,70 +65,53 @@ export class RecurrenceExpander<
     on<T extends Expandable<StartKey, EndKey, ShiftedDateKeys>>(
         date: CalendarDate,
         items: T[],
-        recurrenceExceptions: RecurrenceException<NoInfer<T>>[]
+        recurrence_exceptions: RecurrenceException<NoInfer<T>>[]
     ): WithRecurrence<T>[] {
         const { timezone } = this.#config;
         const view: ViewRange = {
             start: toZoned(date, timezone),
             end: toZoned(date.add({ days: 1 }), timezone)
         };
-        const exceptionsPerId = groupBy(
-            recurrenceExceptions,
-            prop("recurrenceableId")
-        );
+        const exceptions_per_id = groupBy(recurrence_exceptions, prop("recurrenceable_id"));
 
         return items.flatMap((item) =>
-            this.#expandItem(item, exceptionsPerId[item.id] ?? [], view)
+            this.#expand_item(item, exceptions_per_id[item.id] ?? [], view)
         );
     }
 
-    #expandItem<T extends Expandable<StartKey, EndKey, ShiftedDateKeys>>(
+    #expand_item<T extends Expandable<StartKey, EndKey, ShiftedDateKeys>>(
         item: T,
-        itemExceptions: RecurrenceException<T>[],
+        item_exceptions: RecurrenceException<T>[],
         view: ViewRange
     ): WithRecurrence<T>[] {
         if (item.rrule === null) {
-            return [{ ...item, occursAt: null, recurringSince: null }];
+            return [{ ...item, occurs_at: null, recurring_since: null }];
         }
 
-        const { startKey, endKey } = this.#config;
+        const { start_key, end_key } = this.#config;
 
-        const start = toTimeZone(item[startKey], UTC);
-        const end = endKey ? toTimeZone(item[endKey], UTC) : null;
+        const start = toTimeZone(item[start_key], UTC);
+        const end = end_key ? toTimeZone(item[end_key], UTC) : null;
 
         const dates: RecurrenceDates = {
             start,
             end,
-            edoffset: end ? getDiffInDays(end, start) : 0
+            edoffset: end ? get_diff_in_days(end, start) : 0
         };
 
-        const candidates = this.#generateCandidates(item.rrule, dates, view);
-        const exceptions = new Map(itemExceptions.map((e) => [e.occursAt, e]));
+        const candidates = this.#generate_candidates(item.rrule, dates, view);
+        const exceptions = new Map(item_exceptions.map((e) => [e.occurs_at, e]));
 
-        this.#applyExceptions(candidates, exceptions, dates, view);
+        this.#apply_exceptions(candidates, exceptions, dates, view);
 
-        return Array.from(candidates, ([occursAt, date]) =>
-            this.#createOccurrence(
-                item,
-                occursAt,
-                date,
-                dates.start,
-                exceptions.get(occursAt)
-            )
+        return Array.from(candidates, ([occurs_at, date]) =>
+            this.#create_occurrence(item, occurs_at, date, dates.start, exceptions.get(occurs_at))
         ).filter((occurrence) =>
-            this.#overlaps(
-                occurrence[startKey],
-                endKey ? occurrence[endKey] : null,
-                view
-            )
+            this.#overlaps(occurrence[start_key], end_key ? occurrence[end_key] : null, view)
         );
     }
 
-    #generateCandidates(
-        rule: string,
-        dates: RecurrenceDates,
-        view: ViewRange
-    ): Map<string, Date> {
+    #generate_candidates(rule: string, dates: RecurrenceDates, view: ViewRange): Map<string, Date> {
         const start = toTimeZone(view.start, UTC).subtract({
             days: dates.edoffset
         });
@@ -137,78 +120,64 @@ export class RecurrenceExpander<
             ...RRule.parseString(rule),
             dtstart: dates.start.toDate()
         });
-        const candidates = rrule.between(
-            start.toDate(),
-            view.end.toDate(),
-            true
-        );
+        const candidates = rrule.between(start.toDate(), view.end.toDate(), true);
 
         return new Map(
-            candidates.map((date) => [
-                toCalendarDate(fromDate(date, UTC)).toString(),
-                date
-            ])
+            candidates.map((date) => [toCalendarDate(fromDate(date, UTC)).toString(), date])
         );
     }
 
-    #applyExceptions<T extends Expandable<StartKey, EndKey, ShiftedDateKeys>>(
+    #apply_exceptions<T extends Expandable<StartKey, EndKey, ShiftedDateKeys>>(
         candidates: Map<string, Date>,
         exceptions: Map<string, RecurrenceException<T>>,
         dates: RecurrenceDates,
         view: ViewRange
     ): void {
-        const { startKey, endKey } = this.#config;
+        const { start_key, end_key } = this.#config;
 
-        for (const [occursAt, exception] of exceptions) {
-            if (exception.isCancelled) {
-                candidates.delete(occursAt);
+        for (const [occurs_at, exception] of exceptions) {
+            if (exception.is_cancelled) {
+                candidates.delete(occurs_at);
                 continue;
             }
 
-            const startOverride = exception.overrides[startKey];
-            const endOverride = endKey ? exception.overrides[endKey] : null;
+            const start_override = exception.overrides[start_key];
+            const end_override = end_key ? exception.overrides[end_key] : null;
 
-            if (!startOverride && !endOverride) {
+            if (!start_override && !end_override) {
                 continue;
             }
 
-            const date = parseDate(occursAt);
-            const start =
-                startOverride ??
-                toZoned(toCalendarDateTime(date, dates.start), UTC);
+            const date = parseDate(occurs_at);
+            const start = start_override ?? toZoned(toCalendarDateTime(date, dates.start), UTC);
             const end = dates.end
-                ? (endOverride ??
-                  dates.end.set(date.add({ days: dates.edoffset })))
+                ? (end_override ?? dates.end.set(date.add({ days: dates.edoffset })))
                 : null;
 
             if (this.#overlaps(start, end, view)) {
-                candidates.set(occursAt, date.toDate(UTC));
+                candidates.set(occurs_at, date.toDate(UTC));
             } else {
-                candidates.delete(occursAt);
+                candidates.delete(occurs_at);
             }
         }
     }
 
-    #createOccurrence<T extends Expandable<StartKey, EndKey, ShiftedDateKeys>>(
+    #create_occurrence<T extends Expandable<StartKey, EndKey, ShiftedDateKeys>>(
         item: T,
-        occursAt: string,
+        occurs_at: string,
         date: Date,
         dtstart: ZonedDateTime,
         exception?: RecurrenceException<T>
     ): WithRecurrence<T> {
-        const { startKey, endKey, shiftedDateKeys } = this.#config;
+        const { start_key, end_key, shifted_date_keys } = this.#config;
 
-        const dateKeys = [
-            startKey,
-            ...(endKey ? [endKey] : []),
-            ...shiftedDateKeys
-        ];
+        const date_keys = [start_key, ...(end_key ? [end_key] : []), ...shifted_date_keys];
 
         const occurrence = {
             ...item,
-            occursAt: parseDate(occursAt),
-            recurringSince: toCalendarDate(dtstart),
-            ...dateKeys.reduce(
+            occurs_at: parseDate(occurs_at),
+            recurring_since: toCalendarDate(dtstart),
+            ...date_keys.reduce(
                 (acc, key) => {
                     if (exception?.overrides?.[key]) {
                         return acc;
@@ -220,13 +189,11 @@ export class RecurrenceExpander<
                         return acc;
                     }
 
-                    const utcValue = toTimeZone(value, UTC);
-                    const offset = getDiffInDays(utcValue, dtstart);
+                    const utc_value = toTimeZone(value, UTC);
+                    const offset = get_diff_in_days(utc_value, dtstart);
 
                     acc[key] = toTimeZone(
-                        fromDate(date, UTC)
-                            .add({ days: offset })
-                            .set(toTime(utcValue)),
+                        fromDate(date, UTC).add({ days: offset }).set(toTime(utc_value)),
                         value.timeZone
                     );
 
@@ -239,11 +206,7 @@ export class RecurrenceExpander<
         return Object.assign(occurrence, exception?.overrides);
     }
 
-    #overlaps(
-        start: ZonedDateTime,
-        end: ZonedDateTime | null,
-        view: ViewRange
-    ): boolean {
+    #overlaps(start: ZonedDateTime, end: ZonedDateTime | null, view: ViewRange): boolean {
         if (end) {
             return start.compare(view.end) < 0 && end.compare(view.start) > 0;
         }

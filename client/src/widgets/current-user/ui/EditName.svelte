@@ -16,23 +16,21 @@
     let { open = $bindable(), user }: ViewProps = $props();
 </script>
 
-<ScreenView.Overlay bind:open {@attach VirtualKeyboard.retainFocus()}>
+<ScreenView.Overlay bind:open {@attach VirtualKeyboard.retain_focus()}>
     <ScreenView.Header title={m["current-user.account.name"]()} />
     <ScreenView.Content class="mt-5">
         <ApiForm
             action={UpdateUserName()}
             class="flex grow flex-col"
-            inputSchema={z.object({
-                name: z
-                    .string()
-                    .min(1, { error: m["current-user.name.errors.name"]() })
+            input_schema={z.object({
+                name: z.string().min(1, { error: m["current-user.name.errors.name"]() })
             })}
-            onSuccess={async (_, input) => {
+            on_success={async (_, input) => {
                 await SessionCache.update({ "user.name": input.name });
                 Overlay.close();
             }}
         >
-            {#snippet children({ errors, submitting, isDirty })}
+            {#snippet children({ errors, submitting, is_dirty })}
                 <TextField
                     type="text"
                     name="name"
@@ -48,7 +46,7 @@
                 <Button
                     type="submit"
                     class="mt-auto shrink-0"
-                    disabled={!isDirty}
+                    disabled={!is_dirty}
                     loading={submitting}
                 >
                     {m["current-user.name.save"]()}

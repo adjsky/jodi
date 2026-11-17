@@ -16,18 +16,14 @@
     const { icon, selected, children, ...props }: Props = $props();
 </script>
 
-{#snippet endIcon()}
+{#snippet end_icon()}
     <Check class="text-xl not-group-data-selected:hidden" />
 {/snippet}
 
 <InfoActionRow
     {...props}
     {children}
-    {endIcon}
-    startIcon={icon}
-    class={tw(
-        "group data-selected:font-bold",
-        selected && "font-bold",
-        props.class
-    )}
+    {end_icon}
+    start_icon={icon}
+    class={tw("group data-selected:font-bold", selected && "font-bold", props.class)}
 />

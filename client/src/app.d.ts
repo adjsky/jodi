@@ -12,8 +12,7 @@ declare global {
 
         interface PageState {
             overlay?: OverlayState;
-            selectedDate?: string;
-            skipViewTransition?: boolean;
+            skip_view_transition?: boolean;
         }
     }
 
