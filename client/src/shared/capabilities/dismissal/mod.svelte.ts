@@ -1,21 +1,6 @@
+/// <reference types="dom-close-watcher" />
+
 import type { Getter } from "runed";
-
-declare global {
-    class CloseWatcher extends EventTarget {
-        constructor(options?: CloseWatcherOptions);
-
-        oncancel: ((this: CloseWatcher, event: Event) => void) | null;
-        onclose: ((this: CloseWatcher, event: Event) => void) | null;
-
-        request_close(): void;
-        close(): void;
-        destroy(): void;
-    }
-
-    interface CloseWatcherOptions {
-        signal?: AbortSignal;
-    }
-}
 
 type Registration = {
     request_close: VoidFunction;
@@ -33,7 +18,7 @@ function register(on_close: VoidFunction): VoidFunction {
     const registration: Registration = {
         request_close() {
             if (watcher) {
-                watcher.request_close();
+                watcher.requestClose();
             } else {
                 on_close();
             }
