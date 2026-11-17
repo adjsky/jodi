@@ -10,11 +10,11 @@
         variant: "save" | "close";
         confirm?: boolean;
         scopeLabels?: { this: string; all: string };
-        onConfirm?: (scope: RecurrenceScope) => void;
+        onSave?: (scope: RecurrenceScope) => void;
         onClose?: VoidFunction;
     };
 
-    const { title, variant, confirm, scopeLabels, onConfirm, onClose }: Props =
+    const { title, variant, confirm, scopeLabels, onSave, onClose }: Props =
         $props();
 
     let open = $state(false);
@@ -24,7 +24,7 @@
     bind:open
     {title}
     {scopeLabels}
-    {onConfirm}
+    onConfirm={(scope) => onSave?.(scope)}
     skip={!confirm}
 >
     {#snippet trigger(props)}
@@ -45,6 +45,8 @@
                 if (confirm) {
                     e.preventDefault();
                     open = true;
+                } else {
+                    onSave?.("this");
                 }
             }}
         >

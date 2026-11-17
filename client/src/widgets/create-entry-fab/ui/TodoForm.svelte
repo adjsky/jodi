@@ -1,7 +1,7 @@
 <script lang="ts">
     import { toCalendarDate, toZoned } from "@internationalized/date";
     import { Trash } from "@lucide/svelte";
-    import { Todo } from "#entities/todo/mod.ts";
+    import { Todo, TodoService } from "#entities/todo/mod.ts";
     import { CalendarPicker, SelectedDate } from "#features/choose-date/mod.ts";
     import { RescheduleItem } from "#features/reschedule-item/mod.ts";
     import { SaveOrClose } from "#features/save-item/mod.ts";
@@ -54,7 +54,14 @@
         </CalendarPicker>
     {/snippet}
     {#snippet close()}
-        <SaveOrClose variant="save" />
+        <SaveOrClose
+            variant="save"
+            onSave={async () => {
+                await TodoService.create(draft);
+                //  Push.subscription.ahtung(m["todos.reminder-ahtung"]());
+                onClose();
+            }}
+        />
     {/snippet}
     {#snippet category()}
         <Category bind:categoryId={draft.categoryId} />{/snippet}
@@ -103,35 +110,3 @@
         />
     {/snippet}
 </Todo.Fields>
-
-<!--
-<Form
-    action={CreateTodo()}
-    options={{
-        only: ["todos"],
-        preserveState: true,
-        preserveScroll: true,
-        preserveUrl: true,
-        replace: true
-    }}
-    transform={(data) => ({
-        ...data,
-        hasTime,
-        scheduledAt: hasTime
-            ? normalizeIsoString(scheduledAt.toAbsoluteString())
-            : toCalendarDate(scheduledAt).toString()
-    })}
-    onSuccess={() => {
-        if (notifyAt) {
-            Push.subscription.ahtung(m["todos.reminder-ahtung"]());
-        }
-        onClose();
-    }}
-    class="flex grow flex-col"
->
-    {#snippet children({ processing })}
-        <Todo.Fields {scheduledAt}>
-
-        </Todo.Fields>
-    {/snippet}
-</Form> -->

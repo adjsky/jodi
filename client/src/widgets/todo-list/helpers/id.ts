@@ -1,5 +1,5 @@
-import type { TodoData } from "$/entities/todo";
+import type { TodoOccurrence } from "#entities/todo/mod.ts";
 
-export function id(todo: TodoData): string {
+export function id(todo: TodoOccurrence): string {
     return todo.id + "|" + (todo.occursAt ?? todo.scheduledAt);
 }

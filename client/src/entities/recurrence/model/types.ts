@@ -1,4 +1,4 @@
-import type { CalendarDate } from "@internationalized/date";
+import type { CalendarDate, ZonedDateTime } from "@internationalized/date";
 
 export type RecurrenceScope = "this" | "following" | "all";
 
@@ -7,10 +7,35 @@ export type RecurrenceException = {
     recurrenceableId: string;
     occursAt: string;
     isCancelled: boolean;
-    overrides: Record<string, unknown>;
-};
+} & (
+    | {
+          recurrenceableType: "todo";
+          overrides: Partial<{
+              title: string;
+              description: string;
+              categoryId: string | null;
+              color: string | null;
+              scheduledAt: ZonedDateTime;
+              hasTime: boolean;
+              completedAt: ZonedDateTime | null;
+              notifyBefore: string;
+          }>;
+      }
+    | {
+          recurrenceableType: "event";
+          overrides: Partial<{
+              title: string;
+              description: string;
+              location: string | null;
+              color: string | null;
+              startsAt: ZonedDateTime;
+              endsAt: ZonedDateTime;
+              notifyBefore: string;
+          }>;
+      }
+);
 
 export type WithRecurrence<T> = T & {
-    occursAt: CalendarDate;
-    recurringSince: CalendarDate;
+    occursAt: CalendarDate | null;
+    recurringSince: CalendarDate | null;
 };

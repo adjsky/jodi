@@ -1,6 +1,8 @@
 <script lang="ts">
+    import { fromAbsolute, toZoned } from "@internationalized/date";
     import { Check, GripVertical } from "@lucide/svelte";
     import { Todo } from "#entities/todo/mod.ts";
+    import { SelectedEntry } from "#features/choose-entry/mod.ts";
     import { Checkbox } from "#features/complete-todo/mod.ts";
     import { m } from "#paraglide/messages.js";
     import PencilNote from "#shared/assets/pencil-note.svg";
@@ -15,14 +17,14 @@
     import { UNGROUPED_KEY } from "../cfg/constants";
     import { groupTodos } from "../helpers/group-todos";
     import { id } from "../helpers/id";
-    import { editView } from "../model/view";
     import EditSheet from "./EditSheet.svelte";
 
+    import type { TodoOccurrence } from "#entities/todo/mod.ts";
     import type { DndEvent } from "svelte-dnd-action";
     import type { SvelteHTMLElements } from "svelte/elements";
 
     type Props = SvelteHTMLElements["section"] & {
-        todos: Todo[];
+        todos: TodoOccurrence[];
     };
 
     const { todos, ...rest }: Props = $props();
@@ -42,48 +44,54 @@
     //     });
     // });
 
-    let groups = $state(untrack(() => groupTodos(todos)));
-    let isDragging = $state(false);
+    let editOpen = $state(false);
+
+    let groups = $derived(groupTodos(todos));
+    // let isDragging = $state(false);
 
     const todo = $derived.by(() => {
-        const vid = editView.meta?.__todo?.id;
-        if (!vid) return null;
+        const selected = SelectedEntry.current;
+        if (!selected) return null;
 
-        const todo = todos.find((t) => id(t) === vid);
+        const todo = todos.find((t) => id(t) === selected.id);
         if (!todo) return null;
 
         return todo;
     });
 
-    $effect(() => {
-        if (!isDragging && !reorder.isMutating) {
-            groups = groupTodos(todos);
-        }
-    });
+    // $effect(() => {
+    //     if (!isDragging && !reorder.isMutating) {
+    //         groups = groupTodos(todos);
+    //     }
+    // });
 
-    function consider(e: CustomEvent<DndEvent<TodoData>>, group: string) {
-        isDragging = true;
+    // function consider(e: CustomEvent<DndEvent<TodoData>>, group: string) {
+    //     isDragging = true;
 
-        if (
-            e.detail.info.trigger === TRIGGERS.DRAGGED_ENTERED ||
-            e.detail.info.trigger === TRIGGERS.DRAGGED_OVER_INDEX
-        ) {
-            if (!isDeepEqual(groups[group], e.detail.items)) {
-                void Haptics.selectionChanged();
-            }
-        }
+    //     if (
+    //         e.detail.info.trigger === TRIGGERS.DRAGGED_ENTERED ||
+    //         e.detail.info.trigger === TRIGGERS.DRAGGED_OVER_INDEX
+    //     ) {
+    //         if (!isDeepEqual(groups[group], e.detail.items)) {
+    //             void Haptics.selectionChanged();
+    //         }
+    //     }
 
-        groups = { ...groups, [group]: e.detail.items };
-    }
+    //     groups = { ...groups, [group]: e.detail.items };
+    // }
 
-    function finalize(e: CustomEvent<DndEvent<TodoData>>, group: string) {
-        isDragging = false;
-        groups = { ...groups, [group]: e.detail.items };
-        reorder.mutate(group, e.detail.items);
-    }
+    // function finalize(e: CustomEvent<DndEvent<TodoData>>, group: string) {
+    //     isDragging = false;
+    //     groups = { ...groups, [group]: e.detail.items };
+    //     reorder.mutate(group, e.detail.items);
+    // }
 </script>
 
-<EditSheet bind:open={() => editView.isOpen(), () => editView.back()} {todo} />
+<EditSheet
+    bind:open={editOpen}
+    {todo}
+    onExitComplete={() => SelectedEntry.update(null)}
+/>
 
 <section {...rest} class={tw("px-4", rest.class)}>
     <div class="flex items-center gap-1.5">
@@ -130,7 +138,7 @@
     {/if}
 </section>
 
-{#snippet list(group: string, todos: TodoData[])}
+{#snippet list(group: string, todos: TodoOccurrence[])}
     <div
         use:dragHandleZone={{
             items: todos,
@@ -143,25 +151,27 @@
             <Todo.Row class={[todo.completedAt && "opacity-40"]}>
                 {#snippet checkbox()}
                     <Checkbox
-                        {...complete(todo)}
-                        {...visitOptions}
-                        href={CompleteTodo(todo.id)}
+                        id={todo.id}
                         completedAt={todo.completedAt}
                         occursAt={todo.occursAt}
                     />
                 {/snippet}
                 {#snippet edit()}
                     {@const time = todo.hasTime
-                        ? formatToHHMM(new Date(todo.scheduledAt))
+                        ? formatToHHMM(todo.scheduledAt.toDate())
                         : null}
+                    {@const title = todo.title || m["todos.no-title"]()}
                     <button
                         class="relative w-full min-w-0 text-start text-lg font-medium"
                         data-part="edit"
-                        onclick={() =>
-                            editView.push({
-                                meta: { __todo: { id: id(todo) } }
-                            })}
-                        disabled={editView.isOpen()}
+                        onclick={() => {
+                            editOpen = true;
+                            SelectedEntry.update({
+                                type: "todo",
+                                id: id(todo)
+                            });
+                        }}
+                        disabled={editOpen}
                     >
                         <span
                             class={[
@@ -175,7 +185,7 @@
                             ]}
                             style="background: {todo.color ?? 'transparent'};"
                         >
-                            {time ? `${time} ${todo.title}` : todo.title}
+                            {time ? `${time} ${title}` : title}
                         </span>
                     </button>
                 {/snippet}

@@ -1,247 +1,147 @@
 <script lang="ts">
-    import { Form } from "@inertiajs/svelte";
-    import {
-        parseAbsoluteToLocal,
-        parseDate,
-        toCalendarDate
-    } from "@internationalized/date";
-    import { Todo } from "$/entities/todo";
-    import { CalendarPicker } from "$/features/choose-date";
-    import { Checkbox } from "$/features/complete-todo";
-    import { DeleteItem } from "$/features/delete-item";
-    import { RescheduleItem } from "$/features/reschedule-item";
-    import { SaveOrClose } from "$/features/save-item";
-    import { TodoTime } from "$/features/schedule-todo-time";
-    import { Category } from "$/features/select-category";
-    import { Color } from "$/features/select-color";
-    import { Recurrence } from "$/features/select-recurrence";
-    import { Reminder } from "$/features/select-reminder";
-    import CompleteTodo from "$/generated/actions/App/Domain/Todo/Actions/CompleteTodo";
-    import DestroyTodo from "$/generated/actions/App/Domain/Todo/Actions/DestroyTodo";
-    import UpdateTodo from "$/generated/actions/App/Domain/Todo/Actions/UpdateTodo";
-    import { m } from "$/paraglide/messages";
-    import {
-        DEFER_FRAMES,
-        NOTIFICATION_DEFAULT_SUBHOURS
-    } from "$/shared/cfg/constants";
-    import { normalizeIsoString } from "$/shared/lib/date/normalize-iso-string";
-    import { timediff } from "$/shared/lib/date/timediff";
-    import { dispatchInput } from "$/shared/lib/dom/dispatch-input";
-    import { toaster } from "$/shared/ui/toaster";
-    import { tick, untrack } from "svelte";
+    import { toCalendarDate } from "@internationalized/date";
+    import { Todo } from "#entities/todo/mod.ts";
+    import { CalendarPicker } from "#features/choose-date/mod.ts";
+    import { Checkbox } from "#features/complete-todo/mod.ts";
+    import { DeleteItem } from "#features/delete-item/mod.ts";
+    import { RescheduleItem } from "#features/reschedule-item/mod.ts";
+    import { SaveOrClose } from "#features/save-item/mod.ts";
+    import { TodoTime } from "#features/schedule-todo-time/mod.ts";
+    import { Category } from "#features/select-category/mod.ts";
+    import { Color } from "#features/select-color/mod.ts";
+    import { Recurrence } from "#features/select-recurrence/mod.ts";
+    import { Reminder } from "#features/select-reminder/mod.ts";
+    import { m } from "#paraglide/messages.js";
+    import { toaster } from "#shared/ui/toaster.ts";
+    import { isDeepEqual } from "remeda";
+    import { untrack } from "svelte";
 
-    import { complete } from "../api/complete";
-    import { destroy as optimistic_destroy } from "../api/destroy";
-    import { edit } from "../api/edit";
-    import { visitOptions } from "../cfg/inertia";
-
-    import type { RecurrenceScope } from "$/entities/recurrence";
-    import type { TodoData } from "$/entities/todo";
+    import type { TodoDraft, TodoOccurrence } from "#entities/todo/mod.ts";
 
     type Props = {
-        todo: TodoData;
+        todo: TodoOccurrence;
         onClose?: VoidFunction;
     };
 
     const { todo, onClose }: Props = $props();
 
-    let dateAnnouncerInput: HTMLInputElement | null = $state(null);
-    let scope: RecurrenceScope = $state("this");
-
-    const draft = $state(
+    const draft: TodoDraft = $state(
         untrack(() => ({
-            scheduledAt: parseAbsoluteToLocal(todo.scheduledAt),
-            hasTime: todo.hasTime,
-            notifyAt: todo.notifyAt
-                ? parseAbsoluteToLocal(todo.notifyAt)
-                : null,
+            title: todo.title,
+            description: todo.description,
+            categoryId: todo.categoryId,
             color: todo.color,
-            rrule: todo.rrule
+            rrule: todo.rrule,
+            scheduledAt: todo.scheduledAt,
+            hasTime: todo.hasTime,
+            notifyBefore: todo.notifyBefore
         }))
     );
+    const initialDraft = { ...draft };
 
+    const isDirty = $derived(!isDeepEqual(initialDraft, draft));
     const isRRuleDirty = $derived(todo.rrule !== draft.rrule);
 </script>
 
-<Form
-    {...edit(todo, draft.notifyAt !== null)}
-    action={UpdateTodo(todo.id, {
-        query: { scope: isRRuleDirty ? "all" : scope }
-    })}
-    options={visitOptions}
-    transform={(data) => ({
-        ...data,
-        hasTime: draft.hasTime,
-        occursAt: todo.occursAt
-    })}
-    showProgress={false}
-    class="flex min-h-0 grow flex-col"
+<Todo.Fields
+    bind:title={draft.title}
+    bind:description={draft.description}
+    scheduledAt={draft.scheduledAt}
+    isCompleted={todo.completedAt !== null}
 >
-    {#snippet children({ isDirty, submit })}
-        <Todo.Fields
-            scheduledAt={draft.scheduledAt}
-            title={todo.title}
-            description={todo.description}
-            isCompleted={todo.completedAt !== null}
+    {#snippet calendar(trigger)}
+        <CalendarPicker
+            mode="single"
+            selected={[toCalendarDate(draft.scheduledAt)]}
+            min={todo.recurringSince}
+            onSelect={([d]) => {
+                draft.scheduledAt = draft.scheduledAt.set(d);
+            }}
         >
-            {#snippet calendar(trigger)}
-                <CalendarPicker
-                    mode="single"
-                    selected={[toCalendarDate(draft.scheduledAt)]}
-                    min={todo.recurringSince
-                        ? parseDate(todo.recurringSince)
-                        : null}
-                    deferHistoryViewFrames={DEFER_FRAMES.SHEET + 1}
-                    onSelect={async ([d]) => {
-                        if (draft.notifyAt) {
-                            draft.notifyAt = draft.notifyAt.set(d);
-                        }
-                        draft.scheduledAt = draft.scheduledAt.set(d);
-                        await tick();
-                        dispatchInput(dateAnnouncerInput);
-                    }}
-                >
-                    {#snippet children(props)}
-                        {@render trigger(props)}
-                    {/snippet}
-                </CalendarPicker>
+            {#snippet children(props)}
+                {@render trigger(props)}
             {/snippet}
-            {#snippet close()}
-                <SaveOrClose
-                    {onClose}
-                    title={m["todos.recurrence-action.edit-title"]()}
-                    variant={isDirty ? "save" : "close"}
-                    scopeLabels={{
-                        this: m["todos.recurrence-action.this"](),
-                        all: m["todos.recurrence-action.all"]()
-                    }}
-                    confirm={todo.rrule !== null && !isRRuleDirty}
-                    onConfirm={async (s) => {
-                        scope = s;
-                        await tick();
-                        submit();
-                    }}
-                />
-            {/snippet}
-            {#snippet category()}
-                <Category
-                    name="categoryId"
-                    current={todo.category}
-                    deferHistoryViewFrames={DEFER_FRAMES.SHEET + 1}
-                />
-            {/snippet}
-            {#snippet checkbox()}
-                <Checkbox
-                    {...complete(todo)}
-                    {...visitOptions}
-                    href={CompleteTodo(todo.id)}
-                    completedAt={todo.completedAt}
-                    occursAt={todo.occursAt}
-                    class="size-6 text-lg"
-                />
-            {/snippet}
-            {#snippet time()}
-                <TodoTime
-                    bind:hasTime={draft.hasTime}
-                    scheduledAt={draft.scheduledAt}
-                    deferHistoryViewFrames={DEFER_FRAMES.SHEET + 1}
-                    onChange={async (time, hasTime) => {
-                        if (!hasTime) {
-                            draft.notifyAt = null;
-                        } else if (draft.notifyAt) {
-                            draft.notifyAt = draft.notifyAt.add(
-                                timediff(draft.scheduledAt, time)
-                            );
-                        } else {
-                            draft.notifyAt = draft.scheduledAt
-                                .set(time)
-                                .subtract({
-                                    hours: NOTIFICATION_DEFAULT_SUBHOURS
-                                });
-                        }
-
-                        draft.scheduledAt = draft.scheduledAt.set(time);
-
-                        await tick();
-                        dispatchInput(dateAnnouncerInput);
-                    }}
-                />
-            {/snippet}
-            {#snippet destroy()}
-                <DeleteItem
-                    {...optimistic_destroy(todo)}
-                    {...visitOptions}
-                    href={DestroyTodo(todo.id)}
-                    title={{
-                        recurring: m["todos.recurrence-action.delete-title"](),
-                        general: m["todos.delete-ahtung"]()
-                    }}
-                    tooltip={m["todos.tooltips.delete"]()}
-                    recurring={todo.rrule !== null}
-                    occursAt={todo.occursAt}
-                    date={todo.scheduledAt}
-                    scopeLabels={{
-                        this: m["todos.recurrence-action.this"](),
-                        following: m["todos.recurrence-action.following"](),
-                        all: m["todos.recurrence-action.all"]()
-                    }}
-                    deferHistoryViewFrames={DEFER_FRAMES.SHEET + 1}
-                />
-            {/snippet}
-            {#snippet repeat()}
-                <Recurrence
-                    bind:rrule={draft.rrule}
-                    day={draft.scheduledAt}
-                    name="rrule"
-                    tooltip={m["todos.tooltips.repeat"]()}
-                    deferHistoryViewFrames={DEFER_FRAMES.SHEET + 1}
-                />
-            {/snippet}
-            {#snippet color()}
-                <Color
-                    bind:current={draft.color}
-                    name="color"
-                    tooltip={m["todos.tooltips.color"]()}
-                />
-            {/snippet}
-            {#snippet notify()}
-                <Reminder
-                    bind:notifyAt={draft.notifyAt}
-                    startsAt={draft.scheduledAt}
-                    name="notifyAt"
-                    tooltip={m["todos.tooltips.notification"]()}
-                    beforeOpen={() => {
-                        if (!draft.hasTime) {
-                            toaster.info(m["todos.reminder.select-time"]());
-                            return false;
-                        }
-                    }}
-                    deferHistoryViewFrames={DEFER_FRAMES.SHEET + 1}
-                />
-            {/snippet}
-            {#snippet more()}
-                <RescheduleItem
-                    startsAt={toCalendarDate(draft.scheduledAt)}
-                    tooltip={m["todos.tooltips.more"]()}
-                    onReschedule={async (d) => {
-                        if (draft.notifyAt) {
-                            draft.notifyAt = draft.notifyAt.set(d);
-                        }
-                        draft.scheduledAt = draft.scheduledAt.set(d);
-                        await tick();
-                        dispatchInput(dateAnnouncerInput);
-                    }}
-                />
-            {/snippet}
-        </Todo.Fields>
-
-        <input
-            bind:this={dateAnnouncerInput}
-            hidden
-            name="scheduledAt"
-            value={draft.hasTime
-                ? normalizeIsoString(draft.scheduledAt.toAbsoluteString())
-                : toCalendarDate(draft.scheduledAt).toString()}
+        </CalendarPicker>
+    {/snippet}
+    {#snippet close()}
+        <SaveOrClose
+            {onClose}
+            title={m["todos.recurrence-action.edit-title"]()}
+            variant={isDirty ? "save" : "close"}
+            scopeLabels={{
+                this: m["todos.recurrence-action.this"](),
+                all: m["todos.recurrence-action.all"]()
+            }}
+            confirm={todo.rrule !== null && !isRRuleDirty}
+            onSave={async (scope) => {}}
         />
     {/snippet}
-</Form>
+    {#snippet category()}
+        <Category bind:categoryId={draft.categoryId} />
+    {/snippet}
+    {#snippet checkbox()}
+        <Checkbox
+            id={todo.id}
+            completedAt={todo.completedAt}
+            occursAt={todo.occursAt}
+            class="size-6 text-lg"
+        />
+    {/snippet}
+    {#snippet time()}
+        <TodoTime
+            scheduledAt={draft.scheduledAt}
+            hasTime={draft.hasTime}
+            onChange={async (time, ht) => {
+                draft.hasTime = ht;
+                draft.scheduledAt = draft.scheduledAt.set(time);
+            }}
+        />
+    {/snippet}
+    {#snippet destroy()}
+        <DeleteItem
+            title={{
+                recurring: m["todos.recurrence-action.delete-title"](),
+                general: m["todos.delete-ahtung"]()
+            }}
+            tooltip={m["todos.tooltips.delete"]()}
+            recurring={todo.rrule !== null}
+            scopeLabels={{
+                this: m["todos.recurrence-action.this"](),
+                following: m["todos.recurrence-action.following"](),
+                all: m["todos.recurrence-action.all"]()
+            }}
+            onDelete={(scope) => {
+                console.log(scope);
+            }}
+        />
+    {/snippet}
+    {#snippet repeat()}
+        <Recurrence
+            bind:rrule={draft.rrule}
+            day={draft.scheduledAt}
+            tooltip={m["todos.tooltips.repeat"]()}
+        />
+    {/snippet}
+    {#snippet color()}
+        <Color bind:color={draft.color} tooltip={m["todos.tooltips.color"]()} />
+    {/snippet}
+    {#snippet notify()}
+        <Reminder
+            bind:notifyBefore={draft.notifyBefore}
+            tooltip={m["todos.tooltips.notification"]()}
+            disabled={!draft.hasTime}
+            onDisabledAttempt={() => {
+                toaster.info(m["todos.reminder.select-time"]());
+            }}
+        />
+    {/snippet}
+    {#snippet more()}
+        <RescheduleItem
+            startsAt={toCalendarDate(draft.scheduledAt)}
+            tooltip={m["todos.tooltips.more"]()}
+            onReschedule={async (d) => {
+                draft.scheduledAt = draft.scheduledAt.set(d);
+            }}
+        />
+    {/snippet}
+</Todo.Fields>

@@ -7,6 +7,7 @@
     } from "@internationalized/date";
     import { m } from "#paraglide/messages.js";
     import { VirtualKeyboard } from "#shared/capabilities/virtual-keyboard/mod.ts";
+    import { UTC } from "#shared/cfg/constants.ts";
     import Button from "#shared/ui/Button.svelte";
     import SheetDialog from "#shared/ui/SheetDialog.svelte";
     import { Frequency, RRule, rrulestr } from "rrule";
@@ -49,7 +50,7 @@
             byweekday: rule?.options.byweekday ?? DEFAULT_BYWEEKDAY,
             count: rule?.options.count?.toString() ?? DEFAULT_COUNT,
             until: rule?.options.until
-                ? toCalendarDate(fromDate(rule.options.until, "UTC"))
+                ? toCalendarDate(fromDate(rule.options.until, UTC))
                 : DEFAULT_UNTIL,
             limit: rule?.options.count
                 ? ("count" as const)
@@ -69,7 +70,7 @@
                     until: toCalendarDateTime(
                         until,
                         new Time(23, 59, 59)
-                    ).toDate("UTC")
+                    ).toDate(UTC)
                 }),
                 ...(limit === "count" && { count: Number(count) })
             }).toString()

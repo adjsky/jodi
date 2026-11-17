@@ -3,6 +3,7 @@ import { TIMEZONE } from "#shared/cfg/constants.ts";
 import { fromDbBoolean, toDbBoolean } from "#shared/db/boolean.ts";
 import { db } from "#shared/db/dexie.ts";
 import Dexie from "dexie";
+import { omitBy } from "remeda";
 
 import type { Todo, TodoDraft } from "./types.ts";
 import type { CalendarDate } from "@internationalized/date";
@@ -18,21 +19,14 @@ function list(date: CalendarDate): Promise<Todo[]> {
         .between([1, Dexie.minKey], [1, end], true, false)
         .toArray((todos) =>
             todos.map((t) => ({
-                id: t.id,
-                title: t.title,
-                description: t.description,
-                categoryId: t.categoryId,
-                color: t.color,
-                rrule: t.rrule,
+                ...t,
                 scheduledAt: fromAbsolute(t.scheduledAt, t.timezone),
                 hasTime: fromDbBoolean(t.hasTime),
                 completedAt:
                     t.completedAt !== null
                         ? fromAbsolute(t.completedAt, t.timezone)
                         : null,
-                createdAt: fromAbsolute(t.createdAt, TIMEZONE),
-                notifyBefore: t.notifyBefore,
-                timezone: t.timezone
+                createdAt: fromAbsolute(t.createdAt, TIMEZONE)
             }))
         );
 }
@@ -48,24 +42,39 @@ function create(draft: TodoDraft): Promise<string> {
         recurring: toDbBoolean(draft.rrule !== null),
         scheduledAt: draft.scheduledAt.toDate().getTime(),
         hasTime: toDbBoolean(draft.hasTime),
-        createdAt: Date.now(),
         completedAt: null,
+        createdAt: Date.now(),
         notifyBefore: draft.notifyBefore,
         timezone: TIMEZONE
     });
 }
 
-function put(id: string, draft: TodoDraft): Promise<number> {
-    return db.todos.update(id, {
-        title: draft.title,
-        description: draft.description,
-        categoryId: draft.categoryId,
-        color: draft.color,
-        rrule: draft.rrule,
-        recurring: toDbBoolean(draft.rrule !== null),
-        scheduledAt: draft.scheduledAt.toDate().getTime(),
-        hasTime: toDbBoolean(draft.hasTime),
-        notifyBefore: draft.notifyBefore
+function update(id: string, draft: Partial<TodoDraft>): Promise<number> {
+    return db.todos.update(
+        id,
+        omitBy(
+            {
+                title: draft.title,
+                description: draft.description,
+                categoryId: draft.categoryId,
+                color: draft.color,
+                rrule: draft.rrule,
+                recurring:
+                    draft.rrule !== undefined
+                        ? toDbBoolean(draft.rrule !== null)
+                        : undefined,
+                scheduledAt: draft.scheduledAt?.toDate().getTime(),
+                hasTime: draft.hasTime ? toDbBoolean(draft.hasTime) : undefined,
+                notifyBefore: draft.notifyBefore
+            },
+            (v) => v === undefined
+        )
+    );
+}
+
+async function complete(id: string): Promise<void> {
+    await db.todos.update(id, (todo) => {
+        todo.completedAt = todo.completedAt ? null : Date.now();
     });
 }
 
@@ -76,6 +85,7 @@ function destroy(id: string): Promise<void> {
 export const TodoRepository = {
     list,
     create,
-    put,
+    update,
+    complete,
     destroy
 };

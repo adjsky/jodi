@@ -1,48 +1,34 @@
 <script lang="ts">
-    import { router } from "@inertiajs/svelte";
     import { Check } from "@lucide/svelte";
-    import { tw } from "$/shared/lib/styles/tw";
-    import { Haptics } from "$/shared/services/haptics";
+    import { TodoService } from "#entities/todo/mod.ts";
+    import { Haptics } from "#shared/capabilities/haptics/mod.ts";
+    import { tw } from "#shared/lib/styles/tw.ts";
     import { boolAttr } from "runed";
 
-    import type { UrlMethodPair, VisitOptions } from "@inertiajs/core";
-    import type { ClassName } from "$/shared/lib/styles/tw";
+    import type { CalendarDate, ZonedDateTime } from "@internationalized/date";
+    import type { ClassName } from "#shared/lib/styles/tw.ts";
 
-    type Props = VisitOptions & {
-        href: string | UrlMethodPair;
+    type Props = {
         class?: ClassName;
-        completedAt: string | null;
-        occursAt: string | null;
+        id: string;
+        completedAt: ZonedDateTime | null;
+        occursAt: CalendarDate | null;
     };
 
-    const {
-        class: classname,
-        completedAt,
-        occursAt,
-        href,
-        ...options
-    }: Props = $props();
-
-    function onClick() {
-        void Haptics.impact("medium");
-
-        router.visit(href, {
-            ...options,
-            only: ["todos"],
-            data: { occursAt },
-            showProgress: false
-        });
-    }
+    const { id, completedAt, occursAt, ...props }: Props = $props();
 </script>
 
 <button
     type="button"
     class={tw(
         "group flex size-5.5 shrink-0 items-center justify-center rounded-full border border-cream-950 text-ms data-completed:bg-cream-950 data-completed:text-cream-50",
-        classname
+        props.class
     )}
     data-completed={boolAttr(completedAt)}
-    onclick={onClick}
+    onclick={() => {
+        void Haptics.impact("medium");
+        void TodoService.complete(id, occursAt);
+    }}
 >
     <Check class="group-not-data-completed:hidden" />
 </button>

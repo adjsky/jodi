@@ -1,34 +1,27 @@
 <script lang="ts">
-    import { LastMatching } from "$/shared/lib/svelte/last-matching.svelte";
-    import Sheet from "$/shared/ui/Sheet.svelte";
+    import Sheet from "#shared/ui/Sheet.svelte";
 
     import EditForm from "./EditForm.svelte";
 
-    import type { TodoData } from "$/entities/todo";
+    import type { TodoOccurrence } from "#entities/todo/mod.ts";
 
     type Props = {
         open: boolean;
-        todo: TodoData | null;
+        todo: TodoOccurrence | null;
+        onExitComplete?: VoidFunction;
     };
 
-    let { open = $bindable(), ...props }: Props = $props();
-
-    const todo = new LastMatching(
-        () => props.todo,
-        (todo) => todo !== null
-    );
+    let { open = $bindable(), todo, onExitComplete }: Props = $props();
 </script>
 
 <Sheet
     bind:open
+    {onExitComplete}
     maxHeight={0.9}
     snapPoints={[0.6, 1]}
     defaultSnapPoint={0.6}
-    onExitComplete={() => {
-        todo.reset();
-    }}
 >
-    {#if todo.current}
-        <EditForm todo={todo.current} onClose={() => (open = false)} />
+    {#if todo}
+        <EditForm {todo} onClose={() => (open = false)} />
     {/if}
 </Sheet>

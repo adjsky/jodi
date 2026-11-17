@@ -1,21 +1,23 @@
+import { now } from "@internationalized/date";
 import {
     RecurrenceExceptionRepository,
     RecurrenceExpander
 } from "#entities/recurrence/mod.ts";
+import { TIMEZONE } from "#shared/cfg/constants.ts";
 import { db } from "#shared/db/dexie.ts";
-import { liveQuery } from "#shared/db/live-query.ts";
+import { liveQuery } from "#shared/db/live-query.svelte.ts";
 import { sortBy } from "remeda";
 
 import { CategoryRepository, TodoPositionRepository } from "../mod.ts";
 import { TodoRepository } from "./todo-repository.ts";
 
-import type { Todo } from "../mod.ts";
-import type { TodoDraft } from "./types.ts";
+import type { TodoDraft, TodoOccurrence } from "./types.ts";
 import type { CalendarDate } from "@internationalized/date";
-import type { LiveQuery } from "#shared/db/live-query.ts";
+import type { LiveQuery } from "#shared/db/live-query.svelte.ts";
+import type { MaybeGetter } from "runed";
 
-function list(date: CalendarDate): LiveQuery<Todo[]> {
-    return liveQuery(async () => {
+function list(date: MaybeGetter<CalendarDate>): LiveQuery<TodoOccurrence[]> {
+    return liveQuery(date, async (date) => {
         const [todos, exceptions, positions, categories] = await db.transaction(
             "r",
             [
@@ -43,10 +45,11 @@ function list(date: CalendarDate): LiveQuery<Todo[]> {
         const category = new Map(categories.map((c) => [c.id, c.name]));
         const position = new Map(positions.map((p) => [p.todoId, p.position]));
 
-        const expander = new RecurrenceExpander<Todo>({
+        const expander = new RecurrenceExpander({
             startKey: "scheduledAt",
             endKey: null,
-            shiftedDateKeys: []
+            shiftedDateKeys: [],
+            timezone: TIMEZONE
         });
 
         return sortBy(
@@ -64,7 +67,18 @@ async function create(draft: TodoDraft): Promise<string> {
     return id;
 }
 
+async function complete(
+    id: string,
+    occursAt: CalendarDate | null
+): Promise<void> {
+    if (occursAt) {
+    } else {
+        await TodoRepository.complete(id);
+    }
+}
+
 export const TodoService = {
     list,
-    create
+    create,
+    complete
 };

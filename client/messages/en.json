@@ -147,6 +147,7 @@
         "no-todos": "Looks like you have nothing to do. Click + to add a task.",
         "delete-ahtung": "Are you sure you want to delete this task?",
         "reminder-ahtung": "Turn on notifications so you don't forget the task.",
+        "no-title": "No title",
         "category": {
             "title": "Category",
             "trigger": "+ Category",

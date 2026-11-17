@@ -3,6 +3,7 @@ import packageJson from "../../../package.json" with { type: "json" };
 export const VERSION = packageJson.version;
 
 export const TIMEZONE = Intl.DateTimeFormat().resolvedOptions().timeZone;
+export const UTC = "UTC";
 
 export const LANGUAGES = {
     en: "English",
