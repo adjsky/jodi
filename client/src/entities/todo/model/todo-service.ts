@@ -13,8 +13,8 @@ import { TodoPositionRepository } from "./todo-position-repository.ts";
 import { TodoRepository } from "./todo-repository.ts";
 
 import type { Todo, TodoDraft, TodoOccurrence } from "./types.ts";
-import type { CalendarDate, ZonedDateTime } from "@internationalized/date";
-import type { RecurrenceException, RecurrenceScope } from "#entities/recurrence/model/types.ts";
+import type { CalendarDate } from "@internationalized/date";
+import type { RecurrenceScope } from "#entities/recurrence/model/types.ts";
 import type { LiveQuery } from "#shared/db/live-query.svelte.ts";
 import type { MaybeGetter } from "runed";
 
@@ -73,65 +73,43 @@ async function update(
         throw new Error('Scope "following" is not supported for update.');
     }
 
-    type TodoException = Extract<RecurrenceException, { recurrenceable_type: "todo" }>;
-
     async function update_single_occurrence(todo: Todo): Promise<void> {
         if (!occurs_at) raise("No occurs_at.");
 
-        const existing = await RecurrenceExceptionRepository.find("todo", id, occurs_at);
-        const scheduled_at = toTimeZone(todo.scheduled_at, UTC).set(occurs_at);
-        const attributes = omit(draft, ["rrule", "completed_at"]);
-        const overrides = omitBy(attributes, (value, key) => {
+        const existing = await RecurrenceExceptionRepository.find("todo", todo.id, occurs_at);
+        const current = {
+            ...todo,
+            ...existing?.overrides,
+            scheduled_at:
+                existing?.overrides.scheduled_at ??
+                toTimeZone(todo.scheduled_at, UTC).set(occurs_at)
+        };
+        const overrides = omitBy(omit(draft, ["rrule", "completed_at"]), (value, key) => {
             if (key === "scheduled_at") {
-                return (
-                    draft.scheduled_at.compare(existing?.overrides.scheduled_at ?? scheduled_at) ===
-                    0
-                );
+                return draft.scheduled_at.compare(current.scheduled_at) === 0;
             }
 
-            const current =
-                existing && Object.hasOwn(existing.overrides, key)
-                    ? existing.overrides[key]
-                    : todo[key];
-
-            return value === current;
+            return value === current[key];
         });
 
-        await reset_occurrence_positions(todo, scheduled_at, existing);
+        const current_local_date = toCalendarDate(toTimeZone(current.scheduled_at, TIMEZONE));
+        const next_local_date = toCalendarDate(toTimeZone(draft.scheduled_at, TIMEZONE));
+
+        if (
+            draft.category_id !== current.category_id ||
+            !isSameDay(next_local_date, current_local_date)
+        ) {
+            await TodoPositionRepository.destroy_for_date(todo.id, current_local_date);
+        }
 
         await RecurrenceExceptionRepository.upsert({
             id: existing?.id ?? crypto.randomUUID(),
             recurrenceable_type: "todo",
-            recurrenceable_id: id,
+            recurrenceable_id: todo.id,
             occurs_at: occurs_at.toString(),
             is_cancelled: existing?.is_cancelled ?? false,
             overrides: { ...existing?.overrides, ...overrides }
         });
-    }
-
-    async function reset_occurrence_positions(
-        todo: Todo,
-        scheduled_at: ZonedDateTime,
-        existing: TodoException | null
-    ): Promise<void> {
-        const current_scheduled_at = existing?.overrides.scheduled_at ?? scheduled_at;
-        const current_category =
-            existing && Object.hasOwn(existing.overrides, "category_id")
-                ? existing.overrides.category_id
-                : todo.category_id;
-
-        if (
-            draft.category_id !== current_category ||
-            !isSameDay(
-                toTimeZone(draft.scheduled_at, TIMEZONE),
-                toTimeZone(current_scheduled_at, TIMEZONE)
-            )
-        ) {
-            await TodoPositionRepository.destroy_for_date(
-                id,
-                toCalendarDate(toTimeZone(current_scheduled_at, TIMEZONE))
-            );
-        }
     }
 
     async function update_todo(todo: Todo): Promise<void> {
@@ -140,46 +118,38 @@ async function update(
         if (scope === "all" && todo.rrule !== null && occurs_at !== null) {
             await RecurrenceExceptionRepository.reset(
                 "todo",
-                id,
+                todo.id,
                 keys(omit(draft, ["rrule", "completed_at"]))
             );
-            normalize_recurring_data_for_update(todo, attributes, occurs_at);
-            await split_recurring_todo(todo, todo.rrule, attributes);
+
+            const scheduled_at = toTimeZone(draft.scheduled_at, UTC);
+
+            if (isSameDay(scheduled_at, occurs_at)) {
+                const series_start_date = toCalendarDate(toTimeZone(todo.scheduled_at, UTC));
+
+                attributes.scheduled_at = toTimeZone(
+                    scheduled_at.set(series_start_date),
+                    draft.scheduled_at.timeZone
+                );
+            }
+
+            attributes.rrule = await split_recurring_todo(todo, todo.rrule);
         }
 
         await reset_positions(todo);
-        await TodoRepository.update(id, attributes);
+        await TodoRepository.update(todo.id, attributes);
     }
 
-    function normalize_recurring_data_for_update(
-        todo: Todo,
-        attributes: TodoDraft,
-        date: CalendarDate
-    ): void {
-        const scheduled_at = toTimeZone(attributes.scheduled_at, UTC);
-
-        if (isSameDay(scheduled_at, date)) {
-            attributes.scheduled_at = toTimeZone(
-                scheduled_at.set(toCalendarDate(toTimeZone(todo.scheduled_at, UTC))),
-                draft.scheduled_at.timeZone
-            );
-        }
-    }
-
-    async function split_recurring_todo(
-        todo: Todo,
-        rrule: string,
-        attributes: TodoDraft
-    ): Promise<void> {
+    async function split_recurring_todo(todo: Todo, rrule: string): Promise<string> {
         if (
             draft.rrule !== null &&
             isDeepEqual(RRule.parseString(rrule), RRule.parseString(draft.rrule))
         ) {
-            return;
+            return draft.rrule;
         }
 
         const split_date = toCalendarDate(toTimeZone(draft.scheduled_at, UTC));
-        attributes.rrule = new RRule({
+        const truncated_rrule = new RRule({
             ...RRule.parseString(rrule),
             count: null,
             until: toZoned(split_date, UTC).subtract({ seconds: 1 }).toDate()
@@ -188,13 +158,15 @@ async function update(
         const new_id = await TodoRepository.create({ ...todo, ...draft });
 
         if (draft.rrule === null) {
-            await RecurrenceExceptionRepository.destroy("todo", id, split_date);
+            await RecurrenceExceptionRepository.destroy("todo", todo.id, split_date);
         } else {
-            await RecurrenceExceptionRepository.transfer("todo", id, new_id, split_date);
+            await RecurrenceExceptionRepository.transfer("todo", todo.id, new_id, split_date);
         }
 
-        await TodoPositionRepository.transfer(id, new_id, split_date);
+        await TodoPositionRepository.transfer(todo.id, new_id, split_date);
         await reset_positions({ ...todo, ...draft, id: new_id });
+
+        return truncated_rrule;
     }
 
     async function reset_positions(todo: Todo): Promise<void> {
@@ -230,7 +202,7 @@ async function destroy(
     date: CalendarDate | null,
     scope: RecurrenceScope
 ): Promise<void> {
-    async function destroy_following(todo: Todo, rrule: string) {
+    async function destroy_following(rrule: string) {
         if (!occurs_at || !date) raise("No occurs_at and date.");
 
         await TodoRepository.update(id, {
@@ -282,7 +254,7 @@ async function destroy(
             if (!todo) return;
 
             if (scope === "following" && todo.rrule !== null) {
-                await destroy_following(todo, todo.rrule);
+                await destroy_following(todo.rrule);
             } else if (scope === "this" && todo.rrule !== null) {
                 await destroy_this();
             } else {
