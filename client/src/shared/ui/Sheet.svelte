@@ -40,15 +40,12 @@
                 open = details.open;
             }
         },
-        // eslint-disable-next-line @typescript-eslint/naming-convention -- Ark UI option name.
         get defaultSnapPoint() {
             return default_snap_point;
         },
-        // eslint-disable-next-line @typescript-eslint/naming-convention -- Ark UI option name.
         get snapPoints() {
             return snap_points;
         },
-        // eslint-disable-next-line @typescript-eslint/naming-convention -- Ark UI option name.
         get closeOnInteractOutside() {
             return !is_animating;
         },

@@ -1,11 +1,13 @@
 <script lang="ts">
-    import { Bell, Mail } from "@lucide/svelte";
+    import { Bell, BellRing, Mail } from "@lucide/svelte";
     import { createMutation } from "@tanstack/svelte-query";
     import { User } from "#entities/user/mod.ts";
     import { m } from "#paraglide/messages.js";
+    import { NotificationCoordinator } from "#shared/capabilities/notification-coordinator/mod.svelte.ts";
+    import { PLATFORM } from "#shared/cfg/capacitor.ts";
+    import Button from "#shared/ui/Button.svelte";
     import { ScreenView } from "#shared/ui/composites/screen-view/mod.ts";
-
-    // import Button from "#shared/ui/Button.svelte";
+    import { toaster } from "#shared/ui/toaster.ts";
 
     import { update_user_preferences_mutation_options } from "../api/preferences.ts";
 
@@ -44,18 +46,25 @@
             {/each}
         </User.Info.Block>
 
-        <!-- {#if Push.subscription.needsConfiguration}
+        {#if user.preferences.notifications === "push" && NotificationCoordinator.permission !== "granted"}
             <Button
                 type="button"
                 class="mt-5 gap-2"
                 onclick={() => {
-                    void Push.subscription.subscribe();
+                    if (NotificationCoordinator.permission === "denied") {
+                        toaster.info(
+                            PLATFORM === "web"
+                                ? m["notification.permission-denied.web"]()
+                                : m["notification.permission-denied.native"]()
+                        );
+                    }
+
+                    void NotificationCoordinator.enable();
                 }}
-                loading={Push.subscription.isSubscribing}
             >
                 <BellRing class="text-xl" />
                 {m["current-user.notifications.allow"]()}
             </Button>
-        {/if} -->
+        {/if}
     </ScreenView.Content>
 </ScreenView.Overlay>

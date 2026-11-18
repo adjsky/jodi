@@ -1,4 +1,9 @@
 <script lang="ts">
+    import { m } from "#paraglide/messages.js";
+    import { NotificationCoordinator } from "#shared/capabilities/notification-coordinator/mod.svelte.ts";
+    import { PLATFORM } from "#shared/cfg/capacitor.ts";
+    import { toaster } from "#shared/ui/toaster.ts";
+
     import BasicMenu from "./BasicMenu.svelte";
     import CustomConfigurator from "./CustomConfigurator.svelte";
 
@@ -24,7 +29,29 @@
     bind:open={
         () => is_basic_open,
         (v) => {
-            if (disabled) return on_disabled_attempt?.();
+            if (PLATFORM === "web") {
+                toaster.info(m["reminders.not-supported-in-web"]());
+                return;
+            }
+            if (NotificationCoordinator.permission === "denied") {
+                toaster.info(m["notification.permission-denied.native"]());
+                return;
+            }
+            if (NotificationCoordinator.permission !== "granted") {
+                toaster.info(m["notification.no-permission.title"](), {
+                    action: {
+                        label: m["notification.no-permission.action"](),
+                        onclick() {
+                            void NotificationCoordinator.enable();
+                        }
+                    }
+                });
+                return;
+            }
+            if (disabled) {
+                on_disabled_attempt?.();
+                return;
+            }
             is_basic_open = v;
         }
     }

@@ -3,7 +3,7 @@
     import Cat from "#shared/assets/cat.svg";
     import Logo from "#shared/assets/logo.svg";
     import { Overlay } from "#shared/capabilities/overlay/mod.svelte.ts";
-    import { APP_CONFIG } from "#shared/cfg/app.ts";
+    import { app_config } from "#shared/cfg/app.ts";
     import Button from "#shared/ui/Button.svelte";
     import { VerifyScreen } from "#widgets/login/mod.ts";
     import EmailScreen from "#widgets/login/ui/EmailScreen.svelte";
@@ -28,9 +28,9 @@
         </Button>
     </div>
     <div class="mt-6 text-center text-sm text-cream-700">
-        <a href="{APP_CONFIG.url}/terms">{m["login.terms"]()}</a>
+        <a href="{app_config.url}/terms">{m["login.terms"]()}</a>
         •
-        <a href="{APP_CONFIG.url}/privacy">{m["login.privacy-policy"]()}</a>
+        <a href="{app_config.url}/privacy">{m["login.privacy-policy"]()}</a>
     </div>
 </main>
 

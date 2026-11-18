@@ -155,7 +155,7 @@ async function update(
             until: toZoned(split_date, UTC).subtract({ seconds: 1 }).toDate()
         }).toString();
 
-        const new_id = await TodoRepository.create({ ...todo, ...draft });
+        const new_id = await TodoRepository.replicate(todo, draft);
 
         if (draft.rrule === null) {
             await RecurrenceExceptionRepository.destroy("todo", todo.id, split_date);
@@ -251,7 +251,10 @@ async function destroy(
         [db.todos, db.recurrence_exceptions, db.todo_positions],
         async () => {
             const todo = await TodoRepository.find(id);
-            if (!todo) return;
+
+            if (!todo) {
+                return;
+            }
 
             if (scope === "following" && todo.rrule !== null) {
                 await destroy_following(todo.rrule);
@@ -267,7 +270,10 @@ async function destroy(
 async function complete(id: string, occurs_at: CalendarDate | null): Promise<void> {
     await db.transaction("rw", [db.todos, db.recurrence_exceptions], async () => {
         const todo = await TodoRepository.find(id);
-        if (!todo) return;
+
+        if (!todo) {
+            return;
+        }
 
         if (todo.rrule !== null && occurs_at !== null) {
             const existing = await RecurrenceExceptionRepository.find("todo", id, occurs_at);

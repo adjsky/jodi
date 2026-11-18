@@ -152,7 +152,11 @@
         user-select: text;
     }
 
-    :focus-visible {
+    :root[data-platform="native"] :focus-visible {
+        outline: none;
+    }
+
+    :root[data-platform="web"] :focus-visible {
         outline: 2px solid var(--color-brand);
         outline-offset: 2px;
     }

@@ -62,7 +62,7 @@ export default defineConfig(
                     trailingUnderscore: "allowSingleOrDouble"
                 },
                 {
-                    selector: "objectLiteralProperty",
+                    selector: ["objectLiteralProperty", "classicAccessor"],
                     format: null
                 },
                 {
@@ -88,8 +88,7 @@ export default defineConfig(
         },
 
         rules: {
-            "svelte/no-target-blank": "error",
-            "svelte/prefer-svelte-reactivity": "off"
+            "svelte/no-navigation-without-resolve": "off"
         }
     },
     {

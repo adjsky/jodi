@@ -83,15 +83,6 @@
             ]
         }
     },
-    "push-notifications": {
-        "configure": {
-            "title": "Configure notifications to receive reminders for your upcoming events and tasks.",
-            "action": "Proceed"
-        },
-        "no-permission": "Looks like you denied notification permission. Please enable it in your browser settings.",
-        "failed-to-subscribe": "Unknown error happened while creating a push subscription. Please try again.",
-        "success-subscribe": "Successfully allowed push notifications."
-    },
     "pwa-update": {
         "title": "An update is ready to install.",
         "action": "Install"
@@ -294,7 +285,8 @@
             "as-push": "As notification",
             "as-email": "As email",
             "apply": "Apply"
-        }
+        },
+        "not-supported-in-web": "Reminders are only available in the mobile app."
     },
     "reschedule": {
         "tomorrow": "Tomorrow",
@@ -388,5 +380,15 @@
         "title": "Select time",
         "ok": "OK",
         "cancel": "Cancel"
+    },
+    "notification": {
+        "permission-deied": {
+            "web": "Allow notifications for this site in your browser settings.",
+            "native": "Allow notifications in the app's system settings."
+        },
+        "no-permission": {
+            "title": "Уведомления отключены.",
+            "action": "Включить"
+        }
     }
 }

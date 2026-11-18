@@ -2,6 +2,7 @@
     import { PushSubscriptionSchema, SessionCache, UserSchema } from "#entities/user/mod.ts";
     import { m } from "#paraglide/messages.js";
     import { AuthTokenStorage } from "#shared/capabilities/auth-token-storage/mod.ts";
+    import { NotificationCoordinator } from "#shared/capabilities/notification-coordinator/mod.svelte.ts";
     import { Overlay } from "#shared/capabilities/overlay/mod.svelte.ts";
     import { VirtualKeyboard } from "#shared/capabilities/virtual-keyboard/mod.ts";
     import { PLATFORM } from "#shared/cfg/capacitor.ts";
@@ -77,6 +78,7 @@
                 }
 
                 await goto(resolve("/(app)"));
+                await NotificationCoordinator.enable();
             }}
         >
             {#snippet children({ errors, submitting, is_dirty })}

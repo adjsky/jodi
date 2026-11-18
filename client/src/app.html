@@ -19,6 +19,9 @@
         %sveltekit.head%
     </head>
     <body data-sveltekit-preload-data="hover" class="antialiased">
+        <script>
+            window.__JODI_APP_CONFIG__ = "%jodi.config.app%";
+        </script>
         <div id="app">%sveltekit.body%</div>
     </body>
 </html>

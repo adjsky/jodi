@@ -45,19 +45,28 @@ function list(date: CalendarDate): Promise<Todo[]> {
 
 function create(draft: TodoDraft): Promise<string> {
     return db.todos.add({
+        ...draft,
         id: crypto.randomUUID(),
-        title: draft.title,
-        description: draft.description,
-        category_id: draft.category_id,
-        color: draft.color,
-        rrule: draft.rrule,
         recurring: to_db_boolean(draft.rrule !== null),
         scheduled_at: draft.scheduled_at.toDate().getTime(),
         has_time: to_db_boolean(draft.has_time),
         completed_at: draft.completed_at?.toDate().getTime() ?? null,
-        created_at: draft.created_at?.toDate().getTime() ?? Date.now(),
-        notify_before: draft.notify_before,
-        timezone: draft.timezone ?? TIMEZONE
+        created_at: Date.now(),
+        timezone: TIMEZONE
+    });
+}
+
+function replicate(todo: Todo, overrides: Partial<TodoDraft> = {}): Promise<string> {
+    const replica = { ...todo, ...overrides };
+
+    return db.todos.add({
+        ...replica,
+        id: crypto.randomUUID(),
+        recurring: to_db_boolean(replica.rrule !== null),
+        scheduled_at: replica.scheduled_at.toDate().getTime(),
+        has_time: to_db_boolean(replica.has_time),
+        completed_at: replica.completed_at?.toDate().getTime() ?? null,
+        created_at: replica.created_at.toDate().getTime()
     });
 }
 
@@ -92,6 +101,7 @@ export const TodoRepository = {
     find,
     list,
     create,
+    replicate,
     update,
     destroy
 };
